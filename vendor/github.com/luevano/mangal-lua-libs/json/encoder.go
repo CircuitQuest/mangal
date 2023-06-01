@@ -2,7 +2,8 @@ package json
 
 import (
 	"encoding/json"
-	"github.com/metafates/mangal-lua-libs/io"
+
+	"github.com/luevano/mangal-lua-libs/io"
 	lua "github.com/yuin/gopher-lua"
 )
 

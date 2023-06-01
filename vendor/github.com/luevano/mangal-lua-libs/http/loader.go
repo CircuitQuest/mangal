@@ -3,8 +3,8 @@
 package http
 
 import (
-	client "github.com/metafates/mangal-lua-libs/http/client"
-	util "github.com/metafates/mangal-lua-libs/http/util"
+	client "github.com/luevano/mangal-lua-libs/http/client"
+	util "github.com/luevano/mangal-lua-libs/http/util"
 	lua "github.com/yuin/gopher-lua"
 )
 

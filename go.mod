@@ -15,8 +15,8 @@ require (
 	github.com/ivanpirog/coloredcobra v1.0.1
 	github.com/ka-weihe/fast-levenshtein v0.0.0-20201227151214-4c99ee36a1ba
 	github.com/lithammer/fuzzysearch v1.1.5
+	github.com/luevano/mangal-lua-libs v0.6.0
 	github.com/metafates/gache v0.0.2
-	github.com/metafates/mangal-lua-libs v0.5.0
 	github.com/muesli/reflow v0.3.0
 	github.com/pdfcpu/pdfcpu v0.3.13
 	github.com/samber/lo v1.37.0
@@ -97,3 +97,5 @@ require (
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
+
+//replace github.com/metafates/mangal-lua-lib => ../mangal-lua-libs

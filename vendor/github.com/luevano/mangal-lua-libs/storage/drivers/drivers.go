@@ -2,8 +2,8 @@
 package drivers
 
 import (
-	interfaces "github.com/metafates/mangal-lua-libs/storage/drivers/interfaces"
-	memory "github.com/metafates/mangal-lua-libs/storage/drivers/memory"
+	interfaces "github.com/luevano/mangal-lua-libs/storage/drivers/interfaces"
+	memory "github.com/luevano/mangal-lua-libs/storage/drivers/memory"
 )
 
 var (

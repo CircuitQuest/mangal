@@ -9,8 +9,8 @@ import (
 	"sync"
 	"time"
 
-	lua_json "github.com/metafates/mangal-lua-libs/json"
-	interfaces "github.com/metafates/mangal-lua-libs/storage/drivers/interfaces"
+	lua_json "github.com/luevano/mangal-lua-libs/json"
+	interfaces "github.com/luevano/mangal-lua-libs/storage/drivers/interfaces"
 
 	lua "github.com/yuin/gopher-lua"
 )

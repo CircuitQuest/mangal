@@ -3,9 +3,10 @@ package base64
 
 import (
 	"encoding/base64"
-	lio "github.com/metafates/mangal-lua-libs/io"
-	lua "github.com/yuin/gopher-lua"
 	"io"
+
+	lio "github.com/luevano/mangal-lua-libs/io"
+	lua "github.com/yuin/gopher-lua"
 )
 
 const (

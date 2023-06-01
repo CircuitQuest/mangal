@@ -2,9 +2,10 @@
 package ioutil
 
 import (
-	lio "github.com/metafates/mangal-lua-libs/io"
 	"io"
 	"io/ioutil"
+
+	lio "github.com/luevano/mangal-lua-libs/io"
 
 	lua "github.com/yuin/gopher-lua"
 )

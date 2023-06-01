@@ -4,8 +4,8 @@ package storage
 import (
 	lua "github.com/yuin/gopher-lua"
 
-	drivers "github.com/metafates/mangal-lua-libs/storage/drivers"
-	interfaces "github.com/metafates/mangal-lua-libs/storage/drivers/interfaces"
+	drivers "github.com/luevano/mangal-lua-libs/storage/drivers"
+	interfaces "github.com/luevano/mangal-lua-libs/storage/drivers/interfaces"
 )
 
 const (

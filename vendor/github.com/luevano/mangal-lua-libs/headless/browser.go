@@ -9,7 +9,8 @@ import (
 )
 
 var browserMethods = map[string]lua.LGFunction{
-	"page": browserPage,
+	"page":  browserPage,
+	"close": browserClose,
 }
 
 func newBrowser() lua.LGFunction {
@@ -62,5 +63,20 @@ func browserPage(L *lua.LState) int {
 	L.SetMetatable(ud, L.GetTypeMetatable("browserPage"))
 
 	L.Push(ud)
+	return 1
+}
+
+func browserClose(L *lua.LState) int {
+	browser := checkBrowser(L)
+	err := browser.Close()
+
+	if err != nil {
+		L.Push(lua.LNil)
+		L.Push(lua.LString(err.Error()))
+		return 2
+	}
+
+	// L.Push(lua.LNil)
+	L.Push(lua.LString("browser closed"))
 	return 1
 }

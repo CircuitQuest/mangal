@@ -1,9 +1,10 @@
 package strings
 
 import (
-	"github.com/metafates/mangal-lua-libs/io"
-	lua "github.com/yuin/gopher-lua"
 	"strings"
+
+	"github.com/luevano/mangal-lua-libs/io"
+	lua "github.com/yuin/gopher-lua"
 )
 
 const (

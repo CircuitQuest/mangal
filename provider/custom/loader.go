@@ -2,7 +2,7 @@ package custom
 
 import (
 	"fmt"
-	libs "github.com/metafates/mangal-lua-libs"
+	libs "github.com/luevano/mangal-lua-libs"
 	"github.com/metafates/mangal/filesystem"
 	"github.com/metafates/mangal/source"
 	"github.com/metafates/mangal/util"

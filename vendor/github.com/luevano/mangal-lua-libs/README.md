@@ -1,16 +1,17 @@
 # mangal-lua-libs
 
-Lua libraries used by [mangal](https://github.com/metafates/mangal) for custom lua scrapers
+Lua libraries used by [mangal](https://github.com/luevano/mangal) for custom lua scrapers.
+
+This fork was created to fix the [headless](/headless/) module which didn't have a way to close the browser, causing a lot of CPU and memory usage.
 
 ## Index
 
 * [base64](/base64) [encoding/base64](https://pkg.go.dev/encoding/base64) api
-* [headless](/headless) headless chrome browser
-* [html](/html) HTML processing
-* [cert_util](/cert_util) monitoring ssl certs
 * [crypto](/crypto) calculate md5, sha256 hash for string
 * [filepath](/filepath) path.filepath port
 * [goos](/goos) os port
+* [headless](/headless) headless chrome browser
+* [html](/html) HTML processing
 * [http](/http) http.client && http.server
 * [humanize](/humanize) humanize [github.com/dustin/go-humanize](https://github.com/dustin/go-humanize) port
 * [inspect](/inspect) pretty print [github.com/kikito/inspect.lua](https://github.com/kikito/inspect.lua)

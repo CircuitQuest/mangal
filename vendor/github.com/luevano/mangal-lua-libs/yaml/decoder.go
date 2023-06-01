@@ -1,7 +1,7 @@
 package yaml
 
 import (
-	"github.com/metafates/mangal-lua-libs/io"
+	"github.com/luevano/mangal-lua-libs/io"
 	lua "github.com/yuin/gopher-lua"
 	"gopkg.in/yaml.v2"
 )

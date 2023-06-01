@@ -11,7 +11,7 @@ import (
 	"os"
 	"time"
 
-	lua_json "github.com/metafates/mangal-lua-libs/json"
+	lua_json "github.com/luevano/mangal-lua-libs/json"
 	lua "github.com/yuin/gopher-lua"
 )
 
