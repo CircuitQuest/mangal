@@ -121,7 +121,8 @@ func ParseChaptersFilter(description string) (ChaptersFilter, error) {
 				from, to = to, from
 			}
 
-			return chapters[from : to+1], nil
+			// indexes start at 0, so no need to add +1 to "to"
+			return chapters[from : to], nil
 		}
 	}, nil
 }
