@@ -5,11 +5,11 @@ import (
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/state/chapsdownloaded"
+	"github.com/luevano/mangal/tui/state/chapsdownloading"
+	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/tui/base"
-	"github.com/mangalorg/mangal/tui/state/chapsdownloaded"
-	"github.com/mangalorg/mangal/tui/state/chapsdownloading"
-	"github.com/mangalorg/mangal/tui/state/loading"
 )
 
 func (s *State) downloadChaptersCmd(chapters []libmangal.Chapter, options libmangal.DownloadOptions) tea.Cmd {

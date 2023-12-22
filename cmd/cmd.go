@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	cc "github.com/ivanpirog/coloredcobra"
+	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/icon"
+	"github.com/luevano/mangal/meta"
+	"github.com/luevano/mangal/provider/manager"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/config"
-	"github.com/mangalorg/mangal/icon"
-	"github.com/mangalorg/mangal/meta"
-	"github.com/mangalorg/mangal/provider/manager"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )

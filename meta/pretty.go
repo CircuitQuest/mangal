@@ -7,7 +7,7 @@ import (
 	"text/template"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mangalorg/mangal/color"
+	"github.com/luevano/mangal/color"
 )
 
 type versioned struct {
@@ -51,7 +51,7 @@ mangal {{ .Mangal.Version }}
 libmangal {{ .Libmangal.Version }}
 luaprovider {{ .Providers.Lua.Version }}
 
-https://github.com/mangalorg/mangal
+https://github.com/luevano/mangal
 `)).Execute(&info, getVersionInfo())
 
 	if err != nil {

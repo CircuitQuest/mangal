@@ -3,8 +3,8 @@ package cmd
 import (
 	"encoding/json"
 
-	"github.com/mangalorg/mangal/path"
-	"github.com/mangalorg/mangal/tui/misc/pathtable"
+	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/tui/misc/pathtable"
 	"github.com/spf13/cobra"
 )
 

@@ -5,10 +5,10 @@ import (
 	"path/filepath"
 	"time"
 
+	"github.com/luevano/mangal/afs"
+	"github.com/luevano/mangal/cache/bbolt"
+	"github.com/luevano/mangal/path"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/afs"
-	"github.com/mangalorg/mangal/cache/bbolt"
-	"github.com/mangalorg/mangal/path"
 	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/encoding"
 )

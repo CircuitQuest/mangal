@@ -2,7 +2,7 @@ package icon
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mangalorg/mangal/color"
+	"github.com/luevano/mangal/color"
 )
 
 type icon struct {

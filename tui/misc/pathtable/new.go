@@ -5,9 +5,9 @@ import (
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mangalorg/mangal/color"
-	"github.com/mangalorg/mangal/path"
-	"github.com/mangalorg/mangal/tui/util"
+	"github.com/luevano/mangal/color"
+	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/tui/util"
 )
 
 func Run() error {

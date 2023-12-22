@@ -2,9 +2,9 @@ package anilistmangas
 
 import (
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/luevano/mangal/tui/state/listwrapper"
+	"github.com/luevano/mangal/tui/util"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/tui/state/listwrapper"
-	"github.com/mangalorg/mangal/tui/util"
 )
 
 func New(anilist *libmangal.Anilist, chapters []libmangal.AnilistManga, onResponse OnResponseFunc) *State {

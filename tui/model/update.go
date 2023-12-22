@@ -6,9 +6,9 @@ import (
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mangalorg/mangal/log"
-	"github.com/mangalorg/mangal/tui/base"
-	"github.com/mangalorg/mangal/tui/state/errorstate"
+	"github.com/luevano/mangal/log"
+	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/state/errorstate"
 	"github.com/pkg/errors"
 )
 

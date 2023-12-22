@@ -1,7 +1,7 @@
 package chapsdownloaded
 
 import (
-	"github.com/mangalorg/mangal/tui/util"
+	"github.com/luevano/mangal/tui/util"
 )
 
 func New(options Options) *State {

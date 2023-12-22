@@ -1,7 +1,7 @@
 package confirm
 
 import (
-	"github.com/mangalorg/mangal/tui/util"
+	"github.com/luevano/mangal/tui/util"
 )
 
 func New(message string, onResponse OnResponseFunc) *State {

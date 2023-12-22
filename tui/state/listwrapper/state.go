@@ -6,8 +6,8 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mangalorg/mangal/stringutil"
-	"github.com/mangalorg/mangal/tui/base"
+	"github.com/luevano/mangal/stringutil"
+	"github.com/luevano/mangal/tui/base"
 	"time"
 )
 

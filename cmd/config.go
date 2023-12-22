@@ -8,7 +8,7 @@ import (
 	"text/template"
 
 	"github.com/kballard/go-shellquote"
-	"github.com/mangalorg/mangal/config"
+	"github.com/luevano/mangal/config"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )

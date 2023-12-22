@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/mangalorg/mangal/cmd"
-	"github.com/mangalorg/mangal/config"
-	"github.com/mangalorg/mangal/log"
+	"github.com/luevano/mangal/cmd"
+	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/log"
 )
 
 func main() {

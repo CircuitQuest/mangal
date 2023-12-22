@@ -2,8 +2,8 @@ package tui
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mangalorg/mangal/tui/base"
-	"github.com/mangalorg/mangal/tui/model"
+	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model"
 )
 
 func Run(state base.State) error {

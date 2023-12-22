@@ -3,7 +3,7 @@ package providers
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/mangalorg/mangal/tui/state/listwrapper"
+	"github.com/luevano/mangal/tui/state/listwrapper"
 )
 
 var _ help.KeyMap = (*KeyMap)(nil)

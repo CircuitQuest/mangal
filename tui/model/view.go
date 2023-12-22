@@ -2,7 +2,7 @@ package model
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/mangalorg/mangal/stringutil"
+	"github.com/luevano/mangal/stringutil"
 	"github.com/muesli/reflow/wordwrap"
 	"strings"
 )

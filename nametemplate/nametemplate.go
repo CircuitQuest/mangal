@@ -5,9 +5,9 @@ import (
 	"strings"
 	"text/template"
 
+	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/nametemplate/util"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/config"
-	"github.com/mangalorg/mangal/nametemplate/util"
 )
 
 func Chapter(_ string, chapter libmangal.Chapter) string {

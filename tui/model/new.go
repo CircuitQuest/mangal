@@ -3,7 +3,7 @@ package model
 import (
 	"context"
 	"github.com/charmbracelet/bubbles/help"
-	"github.com/mangalorg/mangal/tui/base"
+	"github.com/luevano/mangal/tui/base"
 	"github.com/zyedidia/generic/stack"
 	"golang.org/x/term"
 	"os"

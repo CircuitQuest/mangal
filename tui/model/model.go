@@ -3,8 +3,8 @@ package model
 import (
 	"context"
 
-	"github.com/mangalorg/mangal/log"
-	"github.com/mangalorg/mangal/tui/base"
+	"github.com/luevano/mangal/log"
+	"github.com/luevano/mangal/tui/base"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"

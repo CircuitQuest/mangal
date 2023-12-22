@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/mangalorg/mangal/web"
+	"github.com/luevano/mangal/web"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 )

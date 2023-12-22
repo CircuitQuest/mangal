@@ -1,9 +1,9 @@
 package cmd
 
 import (
-	"github.com/mangalorg/mangal/provider/manager"
-	"github.com/mangalorg/mangal/tui"
-	"github.com/mangalorg/mangal/tui/state/providers"
+	"github.com/luevano/mangal/provider/manager"
+	"github.com/luevano/mangal/tui"
+	"github.com/luevano/mangal/tui/state/providers"
 	"github.com/spf13/cobra"
 )
 

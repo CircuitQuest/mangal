@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/provider/info"
+	"github.com/luevano/mangal/provider/manager"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/path"
-	"github.com/mangalorg/mangal/provider/info"
-	"github.com/mangalorg/mangal/provider/manager"
 	"github.com/spf13/cobra"
 )
 

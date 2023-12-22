@@ -2,7 +2,7 @@ package listwrapper
 
 import (
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/mangalorg/mangal/tui/util"
+	"github.com/luevano/mangal/tui/util"
 )
 
 func New(list list.Model) *State {

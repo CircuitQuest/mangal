@@ -8,11 +8,11 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/color"
+	"github.com/luevano/mangal/icon"
+	"github.com/luevano/mangal/stringutil"
+	"github.com/luevano/mangal/tui/base"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/color"
-	"github.com/mangalorg/mangal/icon"
-	"github.com/mangalorg/mangal/stringutil"
-	"github.com/mangalorg/mangal/tui/base"
 )
 
 var _ base.State = (*State)(nil)

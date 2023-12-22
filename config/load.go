@@ -3,9 +3,9 @@ package config
 import (
 	"fmt"
 
-	"github.com/mangalorg/mangal/afs"
-	"github.com/mangalorg/mangal/meta"
-	"github.com/mangalorg/mangal/path"
+	"github.com/luevano/mangal/afs"
+	"github.com/luevano/mangal/meta"
+	"github.com/luevano/mangal/path"
 	"github.com/spf13/viper"
 )
 

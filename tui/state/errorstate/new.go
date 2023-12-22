@@ -1,6 +1,6 @@
 package errorstate
 
-import "github.com/mangalorg/mangal/tui/util"
+import "github.com/luevano/mangal/tui/util"
 
 func New(err error) *State {
 	return &State{

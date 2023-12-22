@@ -3,7 +3,7 @@ package path
 import (
 	"log"
 
-	"github.com/mangalorg/mangal/afs"
+	"github.com/luevano/mangal/afs"
 )
 
 const (

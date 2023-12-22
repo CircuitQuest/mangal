@@ -4,9 +4,9 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/color"
+	"github.com/luevano/mangal/config"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/color"
-	"github.com/mangalorg/mangal/config"
 )
 
 type Item struct {

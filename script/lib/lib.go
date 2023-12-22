@@ -1,14 +1,14 @@
 package lib
 
 import (
+	"github.com/luevano/mangal/afs"
+	"github.com/luevano/mangal/meta"
+	"github.com/luevano/mangal/script/lib/client"
+	"github.com/luevano/mangal/script/lib/json"
+	"github.com/luevano/mangal/script/lib/prompt"
 	luadoc "github.com/mangalorg/gopher-luadoc"
 	"github.com/mangalorg/libmangal"
 	luaprovidersdk "github.com/mangalorg/luaprovider/lib"
-	"github.com/mangalorg/mangal/afs"
-	"github.com/mangalorg/mangal/meta"
-	"github.com/mangalorg/mangal/script/lib/client"
-	"github.com/mangalorg/mangal/script/lib/json"
-	"github.com/mangalorg/mangal/script/lib/prompt"
 	lua "github.com/yuin/gopher-lua"
 )
 

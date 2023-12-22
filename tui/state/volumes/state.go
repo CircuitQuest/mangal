@@ -6,11 +6,11 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/state/chapters"
+	"github.com/luevano/mangal/tui/state/listwrapper"
+	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/tui/base"
-	"github.com/mangalorg/mangal/tui/state/chapters"
-	"github.com/mangalorg/mangal/tui/state/listwrapper"
-	"github.com/mangalorg/mangal/tui/state/loading"
 )
 
 var _ base.State = (*State)(nil)

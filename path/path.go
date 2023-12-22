@@ -6,7 +6,7 @@ import (
 	"runtime"
 
 	"github.com/adrg/xdg"
-	"github.com/mangalorg/mangal/meta"
+	"github.com/luevano/mangal/meta"
 )
 
 func HomeDir() string {

@@ -2,9 +2,9 @@ package chapters
 
 import (
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/luevano/mangal/tui/state/listwrapper"
+	"github.com/luevano/mangal/tui/util"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/tui/state/listwrapper"
-	"github.com/mangalorg/mangal/tui/util"
 	"github.com/zyedidia/generic/set"
 )
 

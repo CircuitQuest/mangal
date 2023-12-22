@@ -1,6 +1,6 @@
 package textinput
 
-import "github.com/mangalorg/mangal/tui/base"
+import "github.com/luevano/mangal/tui/base"
 
 type Options struct {
 	Title        base.Title

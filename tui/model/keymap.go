@@ -1,8 +1,8 @@
 package model
 
 import (
-	"github.com/mangalorg/mangal/tui/util"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/luevano/mangal/tui/util"
 )
 
 type keyMap struct {

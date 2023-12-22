@@ -5,8 +5,8 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mangalorg/mangal/icon"
-	"github.com/mangalorg/mangal/tui/base"
+	"github.com/luevano/mangal/icon"
+	"github.com/luevano/mangal/tui/base"
 )
 
 var _ base.State = (*State)(nil)

@@ -6,10 +6,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/luevano/mangal/afs"
+	"github.com/luevano/mangal/anilist"
+	"github.com/luevano/mangal/nametemplate"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/afs"
-	"github.com/mangalorg/mangal/anilist"
-	"github.com/mangalorg/mangal/nametemplate"
 	"github.com/zyedidia/generic/queue"
 )
 

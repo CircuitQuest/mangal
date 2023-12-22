@@ -3,9 +3,9 @@ package anilist
 import (
 	"context"
 
+	"github.com/luevano/mangal/script/lib/util"
 	luadoc "github.com/mangalorg/gopher-luadoc"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/script/lib/util"
 	lua "github.com/yuin/gopher-lua"
 )
 

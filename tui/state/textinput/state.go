@@ -5,7 +5,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mangalorg/mangal/tui/base"
+	"github.com/luevano/mangal/tui/base"
 	"strings"
 )
 

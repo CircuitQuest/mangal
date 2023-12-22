@@ -1,9 +1,9 @@
 package manager
 
 import (
+	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/provider/bundle"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/path"
-	"github.com/mangalorg/mangal/provider/bundle"
 )
 
 func Loaders() ([]libmangal.ProviderLoader, error) {

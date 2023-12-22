@@ -5,12 +5,12 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/afs"
+	"github.com/luevano/mangal/color"
+	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/icon"
+	"github.com/luevano/mangal/path"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/afs"
-	"github.com/mangalorg/mangal/color"
-	"github.com/mangalorg/mangal/config"
-	"github.com/mangalorg/mangal/icon"
-	"github.com/mangalorg/mangal/path"
 	"github.com/zyedidia/generic/set"
 )
 

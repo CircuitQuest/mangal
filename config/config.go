@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/adrg/xdg"
+	"github.com/luevano/mangal/icon"
+	"github.com/luevano/mangal/nametemplate/util"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/icon"
-	"github.com/mangalorg/mangal/nametemplate/util"
 )
 
 var Config = config{

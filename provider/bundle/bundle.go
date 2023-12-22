@@ -5,10 +5,10 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/luevano/mangal/afs"
+	"github.com/luevano/mangal/provider/info"
+	"github.com/luevano/mangal/provider/lua"
 	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/mangal/afs"
-	"github.com/mangalorg/mangal/provider/info"
-	"github.com/mangalorg/mangal/provider/lua"
 )
 
 func Loaders(dir string) ([]libmangal.ProviderLoader, error) {
