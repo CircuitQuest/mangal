@@ -69,8 +69,13 @@ func Execute() {
 		root.AddCommand(subcommand)
 	}
 
+	defaultConfiguredMode := ""
+	if config.Config.CLI.Mode.Default.Get() != config.ModeNone {
+		defaultConfiguredMode = fmt.Sprintf("%s (configured as default)", root.Short)
+	}
+
 	root.Use = strings.Replace(root.Use, root.Name(), rootCmd.Name(), 1)
-	root.Long = "The ultimate CLI manga downloader\n\n" + root.Short + " (configured as default)"
+	root.Long = fmt.Sprintf("The ultimate CLI manga downloader\n\n%s", defaultConfiguredMode)
 	root.AddGroup(&cobra.Group{
 		ID:    groupMode,
 		Title: "Mode",
