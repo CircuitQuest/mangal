@@ -20,6 +20,8 @@ const groupMode = "mode"
 var rootCmd = &cobra.Command{
 	Use:  meta.AppName,
 	Args: cobra.NoArgs,
+	// A default completion option is always added, this would disable it.
+	// CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true},
 }
 
 var subcommands []*cobra.Command

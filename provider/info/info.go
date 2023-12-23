@@ -44,7 +44,7 @@ func (i Info) Markdown() string {
 			return URL.Hostname()
 		},
 	}).Parse(`
-{{ with .Provider }}
+{{ with .ProviderInfo }}
 # {{ .Name }} v{{ .Version }}
 
 {{ if .Website }}
