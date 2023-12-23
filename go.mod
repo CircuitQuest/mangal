@@ -3,7 +3,6 @@ module github.com/luevano/mangal
 go 1.21
 
 require (
-	github.com/BurntSushi/toml v1.3.2
 	github.com/adrg/xdg v0.4.0
 	github.com/charmbracelet/bubbles v0.17.1
 	github.com/charmbracelet/bubbletea v0.25.0

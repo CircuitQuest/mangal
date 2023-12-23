@@ -9,13 +9,13 @@ import (
 	"os"
 	"path/filepath"
 
-	"github.com/BurntSushi/toml"
 	"github.com/go-git/go-git/v5"
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/mangalorg/libmangal"
 	"github.com/mangalorg/luaprovider"
+	"github.com/pelletier/go-toml"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
@@ -163,7 +163,10 @@ func newLua(af afero.Afero, information info.Info) error {
 	}
 	defer infoFile.Close()
 
-	err = toml.NewEncoder(infoFile).Encode(information)
+	encoder := toml.NewEncoder(infoFile)
+	encoder.SetTagName("json")
+
+	err = encoder.Encode(information)
 	if err != nil {
 		return err
 	}
