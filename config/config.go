@@ -29,6 +29,7 @@ var Config = config{
 			Description: "Enable colors in cli help",
 		}),
 		Mode: configCLIMode{
+			// TODO: change mode to either none or some (new) "inline" mode
 			Default: reg(Field[string, Mode]{
 				Key:         "cli.mode.default",
 				Default:     ModeTUI,
@@ -94,7 +95,7 @@ var Config = config{
 		}),
 		Strict: reg(Field[bool, bool]{
 			Key:         "download.strict",
-			Default:     false,
+			Default:     true,
 			Description: "If during metadata/banner/cover creation error occurs downloader will return it immediately and chapter won't be downloaded",
 		}),
 		SkipIfExists: reg(Field[bool, bool]{
@@ -118,6 +119,7 @@ var Config = config{
 				Default:     false,
 				Description: "Download manga banner",
 			}),
+			// TODO: in the future change this to a standardized name, maybe coming from anilist
 			NameTemplate: reg(Field[string, string]{
 				Key:         "download.manga.name_template",
 				Default:     `{{ .Title | sanitize }}`,
@@ -170,12 +172,12 @@ var Config = config{
 		Metadata: configDownloadMetadata{
 			ComicInfoXML: reg(Field[bool, bool]{
 				Key:         "download.metadata.comicinfo_xml",
-				Default:     false,
+				Default:     true,
 				Description: "Generate `ComicInfo.xml` file",
 			}),
 			SeriesJSON: reg(Field[bool, bool]{
 				Key:         "download.metadata.series_json",
-				Default:     false,
+				Default:     true,
 				Description: "Generate `series.json` file",
 			}),
 		},
