@@ -31,6 +31,7 @@ var templatesFuncsCmd = &cobra.Command{
 	Short: "Show available name template functions",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
+		// TODO: change theme?
 		keyStyle := lipgloss.NewStyle().Bold(true).Foreground(color.Accent)
 		descriptionStyle := lipgloss.NewStyle().Italic(true)
 

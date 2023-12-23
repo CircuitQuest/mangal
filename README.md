@@ -35,15 +35,13 @@ npm audit fix
 cd ../..
 ```
 
-Generate assets:
+Generate assets and code:
 
 ```sh
 just generate
 ```
 
-### Usage
-
-Can be used without compiling for testing purposes:
+Then it can be used without compiling for testing purposes:
 
 ```sh
 go run main.go ...
@@ -53,12 +51,47 @@ Or compiled/installed:
 
 ```sh
 just build # or full or install
-./mangal # or mangal if it was installed
+./mangal
+```
+
+
+## Usage
+
+By default if just executing the `mangal` command, it will start the TUI. To list all options:
+
+```sh
+mangal -h
 ```
 
 **Note:** If the previous mangal was used, then remove the config (usually located at `~/.config/mangal`) as otherwise these commands will fail.
 
-#### Providers
+### Config
+
+Mangal contains sensitive defaults that can be edited with some command flags or by editing a config file. By default no config is written to disk, to write the default config to disk run:
+
+```sh
+mangal config write
+```
+
+It will be written to `$XDG_CONFIG_HOME/mangal/mangal.toml`.
+
+Then, the config can be set either by modifying the file itself or by running:
+
+```sh
+mangal config set <key> <value>
+```
+
+For example:
+
+```sh
+mangal config set download.path $HOME/downloads_test
+```
+
+### Providers
+
+These are Lua scripts that handle the site scrape logic (search mangas, list mangas/chapters/images, etc). As shown in [mangalorg/saturno](/mangalorg/saturno), each provider is a directory with the `main.lua` (scraper) and `mangal.toml` (metadata) files inside.
+
+Providers need to be placed in `$XDG_CONFIG_HOME/mangal/providers`.
 
 A new provider can be created by running:
 
@@ -66,13 +99,41 @@ A new provider can be created by running:
 mangal providers new
 ```
 
-And a new test provider will be placed in `$XDG_CONFIG/mangal/providers/test`. A sample provider (mangapill) can be found in [mangalorg/saturno](/mangalorg/saturno).
+It is automatically placed in the required path.
 
-#### Script mode
+### Templates
 
-There is no documentation for any of the code, but I figured out how to use the script mode, it is a bit similar to [mangalorg/mangalcli](/mangalorg/mangalcli): a `run.lua` and a provider is required.
+Special functions are available and can be shown by running:
 
-I'm using the sample `mangapill.lua` mentioned above with the following modified `run.lua`:
+```sh
+mangal templates funcs
+```
+
+Run a template with custom functions available:
+
+```sh
+mangal templates exec <template> -v <values>
+```
+
+Where `<template>` is in the form of a go [text/template](https://pkg.go.dev/text/template) and `<values>` a JSON. For example:
+
+```sh
+mangal templates exec "{{sanitizeWindows .Test}}" -v "{\"Test\":\"asdfg<>:?\"}"
+```
+
+Which will output `asdfg`.
+
+### Modes
+
+#### Script
+
+There is no documentation for any of the code, but I figured out how to use the script mode, it is a bit similar to [mangalorg/mangalcli](/mangalorg/mangalcli) where a `run.lua` and a "provider" is required:
+
+```sh
+mangal script -f run.lua -p mangapill -v "title=tengoku"
+```
+
+I'm using the sample `mangapill.lua` mentioned in [Providers](#providers) with the following modified `run.lua`:
 
 ```lua
 local mangal = require('mangal')
