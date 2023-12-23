@@ -1,4 +1,4 @@
-package nametemplate
+package template
 
 import (
 	"log"
@@ -6,7 +6,7 @@ import (
 	"text/template"
 
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/nametemplate/util"
+	"github.com/luevano/mangal/template/util"
 	"github.com/mangalorg/libmangal"
 )
 

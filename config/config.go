@@ -6,7 +6,7 @@ import (
 
 	"github.com/adrg/xdg"
 	"github.com/luevano/mangal/icon"
-	"github.com/luevano/mangal/nametemplate/util"
+	"github.com/luevano/mangal/template/util"
 	"github.com/mangalorg/libmangal"
 )
 

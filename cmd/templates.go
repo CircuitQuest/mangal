@@ -7,7 +7,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/color"
-	"github.com/luevano/mangal/nametemplate/util"
+	"github.com/luevano/mangal/template/util"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )

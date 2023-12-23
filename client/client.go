@@ -8,7 +8,7 @@ import (
 
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/anilist"
-	"github.com/luevano/mangal/nametemplate"
+	"github.com/luevano/mangal/template"
 	"github.com/mangalorg/libmangal"
 	"github.com/zyedidia/generic/queue"
 )
@@ -43,9 +43,9 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 	options.FS = afs.Afero
 	options.Anilist = anilist.Client
 	options.HTTPClient = HTTPClient
-	options.MangaNameTemplate = nametemplate.Manga
-	options.VolumeNameTemplate = nametemplate.Volume
-	options.ChapterNameTemplate = nametemplate.Chapter
+	options.MangaNameTemplate = template.Manga
+	options.VolumeNameTemplate = template.Volume
+	options.ChapterNameTemplate = template.Chapter
 
 	client, err := libmangal.NewClient(ctx, loader, options)
 	if err != nil {
