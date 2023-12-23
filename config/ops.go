@@ -1,6 +1,8 @@
 package config
 
 import (
+	"fmt"
+
 	"github.com/spf13/viper"
 )
 
@@ -23,9 +25,11 @@ func Keys() []string {
 
 func Write() error {
 	switch viper.WriteConfig().(type) {
-	case nil, viper.ConfigFileNotFoundError:
+	case nil:
 		return nil
-	default:
+	case viper.ConfigFileNotFoundError:
 		return viper.SafeWriteConfig()
+	default:
+		return fmt.Errorf("unexpected error")
 	}
 }
