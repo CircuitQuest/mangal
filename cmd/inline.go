@@ -13,7 +13,7 @@ import (
 )
 
 var inlineArgs = struct {
-	Title    string
+	Query    string
 	Provider string
 	Download bool
 	JSON     bool
@@ -22,13 +22,13 @@ var inlineArgs = struct {
 func init() {
 	subcommands = append(subcommands, inlineCmd)
 
-	inlineCmd.Flags().StringVarP(&inlineArgs.Title, "title", "t", "", "Manga title to search")
+	inlineCmd.Flags().StringVarP(&inlineArgs.Query, "query", "q", "", "Query to search")
 	inlineCmd.Flags().StringVarP(&inlineArgs.Provider, "provider", "p", "", "Load provider by tag")
 	inlineCmd.Flags().BoolVarP(&inlineArgs.Download, "download", "d", false, "Load provider by tag")
 	inlineCmd.Flags().BoolVarP(&inlineArgs.JSON, "json", "j", false, "Load provider by tag")
 
 	inlineCmd.MarkFlagRequired("provider")
-	inlineCmd.MarkFlagRequired("title")
+	inlineCmd.MarkFlagRequired("query")
 	inlineCmd.MarkFlagsOneRequired("download", "json")
 	inlineCmd.MarkFlagsMutuallyExclusive("download", "json")
 	inlineCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
@@ -39,6 +39,7 @@ var inlineCmd = &cobra.Command{
 	Short:   "Run mangal in inline mode",
 	GroupID: groupMode,
 	Args:    cobra.NoArgs,
+	// TODO: probably move all this logic to inline/inline.go itself, not sure why this pattern was used (and I followed)
 	Run: func(cmd *cobra.Command, args []string) {
 		loaders, err := manager.Loaders()
 		if err != nil {
@@ -62,7 +63,7 @@ var inlineCmd = &cobra.Command{
 
 		options.Client = client
 		options.Anilist = anilist.Client
-		options.Title = inlineArgs.Title
+		options.Query = inlineArgs.Query
 		options.Download = inlineArgs.Download
 		options.JSON = inlineArgs.JSON
 
