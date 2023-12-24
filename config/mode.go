@@ -8,4 +8,5 @@ const (
 	ModeTUI
 	ModeWeb
 	ModeScript
+	ModeInline
 )

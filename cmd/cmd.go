@@ -57,10 +57,12 @@ func Execute() {
 		root = rootCmd
 	case config.ModeTUI:
 		root = tuiCmd
-	case config.ModeScript:
-		root = scriptCmd
 	case config.ModeWeb:
 		root = webCmd
+	case config.ModeScript:
+		root = scriptCmd
+	case config.ModeInline:
+		root = inlineCmd
 	}
 
 	for _, subcommand := range subcommands {
