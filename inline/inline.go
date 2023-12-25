@@ -8,12 +8,17 @@ import (
 	"github.com/mangalorg/libmangal"
 )
 
-type Options struct {
-	Client   *libmangal.Client
-	Anilist  *libmangal.Anilist
+type InlineArgs struct {
 	Query    string
+	Provider string
 	Download bool
 	JSON     bool
+}
+
+type Options struct {
+	InlineArgs
+	Client  *libmangal.Client
+	Anilist *libmangal.Anilist
 }
 
 func Run(ctx context.Context, options Options) error {
@@ -24,6 +29,10 @@ func Run(ctx context.Context, options Options) error {
 		mangas, err := options.Client.SearchMangas(ctx, options.Query)
 		if err != nil {
 			return err
+		}
+
+		if len(mangas) == 0 {
+			return fmt.Errorf("no mangas found with provider ID %q and query %q", options.Provider, options.Query)
 		}
 
 		for _, manga := range mangas {

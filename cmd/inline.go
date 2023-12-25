@@ -12,12 +12,7 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var inlineArgs = struct {
-	Query    string
-	Provider string
-	Download bool
-	JSON     bool
-}{}
+var inlineArgs = inline.InlineArgs{}
 
 func init() {
 	subcommands = append(subcommands, inlineCmd)
@@ -61,11 +56,9 @@ var inlineCmd = &cobra.Command{
 
 		var options inline.Options
 
+		options.InlineArgs = inlineArgs
 		options.Client = client
 		options.Anilist = anilist.Client
-		options.Query = inlineArgs.Query
-		options.Download = inlineArgs.Download
-		options.JSON = inlineArgs.JSON
 
 		if err := inline.Run(context.Background(), options); err != nil {
 			errorf(cmd, err.Error())
