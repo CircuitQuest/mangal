@@ -10,7 +10,7 @@ import (
 	"github.com/luevano/mangal/tui/state/chapters"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 var _ base.State = (*State)(nil)

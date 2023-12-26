@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/spf13/cobra"
 )
 

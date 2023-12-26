@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 var _ list.Item = (*Item)(nil)

@@ -15,9 +15,9 @@ require (
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
 	github.com/ktr0731/go-fuzzyfinder v0.8.0
 	github.com/labstack/echo/v4 v4.11.4
-	github.com/mangalorg/gopher-luadoc v0.2.2
-	github.com/mangalorg/libmangal v0.8.0
-	github.com/mangalorg/luaprovider v0.6.0
+	github.com/luevano/gopher-luadoc v0.3.0
+	github.com/luevano/libmangal v0.9.0
+	github.com/luevano/luaprovider v0.7.0
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.0
 	github.com/pelletier/go-toml v1.9.5
@@ -36,7 +36,7 @@ require (
 	github.com/yuin/gopher-lua v1.1.1
 	github.com/zyedidia/generic v1.2.1
 	go.etcd.io/bbolt v1.3.8
-	golang.org/x/exp v0.0.0-20231219180239-dc181d75b848
+	golang.org/x/exp v0.0.0-20231226003508-02704c960a9b
 	golang.org/x/term v0.15.0
 )
 
@@ -127,7 +127,7 @@ require (
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/ysmood/fetchup v0.2.4 // indirect
 	github.com/ysmood/goob v0.4.0 // indirect
-	github.com/ysmood/got v0.38.2 // indirect
+	github.com/ysmood/got v0.38.3 // indirect
 	github.com/ysmood/gson v0.7.3 // indirect
 	github.com/ysmood/leakless v0.8.0 // indirect
 	github.com/yuin/gluamapper v0.0.0-20150323120927-d836955830e7 // indirect

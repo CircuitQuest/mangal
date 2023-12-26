@@ -8,7 +8,7 @@ import (
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/provider/lua"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 func Loaders(dir string) ([]libmangal.ProviderLoader, error) {

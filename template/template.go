@@ -7,7 +7,7 @@ import (
 
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/template/util"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 func Chapter(_ string, chapter libmangal.Chapter) string {

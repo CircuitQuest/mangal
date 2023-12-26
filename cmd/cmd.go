@@ -10,7 +10,7 @@ import (
 	"github.com/luevano/mangal/icon"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/provider/manager"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )

@@ -16,7 +16,7 @@ import (
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/web/api"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/bigcache"
 	"github.com/philippgille/gokv/encoding"

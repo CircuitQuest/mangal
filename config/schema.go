@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/luevano/mangal/icon"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 type config struct {

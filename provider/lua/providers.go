@@ -11,8 +11,8 @@ import (
 	"github.com/luevano/mangal/cache/bbolt"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
-	"github.com/mangalorg/libmangal"
-	"github.com/mangalorg/luaprovider"
+	"github.com/luevano/libmangal"
+	"github.com/luevano/luaprovider"
 	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/encoding"
 )

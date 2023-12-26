@@ -6,7 +6,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 func TestNew(t *testing.T) {

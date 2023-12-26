@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/luevano/mangal/anilist"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 )

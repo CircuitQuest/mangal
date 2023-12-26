@@ -2,8 +2,8 @@ package client
 
 import (
 	"github.com/luevano/mangal/script/lib/util"
-	luadoc "github.com/mangalorg/gopher-luadoc"
-	"github.com/mangalorg/libmangal"
+	luadoc "github.com/luevano/gopher-luadoc"
+	"github.com/luevano/libmangal"
 	lua "github.com/yuin/gopher-lua"
 )
 
