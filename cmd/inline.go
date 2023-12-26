@@ -7,7 +7,7 @@ import (
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/inline"
 	"github.com/luevano/mangal/provider/manager"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )

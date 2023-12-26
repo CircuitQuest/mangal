@@ -162,12 +162,6 @@ github.com/labstack/gommon v0.4.2 h1:F8qTUNXgG1+6WQmqoUWnz8WiEU60mXVVw0P4ht1WRA0
 github.com/labstack/gommon v0.4.2/go.mod h1:QlUFxVM+SNXhDL/Z7YhocGIBYOiwB0mXm1+1bAPHPyU=
 github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
 github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
-github.com/luevano/gopher-luadoc v0.3.0 h1:7wOkuWvWkZdyE9WhbArZF1XH0pZGRNBi2ls1U98fvN4=
-github.com/luevano/gopher-luadoc v0.3.0/go.mod h1:0jxRplOdnRq/tJ49bYWS/JBAtx/cXzCPb0MJ7E/8mFA=
-github.com/luevano/libmangal v0.9.0 h1:zKaqsQMlVYVyxBPQ3V9IiOG/vzd4vrpwJYODg+Ntmzs=
-github.com/luevano/libmangal v0.9.0/go.mod h1:EtSg/3f5e/CoMQEk26THBsV7C0HtZDdJWBCyJLIUAX0=
-github.com/luevano/luaprovider v0.7.0 h1:7mf0Zn6nPFIKDh3jkrmsnNHvoFtWtMMfPQDrouYrLMo=
-github.com/luevano/luaprovider v0.7.0/go.mod h1:ufP9Uaf/doal4J0EU/h/CZDIIS7PkAceB7E5Yz0n4Uo=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
 github.com/magiconair/properties v1.8.7/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
 github.com/mailru/easyjson v0.7.7 h1:UGYAvKxe3sBsEDzO8ZeWOSlIQfWFlxbzLZe7hwFURr0=

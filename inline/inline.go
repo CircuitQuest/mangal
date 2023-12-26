@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 type InlineArgs struct {
