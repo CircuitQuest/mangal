@@ -12,7 +12,7 @@ import (
 	"github.com/luevano/mangal/icon"
 	"github.com/luevano/mangal/stringutil"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 var _ base.State = (*State)(nil)

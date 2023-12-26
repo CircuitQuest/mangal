@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"strconv"
 
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 func searchMangas(ctx context.Context, client *libmangal.Client, query string) ([]libmangal.Manga, error) {

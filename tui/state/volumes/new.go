@@ -4,7 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/util"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 func New(client *libmangal.Client, manga libmangal.Manga, volumes []libmangal.Volume) *State {

@@ -6,7 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/color"
 	"github.com/luevano/mangal/config"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 type Item struct {

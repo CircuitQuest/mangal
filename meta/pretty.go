@@ -34,9 +34,9 @@ func getVersionInfo() (info versionInfo) {
 
 	for _, dep := range bi.Deps {
 		switch dep.Path {
-		case "github.com/mangalorg/libmangal":
+		case "github.com/luevano/libmangal":
 			info.Libmangal.Version = dep.Version
-		case "github.com/mangalorg/luaprovider":
+		case "github.com/luevano/luaprovider":
 			info.Providers.Lua.Version = dep.Version
 		}
 	}

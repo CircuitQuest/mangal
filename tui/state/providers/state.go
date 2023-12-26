@@ -13,7 +13,7 @@ import (
 	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/mangas"
 	"github.com/luevano/mangal/tui/state/textinput"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/pkg/errors"
 )
 

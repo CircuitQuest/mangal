@@ -6,7 +6,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/pelletier/go-toml"
 	"github.com/samber/lo"
 )

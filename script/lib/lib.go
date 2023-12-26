@@ -6,9 +6,9 @@ import (
 	"github.com/luevano/mangal/script/lib/client"
 	"github.com/luevano/mangal/script/lib/json"
 	"github.com/luevano/mangal/script/lib/prompt"
-	luadoc "github.com/mangalorg/gopher-luadoc"
-	"github.com/mangalorg/libmangal"
-	luaprovidersdk "github.com/mangalorg/luaprovider/lib"
+	luadoc "github.com/luevano/gopher-luadoc"
+	"github.com/luevano/libmangal"
+	luaprovidersdk "github.com/luevano/luaprovider/lib"
 	lua "github.com/yuin/gopher-lua"
 )
 

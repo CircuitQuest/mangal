@@ -8,7 +8,7 @@ import (
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/cache/bbolt"
 	"github.com/luevano/mangal/path"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/encoding"
 )

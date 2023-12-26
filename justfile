@@ -7,11 +7,12 @@ install:
     go install -ldflags "-s -w" .
 
 # generate and install mangal
-full: generate && install
+full:
+    generate && install
 
 # build
 build:
-	go build -ldflags "-s -w" .
+    go build -ldflags "-s -w" .
 
 # run tests
 test:
@@ -19,13 +20,13 @@ test:
 
 # generate assets
 generate:
-	go generate ./...
-	./web/generate.sh
+    go generate ./...
+    ./web/generate.sh
 
 # update deps
 update:
-	go get -u
-	go mod tidy -v
+    go get -u
+    go mod tidy -v
 
 # publish
 publish tag:

@@ -1,6 +1,6 @@
 package mangas
 
-import "github.com/mangalorg/libmangal"
+import "github.com/luevano/libmangal"
 
 type Item struct {
 	libmangal.Manga

@@ -14,7 +14,7 @@ import (
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/script"
 	"github.com/luevano/mangal/script/lib"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	lua "github.com/yuin/gopher-lua"

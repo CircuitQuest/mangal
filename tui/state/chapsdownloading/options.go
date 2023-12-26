@@ -3,7 +3,7 @@ package chapsdownloading
 import (
 	"context"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 type Options struct {

@@ -10,7 +10,7 @@ import (
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/icon"
 	"github.com/luevano/mangal/path"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/zyedidia/generic/set"
 )
 

@@ -9,7 +9,7 @@ import (
 	"github.com/luevano/mangal/tui/state/chapsdownloaded"
 	"github.com/luevano/mangal/tui/state/chapsdownloading"
 	"github.com/luevano/mangal/tui/state/loading"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 func (s *State) downloadChaptersCmd(chapters []libmangal.Chapter, options libmangal.DownloadOptions) tea.Cmd {

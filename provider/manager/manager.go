@@ -3,7 +3,7 @@ package manager
 import (
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/bundle"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 )
 
 func Loaders() ([]libmangal.ProviderLoader, error) {

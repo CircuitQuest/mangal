@@ -1,16 +1,23 @@
-# Mangal 5
+# Mangal
 
 > Work in progress...
 
-Fork of [metafates/mangal@v5](/metafates/mangal/tree/v5) (originaly [metafates/mangal](/metafates/mangal)). Which is based on metafates' [mangalorg/libmangal](/mangalorg/libmangal), [mangalorg/luaprovider](/mangalorg/luaprovider) and [mangalorg/saturno](/mangalorg/saturno).
+Fork of [metafates/mangal@v5](https://github.com/metafates/mangal/tree/v5).
 
-Basically all work originally from [metafates](/metafates), but he is kinda abandoning his work all the time so I'm making this fork as a personal thing in case I need to add/fix things.
+Version 5 is now based on metafates' [mangalorg](https://github.com/mangalorg) suite, which I've forked to work on them myself:
+
+- [libmangal](https://github.com/luevano/libmangal)
+- [luaprovider](https://github.com/luevano/luaprovider)
+- [gopher-luadoc](https://github.com/luevano/gopher-luadoc)
+- [saturno](https://github.com/luevano/saturno)
 
 ## Development
 
 For now, just notes for myself while I work on this.
 
 ### Requirements
+
+The following needs to be installed before starting development:
 
 - `go>=1.21`
   - [`oapi-codegen`](https://github.com/deepmap/oapi-codegen): `go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@latest`
@@ -54,7 +61,6 @@ just build # or full or install
 ./mangal
 ```
 
-
 ## Usage
 
 By default if just executing the `mangal` command, it will start the TUI. To list all options:
@@ -63,7 +69,7 @@ By default if just executing the `mangal` command, it will start the TUI. To lis
 mangal -h
 ```
 
-**Note:** If the previous mangal was used, then remove the config (usually located at `~/.config/mangal`) as otherwise these commands will fail.
+**Note:** If the previous mangal (v4) was used, then remove the config (usually located at `~/.config/mangal`) as otherwise these commands will fail.
 
 ### Config
 
@@ -127,7 +133,7 @@ Which will output `asdfg`.
 
 #### Script
 
-There is no documentation for any of the code, but I figured out how to use the script mode, it is a bit similar to [mangalorg/mangalcli](/mangalorg/mangalcli) where a `run.lua` and a "provider" is required:
+Similar to [mangalorg/mangalcli](https://github.com/mangalorg/mangalcli) where a `run.lua` and a "provider" is required:
 
 ```sh
 mangal script -f run.lua -p mangapill -v "title=tengoku"

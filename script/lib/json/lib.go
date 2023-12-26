@@ -9,7 +9,7 @@ import (
 	"github.com/itchyny/gojq"
 	json "github.com/json-iterator/go"
 	"github.com/luevano/mangal/script/lib/util"
-	luadoc "github.com/mangalorg/gopher-luadoc"
+	luadoc "github.com/luevano/gopher-luadoc"
 	lua "github.com/yuin/gopher-lua"
 )
 

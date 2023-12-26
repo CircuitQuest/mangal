@@ -9,7 +9,7 @@ import (
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/mangal/template"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/zyedidia/generic/queue"
 )
 

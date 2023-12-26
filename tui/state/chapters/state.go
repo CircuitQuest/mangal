@@ -18,7 +18,7 @@ import (
 	"github.com/luevano/mangal/tui/state/formats"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
-	"github.com/mangalorg/libmangal"
+	"github.com/luevano/libmangal"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
 	"golang.org/x/exp/slices"
