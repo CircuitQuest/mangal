@@ -35,16 +35,8 @@ func Run(ctx context.Context, options Options) error {
 			return fmt.Errorf("no mangas found with provider ID %q and query %q", options.Provider, options.Query)
 		}
 
-		for _, manga := range mangas {
-			mangaJSON, err := json.Marshal(manga.Info())
-			if err != nil {
-				return err
-			}
-
-			fmt.Println(string(mangaJSON))
-
-			break
-		}
+		mangasJSON, err := json.Marshal(mangas)
+		fmt.Println(string(mangasJSON))
 	}
 
 	return nil
