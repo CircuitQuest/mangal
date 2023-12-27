@@ -54,15 +54,11 @@ func RunJSON(ctx context.Context, options Options) error {
 	default:
 		index, err := strconv.Atoi(options.MangaSelector)
 		if err != nil {
-			return fmt.Errorf("invalid manga selector %q (int parse error)", options.MangaSelector)
+			return fmt.Errorf("invalid manga selector %q", options.MangaSelector)
 		}
-		if index < 0 {
-			return fmt.Errorf("invalid manga selector %q (negative int)", options.MangaSelector)
-		}
-		if index >= len(mangas) {
+		if index < 0 || index >= len(mangas) {
 			return fmt.Errorf("invalid manga selector %q (index out of range)", options.MangaSelector)
 		}
-
 		mangaResults = []MangaResult{{Index: index, Manga: mangas[index]}}
 	}
 
