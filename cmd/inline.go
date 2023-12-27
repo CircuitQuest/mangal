@@ -18,8 +18,8 @@ func init() {
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Provider, "provider", "p", "", "Load provider by tag")
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "", "Manga selector")
 
-	inlineCmd.MarkFlagRequired("provider")
-	inlineCmd.MarkFlagRequired("query")
+	inlineCmd.MarkPersistentFlagRequired("provider")
+	inlineCmd.MarkPersistentFlagRequired("query")
 	inlineCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
 }
 
