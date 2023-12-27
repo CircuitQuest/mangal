@@ -82,7 +82,7 @@ func Execute() {
 	root.Long = fmt.Sprintf("The ultimate CLI manga downloader\n\n%s", defaultConfiguredMode)
 	root.AddGroup(&cobra.Group{
 		ID:    groupMode,
-		Title: "Mode",
+		Title: "Mode Commands:",
 	})
 
 	if config.Config.CLI.ColoredHelp.Get() {

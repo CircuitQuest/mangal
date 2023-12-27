@@ -11,11 +11,8 @@ import (
 	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/icon"
-	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/script"
 	"github.com/luevano/mangal/script/lib"
-	"github.com/luevano/libmangal"
-	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -80,24 +77,10 @@ var scriptCmd = &cobra.Command{
 		options.Anilist = anilist.Client
 
 		if scriptArgs.Provider != "" {
-			loaders, err := manager.Loaders()
+			client, err := client.NewClientByID(context.Background(), scriptArgs.Provider)
 			if err != nil {
 				errorf(cmd, err.Error())
 			}
-
-			loader, ok := lo.Find(loaders, func(loader libmangal.ProviderLoader) bool {
-				return loader.Info().ID == scriptArgs.Provider
-			})
-
-			if !ok {
-				errorf(cmd, "provider with ID %q not found", scriptArgs.Provider)
-			}
-
-			client, err := client.NewClient(context.Background(), loader)
-			if err != nil {
-				errorf(cmd, err.Error())
-			}
-
 			options.Client = client
 		}
 
