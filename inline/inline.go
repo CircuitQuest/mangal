@@ -7,9 +7,8 @@ import (
 var queryResult QueryResult = QueryResult{}
 
 type QueryResult struct {
-	Query    string        `json:"query"`
-	Provider string        `json:"provider"`
-	Results  []MangaResult `json:"results"`
+	QueryParams InlineArgs    `json:"query_params"`
+	Results     []MangaResult `json:"results"`
 }
 
 type MangaResult struct {
@@ -19,8 +18,9 @@ type MangaResult struct {
 }
 
 type InlineArgs struct {
-	Query    string
-	Provider string
+	Query         string `json:"query"`
+	Provider      string `json:"provider"`
+	MangaSelector string `json:"manga_selector"`
 }
 
 type Options struct {

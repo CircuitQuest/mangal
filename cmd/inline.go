@@ -16,6 +16,7 @@ func init() {
 
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Query, "query", "q", "", "Query to search")
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Provider, "provider", "p", "", "Load provider by tag")
+	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "", "Manga selector")
 
 	inlineCmd.MarkFlagRequired("provider")
 	inlineCmd.MarkFlagRequired("query")
