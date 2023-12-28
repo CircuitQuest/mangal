@@ -4,22 +4,41 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"strconv"
 	"strings"
 
 	"github.com/luevano/libmangal"
 )
 
-func anilistSearch(ctx context.Context, aniClient *libmangal.Anilist, query string) (libmangal.AnilistManga, error) {
-	anilists, err := aniClient.SearchMangas(ctx, query)
-	if err != nil {
-		return libmangal.AnilistManga{}, err
+func anilistSearch[T string | int](ctx context.Context, aniClient *libmangal.Anilist, queryID T) (ani libmangal.AnilistManga, err error) {
+	switch v := reflect.ValueOf(queryID); v.Kind() {
+	case reflect.String:
+		var anilists []libmangal.AnilistManga
+		anilists, err = aniClient.SearchMangas(ctx, v.String())
+		if err != nil {
+			return
+		}
+		if len(anilists) == 0 {
+			err = fmt.Errorf("no manga found on anilist with query %q", queryID)
+			return
+		}
+		ani = anilists[0]
+	case reflect.Int:
+		var found bool
+		ani, found, err = aniClient.GetByID(ctx, int(v.Int()))
+		if err != nil {
+			return
+		}
+		if !found {
+			err = fmt.Errorf("no manga found on anilist with id %q", queryID)
+			return
+		}
+	default:
+		err = fmt.Errorf("unexpected error while searching manga on anilist with query/id %q (of type %T)", queryID, queryID)
+		return
 	}
-	if len(anilists) == 0 {
-		return libmangal.AnilistManga{}, fmt.Errorf("no mangas found on anilist with query %q", query)
-	}
-
-	return anilists[0], nil
+	return
 }
 
 func RunJSON(ctx context.Context, options Options) error {
@@ -62,10 +81,18 @@ func RunJSON(ctx context.Context, options Options) error {
 		mangaResults = []MangaResult{{Index: index, Manga: mangas[index]}}
 	}
 
-	for i, mangaResult := range mangaResults {
-		anilist, err := anilistSearch(ctx, options.Anilist, mangaResult.Manga.Info().AnilistSearch)
-		if err == nil {
-			mangaResults[i].Anilist = anilist
+	if !options.AnilistDisable {
+		for i, mangaResult := range mangaResults {
+			var anilist libmangal.AnilistManga
+			var found error
+			if options.AnilistID != -1{
+				anilist, found = anilistSearch(ctx, options.Anilist, options.AnilistID)
+			} else {
+				anilist, found = anilistSearch(ctx, options.Anilist, mangaResult.Manga.Info().AnilistSearch)
+			}
+			if found == nil {
+				mangaResults[i].Anilist = &anilist
+			}
 		}
 	}
 

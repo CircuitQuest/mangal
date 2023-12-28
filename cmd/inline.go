@@ -17,9 +17,13 @@ func init() {
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Query, "query", "q", "", "Query to search")
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Provider, "provider", "p", "", "Load provider by tag")
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "", "Manga selector")
+	inlineCmd.PersistentFlags().IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", -1, "Anilist ID to attach")
+	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.AnilistDisable, "anilist-disable", false, "Disable anilist search")
 
 	inlineCmd.MarkPersistentFlagRequired("provider")
 	inlineCmd.MarkPersistentFlagRequired("query")
+	inlineCmd.MarkFlagsMutuallyExclusive("anilist-id", "anilist-disable")
+
 	inlineCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
 }
 
