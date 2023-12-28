@@ -11,31 +11,25 @@ import (
 	"github.com/luevano/libmangal"
 )
 
-func anilistSearch[T string | int](ctx context.Context, aniClient *libmangal.Anilist, queryID T) (ani libmangal.AnilistManga, err error) {
+func anilistSearch[T string | int](ctx context.Context, aniClient *libmangal.Anilist, queryID T) (aniManga libmangal.AnilistManga, found bool, err error) {
 	switch v := reflect.ValueOf(queryID); v.Kind() {
 	case reflect.String:
-		var anilists []libmangal.AnilistManga
-		anilists, err = aniClient.SearchMangas(ctx, v.String())
+		aniManga, found, err = aniClient.FindClosestManga(ctx, v.String())
 		if err != nil {
 			return
 		}
-		if len(anilists) == 0 {
-			err = fmt.Errorf("no manga found on anilist with query %q", queryID)
-			return
-		}
-		ani = anilists[0]
 	case reflect.Int:
-		var found bool
-		ani, found, err = aniClient.GetByID(ctx, int(v.Int()))
+		aniManga, found, err = aniClient.GetByID(ctx, int(v.Int()))
 		if err != nil {
-			return
-		}
-		if !found {
-			err = fmt.Errorf("no manga found on anilist with id %q", queryID)
 			return
 		}
 	default:
 		err = fmt.Errorf("unexpected error while searching manga on anilist with query/id %q (of type %T)", queryID, queryID)
+		return
+	}
+
+	if !found {
+		err = fmt.Errorf("no manga found on anilist with query/id %q", queryID)
 		return
 	}
 	return
@@ -84,13 +78,14 @@ func RunJSON(ctx context.Context, options Options) error {
 	if !options.AnilistDisable {
 		for i, mangaResult := range mangaResults {
 			var anilist libmangal.AnilistManga
-			var found error
+			var found bool
+			var aniErr error
 			if options.AnilistID != -1{
-				anilist, found = anilistSearch(ctx, options.Anilist, options.AnilistID)
+				anilist, found, aniErr = anilistSearch(ctx, options.Anilist, options.AnilistID)
 			} else {
-				anilist, found = anilistSearch(ctx, options.Anilist, mangaResult.Manga.Info().AnilistSearch)
+				anilist, found, aniErr = anilistSearch(ctx, options.Anilist, mangaResult.Manga.Info().AnilistSearch)
 			}
-			if found == nil {
+			if aniErr == nil && found {
 				mangaResults[i].Anilist = &anilist
 			}
 		}
