@@ -93,13 +93,25 @@ func RunJSON(ctx context.Context, options Options) error {
 
 	if options.ChapterPopulate {
 		for i, mangaResult := range mangaResults {
-			mangaVolumes, err := options.Client.MangaVolumes(ctx, mangaResult.Manga)
+			mangaVolumesTemp, err := options.Client.MangaVolumes(ctx, mangaResult.Manga)
 			if err != nil {
 				return err
 			}
-			if len(mangaVolumes) == 0 {
+			if len(mangaVolumesTemp) == 0 {
 				// TODO: use query instead of title?
 				return fmt.Errorf("no manga volumes found with provider %q title %q", options.Provider, mangaResult.Manga.Info().Title)
+			}
+
+			var mangaVolumes []libmangal.Volume
+			switch options.VolumeSelector {
+			case "all":
+				mangaVolumes = mangaVolumesTemp
+			case "first":
+				mangaVolumes = []libmangal.Volume{mangaVolumesTemp[0]}
+			case "last":
+				mangaVolumes = []libmangal.Volume{mangaVolumesTemp[len(mangaVolumesTemp) - 1]}
+			default:
+				return fmt.Errorf("invalid volume selector %q", options.VolumeSelector)
 			}
 
 			var volumeResultsTemp []VolumeResult
@@ -129,6 +141,8 @@ func RunJSON(ctx context.Context, options Options) error {
 				lastV := volumeResultsTemp[len(volumeResultsTemp) - 1]
 				lastM := (*lastV.Chapters)[len(*lastV.Chapters) - 1]
 				volumeResults = []VolumeResult{{lastV.Volume, &[]libmangal.Chapter{lastM}}}
+			default:
+				return fmt.Errorf("invalid chapter selector %q", options.ChapterSelector)
 			}
 			mangaResults[i].Volumes = &volumeResults
 		}

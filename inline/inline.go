@@ -27,6 +27,7 @@ type InlineArgs struct {
 	Query           string `json:"query"`
 	Provider        string `json:"provider"`
 	MangaSelector   string `json:"manga_selector"`
+	VolumeSelector  string `json:"volume_selector"`
 	ChapterSelector string `json:"chapter_selector"`
 	ChapterPopulate bool   `json:"chapter_populate"`
 	AnilistID       int    `json:"anilist_id"`
