@@ -48,7 +48,7 @@ func RunJSON(ctx context.Context, options Options) error {
 
 	mangaResults := []MangaResult{}
 	switch options.MangaSelector {
-	case "", "all":
+	case "all":
 		for i, manga := range mangas {
 			mangaResults = append(mangaResults, MangaResult{Index: i, Manga: manga})
 		}
@@ -80,7 +80,7 @@ func RunJSON(ctx context.Context, options Options) error {
 			var anilist libmangal.AnilistManga
 			var found bool
 			var aniErr error
-			if options.AnilistID != -1{
+			if options.AnilistID != -1 {
 				anilist, found, aniErr = anilistSearch(ctx, options.Anilist, options.AnilistID)
 			} else {
 				anilist, found, aniErr = anilistSearch(ctx, options.Anilist, mangaResult.Manga.Info().AnilistSearch)
@@ -88,6 +88,49 @@ func RunJSON(ctx context.Context, options Options) error {
 			if aniErr == nil && found {
 				mangaResults[i].Anilist = &anilist
 			}
+		}
+	}
+
+	if options.ChapterPopulate {
+		for i, mangaResult := range mangaResults {
+			mangaVolumes, err := options.Client.MangaVolumes(ctx, mangaResult.Manga)
+			if err != nil {
+				return err
+			}
+			if len(mangaVolumes) == 0 {
+				// TODO: use query instead of title?
+				return fmt.Errorf("no manga volumes found with provider %q title %q", options.Provider, mangaResult.Manga.Info().Title)
+			}
+
+			var volumeResultsTemp []VolumeResult
+			for _, mangaVolume := range mangaVolumes {
+				mangaVolumeNumber := mangaVolume.Info().Number
+				mangaCAll, err := options.Client.VolumeChapters(ctx, mangaVolume)
+				if err != nil {
+					return err
+				}
+				if len(mangaCAll) == 0 {
+					// TODO: use query instead of title?
+					return fmt.Errorf("no manga chapters found for volume %d (provider %q, title %q)", mangaVolume.Info().Number, options.Provider, mangaResult.Manga.Info().Title)
+				}
+
+				volumeResultsTemp = append(volumeResultsTemp, VolumeResult{mangaVolumeNumber, &mangaCAll})
+			}
+
+			var volumeResults []VolumeResult
+			switch options.ChapterSelector {
+			case "all":
+				volumeResults = volumeResultsTemp
+			case "first":
+				firstV := volumeResultsTemp[0]
+				firstM := (*firstV.Chapters)[0]
+				volumeResults = []VolumeResult{{firstV.Volume, &[]libmangal.Chapter{firstM}}}
+			case "last":
+				lastV := volumeResultsTemp[len(volumeResultsTemp) - 1]
+				lastM := (*lastV.Chapters)[len(*lastV.Chapters) - 1]
+				volumeResults = []VolumeResult{{lastV.Volume, &[]libmangal.Chapter{lastM}}}
+			}
+			mangaResults[i].Volumes = &volumeResults
 		}
 	}
 

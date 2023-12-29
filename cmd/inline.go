@@ -16,7 +16,8 @@ func init() {
 
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Query, "query", "q", "", "Query to search")
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Provider, "provider", "p", "", "Load provider by tag")
-	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "", "Manga selector")
+	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "all", "Manga selector")
+	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.ChapterSelector, "chapter-selector", "c", "all", "Chapter selector")
 	inlineCmd.PersistentFlags().IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", -1, "Anilist ID to attach")
 	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.AnilistDisable, "anilist-disable", false, "Disable anilist search")
 
@@ -36,6 +37,7 @@ var inlineCmd = &cobra.Command{
 
 func init() {
 	inlineCmd.AddCommand(inlineJSONCmd)
+	inlineJSONCmd.Flags().BoolVar(&inlineArgs.ChapterPopulate, "chapter-populate", false, "Populate chapter metadata")
 }
 
 var inlineJSONCmd = &cobra.Command{
