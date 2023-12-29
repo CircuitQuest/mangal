@@ -7,7 +7,7 @@ import (
 )
 
 func RunJSON(ctx context.Context, options Options) error {
-	queryResult.QueryParams = options.InlineArgs
+	var queryResult QueryResult = QueryResult{QueryParams: options.InlineArgs}
 
 	mangas, err := options.Client.SearchMangas(ctx, options.Query)
 	if err != nil {
@@ -27,7 +27,10 @@ func RunJSON(ctx context.Context, options Options) error {
 	}
 
 	if options.ChapterPopulate {
-		populateChapters(ctx, &mangaResults, options)
+		err := populateChapters(ctx, &mangaResults, options)
+		if err != nil {
+			return err
+		}
 	}
 
 	queryResult.Results = mangaResults
@@ -36,6 +39,5 @@ func RunJSON(ctx context.Context, options Options) error {
 		return err
 	}
 	fmt.Println(string(queryResultJSON))
-
 	return nil
 }

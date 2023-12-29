@@ -4,8 +4,6 @@ import (
 	"github.com/luevano/libmangal"
 )
 
-var queryResult QueryResult = QueryResult{}
-
 type QueryResult struct {
 	QueryParams InlineArgs    `json:"query_params"`
 	Results     []MangaResult `json:"results"`
