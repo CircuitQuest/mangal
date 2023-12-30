@@ -34,16 +34,32 @@ type Options struct {
 	Anilist *libmangal.Anilist
 }
 
+type MangaSelectorError struct {
+	selector  string
+	extraInfo string
+}
+
+func (m *MangaSelectorError) Error() string {
+	return GenericSelectorError("manga", m.selector, m.extraInfo)
+}
+
 type ChapterSelectorError struct {
 	selector  string
 	extraInfo string
 }
 
-func (sE *ChapterSelectorError) Error() string {
-	msg := fmt.Sprintf("invalid chapter selector %q", sE.selector)
-	if sE.extraInfo == "" {
+func (m *ChapterSelectorError) Error() string {
+	return GenericSelectorError("chapter", m.selector, m.extraInfo)
+}
+
+type SelectorError struct {
+}
+
+func GenericSelectorError(selectorType string, selector string, extraInfo string) string {
+	msg := fmt.Sprintf("invalid %s selector %q", selectorType, selector)
+	if extraInfo == "" {
 		return msg
 	} else {
-		return fmt.Sprintf("%s (%s)", msg, sE.extraInfo)
+		return fmt.Sprintf("%s (%s)", msg, extraInfo)
 	}
 }

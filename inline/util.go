@@ -13,7 +13,10 @@ import (
 
 func getSelectedMangaResults(mangas []libmangal.Manga, options Options) ([]MangaResult, error) {
 	var mangaResults []MangaResult
-	switch options.MangaSelector {
+
+	totalMangas := len(mangas)
+	selector := options.MangaSelector
+	switch selector {
 	case "all":
 		for i, manga := range mangas {
 			mangaResults = append(mangaResults, MangaResult{Index: i, Manga: manga})
@@ -22,8 +25,7 @@ func getSelectedMangaResults(mangas []libmangal.Manga, options Options) ([]Manga
 	case "first":
 		return []MangaResult{{Index: 0, Manga: mangas[0]}}, nil
 	case "last":
-		lastIndex := len(mangas) - 1
-		return []MangaResult{{Index: lastIndex, Manga: mangas[lastIndex]}}, nil
+		return []MangaResult{{Index: totalMangas - 1, Manga: mangas[totalMangas-1]}}, nil
 	case "exact":
 		ok := false
 		for i, manga := range mangas {
@@ -34,16 +36,16 @@ func getSelectedMangaResults(mangas []libmangal.Manga, options Options) ([]Manga
 			}
 		}
 		if !ok {
-			return nil, fmt.Errorf("no manga found with provider %q and exact match %q", options.Provider, options.Query)
+			return nil, &MangaSelectorError{selector, fmt.Sprintf("no manga found with provider %q and exact match %q", options.Provider, options.Query)}
 		}
 		return mangaResults, nil
 	default:
-		index, err := strconv.Atoi(options.MangaSelector)
+		index, err := strconv.Atoi(selector)
 		if err != nil {
-			return nil, fmt.Errorf("invalid manga selector %q", options.MangaSelector)
+			return nil, &MangaSelectorError{selector, err.Error()}
 		}
-		if index < 0 || index >= len(mangas) {
-			return nil, fmt.Errorf("invalid manga selector %q (index out of range)", options.MangaSelector)
+		if index < 0 || index >= totalMangas {
+			return nil, &MangaSelectorError{selector, fmt.Sprintf("index out of range(0, %d)", totalMangas-1)}
 		}
 		mangaResults = []MangaResult{{Index: index, Manga: mangas[index]}}
 		return mangaResults, nil
