@@ -1,6 +1,8 @@
 package inline
 
 import (
+	"fmt"
+
 	"github.com/luevano/libmangal"
 )
 
@@ -30,4 +32,18 @@ type Options struct {
 	InlineArgs
 	Client  *libmangal.Client
 	Anilist *libmangal.Anilist
+}
+
+type ChapterSelectorError struct {
+	selector  string
+	extraInfo string
+}
+
+func (sE *ChapterSelectorError) Error() string {
+	msg := fmt.Sprintf("invalid chapter selector %q", sE.selector)
+	if sE.extraInfo == "" {
+		return msg
+	} else {
+		return fmt.Sprintf("%s (%s)", msg, sE.extraInfo)
+	}
 }

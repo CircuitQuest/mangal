@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"reflect"
+	"regexp"
 	"strconv"
 	"strings"
 
@@ -132,14 +133,96 @@ func getChapters(ctx context.Context, volumes []libmangal.Volume, options Option
 }
 
 func getSelectedChapters(chapters []libmangal.Chapter, options Options) ([]libmangal.Chapter, error) {
-	switch options.ChapterSelector {
-	case "all":
-		return chapters, nil
-	case "first":
-		return []libmangal.Chapter{chapters[0]}, nil
-	case "last":
-		return []libmangal.Chapter{chapters[len(chapters) - 1]}, nil
-	default:
-		return nil, fmt.Errorf("invalid chapter selector %q", options.ChapterSelector)
+	const (
+		all   = "all"
+		first = "first"
+		last  = "last"
+		from  = "From"
+		to    = "To"
+	)
+
+	pattern := fmt.Sprintf(`^(%s|%s|%s|(?P<%s>\d+)?-(?P<%s>\d+)?)$`, all, first, last, from, to)
+	selectorRegex, err := regexp.Compile(pattern)
+	if err != nil {
+		return nil, err
 	}
+
+	totalChapters := len(chapters)
+	selector := options.ChapterSelector
+	switch selector {
+	case all:
+		return chapters, nil
+	case first:
+		return chapters[0:1], nil
+	case last:
+		return chapters[totalChapters-1:], nil
+	default:
+		if strings.Contains(selector, "-") {
+			if !selectorRegex.MatchString(selector) {
+				return nil, &ChapterSelectorError{selector, "failed to compile regex, check extra spaces or characters"}
+			}
+			// default values
+			fromI := 0
+			toI := totalChapters - 1
+
+			groups := reGroups(selectorRegex, selector)
+
+			fromS := groups[from]
+			toS := groups[to]
+
+			if fromS == "" && toS == "" {
+				return nil, &ChapterSelectorError{selector, "no 'from' or 'to' specified"}
+			}
+
+			if fromS != "" {
+				fromITemp, err := strconv.Atoi(fromS)
+				if err != nil {
+					return nil, &ChapterSelectorError{selector, err.Error()}
+				}
+				if fromITemp >= totalChapters {
+					return nil, &ChapterSelectorError{selector, fmt.Sprintf("'from' index out of range(%d)", totalChapters-1)}
+				}
+				fromI = fromITemp
+			}
+
+			if toS != "" {
+				toITemp, err := strconv.Atoi(toS)
+				if err != nil {
+					return nil, &ChapterSelectorError{selector, err.Error()}
+				}
+				if toITemp >= totalChapters {
+					return nil, &ChapterSelectorError{selector, fmt.Sprintf("'to' index out of range(%d)", totalChapters-1)}
+				}
+				toI = toITemp
+			}
+
+			if fromI > toI {
+				return nil, &ChapterSelectorError{selector, "'from' greater than 'to'"}
+			}
+
+			return chapters[fromI : toI+1], nil
+
+		} else {
+			index, err := strconv.Atoi(selector)
+			if err != nil {
+				return nil, &ChapterSelectorError{selector, err.Error()}
+			}
+			if index < 0 || index >= totalChapters {
+				return nil, &ChapterSelectorError{selector, fmt.Sprintf("index out of range(0, %d)", totalChapters-1)}
+			}
+			return []libmangal.Chapter{chapters[index]}, nil
+		}
+	}
+}
+
+func reGroups(pattern *regexp.Regexp, str string) map[string]string {
+	groups := make(map[string]string)
+	match := pattern.FindStringSubmatch(str)
+
+	for i, name := range pattern.SubexpNames() {
+		if i > 0 && i <= len(match) {
+			groups[name] = match[i]
+		}
+	}
+	return groups
 }
