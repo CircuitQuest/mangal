@@ -57,7 +57,7 @@ func assignAnilist(ctx context.Context, mangaResults *[]MangaResult, options Opt
 		var anilist libmangal.AnilistManga
 		var found bool
 		var aniErr error
-		if options.AnilistID != -1 {
+		if options.AnilistID != 0 {
 			anilist, found, aniErr = anilistSearch(ctx, options.Anilist, options.AnilistID)
 		} else {
 			anilist, found, aniErr = anilistSearch(ctx, options.Anilist, mangaResult.Manga.Info().AnilistSearch)
