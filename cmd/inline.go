@@ -2,7 +2,10 @@ package cmd
 
 import (
 	"context"
+	"fmt"
+	"strings"
 
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/inline"
@@ -67,6 +70,9 @@ var inlineJSONCmd = &cobra.Command{
 
 func init() {
 	inlineCmd.AddCommand(inlineDownloadCmd)
+	formatDesc := fmt.Sprintf("Download format (%s) (defaults to config)", strings.Join(libmangal.FormatStrings(), "|"))
+	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Format, "format", "f", "", formatDesc)
+	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Directory, "directory", "d", "", "Download directory (defaults to config)")
 }
 
 var inlineDownloadCmd = &cobra.Command{

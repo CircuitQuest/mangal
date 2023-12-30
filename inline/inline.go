@@ -26,6 +26,8 @@ type InlineArgs struct {
 	ChapterPopulate bool   `json:"chapter_populate"`
 	AnilistID       int    `json:"anilist_id"`
 	AnilistDisable  bool   `json:"anilist_disable"`
+	Format          string `json:"format,omitempty"`
+	Directory       string `json:"directory,omitempty"`
 }
 
 type Options struct {
@@ -52,8 +54,7 @@ func (m *ChapterSelectorError) Error() string {
 	return GenericSelectorError("chapter", m.selector, m.extraInfo)
 }
 
-type SelectorError struct {
-}
+type SelectorError struct{}
 
 func GenericSelectorError(selectorType string, selector string, extraInfo string) string {
 	msg := fmt.Sprintf("invalid %s selector %q", selectorType, selector)

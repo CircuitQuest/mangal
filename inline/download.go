@@ -36,9 +36,22 @@ func RunDownload(ctx context.Context, options Options) error {
 		return err
 	}
 
+	formatOption := config.Config.Download.Format.Get()
+	if options.Format != "" {
+		fOption, err := libmangal.FormatString(options.Format)
+		if err != nil {
+			return err
+		}
+		formatOption = fOption
+	}
+	directoryOption := config.Config.Download.Path.Get()
+	if options.Directory != "" {
+		directoryOption = options.Directory
+	}
+
 	downloadOptions := libmangal.DownloadOptions{
-		Format:              config.Config.Download.Format.Get(),
-		Directory:           config.Config.Download.Path.Get(),
+		Format:              formatOption,
+		Directory:           directoryOption,
 		CreateVolumeDir:     config.Config.Download.Volume.CreateDir.Get(),
 		CreateMangaDir:      config.Config.Download.Manga.CreateDir.Get(),
 		Strict:              config.Config.Download.Strict.Get(),
