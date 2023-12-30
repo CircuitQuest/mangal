@@ -92,77 +92,53 @@ func anilistSearch[T string | int](ctx context.Context, aniClient *libmangal.Ani
 
 func populateChapters(ctx context.Context, mangaResults *[]MangaResult, options Options) error {
 	for i, mangaResult := range *mangaResults {
-		mangaVolumesAll, err := options.Client.MangaVolumes(ctx, mangaResult.Manga)
+		volumes, err := options.Client.MangaVolumes(ctx, mangaResult.Manga)
 		if err != nil {
 			return err
 		}
-		if len(mangaVolumesAll) == 0 {
+		if len(volumes) == 0 {
 			// TODO: use query instead of title?
 			return fmt.Errorf("no manga volumes found with provider %q title %q", options.Provider, mangaResult.Manga.Info().Title)
 		}
 
-		mangaVolumes, err := getSelectedMangaVolumes(mangaVolumesAll, options)
+		chapters, err := getChapters(ctx, volumes, options)
 		if err != nil {
 			return err
 		}
 
-		volumeResultsAll, err := getVolumeResults(ctx, mangaVolumes, options)
+		selectedChapters, err := getSelectedChapters(chapters, options)
 		if err != nil {
 			return err
 		}
-
-		volumeResults, err := getFilteredVolumes(volumeResultsAll, options)
-		if err != nil {
-			return err
-		}
-		(*mangaResults)[i].Volumes = &volumeResults
+		(*mangaResults)[i].Chapters = &selectedChapters
 	}
 	return nil
 }
 
-func getSelectedMangaVolumes(mangaVolumesAll []libmangal.Volume, options Options) ([]libmangal.Volume, error) {
-	switch options.VolumeSelector {
-	case "all":
-		return mangaVolumesAll, nil
-	case "first":
-		return []libmangal.Volume{mangaVolumesAll[0]}, nil
-	case "last":
-		return []libmangal.Volume{mangaVolumesAll[len(mangaVolumesAll)-1]}, nil
-	default:
-		return nil, fmt.Errorf("invalid volume selector %q", options.VolumeSelector)
-	}
-}
-
-func getVolumeResults(ctx context.Context, mangaVolumes []libmangal.Volume, options Options) ([]VolumeResult, error) {
-	var volumeResults []VolumeResult
-	for _, mangaVolume := range mangaVolumes {
-		mangaVolumeNumber := mangaVolume.Info().Number
-		mangaCAll, err := options.Client.VolumeChapters(ctx, mangaVolume)
+func getChapters(ctx context.Context, volumes []libmangal.Volume, options Options) ([]libmangal.Chapter, error) {
+	var chapters []libmangal.Chapter
+	for _, volume := range volumes {
+		volumeChapters, err := options.Client.VolumeChapters(ctx, volume)
 		if err != nil {
 			return nil, err
 		}
-		if len(mangaCAll) == 0 {
-			return nil, fmt.Errorf("no manga chapters found for volume %d (provider %q, title %q)", mangaVolume.Info().Number, options.Provider, options.Query)
+		if len(volumeChapters) == 0 {
+			return nil, fmt.Errorf("no manga chapters found for volume %d (provider %q, title %q)", volume.Info().Number, options.Provider, options.Query)
 		}
 
-		volumeResults = append(volumeResults, VolumeResult{mangaVolumeNumber, &mangaCAll})
+		chapters = append(chapters, volumeChapters...)
 	}
-	return volumeResults, nil
+	return chapters, nil
 }
 
-// could be called getSelectedChapters, but at the end it returns filtered volumes
-func getFilteredVolumes(volumeResultsAll []VolumeResult, options Options) ([]VolumeResult, error) {
+func getSelectedChapters(chapters []libmangal.Chapter, options Options) ([]libmangal.Chapter, error) {
 	switch options.ChapterSelector {
 	case "all":
-		return volumeResultsAll, nil
+		return chapters, nil
 	case "first":
-		firstV := volumeResultsAll[0]
-		firstM := (*firstV.Chapters)[0]
-		return []VolumeResult{{firstV.Volume, &[]libmangal.Chapter{firstM}}}, nil
+		return []libmangal.Chapter{chapters[0]}, nil
 	case "last":
-		lastV := volumeResultsAll[len(volumeResultsAll)-1]
-		lastM := (*lastV.Chapters)[len(*lastV.Chapters)-1]
-		return []VolumeResult{{lastV.Volume, &[]libmangal.Chapter{lastM}}}, nil
+		return []libmangal.Chapter{chapters[len(chapters) - 1]}, nil
 	default:
 		return nil, fmt.Errorf("invalid chapter selector %q", options.ChapterSelector)
 	}

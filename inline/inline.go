@@ -10,22 +10,16 @@ type QueryResult struct {
 }
 
 type MangaResult struct {
-	Index   int                     `json:"index"`
-	Manga   libmangal.Manga         `json:"manga"`
-	Volumes *[]VolumeResult         `json:"volumes"`
-	Anilist *libmangal.AnilistManga `json:"anilist"`
-}
-
-type VolumeResult struct {
-	Volume   int                  `json:"volume"`
-	Chapters *[]libmangal.Chapter `json:"chapters"`
+	Index    int                     `json:"index"`
+	Manga    libmangal.Manga         `json:"manga"`
+	Chapters *[]libmangal.Chapter    `json:"chapters"`
+	Anilist  *libmangal.AnilistManga `json:"anilist"`
 }
 
 type InlineArgs struct {
 	Query           string `json:"query"`
 	Provider        string `json:"provider"`
 	MangaSelector   string `json:"manga_selector"`
-	VolumeSelector  string `json:"volume_selector"`
 	ChapterSelector string `json:"chapter_selector"`
 	ChapterPopulate bool   `json:"chapter_populate"`
 	AnilistID       int    `json:"anilist_id"`

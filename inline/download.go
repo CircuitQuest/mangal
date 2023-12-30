@@ -54,14 +54,12 @@ func RunDownload(ctx context.Context, options Options) error {
 	}
 
 	for _, manga := range mangaResults {
-		for _, volume := range *manga.Volumes {
-			for _, chapter := range *volume.Chapters {
-				downloadedPath, err := options.Client.DownloadChapter(ctx, chapter, downloadOptions)
-				if err != nil {
-					return err
-				}
-				fmt.Println(downloadedPath)
+		for _, chapter := range *manga.Chapters {
+			downloadedPath, err := options.Client.DownloadChapter(ctx, chapter, downloadOptions)
+			if err != nil {
+				return err
 			}
+			fmt.Println(downloadedPath)
 		}
 	}
 
