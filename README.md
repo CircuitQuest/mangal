@@ -131,6 +131,36 @@ Which will output `asdfg`.
 
 ### Modes
 
+#### Inline
+
+Similar to mangal v4 inline mode. Two submodes available, `download` which is the expected option and `json` to fetch the metadata only useful to see what would be downloaded.
+
+##### JSON
+
+The minimal usage only fetches mangas found in the provider:
+
+```sh
+mangal inline json -p <provider-id> -q <query>
+```
+
+A more advanced use that fetches just some chapters with anilist output:
+
+```sh
+mangal inline json -p saturno-mangapill -q "Tengoku Daimakyou" -m exact -c 10-15 --chapter-populate
+```
+
+For more, use the `-h` flag.
+
+##### Download
+
+Works exactly like the `json` option but needs to select only one manga and has couple different flags:
+
+```sh
+mangal inline download -p saturno-mangapill -q "Tengoku Daimakyou" -m exact -c 10-15 -f CBZ -d "/custom/manga/root/path"
+```
+
+For more, use the `-h` flag.
+
 #### Script
 
 Similar to [mangalorg/mangalcli](https://github.com/mangalorg/mangalcli) where a `run.lua` and a "provider" is required:
