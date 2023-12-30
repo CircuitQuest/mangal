@@ -18,6 +18,11 @@ func getSelectedMangaResults(mangas []libmangal.Manga, options Options) ([]Manga
 			mangaResults = append(mangaResults, MangaResult{Index: i, Manga: manga})
 		}
 		return mangaResults, nil
+	case "first":
+		return []MangaResult{{Index: 0, Manga: mangas[0]}}, nil
+	case "last":
+		lastIndex := len(mangas) - 1
+		return []MangaResult{{Index: lastIndex, Manga: mangas[lastIndex]}}, nil
 	case "exact":
 		ok := false
 		for i, manga := range mangas {
