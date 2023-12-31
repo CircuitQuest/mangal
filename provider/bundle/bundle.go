@@ -5,23 +5,25 @@ import (
 	"os"
 	"path/filepath"
 
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/provider/lua"
-	"github.com/luevano/libmangal"
 )
 
 func Loaders(dir string) ([]libmangal.ProviderLoader, error) {
-	return loaders("", dir)
+	return getLoaderBundles("", dir)
 }
 
-func loaders(parentID, dir string) ([]libmangal.ProviderLoader, error) {
+// getLoaderBundles returns a linear list of all providers with their parent bundle id attached.
+// A bundle is a collection of providers, any amount of nested providers (or even bundles) is valid.
+func getLoaderBundles(bundleID, dir string) ([]libmangal.ProviderLoader, error) {
 	dirEntries, err := afs.Afero.ReadDir(dir)
 	if err != nil {
 		return nil, err
 	}
 
-	var bundleLoaders []libmangal.ProviderLoader
+	var loaderBundles []libmangal.ProviderLoader
 	for _, dirEntry := range dirEntries {
 		// skip non directories
 		if !dirEntry.IsDir() {
@@ -35,33 +37,30 @@ func loaders(parentID, dir string) ([]libmangal.ProviderLoader, error) {
 			return nil, err
 		}
 
+		// only interested on metadata files 'mangal.toml'
 		if !isProvider {
 			continue
 		}
 
-		loaders, err := getLoaders(parentID, dirEntryPath)
+		loaders, err := getLoaders(bundleID, dirEntryPath)
 		if err != nil {
 			return nil, err
 		}
 
-		bundleLoaders = append(bundleLoaders, loaders...)
+		loaderBundles = append(loaderBundles, loaders...)
 	}
 
-	return bundleLoaders, nil
+	return loaderBundles, nil
 }
 
-func singletone(loader libmangal.ProviderLoader) []libmangal.ProviderLoader {
-	return []libmangal.ProviderLoader{loader}
-}
-
-// TODO: name is confusing
-func getLoaders(parentID, dir string) ([]libmangal.ProviderLoader, error) {
+// getLoaders returns either the providerloader or the next subset of bundles.
+// It all depends if the provider type is Lua (actual provider loader) or bundle.
+func getLoaders(bundleID, dir string) ([]libmangal.ProviderLoader, error) {
 	infoFile, err := afs.Afero.OpenFile(
 		filepath.Join(dir, info.Filename),
 		os.O_RDONLY,
 		0755,
 	)
-
 	if err != nil {
 		return nil, err
 	}
@@ -73,8 +72,9 @@ func getLoaders(parentID, dir string) ([]libmangal.ProviderLoader, error) {
 		return nil, err
 	}
 
-	if parentID != "" {
-		providerInfo.ID = fmt.Sprint(parentID, "-", providerInfo.ID)
+	// to make provider ids unique, attach the bundle id
+	if bundleID != "" {
+		providerInfo.ID = fmt.Sprint(bundleID, "-", providerInfo.ID)
 	}
 
 	switch providerInfo.Type {
@@ -84,9 +84,9 @@ func getLoaders(parentID, dir string) ([]libmangal.ProviderLoader, error) {
 			return nil, err
 		}
 
-		return singletone(loader), nil
+		return []libmangal.ProviderLoader{loader}, nil
 	case info.TypeBundle:
-		return loaders(providerInfo.ID, dir)
+		return getLoaderBundles(providerInfo.ID, dir)
 	default:
 		return nil, fmt.Errorf("unkown provider type: %#v", providerInfo.Type)
 	}
