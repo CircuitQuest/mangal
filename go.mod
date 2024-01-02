@@ -17,7 +17,7 @@ require (
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/luevano/gopher-luadoc v0.3.0
 	github.com/luevano/libmangal v0.9.1
-	github.com/luevano/luaprovider v0.7.1
+	github.com/luevano/luaprovider v0.7.2
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.0
 	github.com/pelletier/go-toml v1.9.5
@@ -47,7 +47,7 @@ require (
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-openapi/jsonpointer v0.20.2 // indirect
-	github.com/go-openapi/swag v0.22.6 // indirect
+	github.com/go-openapi/swag v0.22.7 // indirect
 	github.com/google/uuid v1.5.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/invopop/yaml v0.2.0 // indirect
@@ -72,7 +72,7 @@ require (
 
 require (
 	dario.cat/mergo v1.0.0 // indirect
-	github.com/JohannesKaufmann/html-to-markdown v1.4.2 // indirect
+	github.com/JohannesKaufmann/html-to-markdown v1.5.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
 	github.com/ProtonMail/go-crypto v0.0.0-20230923063757-afb1ddc0824c // indirect
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
@@ -83,7 +83,7 @@ require (
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/charmbracelet/harmonica v0.2.0 // indirect
 	github.com/cixtor/readability v1.0.0 // indirect
-	github.com/cloudflare/circl v1.3.6 // indirect
+	github.com/cloudflare/circl v1.3.7 // indirect
 	github.com/containerd/console v1.0.4-0.20230313162750-1ae8d489ac81 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/gdamore/encoding v1.0.0 // indirect
