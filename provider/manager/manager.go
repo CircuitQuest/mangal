@@ -1,11 +1,25 @@
 package manager
 
 import (
-	"github.com/luevano/mangal/path"
-	"github.com/luevano/mangal/provider/bundle"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/provider/loader"
 )
 
+// TODO: need to provide options such as Mangadex specific options
 func Loaders() ([]libmangal.ProviderLoader, error) {
-	return bundle.Loaders(path.ProvidersDir())
+	var loaders []libmangal.ProviderLoader
+
+	mangoLoaders, err := loader.MangoLoaders()
+	if err != nil {
+		return nil, err
+	}
+	loaders = append(loaders, mangoLoaders...)
+
+	luaLoaders, err := loader.LuaLoaders()
+	if err != nil {
+		return nil, err
+	}
+	loaders = append(loaders, luaLoaders...)
+
+	return loaders, nil
 }

@@ -1,9 +1,9 @@
 package client
 
 import (
-	"github.com/luevano/mangal/script/lib/util"
 	luadoc "github.com/luevano/gopher-luadoc"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/script/lib/util"
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -152,7 +152,6 @@ func Lib(client *libmangal.Client) *luadoc.Lib {
 				},
 			},
 			{
-
 				Name:        "manga_volumes",
 				Description: "",
 				Value:       newMangaVolumes(client),
@@ -170,7 +169,6 @@ func Lib(client *libmangal.Client) *luadoc.Lib {
 				},
 			},
 			{
-
 				Name:        "volume_chapters",
 				Description: "",
 				Value:       newVolumeChapters(client),

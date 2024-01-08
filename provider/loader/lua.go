@@ -1,18 +1,23 @@
-package bundle
+package loader
 
 import (
 	"fmt"
+	"net/http"
 	"os"
 	"path/filepath"
+	"time"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/luaprovider"
 	"github.com/luevano/mangal/afs"
+	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
-	"github.com/luevano/mangal/provider/lua"
 )
 
-func Loaders(dir string) ([]libmangal.ProviderLoader, error) {
-	return getLoaderBundles("", dir)
+const mainLua = "main.lua"
+
+func LuaLoaders() ([]libmangal.ProviderLoader, error) {
+	return getLoaderBundles("", path.ProvidersDir())
 }
 
 // getLoaderBundles returns a linear list of all providers with their parent bundle id attached.
@@ -59,7 +64,7 @@ func getLoaders(bundleID, dir string) ([]libmangal.ProviderLoader, error) {
 	infoFile, err := afs.Afero.OpenFile(
 		filepath.Join(dir, info.Filename),
 		os.O_RDONLY,
-		0755,
+		0o755,
 	)
 	if err != nil {
 		return nil, err
@@ -79,7 +84,7 @@ func getLoaders(bundleID, dir string) ([]libmangal.ProviderLoader, error) {
 
 	switch providerInfo.Type {
 	case info.TypeLua:
-		loader, err := lua.NewLoader(providerInfo.ProviderInfo, dir)
+		loader, err := newLoader(providerInfo.ProviderInfo, dir)
 		if err != nil {
 			return nil, err
 		}
@@ -90,4 +95,31 @@ func getLoaders(bundleID, dir string) ([]libmangal.ProviderLoader, error) {
 	default:
 		return nil, fmt.Errorf("unkown provider type: %#v", providerInfo.Type)
 	}
+}
+
+func newLoader(info libmangal.ProviderInfo, dir string) (libmangal.ProviderLoader, error) {
+	providerMainFilePath := filepath.Join(dir, mainLua)
+	exists, err := afs.Afero.Exists(providerMainFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	if !exists {
+		return nil, fmt.Errorf("%s is missing", providerMainFilePath)
+	}
+
+	providerMainFileContents, err := afs.Afero.ReadFile(providerMainFilePath)
+	if err != nil {
+		return nil, err
+	}
+
+	options := luaprovider.Options{
+		PackagePaths: []string{dir},
+		HTTPClient: &http.Client{
+			Timeout: time.Minute,
+		},
+		HTTPStoreProvider: httpStoreProvider,
+	}
+
+	return luaprovider.NewLoader(providerMainFileContents, info, options)
 }
