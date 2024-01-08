@@ -15,7 +15,8 @@ type versioned struct {
 }
 
 type providers struct {
-	Lua versioned
+	Mango versioned
+	Lua   versioned
 }
 
 type versionInfo struct {
@@ -36,6 +37,8 @@ func getVersionInfo() (info versionInfo) {
 		switch dep.Path {
 		case "github.com/luevano/libmangal":
 			info.Libmangal.Version = dep.Version
+		case "github.com/luevano/mangoprovider":
+			info.Providers.Mango.Version = dep.Version
 		case "github.com/luevano/luaprovider":
 			info.Providers.Lua.Version = dep.Version
 		}
@@ -49,11 +52,11 @@ func PrettyVersion() string {
 	err := template.Must(template.New("version").Parse(`
 mangal {{ .Mangal.Version }}
 libmangal {{ .Libmangal.Version }}
+mangoprovider {{ .Providers.Mango.Version }}
 luaprovider {{ .Providers.Lua.Version }}
 
 https://github.com/luevano/mangal
 `)).Execute(&info, getVersionInfo())
-
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -61,7 +64,7 @@ https://github.com/luevano/mangal
 	return lipgloss.JoinVertical(
 		lipgloss.Center,
 		lipgloss.NewStyle().Bold(true).Foreground(color.Accent).Render(Logo),
-		//strings.Repeat("  \n", lipgloss.Height(Logo)),
+		// strings.Repeat("  \n", lipgloss.Height(Logo)),
 		info.String(),
 	)
 }
