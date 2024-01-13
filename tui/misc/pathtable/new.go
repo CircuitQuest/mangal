@@ -6,6 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/color"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/util"
 )
@@ -39,7 +40,7 @@ func newModel() *Model {
 		},
 		{
 			"downloads",
-			path.DownloadsDir(),
+			config.Config.Download.Path.Get(),
 		},
 		{
 			"cache",

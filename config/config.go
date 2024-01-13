@@ -76,6 +76,8 @@ var Config = config{
 	Download: configDownload{
 		Path: reg(Field[string, string]{
 			Key:         "download.path",
+			// Don't use config.Config.Download.Path.Get()
+			// as it creates a directory when called, may be unwanted?
 			Default:     xdg.UserDirs.Download,
 			Description: "Path where chapters will be downloaded",
 			Unmarshal: func(s string) (string, error) {

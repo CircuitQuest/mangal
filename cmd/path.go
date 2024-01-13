@@ -3,6 +3,7 @@ package cmd
 import (
 	"encoding/json"
 
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/misc/pathtable"
 	"github.com/spf13/cobra"
@@ -62,7 +63,7 @@ var pathCmd = &cobra.Command{
 			pathToShow = path.ProvidersDir()
 			pathToShowName = "providers"
 		case pathArgs.Downloads:
-			pathToShow = path.DownloadsDir()
+			pathToShow = config.Config.Download.Path.Get()
 			pathToShowName = "downloads"
 		case pathArgs.Cache:
 			pathToShow = path.CacheDir()
@@ -86,7 +87,7 @@ var pathCmd = &cobra.Command{
 					},
 					{
 						Name: "downloads",
-						Path: path.DownloadsDir(),
+						Path: config.Config.Download.Path.Get(),
 					},
 					{
 						Name: "cache",
