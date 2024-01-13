@@ -1,8 +1,8 @@
 package config
 
 import (
-	"github.com/luevano/mangal/icon"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/icon"
 )
 
 type config struct {
@@ -13,6 +13,7 @@ type config struct {
 	TUI       configTUI
 	Providers configProviders
 	Library   configLibrary
+	Filter    configFilter
 }
 
 type configCLI struct {
@@ -47,9 +48,10 @@ type configDownload struct {
 }
 
 type configDownloadManga struct {
-	CreateDir     *registered[bool, bool]
-	Cover, Banner *registered[bool, bool]
-	NameTemplate  *registered[string, string]
+	CreateDir    *registered[bool, bool]
+	Cover        *registered[bool, bool]
+	Banner       *registered[bool, bool]
+	NameTemplate *registered[string, string]
 }
 
 type configDownloadVolume struct {
@@ -80,4 +82,13 @@ type configProvidersCache struct {
 
 type configLibrary struct {
 	Path *registered[string, string]
+}
+
+type configFilter struct {
+	NSFW                    *registered[bool, bool]
+	Language                *registered[string, string]
+	MangaDexDataSaver       *registered[bool, bool]
+	TitleChapterNumber      *registered[bool, bool]
+	AvoidDuplicateChapters  *registered[bool, bool]
+	ShowUnavailableChapters *registered[bool, bool]
 }

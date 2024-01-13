@@ -10,7 +10,9 @@ import (
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/mangal/client"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/icon"
+	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/script"
 	"github.com/luevano/mangal/script/lib"
 	"github.com/spf13/cobra"
@@ -18,12 +20,15 @@ import (
 )
 
 var scriptArgs = struct {
-	File      string
-	String    string
-	Stdin     bool
-	Provider  string
-	Variables map[string]string
-}{}
+	File          string
+	String        string
+	Stdin         bool
+	Provider      string
+	Variables     map[string]string
+	LoaderOptions *loader.Options
+}{
+	LoaderOptions: &loader.Options{},
+}
 
 func init() {
 	subcommands = append(subcommands, scriptCmd)
@@ -35,8 +40,14 @@ func init() {
 	scriptCmd.MarkFlagsMutuallyExclusive("file", "string", "stdin")
 
 	scriptCmd.Flags().StringVarP(&scriptArgs.Provider, "provider", "p", "", "Load provider by tag")
-
 	scriptCmd.Flags().StringToStringVarP(&scriptArgs.Variables, "vars", "v", nil, "Variables to set in the `Vars` table")
+
+	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.NSFW, "nsfw", config.Config.Filter.NSFW.Get(), "Include NSFW content (when supported)")
+	scriptCmd.PersistentFlags().StringVar(&scriptArgs.LoaderOptions.Language, "language", config.Config.Filter.Language.Get(), "Manga/Chapter language")
+	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.MangaDexDataSaver, "mangadex-data-saver", config.Config.Filter.MangaDexDataSaver.Get(), "If 'data-saver' should be used (mangadex)")
+	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.TitleChapterNumber, "title-chapter-number", config.Config.Filter.TitleChapterNumber.Get(), "If 'Chapter #' should always be included")
+	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.AvoidDuplicateChapters, "avoid-duplicate-chapters", config.Config.Filter.AvoidDuplicateChapters.Get(), "Only select one chapter when more are found")
+	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.ShowUnavailableChapters, "show-unavailable-chapters", config.Config.Filter.ShowUnavailableChapters.Get(), "If chapter is undownloadable, still show it")
 
 	scriptCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
 }
@@ -77,7 +88,7 @@ var scriptCmd = &cobra.Command{
 		options.Anilist = anilist.Client
 
 		if scriptArgs.Provider != "" {
-			client, err := client.NewClientByID(context.Background(), scriptArgs.Provider)
+			client, err := client.NewClientByID(context.Background(), scriptArgs.Provider, *scriptArgs.LoaderOptions)
 			if err != nil {
 				errorf(cmd, err.Error())
 			}
@@ -103,8 +114,7 @@ var scriptDocCmd = &cobra.Command{
 
 		filename := fmt.Sprint(l.Name, ".lua")
 
-		err := afs.Afero.WriteFile(filename, []byte(l.LuaDoc()), 0755)
-
+		err := afs.Afero.WriteFile(filename, []byte(l.LuaDoc()), 0o755)
 		if err != nil {
 			return err
 		}

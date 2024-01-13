@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/tui"
 	"github.com/luevano/mangal/tui/state/providers"
@@ -17,7 +18,7 @@ var tuiCmd = &cobra.Command{
 	GroupID: groupMode,
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		loaders, err := manager.Loaders()
+		loaders, err := manager.Loaders(loader.DefaultOptions())
 		if err != nil {
 			errorf(cmd, err.Error())
 		}

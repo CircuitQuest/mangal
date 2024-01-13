@@ -8,11 +8,15 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/mangal/client"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/inline"
+	"github.com/luevano/mangal/provider/loader"
 	"github.com/spf13/cobra"
 )
 
-var inlineArgs = inline.InlineArgs{}
+var inlineArgs = inline.InlineArgs{
+	LoaderOptions: &loader.Options{},
+}
 
 func init() {
 	subcommands = append(subcommands, inlineCmd)
@@ -22,6 +26,13 @@ func init() {
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "all", "Manga selector (all|first|last|exact|<index>)")
 	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.ChapterSelector, "chapter-selector", "c", "all", "Chapter selector (all|first|last|<index>|[from]-[to])")
 	inlineCmd.PersistentFlags().IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", 0, "Anilist ID to bind title to")
+
+	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.NSFW, "nsfw", config.Config.Filter.NSFW.Get(), "Include NSFW content (when supported)")
+	inlineCmd.PersistentFlags().StringVar(&inlineArgs.LoaderOptions.Language, "language", config.Config.Filter.Language.Get(), "Manga/Chapter language")
+	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.MangaDexDataSaver, "mangadex-data-saver", config.Config.Filter.MangaDexDataSaver.Get(), "If 'data-saver' should be used (mangadex)")
+	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.TitleChapterNumber, "title-chapter-number", config.Config.Filter.TitleChapterNumber.Get(), "If 'Chapter #' should always be included")
+	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.AvoidDuplicateChapters, "avoid-duplicate-chapters", config.Config.Filter.AvoidDuplicateChapters.Get(), "Only select one chapter when more are found")
+	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.ShowUnavailableChapters, "show-unavailable-chapters", config.Config.Filter.ShowUnavailableChapters.Get(), "If chapter is undownloadable, still show it")
 
 	inlineCmd.MarkPersistentFlagRequired("provider")
 	inlineCmd.MarkPersistentFlagRequired("query")
@@ -45,13 +56,13 @@ func init() {
 }
 
 var inlineJSONCmd = &cobra.Command{
-	Use:     "json",
-	Short:   "Output search results in JSON",
-	Args:    cobra.NoArgs,
+	Use:   "json",
+	Short: "Output search results in JSON",
+	Args:  cobra.NoArgs,
 	// TODO: change to RunE
 	// TODO: refactor this (similar to Download code)
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := client.NewClientByID(context.Background(), inlineArgs.Provider)
+		client, err := client.NewClientByID(context.Background(), inlineArgs.Provider, *inlineArgs.LoaderOptions)
 		if err != nil {
 			errorf(cmd, err.Error())
 		}
@@ -76,12 +87,12 @@ func init() {
 }
 
 var inlineDownloadCmd = &cobra.Command{
-	Use:     "download",
-	Short:   "Download manga",
-	Args:    cobra.NoArgs,
+	Use:   "download",
+	Short: "Download manga",
+	Args:  cobra.NoArgs,
 	// TODO: refactor this (similar to JSON code)
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := client.NewClientByID(context.Background(), inlineArgs.Provider)
+		client, err := client.NewClientByID(context.Background(), inlineArgs.Provider, *inlineArgs.LoaderOptions)
 		if err != nil {
 			errorf(cmd, err.Error())
 		}

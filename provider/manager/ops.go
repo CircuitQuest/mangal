@@ -10,17 +10,19 @@ import (
 	"path/filepath"
 
 	"github.com/go-git/go-git/v5"
+	"github.com/luevano/libmangal"
+	"github.com/luevano/luaprovider"
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
-	"github.com/luevano/libmangal"
-	"github.com/luevano/luaprovider"
+	"github.com/luevano/mangal/provider/loader"
 	"github.com/pelletier/go-toml"
 	"github.com/pkg/errors"
 	"github.com/samber/lo"
 	"github.com/spf13/afero"
 )
 
+// TODO: add actual options and pass them
 type (
 	AddOptions struct {
 		URL *url.URL
@@ -62,7 +64,7 @@ func Add(ctx context.Context, options AddOptions) error {
 		return fmt.Errorf("ID is empty")
 	}
 
-	loaders, err := Loaders()
+	loaders, err := Loaders(loader.DefaultOptions())
 	if err != nil {
 		return err
 	}

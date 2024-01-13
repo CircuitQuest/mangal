@@ -5,11 +5,10 @@ import (
 	"github.com/luevano/mangal/provider/loader"
 )
 
-// TODO: need to provide options such as Mangadex specific options
-func Loaders() ([]libmangal.ProviderLoader, error) {
+func Loaders(options loader.Options) ([]libmangal.ProviderLoader, error) {
 	var loaders []libmangal.ProviderLoader
 
-	mangoLoaders, err := loader.MangoLoaders()
+	mangoLoaders, err := loader.MangoLoaders(options)
 	if err != nil {
 		return nil, err
 	}

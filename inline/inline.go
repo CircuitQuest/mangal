@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/provider/loader"
 )
 
 type QueryResult struct {
@@ -19,15 +20,16 @@ type MangaResult struct {
 }
 
 type InlineArgs struct {
-	Query           string `json:"query"`
-	Provider        string `json:"provider"`
-	MangaSelector   string `json:"manga_selector"`
-	ChapterSelector string `json:"chapter_selector"`
-	ChapterPopulate bool   `json:"chapter_populate"`
-	AnilistID       int    `json:"anilist_id"`
-	AnilistDisable  bool   `json:"anilist_disable"`
-	Format          string `json:"format,omitempty"`
-	Directory       string `json:"directory,omitempty"`
+	Query           string          `json:"query"`
+	Provider        string          `json:"provider"`
+	MangaSelector   string          `json:"manga_selector"`
+	ChapterSelector string          `json:"chapter_selector"`
+	ChapterPopulate bool            `json:"chapter_populate"`
+	AnilistID       int             `json:"anilist_id"`
+	AnilistDisable  bool            `json:"anilist_disable"`
+	Format          string          `json:"format,omitempty"`
+	Directory       string          `json:"directory,omitempty"`
+	LoaderOptions   *loader.Options `json:"loader_options"`
 }
 
 type Options struct {

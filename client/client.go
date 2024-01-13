@@ -10,6 +10,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/anilist"
+	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/template"
 	"github.com/samber/lo"
@@ -59,8 +60,8 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 	return client, nil
 }
 
-func NewClientByID(ctx context.Context, provider string) (*libmangal.Client, error) {
-	loaders, err := manager.Loaders()
+func NewClientByID(ctx context.Context, provider string, options loader.Options) (*libmangal.Client, error) {
+	loaders, err := manager.Loaders(options)
 	if err != nil {
 		return nil, err
 	}

@@ -5,9 +5,9 @@ import (
 	"time"
 
 	"github.com/adrg/xdg"
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/icon"
 	"github.com/luevano/mangal/template/util"
-	"github.com/luevano/libmangal"
 )
 
 var Config = config{
@@ -207,6 +207,39 @@ var Config = config{
 			Key:         "library.path",
 			Default:     "",
 			Description: "Path to the manga library. Empty string will fallback to the download.path",
+		}),
+	},
+	Filter: configFilter{
+		NSFW: reg(Field[bool, bool]{
+			Key:         "filter.nsfw",
+			Default:     true,
+			Description: "If NSFW content should be included, usually used for MangaDex.",
+		}),
+		// TODO: add validation to language filter
+		Language: reg(Field[string, string]{
+			Key:         "filter.language",
+			Default:     "en",
+			Description: "The language the manga should be on.",
+		}),
+		MangaDexDataSaver: reg(Field[bool, bool]{
+			Key:         "filter.mangadex_datasaver",
+			Default:     false,
+			Description: `Use MangaDex "data-saver" option for chapter pages.`,
+		}),
+		TitleChapterNumber: reg(Field[bool, bool]{
+			Key:         "filter.title_chapter_number",
+			Default:     false,
+			Description: "Include the chapter number in the title regardless of the availability of the chapter title.",
+		}),
+		AvoidDuplicateChapters: reg(Field[bool, bool]{
+			Key:         "filter.avoid_duplicate_chapters",
+			Default:     true,
+			Description: "Only select one chapter when multiple of the same number are present.",
+		}),
+		ShowUnavailableChapters: reg(Field[bool, bool]{
+			Key:         "filter.show_unavailable_chapters",
+			Default:     false,
+			Description: "When there are non-downloadable chapters, show them anyways. Should only be used to search around.",
 		}),
 	},
 }

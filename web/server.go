@@ -11,12 +11,13 @@ import (
 	"path/filepath"
 
 	"github.com/labstack/echo/v4"
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/meta"
+	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/web/api"
-	"github.com/luevano/libmangal"
 	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/bigcache"
 	"github.com/philippgille/gokv/encoding"
@@ -365,7 +366,7 @@ func NewServer() (*echo.Echo, error) {
 	}
 
 	server.imageCache = store
-	server.loaders, err = manager.Loaders()
+	server.loaders, err = manager.Loaders(loader.DefaultOptions())
 	if err != nil {
 		return nil, err
 	}

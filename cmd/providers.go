@@ -5,10 +5,11 @@ import (
 	"fmt"
 	"net/url"
 
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
+	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
-	"github.com/luevano/libmangal"
 	"github.com/spf13/cobra"
 )
 
@@ -65,7 +66,7 @@ var providersLsCmd = &cobra.Command{
 	Short: "List installed providers",
 	Args:  cobra.NoArgs,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		loaders, err := manager.Loaders()
+		loaders, err := manager.Loaders(loader.DefaultOptions())
 		if err != nil {
 			return err
 		}
