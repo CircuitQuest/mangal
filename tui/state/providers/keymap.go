@@ -26,5 +26,6 @@ func (p KeyMap) ShortHelp() []key.Binding {
 	return append(
 		p.list.ShortHelp(),
 		p.confirm,
+		p.info,
 	)
 }

@@ -47,15 +47,15 @@ func (s *State) downloadChapterCmd(ctx context.Context, chapter libmangal.Chapte
 	volume := chapter.Volume()
 	manga := volume.Manga()
 
-	loadingState := loading.New("Preparing...", fmt.Sprintf("%s / Vol. %s / %s", manga, volume, chapter))
+	loadingState := loading.New("Downloading", fmt.Sprintf("%s / Vol. %s / %s", manga, volume, chapter))
 	return tea.Sequence(
 		func() tea.Msg {
 			return loadingState
 		},
 		func() tea.Msg {
-			s.client.Logger().SetOnLog(func(msg string) {
-				loadingState.SetMessage(msg)
-			})
+			// s.client.Logger().SetOnLog(func(msg string) {
+			// 	loadingState.SetMessage(msg)
+			// })
 
 			_, err := s.client.DownloadChapter(ctx, chapter, options)
 			if err != nil {

@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/stringutil"
@@ -18,7 +19,6 @@ import (
 	"github.com/luevano/mangal/tui/state/formats"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
-	"github.com/luevano/libmangal"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
 	"golang.org/x/exp/slices"
@@ -123,7 +123,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.OpenURL):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("opening", item.chapter.String())
+					return loading.New("Opening", item.chapter.String())
 				},
 				func() tea.Msg {
 					err := open.Run(item.chapter.Info().URL)
@@ -203,7 +203,6 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 							item.chapter,
 							readOptions,
 						)
-
 						if err != nil {
 							return err
 						}
@@ -242,7 +241,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.Anilist):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Loading...", "Getting Anilist Mangas")
+					return loading.New("Searching", "Getting Anilist Mangas")
 				},
 				func() tea.Msg {
 					var mangas []libmangal.AnilistManga

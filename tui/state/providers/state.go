@@ -7,13 +7,13 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/mangas"
 	"github.com/luevano/mangal/tui/state/textinput"
-	"github.com/luevano/libmangal"
 	"github.com/pkg/errors"
 )
 
@@ -86,7 +86,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Loading...", "")
+					return loading.New("Loading", "Loading providers")
 				},
 				func() tea.Msg {
 					client, err := client.NewClient(model.Context(), item)
@@ -100,7 +100,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						OnResponse: func(response string) tea.Cmd {
 							return tea.Sequence(
 								func() tea.Msg {
-									return loading.New("Loading", fmt.Sprintf("Searching for %q", response))
+									return loading.New("Searching", fmt.Sprintf("Searching for %q", response))
 								},
 								func() tea.Msg {
 									m, err := client.SearchMangas(model.Context(), response)
@@ -117,7 +117,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			)
 		case key.Matches(msg, s.keyMap.info):
 			return func() tea.Msg {
-				return errors.New("not implemented")
+				return errors.New("unimplemented")
 			}
 		}
 	}

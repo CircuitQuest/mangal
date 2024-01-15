@@ -2,6 +2,7 @@ package base
 
 import (
 	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/color"
 )
 
 type Styles struct {
@@ -17,15 +18,15 @@ func DefaultStyles() Styles {
 		Title: lipgloss.
 			NewStyle().
 			Bold(true).
-			Background(lipgloss.Color("#EB5E28")).
-			Foreground(lipgloss.Color("#252422")).
+			Background(color.Accent).
+			Foreground(color.Background).
 			Padding(0, 1),
 		TitleBar: lipgloss.
 			NewStyle().
 			Padding(0, 0, 1, 2),
 		Subtitle: lipgloss.
 			NewStyle().
-			Foreground(lipgloss.AdaptiveColor{Light: "#A49FA5", Dark: "#777777"}),
+			Foreground(color.Secondary),
 		HelpBar: lipgloss.
 			NewStyle().
 			Padding(0, 1),

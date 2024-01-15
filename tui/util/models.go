@@ -4,6 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/paginator"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/color"
 )
 
 func NewList[T any](
@@ -12,13 +13,12 @@ func NewList[T any](
 	items []T,
 	transform func(T) list.DefaultItem,
 ) list.Model {
-	var listItems = make([]list.Item, len(items))
+	listItems := make([]list.Item, len(items))
 	for i, item := range items {
 		listItems[i] = transform(item)
 	}
 
 	border := lipgloss.ThickBorder()
-
 	delegate := list.NewDefaultDelegate()
 
 	delegate.Styles.NormalTitle.Bold(true)
@@ -28,8 +28,9 @@ func NewList[T any](
 		Border(border, false, false, false, true).
 		Foreground(delegate.Styles.NormalDesc.GetForeground())
 
-	//delegate.Styles.SelectedTitle.BorderLeftForeground(color.Accent)
-	//delegate.Styles.SelectedDesc.BorderLeftForeground(color.Accent)
+	delegate.Styles.SelectedTitle.Foreground(color.Accent)
+	delegate.Styles.SelectedTitle.BorderLeftForeground(color.Accent)
+	delegate.Styles.SelectedDesc.BorderLeftForeground(color.Accent)
 
 	if delegateHeight == 1 {
 		delegate.ShowDescription = false

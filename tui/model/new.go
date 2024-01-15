@@ -2,11 +2,12 @@ package model
 
 import (
 	"context"
+	"os"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/zyedidia/generic/stack"
 	"golang.org/x/term"
-	"os"
 )
 
 func New(state base.State) *Model {

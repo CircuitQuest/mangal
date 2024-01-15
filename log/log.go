@@ -15,7 +15,7 @@ import (
 var L = lo.Must(newLogger())
 
 func newLogger() (*zerolog.Logger, error) {
-	today := time.Now().Format("2006-01-02")
+	today := time.Now().Format(time.DateOnly)
 
 	logPath := filepath.Join(path.LogDir(), fmt.Sprint(today, ".log"))
 
@@ -25,7 +25,7 @@ func newLogger() (*zerolog.Logger, error) {
 	}
 
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnix
-	zerolog.SetGlobalLevel(zerolog.WarnLevel)
+	zerolog.SetGlobalLevel(zerolog.InfoLevel)
 
 	logger := zerolog.New(file)
 

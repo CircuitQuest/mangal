@@ -23,9 +23,8 @@ func (i Item) Title() string {
 
 func (i Item) Description() string {
 	info := i.Info()
-	return fmt.Sprintf(`%s
-Version %s
-%s`,
+	return fmt.Sprintf(
+		"%s v%s\n%s",
 		info.ID,
 		info.Version,
 		info.Website,
