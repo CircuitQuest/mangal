@@ -27,11 +27,14 @@ import (
 var _ base.State = (*State)(nil)
 
 type State struct {
-	client   *libmangal.Client
-	volume   libmangal.Volume
-	selected set.Set[*Item]
-	list     *listwrapper.State
-	keyMap   KeyMap
+	client            *libmangal.Client
+	volume            libmangal.Volume
+	selected          set.Set[*Item]
+	list              *listwrapper.State
+	keyMap            KeyMap
+	showChapterNumber *bool
+	showGroup         *bool
+	showDate          *bool
 }
 
 func (s *State) Intermediate() bool {
@@ -289,6 +292,18 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					)
 				},
 			)
+		case key.Matches(msg, s.keyMap.ToggleChapterNumber):
+			*s.showChapterNumber = !(*s.showChapterNumber)
+
+			return s.list.Update(model, msg)
+		case key.Matches(msg, s.keyMap.ToggleGroup):
+			*s.showGroup = !(*s.showGroup)
+
+			return s.list.Update(model, msg)
+		case key.Matches(msg, s.keyMap.ToggleDate):
+			*s.showDate = !(*s.showDate)
+
+			return s.list.Update(model, msg)
 		}
 	}
 

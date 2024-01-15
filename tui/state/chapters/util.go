@@ -53,9 +53,9 @@ func (s *State) downloadChapterCmd(ctx context.Context, chapter libmangal.Chapte
 			return loadingState
 		},
 		func() tea.Msg {
-			// s.client.Logger().SetOnLog(func(msg string) {
-			// 	loadingState.SetMessage(msg)
-			// })
+			s.client.Logger().SetOnLog(func(msg string) {
+				loadingState.SetMessage(msg)
+			})
 
 			_, err := s.client.DownloadChapter(ctx, chapter, options)
 			if err != nil {

@@ -12,7 +12,7 @@ type keyMap struct {
 func newKeyMap() *keyMap {
 	return &keyMap{
 		Back: util.Bind("back", "esc"),
-		Quit: util.Bind("quit", "ctrl+c", "ctrl+d"),
+		Quit: util.Bind("quit", "ctrl+c"),
 		Help: util.Bind("help", "?"),
 	}
 }

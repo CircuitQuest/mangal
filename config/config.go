@@ -75,7 +75,7 @@ var Config = config{
 	},
 	Download: configDownload{
 		Path: reg(Field[string, string]{
-			Key:         "download.path",
+			Key: "download.path",
 			// Don't use config.Config.Download.Path.Get()
 			// as it creates a directory when called, may be unwanted?
 			Default:     xdg.UserDirs.Download,
@@ -190,6 +190,29 @@ var Config = config{
 			Default:     true,
 			Description: "Skip selecting volume if there's only one",
 		}),
+		Chapter: configTUIChapter{
+			// TODO: add validation to the format
+			NumberFormat: reg(Field[string, string]{
+				Key:         "tui.chapter.number_format",
+				Default:     "[%06.1f]",
+				Description: "Format that the chapter number (float 32) should take, for example '[%06.1f]'",
+			}),
+			ShowNumber: reg(Field[bool, bool]{
+				Key:         "tui.chapter.show_number",
+				Default:     true,
+				Description: "If the chapter number should be shown prepended to the chapter title",
+			}),
+			ShowDate: reg(Field[bool, bool]{
+				Key:         "tui.chapter.show_date",
+				Default:     true,
+				Description: "If the chapter date should be shown in the description",
+			}),
+			ShowGroup: reg(Field[bool, bool]{
+				Key:         "tui.chapter.show_group",
+				Default:     true,
+				Description: "If the chapter scanlation group should be shown in the description",
+			}),
+		},
 	},
 	Providers: configProviders{
 		Cache: configProvidersCache{

@@ -2,23 +2,30 @@ package chapters
 
 import (
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/util"
-	"github.com/luevano/libmangal"
 	"github.com/zyedidia/generic/set"
 )
 
 func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal.Chapter) *State {
+	showChapterNumber := config.Config.TUI.Chapter.ShowNumber.Get()
+	showGroup := config.Config.TUI.Chapter.ShowGroup.Get()
+	showDate := config.Config.TUI.Chapter.ShowDate.Get()
 	selectedSet := set.NewMapset[*Item]()
 	listWrapper := listwrapper.New(util.NewList(
-		2,
+		3,
 		"chapter", "chapters",
 		chapters,
 		func(chapter libmangal.Chapter) list.DefaultItem {
 			return &Item{
-				chapter:       chapter,
-				selectedItems: &selectedSet,
-				client:        client,
+				chapter:           chapter,
+				selectedItems:     &selectedSet,
+				client:            client,
+				showChapterNumber: &showChapterNumber,
+				showGroup:         &showGroup,
+				showDate:          &showDate,
 			}
 		},
 	))
@@ -29,16 +36,22 @@ func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal
 		selected: selectedSet,
 		list:     listWrapper,
 		keyMap: KeyMap{
-			UnselectAll:  util.Bind("unselect all", "backspace"),
-			SelectAll:    util.Bind("select all", "a"),
-			Toggle:       util.Bind("toggle", " "),
-			Read:         util.Bind("read", "r"),
-			OpenURL:      util.Bind("open url", "o"),
-			Anilist:      util.Bind("anilist", "A"),
-			Download:     util.Bind("download", "d"),
-			Confirm:      util.Bind("confirm", "enter"),
-			ChangeFormat: util.Bind("change format", "f"),
-			list:         listWrapper.GetKeyMap(),
+			UnselectAll:         util.Bind("unselect all", "backspace"),
+			SelectAll:           util.Bind("select all", "a"),
+			ToggleChapterNumber: util.Bind("toggle group", "c"),
+			ToggleGroup:         util.Bind("toggle group", "g"),
+			ToggleDate:          util.Bind("toggle date", "ctrl+d"),
+			Toggle:              util.Bind("toggle", " "),
+			Read:                util.Bind("read", "r"),
+			OpenURL:             util.Bind("open url", "o"),
+			Anilist:             util.Bind("anilist", "A"),
+			Download:            util.Bind("download", "d"),
+			Confirm:             util.Bind("confirm", "enter"),
+			ChangeFormat:        util.Bind("change format", "f"),
+			list:                listWrapper.GetKeyMap(),
 		},
+		showChapterNumber: &showChapterNumber,
+		showGroup:         &showGroup,
+		showDate:          &showDate,
 	}
 }

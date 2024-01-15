@@ -29,7 +29,8 @@ func (s *State) KeyMap() help.KeyMap {
 }
 
 func (s *State) Title() base.Title {
-	return base.Title{Text: s.message, Background: color.Loading}
+	// return base.Title{Text: s.message, Background: color.Loading}
+	return base.Title{Text: "Loading", Background: color.Loading}
 }
 
 func (s *State) Subtitle() string {

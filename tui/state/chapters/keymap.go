@@ -11,6 +11,9 @@ var _ help.KeyMap = (*KeyMap)(nil)
 type KeyMap struct {
 	UnselectAll,
 	SelectAll,
+	ToggleChapterNumber,
+	ToggleGroup,
+	ToggleDate,
 	Toggle,
 	Read,
 	OpenURL,
@@ -34,7 +37,7 @@ func (k KeyMap) ShortHelp() []key.Binding {
 func (k KeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		k.ShortHelp(),
-		{k.SelectAll, k.UnselectAll},
+		{k.SelectAll, k.UnselectAll, k.ToggleChapterNumber, k.ToggleGroup, k.ToggleDate},
 		{k.Anilist},
 		{k.ChangeFormat, k.OpenURL},
 	}

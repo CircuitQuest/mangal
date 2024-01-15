@@ -70,6 +70,14 @@ type configDownloadMetadata struct {
 
 type configTUI struct {
 	ExpandSingleVolume *registered[bool, bool]
+	Chapter            configTUIChapter
+}
+
+type configTUIChapter struct {
+	NumberFormat *registered[string, string]
+	ShowNumber   *registered[bool, bool]
+	ShowDate     *registered[bool, bool]
+	ShowGroup    *registered[bool, bool]
 }
 
 type configProviders struct {

@@ -4,8 +4,8 @@ import (
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/color"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/color"
 )
 
 func New(chapters []libmangal.Chapter, options Options) *State {

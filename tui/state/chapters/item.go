@@ -1,23 +1,27 @@
 package chapters
 
 import (
+	"fmt"
 	"path/filepath"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/color"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/icon"
 	"github.com/luevano/mangal/path"
-	"github.com/luevano/libmangal"
 	"github.com/zyedidia/generic/set"
 )
 
 type Item struct {
-	client        *libmangal.Client
-	chapter       libmangal.Chapter
-	selectedItems *set.Set[*Item]
+	client            *libmangal.Client
+	chapter           libmangal.Chapter
+	selectedItems     *set.Set[*Item]
+	showChapterNumber *bool
+	showGroup         *bool
+	showDate          *bool
 }
 
 func (i *Item) FilterValue() string {
@@ -26,6 +30,13 @@ func (i *Item) FilterValue() string {
 
 func (i *Item) Title() string {
 	var title strings.Builder
+
+	if *i.showChapterNumber {
+		chapterNumber := fmt.Sprintf(config.Config.TUI.Chapter.NumberFormat.Get(), i.chapter.Info().Number)
+		chapterNumberFmt := lipgloss.NewStyle().Bold(true).Render(chapterNumber)
+		title.WriteString(chapterNumberFmt)
+		title.WriteString(" ")
+	}
 
 	title.WriteString(i.FilterValue())
 
@@ -59,6 +70,26 @@ func (i *Item) Title() string {
 }
 
 func (i *Item) Description() string {
+	var extraInfo strings.Builder
+
+	if *i.showDate {
+		chapterDate := lipgloss.NewStyle().Foreground(color.Secondary).Bold(true).Render(i.chapter.Info().Date.String())
+		extraInfo.WriteString(chapterDate)
+		extraInfo.WriteString(" ")
+	}
+
+	if *i.showGroup {
+		scanlationGroup := lipgloss.NewStyle().Foreground(color.Secondary).Italic(true).Render(i.chapter.Info().ScanlationGroup)
+		extraInfo.WriteString(scanlationGroup)
+	}
+
+	if extraInfo.String() != "" {
+		return fmt.Sprintf(
+			"%s\n%s",
+			extraInfo.String(),
+			i.chapter.Info().URL)
+	}
+
 	return i.chapter.Info().URL
 }
 

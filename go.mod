@@ -16,7 +16,7 @@ require (
 	github.com/ktr0731/go-fuzzyfinder v0.8.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/luevano/gopher-luadoc v0.3.0
-	github.com/luevano/libmangal v0.9.5
+	github.com/luevano/libmangal v0.9.6
 	github.com/luevano/luaprovider v0.8.0
 	github.com/luevano/mangoprovider v0.3.1
 	github.com/muesli/reflow v0.3.0
