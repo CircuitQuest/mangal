@@ -8,11 +8,11 @@ import (
 	"strings"
 )
 
-const _ModeName = "NoneTUIWebScript"
+const _ModeName = "NoneTUIWebScriptInline"
 
-var _ModeIndex = [...]uint8{0, 4, 7, 10, 16}
+var _ModeIndex = [...]uint8{0, 4, 7, 10, 16, 22}
 
-const _ModeLowerName = "nonetuiwebscript"
+const _ModeLowerName = "nonetuiwebscriptinline"
 
 func (i Mode) String() string {
 	i -= 1
@@ -30,9 +30,10 @@ func _ModeNoOp() {
 	_ = x[ModeTUI-(2)]
 	_ = x[ModeWeb-(3)]
 	_ = x[ModeScript-(4)]
+	_ = x[ModeInline-(5)]
 }
 
-var _ModeValues = []Mode{ModeNone, ModeTUI, ModeWeb, ModeScript}
+var _ModeValues = []Mode{ModeNone, ModeTUI, ModeWeb, ModeScript, ModeInline}
 
 var _ModeNameToValueMap = map[string]Mode{
 	_ModeName[0:4]:        ModeNone,
@@ -43,6 +44,8 @@ var _ModeNameToValueMap = map[string]Mode{
 	_ModeLowerName[7:10]:  ModeWeb,
 	_ModeName[10:16]:      ModeScript,
 	_ModeLowerName[10:16]: ModeScript,
+	_ModeName[16:22]:      ModeInline,
+	_ModeLowerName[16:22]: ModeInline,
 }
 
 var _ModeNames = []string{
@@ -50,6 +53,7 @@ var _ModeNames = []string{
 	_ModeName[4:7],
 	_ModeName[7:10],
 	_ModeName[10:16],
+	_ModeName[16:22],
 }
 
 // ModeString retrieves an enum value from the enum constants string name.
