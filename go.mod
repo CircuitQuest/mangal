@@ -8,7 +8,7 @@ require (
 	github.com/charmbracelet/bubbletea v0.25.0
 	github.com/charmbracelet/lipgloss v0.9.1
 	github.com/fatih/camelcase v1.0.0
-	github.com/getkin/kin-openapi v0.122.0
+	github.com/getkin/kin-openapi v0.123.0
 	github.com/go-git/go-git/v5 v5.11.0
 	github.com/itchyny/gojq v0.12.14
 	github.com/json-iterator/go v1.1.12
@@ -16,9 +16,9 @@ require (
 	github.com/ktr0731/go-fuzzyfinder v0.8.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/luevano/gopher-luadoc v0.3.0
-	github.com/luevano/libmangal v0.9.6
+	github.com/luevano/libmangal v0.9.8
 	github.com/luevano/luaprovider v0.8.0
-	github.com/luevano/mangoprovider v0.3.1
+	github.com/luevano/mangoprovider v0.5.4
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -37,7 +37,7 @@ require (
 	github.com/yuin/gopher-lua v1.1.1
 	github.com/zyedidia/generic v1.2.1
 	go.etcd.io/bbolt v1.3.8
-	golang.org/x/exp v0.0.0-20240112132812-db7319d0e0e3
+	golang.org/x/exp v0.0.0-20240119083558-1b970713d09a
 	golang.org/x/term v0.16.0
 )
 
@@ -51,7 +51,7 @@ require (
 	github.com/fatih/color v1.16.0 // indirect
 	github.com/fsnotify/fsnotify v1.7.0 // indirect
 	github.com/go-openapi/jsonpointer v0.20.2 // indirect
-	github.com/go-openapi/swag v0.22.7 // indirect
+	github.com/go-openapi/swag v0.22.8 // indirect
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly/v2 v2.1.0 // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
@@ -61,7 +61,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
-	github.com/luevano/mangodex v0.2.2 // indirect
+	github.com/luevano/mangodex v0.3.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
@@ -87,7 +87,7 @@ require (
 	dario.cat/mergo v1.0.0 // indirect
 	github.com/JohannesKaufmann/html-to-markdown v1.5.0 // indirect
 	github.com/Microsoft/go-winio v0.6.1 // indirect
-	github.com/ProtonMail/go-crypto v0.0.0-20230923063757-afb1ddc0824c // indirect
+	github.com/ProtonMail/go-crypto v1.0.0 // indirect
 	github.com/PuerkitoBio/goquery v1.8.1 // indirect
 	github.com/andybalholm/cascadia v1.3.2 // indirect
 	github.com/atotto/clipboard v0.1.4
@@ -103,7 +103,7 @@ require (
 	github.com/gdamore/tcell/v2 v2.7.0 // indirect
 	github.com/go-git/gcfg v1.5.1-0.20230307220236-3a3c6141e376 // indirect
 	github.com/go-git/go-billy/v5 v5.5.0 // indirect
-	github.com/go-rod/rod v0.114.5 // indirect
+	github.com/go-rod/rod v0.114.6 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/hhrutter/lzw v1.0.0 // indirect
 	github.com/hhrutter/tiff v1.0.1 // indirect

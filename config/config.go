@@ -14,7 +14,7 @@ var Config = config{
 	Icons: reg(Field[string, icon.Type]{
 		Key:         "icons",
 		Default:     icon.TypeASCII,
-		Description: "Icon format to use",
+		Description: "Icon format to use.",
 		Unmarshal: func(s string) (icon.Type, error) {
 			return icon.TypeString(s)
 		},
@@ -26,14 +26,14 @@ var Config = config{
 		ColoredHelp: reg(Field[bool, bool]{
 			Key:         "cli.colored_help",
 			Default:     true,
-			Description: "Enable colors in cli help",
+			Description: "Enable colors in cli help.",
 		}),
 		Mode: configCLIMode{
 			// TODO: change mode to either none or some (new) "inline" mode
 			Default: reg(Field[string, Mode]{
 				Key:         "cli.mode.default",
 				Default:     ModeTUI,
-				Description: "Default mode to use when no subcommand is given",
+				Description: "Default mode to use when no subcommand is given.",
 				Unmarshal: func(s string) (Mode, error) {
 					return ModeString(s)
 				},
@@ -47,7 +47,7 @@ var Config = config{
 		Format: reg(Field[string, libmangal.Format]{
 			Key:         "read.format",
 			Default:     libmangal.FormatPDF,
-			Description: "Format to read chapters in",
+			Description: "Format to read chapters in.",
 			Unmarshal: func(s string) (libmangal.Format, error) {
 				return libmangal.FormatString(s)
 			},
@@ -64,22 +64,22 @@ var Config = config{
 			Local: reg(Field[bool, bool]{
 				Key:         "read.history.local",
 				Default:     true,
-				Description: "Save to local history",
+				Description: "Save to local history.",
 			}),
 		},
 		DownloadOnRead: reg(Field[bool, bool]{
 			Key:         "read.download_on_read",
 			Default:     false,
-			Description: "Download chapter to the default directory when opening for reading",
+			Description: "Download chapter to the default directory when opening for reading.",
 		}),
 	},
 	Download: configDownload{
+		// Don't use config.Config.Download.Path.Get()
+		// as it creates a directory when called, may be unwanted?
 		Path: reg(Field[string, string]{
-			Key: "download.path",
-			// Don't use config.Config.Download.Path.Get()
-			// as it creates a directory when called, may be unwanted?
+			Key:         "download.path",
 			Default:     xdg.UserDirs.Download,
-			Description: "Path where chapters will be downloaded",
+			Description: "Path where chapters will be downloaded.",
 			Unmarshal: func(s string) (string, error) {
 				return expandPath(s)
 			},
@@ -87,7 +87,7 @@ var Config = config{
 		Format: reg(Field[string, libmangal.Format]{
 			Key:         "download.format",
 			Default:     libmangal.FormatPDF,
-			Description: "Format to download chapters in",
+			Description: "Format to download chapters in.",
 			Unmarshal: func(s string) (libmangal.Format, error) {
 				return libmangal.FormatString(s)
 			},
@@ -98,7 +98,7 @@ var Config = config{
 		Strict: reg(Field[bool, bool]{
 			Key:         "download.strict",
 			Default:     true,
-			Description: "If during metadata/banner/cover creation error occurs downloader will return it immediately and chapter won't be downloaded",
+			Description: "If during metadata/banner/cover creation error occurs downloader will return it immediately and chapter won't be downloaded.",
 		}),
 		SkipIfExists: reg(Field[bool, bool]{
 			Key:         "download.skip_if_exists",
@@ -109,23 +109,23 @@ var Config = config{
 			CreateDir: reg(Field[bool, bool]{
 				Key:         "download.manga.create_dir",
 				Default:     true,
-				Description: "Create manga directory",
+				Description: "Create manga directory.",
 			}),
 			Cover: reg(Field[bool, bool]{
 				Key:         "download.manga.cover",
 				Default:     false,
-				Description: "Download manga cover",
+				Description: "Download manga cover.",
 			}),
 			Banner: reg(Field[bool, bool]{
 				Key:         "download.manga.banner",
 				Default:     false,
-				Description: "Download manga banner",
+				Description: "Download manga banner.",
 			}),
 			// TODO: in the future change this to a standardized name, maybe coming from anilist
 			NameTemplate: reg(Field[string, string]{
 				Key:         "download.manga.name_template",
 				Default:     `{{ .Title | sanitize }}`,
-				Description: "Template to use for naming downloaded mangas",
+				Description: "Template to use for naming downloaded mangas.",
 				Validate: func(s string) error {
 					_, err := template.
 						New("").
@@ -145,7 +145,7 @@ var Config = config{
 			NameTemplate: reg(Field[string, string]{
 				Key:         "download.volume.name_template",
 				Default:     `{{ printf "Vol. %d" .Number | sanitize }}`,
-				Description: "Template to use for naming downloaded volumes",
+				Description: "Template to use for naming downloaded volumes.",
 				Validate: func(s string) error {
 					_, err := template.
 						New("").
@@ -160,7 +160,7 @@ var Config = config{
 			NameTemplate: reg(Field[string, string]{
 				Key:         "download.chapter.name_template",
 				Default:     `{{ printf "[%06.1f] %s" .Number .Title | sanitize }}`,
-				Description: "Template to use for naming downloaded chapters",
+				Description: "Template to use for naming downloaded chapters.",
 				Validate: func(s string) error {
 					_, err := template.
 						New("").
@@ -175,12 +175,12 @@ var Config = config{
 			ComicInfoXML: reg(Field[bool, bool]{
 				Key:         "download.metadata.comicinfo_xml",
 				Default:     true,
-				Description: "Generate `ComicInfo.xml` file",
+				Description: "Generate `ComicInfo.xml` file.",
 			}),
 			SeriesJSON: reg(Field[bool, bool]{
 				Key:         "download.metadata.series_json",
 				Default:     true,
-				Description: "Generate `series.json` file",
+				Description: "Generate `series.json` file.",
 			}),
 		},
 	},
@@ -188,33 +188,38 @@ var Config = config{
 		ExpandSingleVolume: reg(Field[bool, bool]{
 			Key:         "tui.expand_single_volume",
 			Default:     true,
-			Description: "Skip selecting volume if there's only one",
+			Description: "Skip selecting volume if there's only one.",
 		}),
 		Chapter: configTUIChapter{
 			// TODO: add validation to the format
 			NumberFormat: reg(Field[string, string]{
 				Key:         "tui.chapter.number_format",
 				Default:     "[%06.1f]",
-				Description: "Format that the chapter number (float 32) should take, for example '[%06.1f]'",
+				Description: "Format that the chapter number (float 32) should take, for example '[%06.1f]'.",
 			}),
 			ShowNumber: reg(Field[bool, bool]{
 				Key:         "tui.chapter.show_number",
 				Default:     true,
-				Description: "If the chapter number should be shown prepended to the chapter title",
+				Description: "If the chapter number should be shown prepended to the chapter title.",
 			}),
 			ShowDate: reg(Field[bool, bool]{
 				Key:         "tui.chapter.show_date",
 				Default:     true,
-				Description: "If the chapter date should be shown in the description",
+				Description: "If the chapter date should be shown in the description.",
 			}),
 			ShowGroup: reg(Field[bool, bool]{
 				Key:         "tui.chapter.show_group",
 				Default:     true,
-				Description: "If the chapter scanlation group should be shown in the description",
+				Description: "If the chapter scanlation group should be shown in the description.",
 			}),
 		},
 	},
 	Providers: configProviders{
+		Parallelism: reg(Field[uint8, uint8]{
+			Key:         "providers.parallelism",
+			Default:     15,
+			Description: "Parallelism to use for the scrapers that support it.",
+		}),
 		Cache: configProvidersCache{
 			TTL: reg(Field[string, string]{
 				Key:         "providers.cache.ttl",
@@ -226,12 +231,24 @@ var Config = config{
 				},
 			}),
 		},
+		Headless: configProvidersHeadless{
+			UseFlaresolverr: reg(Field[bool, bool]{
+				Key:         "providers.headless.use_flaresolverr",
+				Default:     false,
+				Description: "If Flaresolverr should be used for headless providers, requires a flaresolverr service to connect to. providers.headless.flaresolverr_url needs to be set.",
+			}),
+			FlaresolverrURL: reg(Field[string, string]{
+				Key:         "providers.headless.flaresolverr_url",
+				Default:     "http://localhost:8191/v1",
+				Description: "Flaresolverr URL to use for headless providers.",
+			}),
+		},
 	},
 	Library: configLibrary{
 		Path: reg(Field[string, string]{
 			Key:         "library.path",
 			Default:     "",
-			Description: "Path to the manga library. Empty string will fallback to the download.path",
+			Description: "Path to the manga library. Empty string will fallback to the download.path.",
 		}),
 	},
 	Filter: configFilter{

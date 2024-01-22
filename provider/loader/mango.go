@@ -1,20 +1,34 @@
 package loader
 
 import (
+	"encoding/gob"
+	"fmt"
 	"net/http"
 	"time"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangoprovider"
-	"github.com/luevano/mangoprovider/mango"
+	mango "github.com/luevano/mangoprovider"
+	"github.com/luevano/mangoprovider/apis"
+	"github.com/luevano/mangoprovider/scrapers"
 )
 
 func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
+	// httpStoreProvider uses gob, it needs to register custom types
+	gob.Register(mango.Manga{})
+	gob.Register(mango.Volume{})
+	gob.Register(mango.Chapter{})
+	gob.Register(mango.Page{})
+
 	o := mango.Options{
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
 		HTTPStoreProvider: httpStoreProvider,
+		Parallelism:       options.Parallelism,
+		Headless: mango.Headless{
+			UseFlaresolverr: options.HeadlessUseFlaresolverr,
+			FlaresolverrURL: options.HeadlessFlaresolverrURL,
+		},
 		Filter: mango.Filter{
 			NSFW:                    options.NSFW,
 			Language:                options.Language,
@@ -24,6 +38,15 @@ func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
 			ShowUnavailableChapters: options.ShowUnavailableChapters,
 		},
 	}
+	var loaders []libmangal.ProviderLoader
+	loaders = append(loaders, apis.Loaders(o)...)
+	loaders = append(loaders, scrapers.Loaders(o)...)
 
-	return mangoprovider.Loaders(o)
+	for _, loader := range loaders {
+		if loader == nil {
+			return nil, fmt.Errorf("failed while loading providers")
+		}
+	}
+
+	return loaders, nil
 }

@@ -81,11 +81,18 @@ type configTUIChapter struct {
 }
 
 type configProviders struct {
-	Cache configProvidersCache
+	Parallelism *registered[uint8, uint8]
+	Cache       configProvidersCache
+	Headless    configProvidersHeadless
 }
 
 type configProvidersCache struct {
 	TTL *registered[string, string]
+}
+
+type configProvidersHeadless struct {
+	UseFlaresolverr *registered[bool, bool]
+	FlaresolverrURL *registered[string, string]
 }
 
 type configLibrary struct {

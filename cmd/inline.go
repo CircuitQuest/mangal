@@ -33,6 +33,9 @@ func init() {
 	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.TitleChapterNumber, "title-chapter-number", config.Config.Filter.TitleChapterNumber.Get(), "If 'Chapter #' should always be included")
 	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.AvoidDuplicateChapters, "avoid-duplicate-chapters", config.Config.Filter.AvoidDuplicateChapters.Get(), "Only select one chapter when more are found")
 	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.ShowUnavailableChapters, "show-unavailable-chapters", config.Config.Filter.ShowUnavailableChapters.Get(), "If chapter is undownloadable, still show it")
+	inlineCmd.PersistentFlags().Uint8Var(&inlineArgs.LoaderOptions.Parallelism, "parallelism", config.Config.Providers.Parallelism.Get(), "Parallelism to use for the provider if supported")
+	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.HeadlessUseFlaresolverr, "headless-use-flaresolverr", config.Config.Providers.Headless.UseFlaresolverr.Get(), "For providers that use headless, if flaresolverr should be used")
+	inlineCmd.PersistentFlags().StringVar(&inlineArgs.LoaderOptions.HeadlessFlaresolverrURL, "headless-flaresolverr-url", config.Config.Providers.Headless.FlaresolverrURL.Get(), "URL for the flaresolverr URL")
 
 	inlineCmd.MarkPersistentFlagRequired("provider")
 	inlineCmd.MarkPersistentFlagRequired("query")

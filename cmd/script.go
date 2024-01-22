@@ -48,6 +48,9 @@ func init() {
 	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.TitleChapterNumber, "title-chapter-number", config.Config.Filter.TitleChapterNumber.Get(), "If 'Chapter #' should always be included")
 	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.AvoidDuplicateChapters, "avoid-duplicate-chapters", config.Config.Filter.AvoidDuplicateChapters.Get(), "Only select one chapter when more are found")
 	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.ShowUnavailableChapters, "show-unavailable-chapters", config.Config.Filter.ShowUnavailableChapters.Get(), "If chapter is undownloadable, still show it")
+	scriptCmd.PersistentFlags().Uint8Var(&scriptArgs.LoaderOptions.Parallelism, "parallelism", config.Config.Providers.Parallelism.Get(), "Parallelism to use for the provider if supported")
+	scriptCmd.PersistentFlags().BoolVar(&scriptArgs.LoaderOptions.HeadlessUseFlaresolverr, "headless-use-flaresolverr", config.Config.Providers.Headless.UseFlaresolverr.Get(), "For providers that use headless, if flaresolverr should be used")
+	scriptCmd.PersistentFlags().StringVar(&scriptArgs.LoaderOptions.HeadlessFlaresolverrURL, "headless-flaresolverr-url", config.Config.Providers.Headless.FlaresolverrURL.Get(), "URL for the flaresolverr URL")
 
 	scriptCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
 }
