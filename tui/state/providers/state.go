@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/client"
+	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
@@ -93,6 +94,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					if err != nil {
 						return err
 					}
+
+					client.Logger().SetOnLog(func(msg string) {
+						log.Log(msg)
+					})
 
 					return textinput.New(textinput.Options{
 						Title:  base.Title{Text: "Search"},

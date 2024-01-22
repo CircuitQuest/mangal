@@ -10,4 +10,5 @@ var (
 	Warning    = lipgloss.Color("#EBCA89")
 	Error      = lipgloss.Color("#E05252")
 	Loading    = lipgloss.Color("#A49FA5")
+	Viewport   = lipgloss.Color("#008080")
 )

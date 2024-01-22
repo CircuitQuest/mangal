@@ -7,7 +7,7 @@ import (
 )
 
 func Run(state base.State) error {
-	program := tea.NewProgram(model.New(state), tea.WithAltScreen())
+	program := tea.NewProgram(model.New(state), tea.WithAltScreen(), tea.WithMouseCellMotion())
 
 	_, err := program.Run()
 	return err

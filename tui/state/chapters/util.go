@@ -5,11 +5,12 @@ import (
 	"fmt"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapsdownloaded"
 	"github.com/luevano/mangal/tui/state/chapsdownloading"
 	"github.com/luevano/mangal/tui/state/loading"
-	"github.com/luevano/libmangal"
 )
 
 func (s *State) downloadChaptersCmd(chapters []libmangal.Chapter, options libmangal.DownloadOptions) tea.Cmd {
@@ -37,6 +38,7 @@ func (s *State) downloadChaptersCmd(chapters []libmangal.Chapter, options libman
 
 		s.client.Logger().SetOnLog(func(msg string) {
 			state.SetMessage(msg)
+			log.Log(msg)
 		})
 
 		return state
@@ -55,6 +57,7 @@ func (s *State) downloadChapterCmd(ctx context.Context, chapter libmangal.Chapte
 		func() tea.Msg {
 			s.client.Logger().SetOnLog(func(msg string) {
 				loadingState.SetMessage(msg)
+				log.Log(msg)
 			})
 
 			_, err := s.client.DownloadChapter(ctx, chapter, options)

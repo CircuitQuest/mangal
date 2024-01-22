@@ -13,6 +13,8 @@ import (
 	"github.com/zyedidia/generic/stack"
 )
 
+var _ base.Model = (*Model)(nil)
+
 type Model struct {
 	state   base.State
 	history *stack.Stack[base.State]
@@ -34,7 +36,7 @@ func (m *Model) ShortHelp() []key.Binding {
 }
 
 func (m *Model) FullHelp() [][]key.Binding {
-	keys := [][]key.Binding{{m.keyMap.Back, m.keyMap.Help}}
+	keys := [][]key.Binding{{m.keyMap.Back, m.keyMap.Help, m.keyMap.Quit, m.keyMap.Log}}
 	return append(keys, m.state.KeyMap().FullHelp()...)
 }
 

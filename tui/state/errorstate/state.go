@@ -28,7 +28,6 @@ func (s *State) KeyMap() help.KeyMap {
 }
 
 func (s *State) Title() base.Title {
-	// TODO: red bg
 	return base.Title{Text: "Error", Background: color.Error}
 }
 

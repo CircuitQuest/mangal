@@ -4,8 +4,8 @@ import (
 	"context"
 	"io"
 
-	"github.com/luevano/mangal/script/lib"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/script/lib"
 	lua "github.com/yuin/gopher-lua"
 )
 

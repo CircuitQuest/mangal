@@ -9,6 +9,7 @@ import (
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/errorstate"
+	"github.com/luevano/mangal/tui/state/viewport"
 	"github.com/pkg/errors"
 )
 
@@ -31,6 +32,8 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.help.ShowAll = !m.help.ShowAll
 			m.resize(m.size)
 			return m, nil
+		case key.Matches(msg, m.keyMap.Log):
+			return m, m.pushState(viewport.New("Logs", log.Aggregate.String(), m.StateSize()))
 		}
 	case base.MsgBack:
 		// this msg can override Backable() output
