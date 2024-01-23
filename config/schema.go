@@ -81,7 +81,7 @@ type configTUIChapter struct {
 }
 
 type configProviders struct {
-	Parallelism *registered[uint8, uint8]
+	Parallelism *registered[int64, uint8]
 	Cache       configProvidersCache
 	Headless    configProvidersHeadless
 }

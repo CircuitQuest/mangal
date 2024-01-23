@@ -215,7 +215,7 @@ var Config = config{
 		},
 	},
 	Providers: configProviders{
-		Parallelism: reg(Field[uint8, uint8]{
+		Parallelism: reg(Field[int64, uint8]{
 			Key:         "providers.parallelism",
 			Default:     15,
 			Description: "Parallelism to use for the scrapers that support it.",
