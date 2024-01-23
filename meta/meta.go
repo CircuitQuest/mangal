@@ -7,5 +7,5 @@ var Logo string
 
 const (
 	AppName = "mangal"
-	Version = "5.3.4"
+	Version = "5.3.5"
 )
