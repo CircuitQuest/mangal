@@ -1,14 +1,17 @@
 #!/usr/bin/env just --justfile
+set positional-arguments
 
 go-mod := `go list`
+
+default: run
+
+# just run without compiling/installling
+run *args='':
+    go run . $@
 
 # install mangal to the ~/go/bin
 install:
     go install -ldflags "-s -w" .
-
-# generate and install mangal
-full:
-    generate && install
 
 # build
 build:
@@ -27,6 +30,9 @@ generate:
 update:
     go get -u
     go mod tidy -v
+
+# generate and install mangal
+full: update generate test install
 
 # publish
 publish tag:
