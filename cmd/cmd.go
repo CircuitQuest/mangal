@@ -100,6 +100,9 @@ func Execute() {
 		})
 	}
 
+	root.SetOut(os.Stdout)
+	root.SetErr(os.Stderr)
+	root.SetIn(os.Stdin)
 	if err := root.Execute(); err != nil {
 		errorf(root, err.Error())
 	}

@@ -1,17 +1,26 @@
 package cmd
 
 import (
-	"os"
-	"os/exec"
+	"encoding/json"
+	"fmt"
 	"strconv"
 	"strings"
-	"text/template"
 
-	"github.com/kballard/go-shellquote"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )
+
+func completionConfigKeys(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
+	keys := config.Keys()
+
+	filtered := lo.Filter(keys, func(key string, _ int) bool {
+		return strings.HasPrefix(key, toComplete)
+	})
+
+	return filtered, cobra.ShellCompDirectiveDefault
+}
 
 func init() {
 	subcommands = append(subcommands, configCmd)
@@ -24,13 +33,16 @@ var configCmd = &cobra.Command{
 }
 
 var configInfoArgs = struct {
-	JSON bool
+	JSON  bool
+	Short bool
 }{}
 
 func init() {
 	configCmd.AddCommand(configInfoCmd)
 
 	configInfoCmd.Flags().BoolVarP(&configInfoArgs.JSON, "json", "j", false, "JSON output")
+	configInfoCmd.Flags().BoolVarP(&configInfoArgs.Short, "short", "s", false, "Only print 'key: value'")
+	configInfoCmd.MarkFlagsMutuallyExclusive("json", "short")
 }
 
 var configInfoCmd = &cobra.Command{
@@ -38,47 +50,52 @@ var configInfoCmd = &cobra.Command{
 	Short: "Show configuration information",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		if configInfoArgs.JSON {
-			// TODO
-			panic("unimplemented")
+		type configEntry struct {
+			Value       any    `json:"value"`
+			Default     any    `json:"default"`
+			Description string `json:"description"`
 		}
 
-		fieldTemplate := template.Must(template.New("field").Funcs(map[string]any{
-			"get": func(key string) any {
-				return config.Get(key)
-			},
-		}).Parse(`
-{{ .Description }}
-
-Key: {{ .Key }}
-Value: {{ get .Key }}
-Default: {{ .Default }}
-`))
-
-		var out strings.Builder
+		configEntries := map[string]configEntry{}
 		for _, field := range config.Fields {
-			var sb strings.Builder
-			if err := fieldTemplate.Execute(&sb, field); err != nil {
-				errorf(cmd, err.Error())
+			configEntries[field.Key] = configEntry{
+				Value:       config.Get(field.Key),
+				Default:     field.Default,
+				Description: field.Description,
 			}
-
-			out.WriteString(sb.String())
 		}
 
-		// TODO: ???
-		if pager := os.Getenv("PAGER"); pager != "" {
-			cmdWithArgs, err := shellquote.Split(pager)
+		if configInfoArgs.JSON {
+			jsonEntries, err := json.Marshal(configEntries)
 			if err != nil {
-				return
-			}
-
-			pagerCmd := exec.Command(cmdWithArgs[0], cmdWithArgs[1:]...)
-			pagerCmd.Stdin = strings.NewReader(out.String())
-			if err := pagerCmd.Run(); err != nil {
 				errorf(cmd, err.Error())
 			}
-		} else {
-			cmd.Print(out.String())
+			cmd.Println(string(jsonEntries))
+			return
+		}
+
+		// TODO: change theme?
+		for key, entry := range configEntries {
+			if configInfoArgs.Short {
+				cmd.Printf("%s:%s\n",
+					style.Normal.Viewport.Render(key),
+					style.Normal.Secondary.Render(fmt.Sprintf("%v", entry.Value)),
+				)
+				continue
+			}
+			cmd.Println(style.Bold.Accent.Render(key))
+			cmd.Printf("  %s %s\n",
+				style.Normal.Viewport.Render("Description:"),
+				style.Normal.Secondary.Render(entry.Description),
+			)
+			cmd.Printf("  %s %s\n",
+				style.Normal.Viewport.Render("Value:"),
+				style.Normal.Secondary.Render(fmt.Sprintf("%v", entry.Value)),
+			)
+			cmd.Printf("  %s %s\n",
+				style.Normal.Viewport.Render("Default:"),
+				style.Normal.Secondary.Render(fmt.Sprintf("%v", entry.Default)),
+			)
 		}
 	},
 }
@@ -105,19 +122,11 @@ func init() {
 }
 
 var configGetCmd = &cobra.Command{
-	Use:           "get key",
-	Short:         "Get config value by key",
-	Args:          cobra.ExactArgs(1),
-	SilenceErrors: true,
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		keys := config.Keys()
-
-		filtered := lo.Filter(keys, func(key string, _ int) bool {
-			return strings.HasPrefix(key, toComplete)
-		})
-
-		return filtered, cobra.ShellCompDirectiveDefault
-	},
+	Use:               "get key",
+	Short:             "Get config value by key",
+	Args:              cobra.ExactArgs(1),
+	SilenceErrors:     true,
+	ValidArgsFunction: completionConfigKeys,
 	Run: func(cmd *cobra.Command, args []string) {
 		key := args[0]
 		if !config.Exists(key) {
@@ -133,24 +142,17 @@ func init() {
 }
 
 var configSetCmd = &cobra.Command{
-	Use:           "set key value",
-	Short:         "Sets value to the config key",
-	Args:          cobra.ExactArgs(2),
-	SilenceErrors: true,
-	ValidArgsFunction: func(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-		keys := config.Keys()
-
-		filtered := lo.Filter(keys, func(key string, _ int) bool {
-			return strings.HasPrefix(key, toComplete)
-		})
-
-		return filtered, cobra.ShellCompDirectiveDefault
-	},
+	Use:               "set key value",
+	Short:             "Sets value to the config key",
+	Args:              cobra.ExactArgs(2),
+	SilenceErrors:     true,
+	ValidArgsFunction: completionConfigKeys,
 	Run: func(cmd *cobra.Command, args []string) {
 		key, value := args[0], args[1]
 
 		var converted any
 
+		// All of this seems innecessary.
 		switch config.Get(key).(type) {
 		case nil:
 			errorf(cmd, "unknown config key %q", key)

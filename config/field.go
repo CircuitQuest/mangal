@@ -6,9 +6,9 @@ import (
 	"github.com/spf13/viper"
 )
 
-var Fields = make(map[string]entry)
+var Fields = make(map[string]Entry)
 
-type entry struct {
+type Entry struct {
 	Key         string
 	Description string
 	Default     any
@@ -66,7 +66,7 @@ func reg[Raw, Value any](field Field[Raw, Value]) *registered[Raw, Value] {
 		value: field.Default,
 	}
 
-	Fields[field.Key] = entry{
+	Fields[field.Key] = Entry{
 		Key:         field.Key,
 		Description: field.Description,
 		Default:     field.Default,
