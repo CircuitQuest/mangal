@@ -5,7 +5,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/luevano/mangal/tui/util"
-	"github.com/luevano/mangal/ui/icon"
+	"github.com/luevano/mangal/theme/icon"
 )
 
 func New(options Options) *State {

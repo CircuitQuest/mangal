@@ -8,10 +8,9 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/stringutil"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/ui/color"
 	"github.com/skratchdot/open-golang/open"
 )
 
@@ -79,9 +78,7 @@ func (s *State) View(model base.Model) string {
 	)
 
 	if len(s.options.Failed) == 0 {
-		return lipgloss.
-			NewStyle().
-			Foreground(color.Success).
+		return style.Normal.Success.
 			Render(fmt.Sprintf(
 				"%s downloaded successfully!",
 				stringutil.Quantify(succeed, "chapter", "chapters"),

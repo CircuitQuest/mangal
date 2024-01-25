@@ -3,9 +3,8 @@ package chapsdownloading
 import (
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/ui/color"
+	"github.com/luevano/mangal/theme/style"
 )
 
 func New(chapters []libmangal.Chapter, options Options) *State {
@@ -16,7 +15,7 @@ func New(chapters []libmangal.Chapter, options Options) *State {
 		progress: progress.New(),
 		spinner: spinner.New(
 			spinner.WithSpinner(spinner.Dot),
-			spinner.WithStyle(lipgloss.NewStyle().Foreground(color.Accent).Bold(true)),
+			spinner.WithStyle(style.Bold.Accent),
 		),
 		keyMap: KeyMap{},
 	}

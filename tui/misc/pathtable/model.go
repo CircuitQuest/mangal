@@ -10,7 +10,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/theme/style"
 )
 
 type Model struct {
@@ -70,13 +70,15 @@ func (m *Model) View() string {
 		return ""
 	}
 
-	style := lipgloss.NewStyle().Margin(1, 2)
+	style := style.Normal.Base.Copy().Margin(1, 2)
 
 	return style.Render(strings.Join([]string{
 		m.table.View(),
 		"",
 		m.help.View(&m.keyMap),
 		"",
-		lipgloss.NewStyle().Italic(true).Faint(true).Render(m.msg),
+		m.msg,
+		// This should be already setup in new.go
+		// lipgloss.NewStyle().Italic(true).Faint(true).Render(m.msg),
 	}, "\n"))
 }

@@ -2,7 +2,8 @@ package viewport
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/ui/color"
+	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/theme/style"
 )
 
 // Styles for the viewport.
@@ -30,21 +31,18 @@ func DefaultStyles() Styles {
 			BorderStyle(borderRight),
 		Info: boxStyle.Copy().
 			BorderStyle(borderLeft),
-		Line: lipgloss.
-			NewStyle().
-			Foreground(color.Viewport),
+		Line: style.Normal.Viewport,
 		Viewport: boxStyle.Copy().
 			BorderStyle(lipgloss.RoundedBorder()).
 			BorderLeft(true).
 			BorderRight(true),
+		// TODO: use style.Trim?
 		Content: func(maxSize int) lipgloss.Style {
-			return lipgloss.
-				NewStyle().
+			return style.Normal.Base.
 				Width(maxSize)
 		},
 		ContentWrapper: func(height, width int) lipgloss.Style {
-			return lipgloss.
-				NewStyle().
+			return style.Normal.Base.
 				Padding(height, width)
 		},
 	}

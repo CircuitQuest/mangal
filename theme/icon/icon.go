@@ -2,7 +2,8 @@ package icon
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/ui/color"
+	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/theme/style"
 )
 
 type icon struct {
@@ -13,9 +14,7 @@ type icon struct {
 type symbols map[Type]string
 
 func (i icon) String() string {
-	return lipgloss.
-		NewStyle().
-		Bold(true).
+	return style.Bold.Base.Copy().
 		Foreground(i.color).
 		Render(i.symbols[currentType])
 }

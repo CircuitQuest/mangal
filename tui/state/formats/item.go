@@ -3,10 +3,9 @@ package formats
 import (
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/ui/color"
+	"github.com/luevano/mangal/theme/style"
 )
 
 type Item struct {
@@ -24,12 +23,12 @@ func (i Item) Title() string {
 
 	if i.IsSelectedForDownloading() {
 		sb.WriteString(" ")
-		sb.WriteString(lipgloss.NewStyle().Foreground(color.Accent).Render("Download"))
+		sb.WriteString(style.Bold.Accent.Render("Download"))
 	}
 
 	if i.IsSelectedForReading() {
 		sb.WriteString(" ")
-		sb.WriteString(lipgloss.NewStyle().Foreground(color.Accent).Render("Read"))
+		sb.WriteString(style.Bold.Accent.Render("Read"))
 	}
 
 	return sb.String()

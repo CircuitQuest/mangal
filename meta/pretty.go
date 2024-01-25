@@ -7,7 +7,7 @@ import (
 	"text/template"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/ui/color"
+	"github.com/luevano/mangal/theme/style"
 )
 
 type versioned struct {
@@ -63,7 +63,7 @@ https://github.com/luevano/mangal
 
 	return lipgloss.JoinVertical(
 		lipgloss.Center,
-		lipgloss.NewStyle().Bold(true).Foreground(color.Accent).Render(Logo),
+		style.Bold.Accent.Render(Logo),
 		// strings.Repeat("  \n", lipgloss.Height(Logo)),
 		info.String(),
 	)

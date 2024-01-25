@@ -5,9 +5,8 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/template/util"
-	"github.com/luevano/mangal/ui/color"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )
@@ -31,13 +30,9 @@ var templatesFuncsCmd = &cobra.Command{
 	Short: "Show available functions",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: change theme?
-		keyStyle := lipgloss.NewStyle().Bold(true).Foreground(color.Accent)
-		descriptionStyle := lipgloss.NewStyle().Italic(true)
-
 		for k, v := range util.Funcs {
-			cmd.Println(keyStyle.Render(k))
-			cmd.Println(descriptionStyle.Render(v.Description))
+			cmd.Println(style.Bold.Accent.Render(k))
+			cmd.Println(style.Normal.Secondary.Render(v.Description))
 			cmd.Println()
 		}
 	},

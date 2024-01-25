@@ -11,7 +11,7 @@ import (
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
-	"github.com/luevano/mangal/ui/icon"
+	"github.com/luevano/mangal/theme/icon"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )

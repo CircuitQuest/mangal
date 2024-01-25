@@ -10,9 +10,9 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/stringutil"
+	"github.com/luevano/mangal/theme/icon"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/ui/color"
-	"github.com/luevano/mangal/ui/icon"
 )
 
 var _ base.State = (*State)(nil)
@@ -114,7 +114,7 @@ func (s *State) View(model base.Model) string {
 		s.currentIdx+1, len(s.chapters),
 		s.progress.ViewAs(float64(s.currentIdx)/float64(len(s.chapters))),
 		spinnerView,
-		lipgloss.NewStyle().Foreground(color.Secondary).Render(stringutil.Trim(s.message, s.size.Width-lipgloss.Width(spinnerView)-1)),
+		style.Normal.Secondary.Render(stringutil.Trim(s.message, s.size.Width-lipgloss.Width(spinnerView)-1)),
 	)
 }
 

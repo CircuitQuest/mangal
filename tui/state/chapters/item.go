@@ -5,13 +5,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
-	"github.com/luevano/mangal/ui/color"
-	"github.com/luevano/mangal/ui/icon"
+	"github.com/luevano/mangal/theme/icon"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -33,7 +32,7 @@ func (i *Item) Title() string {
 
 	if *i.showChapterNumber {
 		chapterNumber := fmt.Sprintf(config.Config.TUI.Chapter.NumberFormat.Get(), i.chapter.Info().Number)
-		chapterNumberFmt := lipgloss.NewStyle().Bold(true).Render(chapterNumber)
+		chapterNumberFmt := style.Bold.Base.Render(chapterNumber)
 		title.WriteString(chapterNumberFmt)
 		title.WriteString(" ")
 	}
@@ -61,8 +60,7 @@ func (i *Item) Title() string {
 			}
 
 			title.WriteString(" ")
-			formatStyle := lipgloss.NewStyle().Bold(true).Foreground(color.Warning)
-			title.WriteString(formatStyle.Render(format.String()))
+			title.WriteString(style.Bold.Warning.Render(format.String()))
 		}
 	}
 
@@ -73,13 +71,13 @@ func (i *Item) Description() string {
 	var extraInfo strings.Builder
 
 	if *i.showDate {
-		chapterDate := lipgloss.NewStyle().Foreground(color.Secondary).Bold(true).Render(i.chapter.Info().Date.String())
+		chapterDate := style.Bold.Secondary.Render(i.chapter.Info().Date.String())
 		extraInfo.WriteString(chapterDate)
 		extraInfo.WriteString(" ")
 	}
 
 	if *i.showGroup {
-		scanlationGroup := lipgloss.NewStyle().Foreground(color.Secondary).Italic(true).Render(i.chapter.Info().ScanlationGroup)
+		scanlationGroup := style.Italic.Secondary.Render(i.chapter.Info().ScanlationGroup)
 		extraInfo.WriteString(scanlationGroup)
 	}
 

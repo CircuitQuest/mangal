@@ -5,9 +5,9 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/ui/color"
 	"github.com/muesli/reflow/wordwrap"
 )
 
@@ -66,7 +66,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 func (s *State) View(model base.Model) string {
 	wrapped := wordwrap.String(s.error.Error(), int(float64(s.size.Width)/1.2))
 
-	return lipgloss.NewStyle().Foreground(color.Error).Render(wrapped)
+	return style.Normal.Error.Render(wrapped)
 }
 
 func (s *State) Init(model base.Model) tea.Cmd {

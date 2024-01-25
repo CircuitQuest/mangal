@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/ui/icon"
+	"github.com/luevano/mangal/theme/icon"
 )
 
 var _ base.State = (*State)(nil)

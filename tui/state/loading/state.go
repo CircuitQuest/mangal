@@ -6,9 +6,9 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/ui/color"
 )
 
 var _ base.State = (*State)(nil)
@@ -60,8 +60,8 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 
 func (s *State) View(model base.Model) string {
 	return fmt.Sprint(
-		lipgloss.NewStyle().Foreground(color.Accent).Render(s.spinner.View()),
-		lipgloss.NewStyle().Foreground(color.Secondary).Render(s.message),
+		style.Bold.Accent.Render(s.spinner.View()),
+		style.Normal.Secondary.Render(s.message),
 	)
 }
 

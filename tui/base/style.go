@@ -2,7 +2,8 @@ package base
 
 import (
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/ui/color"
+	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/theme/style"
 )
 
 type Styles struct {
@@ -14,21 +15,15 @@ type Styles struct {
 }
 
 func DefaultStyles() Styles {
+	// Flipped Accent
+	tempAccent := style.Bold.Accent.Copy().Background(color.Background)
 	return Styles{
-		Title: lipgloss.
-			NewStyle().
-			Bold(true).
-			Background(color.Accent).
-			Foreground(color.Background).
+		Title: style.FlipGrounds(tempAccent).
 			Padding(0, 1),
-		TitleBar: lipgloss.
-			NewStyle().
+		TitleBar: style.Normal.Base.Copy().
 			Padding(0, 0, 1, 2),
-		Subtitle: lipgloss.
-			NewStyle().
-			Foreground(color.Secondary),
-		HelpBar: lipgloss.
-			NewStyle().
+		Subtitle: style.Normal.Secondary,
+		HelpBar: style.Normal.Base.Copy().
 			Padding(0, 1),
 	}
 }

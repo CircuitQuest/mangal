@@ -4,11 +4,10 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/util"
-	"github.com/luevano/mangal/ui/color"
 )
 
 func Run() error {
@@ -62,9 +61,9 @@ func newModel() *Model {
 		table.WithFocused(true),
 		table.WithHeight(len(rows)),
 		table.WithStyles(table.Styles{
-			Header:   lipgloss.NewStyle().Bold(true).Foreground(color.Accent),
-			Cell:     lipgloss.NewStyle(),
-			Selected: lipgloss.NewStyle().Italic(true).Foreground(color.Accent),
+			Header:   style.Bold.Accent,
+			Cell:     style.Normal.Base,
+			Selected: style.Italic.Accent,
 		}),
 	)
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/lipgloss"
 	"github.com/fatih/camelcase"
+	"github.com/luevano/mangal/theme/style"
 	"golang.org/x/exp/constraints"
 )
 
@@ -33,7 +34,7 @@ func Trim(s string, max int) string {
 		return s
 	}
 
-	trimmed := lipgloss.NewStyle().MaxWidth(max - 1).Render(s)
+	trimmed := style.Trim(max - 1).Render(s)
 
 	// get index of \x1b
 	idx := strings.LastIndex(trimmed, "\x1b")

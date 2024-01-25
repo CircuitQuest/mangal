@@ -7,7 +7,7 @@ import (
 	"github.com/adrg/xdg"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/template/util"
-	"github.com/luevano/mangal/ui/icon"
+	"github.com/luevano/mangal/theme/icon"
 )
 
 var Config = config{
