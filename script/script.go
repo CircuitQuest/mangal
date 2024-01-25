@@ -5,8 +5,8 @@ import (
 	"io"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/mangal/client"
+	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/script/lib"
 	lua "github.com/yuin/gopher-lua"
@@ -54,7 +54,7 @@ func Run(ctx context.Context, args Args, script io.Reader) error {
 	addVarsTable(state, args.Variables)
 	addLibraries(state, lib.Options{
 		Client:  client,
-		Anilist: anilist.Client,
+		Anilist: anilist.Anilist,
 	})
 
 	lFunction, err := state.Load(script, "script")

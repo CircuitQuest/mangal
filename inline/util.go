@@ -9,7 +9,7 @@ import (
 	"strings"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/anilist"
+	"github.com/luevano/mangal/client/anilist"
 )
 
 func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult, error) {
@@ -74,12 +74,12 @@ func assignAnilist(ctx context.Context, args Args, mangaResults *[]MangaResult) 
 func anilistSearch[T string | int](ctx context.Context, queryID T) (aniManga libmangal.AnilistManga, found bool, err error) {
 	switch v := reflect.ValueOf(queryID); v.Kind() {
 	case reflect.String:
-		aniManga, found, err = anilist.Client.FindClosestManga(ctx, v.String())
+		aniManga, found, err = anilist.Anilist.FindClosestManga(ctx, v.String())
 		if err != nil {
 			return
 		}
 	case reflect.Int:
-		aniManga, found, err = anilist.Client.GetByID(ctx, int(v.Int()))
+		aniManga, found, err = anilist.Anilist.GetByID(ctx, int(v.Int()))
 		if err != nil {
 			return
 		}

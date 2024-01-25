@@ -5,7 +5,7 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/luevano/mangal/template/util"
+	"github.com/luevano/mangal/template/funcs"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
@@ -30,7 +30,7 @@ var templatesFuncsCmd = &cobra.Command{
 	Short: "Show available functions",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
-		for k, v := range util.Funcs {
+		for k, v := range funcs.Funcs {
 			cmd.Println(style.Bold.Accent.Render(k))
 			cmd.Println(style.Normal.Secondary.Render(v.Description))
 			cmd.Println()
@@ -62,10 +62,11 @@ var templatesExecCmd = &cobra.Command{
 	Use:   "exec template...",
 	Short: "Execute template",
 	Args:  cobra.MinimumNArgs(1),
+	// TODO: fix issue when using spaces in -v
 	Run: func(cmd *cobra.Command, args []string) {
 		tmpl, err := template.
 			New("exec").
-			Funcs(util.FuncMap).
+			Funcs(funcs.FuncMap).
 			Parse(strings.Join(args, " "))
 		if err != nil {
 			errorf(cmd, err.Error())

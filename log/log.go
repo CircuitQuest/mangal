@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/util/afs"
 	"github.com/rs/zerolog"
 	"github.com/samber/lo"
 )

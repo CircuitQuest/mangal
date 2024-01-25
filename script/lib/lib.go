@@ -4,11 +4,11 @@ import (
 	luadoc "github.com/luevano/gopher-luadoc"
 	"github.com/luevano/libmangal"
 	sdk "github.com/luevano/luaprovider/lib"
-	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/script/lib/client"
 	"github.com/luevano/mangal/script/lib/json"
 	"github.com/luevano/mangal/script/lib/prompt"
+	"github.com/luevano/mangal/util/afs"
 	lua "github.com/yuin/gopher-lua"
 )
 

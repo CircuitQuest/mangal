@@ -6,11 +6,11 @@ import (
 	"strings"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/theme/style"
+	"github.com/luevano/mangal/util/afs"
 	"github.com/zyedidia/generic/set"
 )
 

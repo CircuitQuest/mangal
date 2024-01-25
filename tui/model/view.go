@@ -4,7 +4,7 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/stringutil"
+	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/muesli/reflow/wordwrap"
 )
 

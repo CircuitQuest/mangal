@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/afs"
-	"github.com/luevano/mangal/cache/bbolt"
 	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/util/afs"
+	"github.com/luevano/mangal/util/cache/bbolt"
 	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/encoding"
 )
 
-var Client = newAnilist()
+var Anilist = newAnilist()
 
 func newAnilist() *libmangal.Anilist {
 	newPersistentStore := func(name string, ttl time.Duration) (gokv.Store, error) {

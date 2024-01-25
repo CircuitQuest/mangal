@@ -2,13 +2,14 @@ package listwrapper
 
 import (
 	"fmt"
+	"time"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/mangal/stringutil"
 	"github.com/luevano/mangal/tui/base"
-	"time"
+	stringutil "github.com/luevano/mangal/util/string"
 )
 
 var _ base.State = (*State)(nil)

@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/mangal/client"
+	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/config"
 )
 
@@ -34,7 +34,7 @@ func RunDownload(ctx context.Context, args Args) error {
 
 	// TODO: fix this (should be 0), include it in json.go
 	if args.AnilistID != -1 {
-		err := anilist.Client.BindTitleWithID(mangaResults[0].Manga.Info().AnilistSearch, args.AnilistID)
+		err := anilist.Anilist.BindTitleWithID(mangaResults[0].Manga.Info().AnilistSearch, args.AnilistID)
 		if err != nil {
 			return err
 		}

@@ -5,9 +5,9 @@ import (
 	"path/filepath"
 	"time"
 
-	"github.com/luevano/mangal/cache/bbolt"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/util/cache/bbolt"
 	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/encoding"
 )

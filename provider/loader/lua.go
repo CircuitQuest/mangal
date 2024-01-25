@@ -9,7 +9,7 @@ import (
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/luaprovider"
-	"github.com/luevano/mangal/afs"
+	"github.com/luevano/mangal/util/afs"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
 )

@@ -7,7 +7,7 @@ import (
 	"strings"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/anilist"
+	"github.com/luevano/mangal/client/anilist"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 )
@@ -59,7 +59,7 @@ var anilistAuthCmd = &cobra.Command{
 		}
 		code = strings.TrimSpace(code)
 
-		err = anilist.Client.Authorize(context.Background(), libmangal.AnilistLoginCredentials{
+		err = anilist.Anilist.Authorize(context.Background(), libmangal.AnilistLoginCredentials{
 			ID:     id,
 			Secret: secret,
 			Code:   code,
@@ -81,7 +81,7 @@ var anilistLogoutCmd = &cobra.Command{
 	Use:   "logout",
 	Short: "Logout from anilist",
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := anilist.Client.Logout(); err != nil {
+		if err := anilist.Anilist.Logout(); err != nil {
 			errorf(cmd, err.Error())
 		}
 

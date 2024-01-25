@@ -5,16 +5,16 @@ import (
 	"strings"
 	"text/template"
 
-	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/template/util"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/template/funcs"
 )
 
 func Chapter(_ string, chapter libmangal.Chapter) string {
 	var sb strings.Builder
 
 	err := template.Must(template.New("chapter").
-		Funcs(util.FuncMap).
+		Funcs(funcs.FuncMap).
 		Parse(config.Config.Download.Chapter.NameTemplate.Get())).
 		Execute(&sb, chapter.Info())
 
@@ -29,7 +29,7 @@ func Manga(_ string, manga libmangal.Manga) string {
 	var sb strings.Builder
 
 	err := template.Must(template.New("manga").
-		Funcs(util.FuncMap).
+		Funcs(funcs.FuncMap).
 		Parse(config.Config.Download.Manga.NameTemplate.Get())).
 		Execute(&sb, manga.Info())
 
@@ -44,7 +44,7 @@ func Volume(_ string, manga libmangal.Volume) string {
 	var sb strings.Builder
 
 	err := template.Must(template.New("volume").
-		Funcs(util.FuncMap).
+		Funcs(funcs.FuncMap).
 		Parse(config.Config.Download.Volume.NameTemplate.Get())).
 		Execute(&sb, manga.Info())
 

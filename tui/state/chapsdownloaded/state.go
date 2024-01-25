@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/mangal/stringutil"
+	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/skratchdot/open-golang/open"

@@ -6,7 +6,7 @@ import (
 
 	"github.com/adrg/xdg"
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/template/util"
+	"github.com/luevano/mangal/template/funcs"
 	"github.com/luevano/mangal/theme/icon"
 )
 
@@ -129,7 +129,7 @@ var Config = config{
 				Validate: func(s string) error {
 					_, err := template.
 						New("").
-						Funcs(util.FuncMap).
+						Funcs(funcs.FuncMap).
 						Parse(s)
 
 					return err
@@ -149,7 +149,7 @@ var Config = config{
 				Validate: func(s string) error {
 					_, err := template.
 						New("").
-						Funcs(util.FuncMap).
+						Funcs(funcs.FuncMap).
 						Parse(s)
 
 					return err
@@ -164,7 +164,7 @@ var Config = config{
 				Validate: func(s string) error {
 					_, err := template.
 						New("").
-						Funcs(util.FuncMap).
+						Funcs(funcs.FuncMap).
 						Parse(s)
 
 					return err
