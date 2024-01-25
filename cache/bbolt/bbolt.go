@@ -1,11 +1,12 @@
 package bbolt
 
 import (
-	bolt "go.etcd.io/bbolt"
 	"time"
 
+	"github.com/luevano/mangal/path"
 	"github.com/philippgille/gokv/encoding"
 	"github.com/philippgille/gokv/util"
+	bolt "go.etcd.io/bbolt"
 )
 
 const ttlBucketName = "ttl"
@@ -169,7 +170,7 @@ func NewStore(options Options) (Store, error) {
 	}
 
 	// Open DB
-	db, err := bolt.Open(options.Path, 0600, nil)
+	db, err := bolt.Open(options.Path, path.ModeDB, nil)
 	if err != nil {
 		return result, err
 	}

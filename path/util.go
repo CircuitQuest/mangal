@@ -9,6 +9,7 @@ import (
 const (
 	ModeDir  = 0755
 	ModeFile = 0644
+	ModeDB   = 0600
 )
 
 func createDirIfAbsent(path string) {
