@@ -64,12 +64,11 @@ func getLoaders(bundleID, dir string) ([]libmangal.ProviderLoader, error) {
 	infoFile, err := afs.Afero.OpenFile(
 		filepath.Join(dir, info.Filename),
 		os.O_RDONLY,
-		0o755,
+		path.ModeDir,
 	)
 	if err != nil {
 		return nil, err
 	}
-
 	defer infoFile.Close()
 
 	providerInfo, err := info.New(infoFile)

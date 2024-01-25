@@ -10,6 +10,7 @@ import (
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/meta"
+	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/script"
 	"github.com/luevano/mangal/script/lib"
@@ -63,7 +64,7 @@ var scriptCmd = &cobra.Command{
 			file, err := afs.Afero.OpenFile(
 				scriptArgs.File,
 				os.O_RDONLY,
-				0o755,
+				path.ModeDir,
 			)
 			if err != nil {
 				errorf(cmd, err.Error())
@@ -97,7 +98,7 @@ var scriptDocCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 		filename := fmt.Sprint(meta.AppName, ".lua")
 		// TODO: fix mode?
-		err := afs.Afero.WriteFile(filename, []byte(lib.LuaDoc()), 0o755)
+		err := afs.Afero.WriteFile(filename, []byte(lib.LuaDoc()), path.ModeDir)
 		if err != nil {
 			errorf(cmd, "Error writting library specs: %s", err.Error())
 		}

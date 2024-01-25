@@ -23,14 +23,11 @@ import (
 )
 
 // TODO: add actual options and pass them
-type (
-	AddOptions struct {
-		URL *url.URL
-	}
+type AddOptions struct {
+	URL *url.URL
+}
 
-	UpdateOptions struct {
-	}
-)
+type UpdateOptions struct{}
 
 func Add(ctx context.Context, options AddOptions) error {
 	tempDir, err := afs.Afero.TempDir(path.TempDir(), "")
@@ -48,7 +45,7 @@ func Add(ctx context.Context, options AddOptions) error {
 		return err
 	}
 
-	infoFile, err := afs.Afero.OpenFile(filepath.Join(tempDir, info.Filename), os.O_RDONLY, 0755)
+	infoFile, err := afs.Afero.OpenFile(filepath.Join(tempDir, info.Filename), os.O_RDONLY, path.ModeDir)
 	if err != nil {
 		return err
 	}
@@ -145,7 +142,7 @@ func New(options NewOptions) error {
 		return fmt.Errorf("unsupported provider type %s", options.Type)
 	}
 
-	err := files.WriteFile("README.md", []byte(options.Markdown()), 0755)
+	err := files.WriteFile("README.md", []byte(options.Markdown()), path.ModeDir)
 	if err != nil {
 		return err
 	}
@@ -154,7 +151,7 @@ func New(options NewOptions) error {
 }
 
 func newLua(af afero.Afero, information info.Info) error {
-	err := af.WriteFile(".gitignore", []byte("sdk.lua"), 0755)
+	err := af.WriteFile(".gitignore", []byte("sdk.lua"), path.ModeDir)
 	if err != nil {
 		return err
 	}
@@ -173,12 +170,12 @@ func newLua(af afero.Afero, information info.Info) error {
 		return err
 	}
 
-	err = af.WriteFile("main.lua", []byte(luaprovider.LuaTemplate()), 0755)
+	err = af.WriteFile("main.lua", []byte(luaprovider.LuaTemplate()), path.ModeDir)
 	if err != nil {
 		return err
 	}
 
-	return af.WriteFile("sdk.lua", []byte(luaprovider.LuaDoc()), 0755)
+	return af.WriteFile("sdk.lua", []byte(luaprovider.LuaDoc()), path.ModeDir)
 }
 
 func createRepo(dir string, files afero.Fs) error {
@@ -213,7 +210,6 @@ func createRepo(dir string, files afero.Fs) error {
 
 		return err
 	})
-
 	if err != nil {
 		return err
 	}

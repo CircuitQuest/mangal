@@ -7,8 +7,8 @@ import (
 )
 
 const (
-	permDir  = 0755
-	permFile = 0655
+	ModeDir  = 0755
+	ModeFile = 0644
 )
 
 func createDirIfAbsent(path string) {
@@ -22,7 +22,7 @@ func createDirIfAbsent(path string) {
 		return
 	}
 
-	if err := afs.Afero.MkdirAll(path, permDir); err != nil {
+	if err := afs.Afero.MkdirAll(path, ModeDir); err != nil {
 		log.Fatal(err)
 	}
 
