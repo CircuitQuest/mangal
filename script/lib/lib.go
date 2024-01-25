@@ -1,18 +1,16 @@
 package lib
 
 import (
+	luadoc "github.com/luevano/gopher-luadoc"
+	"github.com/luevano/libmangal"
+	sdk "github.com/luevano/luaprovider/lib"
 	"github.com/luevano/mangal/afs"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/script/lib/client"
 	"github.com/luevano/mangal/script/lib/json"
 	"github.com/luevano/mangal/script/lib/prompt"
-	luadoc "github.com/luevano/gopher-luadoc"
-	"github.com/luevano/libmangal"
-	luaprovidersdk "github.com/luevano/luaprovider/lib"
 	lua "github.com/yuin/gopher-lua"
 )
-
-const libName = meta.AppName
 
 type Options struct {
 	Client  *libmangal.Client
@@ -20,21 +18,20 @@ type Options struct {
 }
 
 func Lib(state *lua.LState, options Options) *luadoc.Lib {
-	SDKOptions := luaprovidersdk.DefaultOptions()
+	SDKOptions := sdk.DefaultOptions()
 	SDKOptions.FS = afs.Afero.Fs
 
-	lib := &luadoc.Lib{
-		Name:        libName,
+	return &luadoc.Lib{
+		Name:        meta.AppName,
 		Description: meta.AppName + " scripting mode utilities",
+		// TODO: addd anilist lib, why isn't it added?
 		Libs: []*luadoc.Lib{
-			luaprovidersdk.Lib(state, SDKOptions),
+			sdk.Lib(state, SDKOptions),
 			prompt.Lib(),
 			json.Lib(),
 			client.Lib(options.Client),
 		},
 	}
-
-	return lib
 }
 
 func Preload(state *lua.LState, options Options) {

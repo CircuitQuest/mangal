@@ -8,10 +8,10 @@ import (
 	cc "github.com/ivanpirog/coloredcobra"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/icon"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
+	"github.com/luevano/mangal/ui/icon"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )
@@ -29,7 +29,6 @@ var subcommands []*cobra.Command
 
 func completionProviderIDs(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	loaders, err := manager.Loaders(loader.DefaultOptions())
-
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveError
 	}

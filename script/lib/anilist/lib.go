@@ -3,9 +3,9 @@ package anilist
 import (
 	"context"
 
-	"github.com/luevano/mangal/script/lib/util"
 	luadoc "github.com/luevano/gopher-luadoc"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/script/lib/util"
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -15,6 +15,7 @@ const (
 	mangaTypeName = libName + "_manga"
 )
 
+// TODO: add this to main lib, currently not being used
 func Lib(anilist *libmangal.Anilist) *luadoc.Lib {
 	return &luadoc.Lib{
 		Name:        libName,

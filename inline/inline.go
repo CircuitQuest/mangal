@@ -8,7 +8,7 @@ import (
 )
 
 type QueryResult struct {
-	QueryParams InlineArgs    `json:"query_params"`
+	QueryParams Args          `json:"query_params"`
 	Results     []MangaResult `json:"results"`
 }
 
@@ -19,7 +19,7 @@ type MangaResult struct {
 	Anilist  *libmangal.AnilistManga `json:"anilist"`
 }
 
-type InlineArgs struct {
+type Args struct {
 	Query           string          `json:"query"`
 	Provider        string          `json:"provider"`
 	MangaSelector   string          `json:"manga_selector"`
@@ -30,12 +30,6 @@ type InlineArgs struct {
 	Format          string          `json:"format,omitempty"`
 	Directory       string          `json:"directory,omitempty"`
 	LoaderOptions   *loader.Options `json:"loader_options"`
-}
-
-type Options struct {
-	InlineArgs
-	Client  *libmangal.Client
-	Anilist *libmangal.Anilist
 }
 
 type MangaSelectorError struct {

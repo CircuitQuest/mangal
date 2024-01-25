@@ -4,7 +4,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/paginator"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/color"
+	"github.com/luevano/mangal/ui/color"
 )
 
 func NewList[T any](

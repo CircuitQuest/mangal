@@ -17,12 +17,12 @@ type Options struct {
 // DefaultOptions gets configured options or default ones.
 func DefaultOptions() Options {
 	return Options{
-		NSFW:                    config.Config.Filter.NSFW.Get(),
-		Language:                config.Config.Filter.Language.Get(),
-		MangaDexDataSaver:       config.Config.Filter.TitleChapterNumber.Get(),
-		TitleChapterNumber:      config.Config.Filter.TitleChapterNumber.Get(),
-		AvoidDuplicateChapters:  config.Config.Filter.AvoidDuplicateChapters.Get(),
-		ShowUnavailableChapters: config.Config.Filter.ShowUnavailableChapters.Get(),
+		NSFW:                    config.Config.Providers.Filter.NSFW.Get(),
+		Language:                config.Config.Providers.Filter.Language.Get(),
+		MangaDexDataSaver:       config.Config.Providers.Filter.TitleChapterNumber.Get(),
+		TitleChapterNumber:      config.Config.Providers.Filter.TitleChapterNumber.Get(),
+		AvoidDuplicateChapters:  config.Config.Providers.Filter.AvoidDuplicateChapters.Get(),
+		ShowUnavailableChapters: config.Config.Providers.Filter.ShowUnavailableChapters.Get(),
 		Parallelism:             config.Config.Providers.Parallelism.Get(),
 		HeadlessUseFlaresolverr: config.Config.Providers.Headless.UseFlaresolverr.Get(),
 		HeadlessFlaresolverrURL: config.Config.Providers.Headless.FlaresolverrURL.Get(),

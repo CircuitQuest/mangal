@@ -6,8 +6,8 @@ import (
 	"text/template"
 
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/color"
 	"github.com/luevano/mangal/template/util"
+	"github.com/luevano/mangal/ui/color"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
 )
@@ -17,9 +17,9 @@ func init() {
 }
 
 var templatesCmd = &cobra.Command{
-	Use:     "templates",
-	Aliases: []string{"t"},
-	Short:   "Command related to the name templates",
+	Use:   "templates",
+	Short: "Name templates commands",
+	Args:  cobra.NoArgs,
 }
 
 func init() {
@@ -28,7 +28,7 @@ func init() {
 
 var templatesFuncsCmd = &cobra.Command{
 	Use:   "funcs",
-	Short: "Show available name template functions",
+	Short: "Show available functions",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, args []string) {
 		// TODO: change theme?
@@ -72,7 +72,6 @@ var templatesExecCmd = &cobra.Command{
 			New("exec").
 			Funcs(util.FuncMap).
 			Parse(strings.Join(args, " "))
-
 		if err != nil {
 			errorf(cmd, err.Error())
 		}

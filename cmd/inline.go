@@ -6,40 +6,41 @@ import (
 	"strings"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/anilist"
-	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/inline"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/spf13/cobra"
 )
 
-var inlineArgs = inline.InlineArgs{
-	LoaderOptions: &loader.Options{},
-}
+var inlineArgs = inline.Args{}
 
 func init() {
 	subcommands = append(subcommands, inlineCmd)
+	// To shorten the statements a bit
+	pF := inlineCmd.PersistentFlags()
+	cP := config.Config.Providers
+	lOpts := loader.Options{}
 
-	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Query, "query", "q", "", "Query to search")
-	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.Provider, "provider", "p", "", "Provider id to use")
-	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "all", "Manga selector (all|first|last|exact|<index>)")
-	inlineCmd.PersistentFlags().StringVarP(&inlineArgs.ChapterSelector, "chapter-selector", "c", "all", "Chapter selector (all|first|last|<index>|[from]-[to])")
-	inlineCmd.PersistentFlags().IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", 0, "Anilist ID to bind title to")
+	pF.StringVarP(&inlineArgs.Query, "query", "q", "", "Query to search")
+	pF.StringVarP(&inlineArgs.Provider, "provider", "p", "", "Provider id to use")
+	pF.StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "all", "Manga selector (all|first|last|exact|<index>)")
+	pF.StringVarP(&inlineArgs.ChapterSelector, "chapter-selector", "c", "all", "Chapter selector (all|first|last|<index>|[from]-[to])")
+	pF.IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", 0, "Anilist ID to bind title to")
 
-	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.NSFW, "nsfw", config.Config.Filter.NSFW.Get(), "Include NSFW content (when supported)")
-	inlineCmd.PersistentFlags().StringVar(&inlineArgs.LoaderOptions.Language, "language", config.Config.Filter.Language.Get(), "Manga/Chapter language")
-	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.MangaDexDataSaver, "mangadex-data-saver", config.Config.Filter.MangaDexDataSaver.Get(), "If 'data-saver' should be used (mangadex)")
-	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.TitleChapterNumber, "title-chapter-number", config.Config.Filter.TitleChapterNumber.Get(), "If 'Chapter #' should always be included")
-	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.AvoidDuplicateChapters, "avoid-duplicate-chapters", config.Config.Filter.AvoidDuplicateChapters.Get(), "Only select one chapter when more are found")
-	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.ShowUnavailableChapters, "show-unavailable-chapters", config.Config.Filter.ShowUnavailableChapters.Get(), "If chapter is undownloadable, still show it")
-	inlineCmd.PersistentFlags().Uint8Var(&inlineArgs.LoaderOptions.Parallelism, "parallelism", config.Config.Providers.Parallelism.Get(), "Parallelism to use for the provider if supported")
-	inlineCmd.PersistentFlags().BoolVar(&inlineArgs.LoaderOptions.HeadlessUseFlaresolverr, "headless-use-flaresolverr", config.Config.Providers.Headless.UseFlaresolverr.Get(), "For providers that use headless, if flaresolverr should be used")
-	inlineCmd.PersistentFlags().StringVar(&inlineArgs.LoaderOptions.HeadlessFlaresolverrURL, "headless-flaresolverr-url", config.Config.Providers.Headless.FlaresolverrURL.Get(), "URL for the flaresolverr URL")
+	// Setup LoaderOptions
+	pF.BoolVar(&lOpts.NSFW, "nsfw", cP.Filter.NSFW.Get(), "Include NSFW content (when supported)")
+	pF.StringVar(&lOpts.Language, "language", cP.Filter.Language.Get(), "Manga/Chapter language")
+	pF.BoolVar(&lOpts.MangaDexDataSaver, "mangadex-data-saver", cP.Filter.MangaDexDataSaver.Get(), "Use 'data-saver'")
+	pF.BoolVar(&lOpts.TitleChapterNumber, "title-chapter-number", cP.Filter.TitleChapterNumber.Get(), "Include 'Chapter #' always")
+	pF.BoolVar(&lOpts.AvoidDuplicateChapters, "avoid-duplicate-chapters", cP.Filter.AvoidDuplicateChapters.Get(), "No duplicate chapters")
+	pF.BoolVar(&lOpts.ShowUnavailableChapters, "show-unavailable-chapters", cP.Filter.ShowUnavailableChapters.Get(), "Show undownloadable chapters")
+	pF.Uint8Var(&lOpts.Parallelism, "parallelism", cP.Parallelism.Get(), "Provider parallelism to use (when supported)")
+	pF.BoolVar(&lOpts.HeadlessUseFlaresolverr, "headless-use-flaresolverr", cP.Headless.UseFlaresolverr.Get(), "Use Flaresolverr for headlessproviders")
+	pF.StringVar(&lOpts.HeadlessFlaresolverrURL, "headless-flaresolverr-url", cP.Headless.FlaresolverrURL.Get(), "Flaresolverr service URL")
+	inlineArgs.LoaderOptions = &lOpts
 
 	inlineCmd.MarkPersistentFlagRequired("provider")
 	inlineCmd.MarkPersistentFlagRequired("query")
-
 	inlineCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
 }
 
@@ -60,23 +61,10 @@ func init() {
 
 var inlineJSONCmd = &cobra.Command{
 	Use:   "json",
-	Short: "Output search results in JSON",
+	Short: "Output search results",
 	Args:  cobra.NoArgs,
-	// TODO: change to RunE
-	// TODO: refactor this (similar to Download code)
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := client.NewClientByID(context.Background(), inlineArgs.Provider, *inlineArgs.LoaderOptions)
-		if err != nil {
-			errorf(cmd, err.Error())
-		}
-
-		var options inline.Options
-
-		options.InlineArgs = inlineArgs
-		options.Client = client
-		options.Anilist = anilist.Client
-
-		if err := inline.RunJSON(context.Background(), options); err != nil {
+		if err := inline.RunJSON(context.Background(), inlineArgs); err != nil {
 			errorf(cmd, err.Error())
 		}
 	},
@@ -84,29 +72,18 @@ var inlineJSONCmd = &cobra.Command{
 
 func init() {
 	inlineCmd.AddCommand(inlineDownloadCmd)
-	formatDesc := fmt.Sprintf("Download format (%s) (defaults to config)", strings.Join(libmangal.FormatStrings(), "|"))
-	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Format, "format", "f", "", formatDesc)
-	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Directory, "directory", "d", "", "Download directory (defaults to config)")
+	formatDesc := fmt.Sprintf("Download format (%s)", strings.Join(libmangal.FormatStrings(), "|"))
+	// TODO: fix configs getting the default values instead of the configured mangal.toml, it is something to do regarding init order
+	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Format, "format", "f", config.Config.Download.Format.Get().String(), formatDesc)
+	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Directory, "directory", "d", config.Config.Download.Path.Get(), "Download directory")
 }
 
 var inlineDownloadCmd = &cobra.Command{
 	Use:   "download",
 	Short: "Download manga",
 	Args:  cobra.NoArgs,
-	// TODO: refactor this (similar to JSON code)
 	Run: func(cmd *cobra.Command, args []string) {
-		client, err := client.NewClientByID(context.Background(), inlineArgs.Provider, *inlineArgs.LoaderOptions)
-		if err != nil {
-			errorf(cmd, err.Error())
-		}
-
-		var options inline.Options
-
-		options.InlineArgs = inlineArgs
-		options.Client = client
-		options.Anilist = anilist.Client
-
-		if err := inline.RunDownload(context.Background(), options); err != nil {
+		if err := inline.RunDownload(context.Background(), inlineArgs); err != nil {
 			errorf(cmd, err.Error())
 		}
 	},

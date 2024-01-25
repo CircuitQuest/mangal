@@ -2,16 +2,17 @@ package chapsdownloaded
 
 import (
 	"fmt"
+	"path/filepath"
+	"strings"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/color"
 	"github.com/luevano/mangal/stringutil"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/ui/color"
 	"github.com/skratchdot/open-golang/open"
-	"path/filepath"
-	"strings"
 )
 
 var _ base.State = (*State)(nil)
@@ -102,7 +103,7 @@ func (s *State) View(model base.Model) string {
 			sb.WriteString(fmt.Sprintf("\n%s", chapter))
 		}
 	} else {
-		var indices = make([]float32, failed)
+		indices := make([]float32, failed)
 		for i, c := range s.options.Failed {
 			indices[i] = c.Info().Number
 		}

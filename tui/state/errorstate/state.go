@@ -6,8 +6,8 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/color"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/ui/color"
 	"github.com/muesli/reflow/wordwrap"
 )
 

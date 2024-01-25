@@ -9,13 +9,14 @@ import (
 	"strings"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/anilist"
 )
 
-func getSelectedMangaResults(mangas []libmangal.Manga, options Options) ([]MangaResult, error) {
+func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult, error) {
 	var mangaResults []MangaResult
 
 	totalMangas := len(mangas)
-	selector := options.MangaSelector
+	selector := args.MangaSelector
 	switch selector {
 	case "all":
 		for i, manga := range mangas {
@@ -29,14 +30,14 @@ func getSelectedMangaResults(mangas []libmangal.Manga, options Options) ([]Manga
 	case "exact":
 		ok := false
 		for i, manga := range mangas {
-			if strings.ToLower(manga.Info().Title) == strings.ToLower(options.Query) {
+			if strings.ToLower(manga.Info().Title) == strings.ToLower(args.Query) {
 				mangaResults = []MangaResult{{Index: i, Manga: manga}}
 				ok = true
 				break
 			}
 		}
 		if !ok {
-			return nil, &MangaSelectorError{selector, fmt.Sprintf("no manga found with provider %q and exact match %q", options.Provider, options.Query)}
+			return nil, &MangaSelectorError{selector, fmt.Sprintf("no manga found with provider %q and exact match %q", args.Provider, args.Query)}
 		}
 		return mangaResults, nil
 	default:
@@ -52,15 +53,15 @@ func getSelectedMangaResults(mangas []libmangal.Manga, options Options) ([]Manga
 	}
 }
 
-func assignAnilist(ctx context.Context, mangaResults *[]MangaResult, options Options) {
+func assignAnilist(ctx context.Context, args Args, mangaResults *[]MangaResult) {
 	for i, mangaResult := range *mangaResults {
 		var anilist libmangal.AnilistManga
 		var found bool
 		var aniErr error
-		if options.AnilistID != 0 {
-			anilist, found, aniErr = anilistSearch(ctx, options.Anilist, options.AnilistID)
+		if args.AnilistID != 0 {
+			anilist, found, aniErr = anilistSearch(ctx, args.AnilistID)
 		} else {
-			anilist, found, aniErr = anilistSearch(ctx, options.Anilist, mangaResult.Manga.Info().AnilistSearch)
+			anilist, found, aniErr = anilistSearch(ctx, mangaResult.Manga.Info().AnilistSearch)
 		}
 		if aniErr == nil && found {
 			(*mangaResults)[i].Anilist = &anilist
@@ -68,16 +69,17 @@ func assignAnilist(ctx context.Context, mangaResults *[]MangaResult, options Opt
 	}
 }
 
+// TODO: remove this function? not really necessary, doesn't do much
 // TODO: probably change the return "methodology" (explicit returns)
-func anilistSearch[T string | int](ctx context.Context, aniClient *libmangal.Anilist, queryID T) (aniManga libmangal.AnilistManga, found bool, err error) {
+func anilistSearch[T string | int](ctx context.Context, queryID T) (aniManga libmangal.AnilistManga, found bool, err error) {
 	switch v := reflect.ValueOf(queryID); v.Kind() {
 	case reflect.String:
-		aniManga, found, err = aniClient.FindClosestManga(ctx, v.String())
+		aniManga, found, err = anilist.Client.FindClosestManga(ctx, v.String())
 		if err != nil {
 			return
 		}
 	case reflect.Int:
-		aniManga, found, err = aniClient.GetByID(ctx, int(v.Int()))
+		aniManga, found, err = anilist.Client.GetByID(ctx, int(v.Int()))
 		if err != nil {
 			return
 		}
@@ -93,23 +95,23 @@ func anilistSearch[T string | int](ctx context.Context, aniClient *libmangal.Ani
 	return
 }
 
-func populateChapters(ctx context.Context, mangaResults *[]MangaResult, options Options) error {
+func populateChapters(ctx context.Context, client *libmangal.Client, args Args, mangaResults *[]MangaResult) error {
 	for i, mangaResult := range *mangaResults {
-		volumes, err := options.Client.MangaVolumes(ctx, mangaResult.Manga)
+		volumes, err := client.MangaVolumes(ctx, mangaResult.Manga)
 		if err != nil {
 			return err
 		}
 		if len(volumes) == 0 {
 			// TODO: use query instead of title?
-			return fmt.Errorf("no manga volumes found with provider %q title %q", options.Provider, mangaResult.Manga.Info().Title)
+			return fmt.Errorf("no manga volumes found with provider %q title %q", args.Provider, mangaResult.Manga.Info().Title)
 		}
 
-		chapters, err := getChapters(ctx, volumes, options)
+		chapters, err := getChapters(ctx, client, args, volumes)
 		if err != nil {
 			return err
 		}
 
-		selectedChapters, err := getSelectedChapters(chapters, options)
+		selectedChapters, err := getSelectedChapters(args, chapters)
 		if err != nil {
 			return err
 		}
@@ -118,15 +120,15 @@ func populateChapters(ctx context.Context, mangaResults *[]MangaResult, options 
 	return nil
 }
 
-func getChapters(ctx context.Context, volumes []libmangal.Volume, options Options) ([]libmangal.Chapter, error) {
+func getChapters(ctx context.Context, client *libmangal.Client, args Args, volumes []libmangal.Volume) ([]libmangal.Chapter, error) {
 	var chapters []libmangal.Chapter
 	for _, volume := range volumes {
-		volumeChapters, err := options.Client.VolumeChapters(ctx, volume)
+		volumeChapters, err := client.VolumeChapters(ctx, volume)
 		if err != nil {
 			return nil, err
 		}
 		if len(volumeChapters) == 0 {
-			return nil, fmt.Errorf("no manga chapters found for volume %d (provider %q, title %q)", volume.Info().Number, options.Provider, options.Query)
+			return nil, fmt.Errorf("no manga chapters found for volume %d (provider %q, title %q)", volume.Info().Number, args.Provider, args.Query)
 		}
 
 		chapters = append(chapters, volumeChapters...)
@@ -134,7 +136,7 @@ func getChapters(ctx context.Context, volumes []libmangal.Volume, options Option
 	return chapters, nil
 }
 
-func getSelectedChapters(chapters []libmangal.Chapter, options Options) ([]libmangal.Chapter, error) {
+func getSelectedChapters(args Args, chapters []libmangal.Chapter) ([]libmangal.Chapter, error) {
 	const (
 		all   = "all"
 		first = "first"
@@ -150,7 +152,7 @@ func getSelectedChapters(chapters []libmangal.Chapter, options Options) ([]libma
 	}
 
 	totalChapters := len(chapters)
-	selector := options.ChapterSelector
+	selector := args.ChapterSelector
 	switch selector {
 	case all:
 		return chapters, nil

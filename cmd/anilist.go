@@ -6,8 +6,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/luevano/mangal/anilist"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/anilist"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
 )
@@ -17,30 +17,30 @@ func init() {
 }
 
 var anilistCmd = &cobra.Command{
-	Use:     "anilist",
-	Aliases: []string{"al"},
-	Short:   "Anilist related commands",
+	Use:   "anilist",
+	Short: "Anilist auth commands",
+	Args:  cobra.NoArgs,
 }
 
 func init() {
 	anilistCmd.AddCommand(anilistAuthCmd)
 }
 
+// TODO: replace this with a mini TUI
 var anilistAuthCmd = &cobra.Command{
 	Use:   "auth",
-	Short: "Authorize with anilist to enable sync",
+	Short: "Authenticate with anilist",
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: replace it with something better
 		reader := bufio.NewReader(cmd.InOrStdin())
 
-		cmd.Print("Enter your ID\n> ")
+		cmd.Print("ID\n> ")
 		id, err := reader.ReadString('\n')
 		if err != nil {
 			errorf(cmd, err.Error())
 		}
 		id = strings.TrimSpace(id)
 
-		cmd.Print("Enter your secret\n> ")
+		cmd.Print("Secret\n> ")
 		secret, err := reader.ReadString('\n')
 		if err != nil {
 			errorf(cmd, err.Error())
@@ -52,7 +52,7 @@ var anilistAuthCmd = &cobra.Command{
 			errorf(cmd, err.Error())
 		}
 
-		cmd.Print("Enter your code\n> ")
+		cmd.Print("Code\n> ")
 		code, err := reader.ReadString('\n')
 		if err != nil {
 			errorf(cmd, err.Error())
@@ -79,7 +79,7 @@ func init() {
 
 var anilistLogoutCmd = &cobra.Command{
 	Use:   "logout",
-	Short: "Exit from anilist",
+	Short: "Logout from anilist",
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := anilist.Client.Logout(); err != nil {
 			errorf(cmd, err.Error())

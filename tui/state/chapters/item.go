@@ -8,10 +8,10 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/afs"
-	"github.com/luevano/mangal/color"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/icon"
 	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/ui/color"
+	"github.com/luevano/mangal/ui/icon"
 	"github.com/zyedidia/generic/set"
 )
 

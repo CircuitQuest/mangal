@@ -2,7 +2,7 @@ package config
 
 import (
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/icon"
+	"github.com/luevano/mangal/ui/icon"
 )
 
 type config struct {
@@ -13,7 +13,6 @@ type config struct {
 	TUI       configTUI
 	Providers configProviders
 	Library   configLibrary
-	Filter    configFilter
 }
 
 type configCLI struct {
@@ -84,6 +83,7 @@ type configProviders struct {
 	Parallelism *registered[int64, uint8]
 	Cache       configProvidersCache
 	Headless    configProvidersHeadless
+	Filter      configProvidersFilter
 }
 
 type configProvidersCache struct {
@@ -99,7 +99,7 @@ type configLibrary struct {
 	Path *registered[string, string]
 }
 
-type configFilter struct {
+type configProvidersFilter struct {
 	NSFW                    *registered[bool, bool]
 	Language                *registered[string, string]
 	MangaDexDataSaver       *registered[bool, bool]

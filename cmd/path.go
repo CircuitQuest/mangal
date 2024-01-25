@@ -40,6 +40,7 @@ func init() {
 	)
 }
 
+// TODO: refactor
 var pathCmd = &cobra.Command{
 	Use:   "path",
 	Short: "Show paths",
@@ -102,7 +103,6 @@ var pathCmd = &cobra.Command{
 						Path: path.TempDir(),
 					},
 				})
-
 				if err != nil {
 					errorf(cmd, err.Error())
 				}
@@ -122,7 +122,6 @@ var pathCmd = &cobra.Command{
 				Name: pathToShowName,
 				Path: pathToShow,
 			})
-
 			if err != nil {
 				errorf(cmd, err.Error())
 			}

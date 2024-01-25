@@ -2,9 +2,10 @@ package textinput
 
 import (
 	"fmt"
+
 	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/luevano/mangal/icon"
 	"github.com/luevano/mangal/tui/util"
+	"github.com/luevano/mangal/ui/icon"
 )
 
 func New(options Options) *State {

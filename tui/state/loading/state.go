@@ -7,8 +7,8 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/color"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/ui/color"
 )
 
 var _ base.State = (*State)(nil)

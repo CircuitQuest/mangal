@@ -5,53 +5,54 @@ import (
 	"fmt"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/anilist"
+	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/config"
 )
 
-func RunDownload(ctx context.Context, options Options) error {
-	mangas, err := options.Client.SearchMangas(ctx, options.Query)
+func RunDownload(ctx context.Context, args Args) error {
+	client, err := client.NewClientByID(ctx, args.Provider, *args.LoaderOptions)
+	if err != nil {
+		return err
+	}
+
+	mangas, err := client.SearchMangas(ctx, args.Query)
 	if err != nil {
 		return err
 	}
 	if len(mangas) == 0 {
-		return fmt.Errorf("no mangas found with provider ID %q and query %q", options.Provider, options.Query)
+		return fmt.Errorf("no mangas found with provider ID %q and query %q", args.Provider, args.Query)
 	}
 
-	mangaResults, err := getSelectedMangaResults(mangas, options)
+	mangaResults, err := getSelectedMangaResults(args, mangas)
 	if err != nil {
 		return err
 	}
 	if len(mangaResults) != 1 {
-		return fmt.Errorf("invalid manga selector %q, needs to select 1 manga only", options.MangaSelector)
+		return fmt.Errorf("invalid manga selector %q, needs to select 1 manga only", args.MangaSelector)
 	}
 
-	if options.AnilistID != -1 {
-		err := options.Anilist.BindTitleWithID(mangaResults[0].Manga.Info().AnilistSearch, options.AnilistID)
+	// TODO: fix this (should be 0), include it in json.go
+	if args.AnilistID != -1 {
+		err := anilist.Client.BindTitleWithID(mangaResults[0].Manga.Info().AnilistSearch, args.AnilistID)
 		if err != nil {
 			return err
 		}
 	}
 
-	if err := populateChapters(ctx, &mangaResults, options); err != nil {
+	if err := populateChapters(ctx, client, args, &mangaResults); err != nil {
 		return err
 	}
 
-	formatOption := config.Config.Download.Format.Get()
-	if options.Format != "" {
-		fOption, err := libmangal.FormatString(options.Format)
-		if err != nil {
-			return err
-		}
-		formatOption = fOption
-	}
-	directoryOption := config.Config.Download.Path.Get()
-	if options.Directory != "" {
-		directoryOption = options.Directory
+	formatOption, err := libmangal.FormatString(args.Format)
+	if err != nil {
+		return err
 	}
 
+	// TODO: fix args.Directory using default instead of mangal.toml config set
 	downloadOptions := libmangal.DownloadOptions{
 		Format:              formatOption,
-		Directory:           directoryOption,
+		Directory:           args.Directory,
 		CreateVolumeDir:     config.Config.Download.Volume.CreateDir.Get(),
 		CreateMangaDir:      config.Config.Download.Manga.CreateDir.Get(),
 		Strict:              config.Config.Download.Strict.Get(),
@@ -68,7 +69,7 @@ func RunDownload(ctx context.Context, options Options) error {
 
 	for _, manga := range mangaResults {
 		for _, chapter := range *manga.Chapters {
-			downloadedPath, err := options.Client.DownloadChapter(ctx, chapter, downloadOptions)
+			downloadedPath, err := client.DownloadChapter(ctx, chapter, downloadOptions)
 			if err != nil {
 				return err
 			}

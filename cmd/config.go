@@ -20,6 +20,7 @@ func init() {
 var configCmd = &cobra.Command{
 	Use:   "config",
 	Short: "Manage configuration",
+	Args:  cobra.NoArgs,
 }
 
 var configInfoArgs = struct {
@@ -164,7 +165,6 @@ var configSetCmd = &cobra.Command{
 			converted = int(parsedInt)
 		case bool:
 			parsedBool, err := strconv.ParseBool(value)
-
 			if err != nil {
 				errorf(cmd, err.Error())
 			}
