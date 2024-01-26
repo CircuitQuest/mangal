@@ -40,10 +40,16 @@ type configDownload struct {
 	Path         *registered[string, string]
 	Strict       *registered[bool, bool]
 	SkipIfExists *registered[bool, bool]
+	Provider     configDownloadProvider
 	Manga        configDownloadManga
 	Volume       configDownloadVolume
 	Chapter      configDownloadChapter
 	Metadata     configDownloadMetadata
+}
+
+type configDownloadProvider struct {
+	CreateDir    *registered[bool, bool]
+	NameTemplate *registered[string, string]
 }
 
 type configDownloadManga struct {

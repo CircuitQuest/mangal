@@ -47,6 +47,7 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 	options.FS = afs.Afero
 	options.Anilist = anilist.Anilist
 	options.HTTPClient = HTTPClient
+	options.ProviderNameTemplate = template.Provider
 	options.MangaNameTemplate = template.Manga
 	options.VolumeNameTemplate = template.Volume
 	options.ChapterNameTemplate = template.Chapter

@@ -12,21 +12,26 @@ import (
 
 // TODO: change logger?
 
-func Chapter(_ string, chapter libmangal.Chapter) string {
+func Provider(provider libmangal.ProviderInfo) string {
 	var sb strings.Builder
 
-	err := template.Must(template.New("chapter").
+	err := template.Must(template.New("provider").
 		Funcs(funcs.FuncMap).
-		Parse(config.Config.Download.Chapter.NameTemplate.Get())).
-		Execute(&sb, chapter.Info())
+		Parse(config.Config.Download.Provider.NameTemplate.Get())).
+		Execute(&sb, provider)
 	if err != nil {
-		log.Fatal("error during execution of the chapter name template", "err", err)
+		log.Fatal("error during execution of the provider name template", "err", err)
 	}
 
 	return sb.String()
 }
 
 func Manga(_ string, manga libmangal.Manga) string {
+	// TODO: will change to need MangaWithAnilist in the future, to have standardized manga dir names
+	// _, ok := manga.(libmangal.MangaWithAnilist)
+	// if !ok {
+	// 	panic("[Manga template]manga doesn't have anilist data")
+	// }
 	var sb strings.Builder
 
 	err := template.Must(template.New("manga").
@@ -54,6 +59,21 @@ func Volume(_ string, manga libmangal.Volume) string {
 	return sb.String()
 }
 
+func Chapter(_ string, chapter libmangal.Chapter) string {
+	var sb strings.Builder
+
+	err := template.Must(template.New("chapter").
+		Funcs(funcs.FuncMap).
+		Parse(config.Config.Download.Chapter.NameTemplate.Get())).
+		Execute(&sb, chapter.Info())
+	if err != nil {
+		log.Fatal("error during execution of the chapter name template", "err", err)
+	}
+
+	return sb.String()
+}
+
+// Currently unused.
 func Config(field config.Entry) string {
 	var sb strings.Builder
 

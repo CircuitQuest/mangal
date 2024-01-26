@@ -141,8 +141,9 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			options := libmangal.DownloadOptions{
 				Format:              config.Config.Download.Format.Get(),
 				Directory:           config.Config.Download.Path.Get(),
-				CreateVolumeDir:     config.Config.Download.Volume.CreateDir.Get(),
+				CreateProviderDir:   config.Config.Download.Provider.CreateDir.Get(),
 				CreateMangaDir:      config.Config.Download.Manga.CreateDir.Get(),
+				CreateVolumeDir:     config.Config.Download.Volume.CreateDir.Get(),
 				Strict:              config.Config.Download.Strict.Get(),
 				SkipIfExists:        config.Config.Download.SkipIfExists.Get(),
 				DownloadMangaCover:  config.Config.Download.Manga.Cover.Get(),
@@ -223,14 +224,16 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				directory = path.TempDir()
 			}
 
+			// TODO: change this
 			options := libmangal.DownloadOptions{
-				Format:          format,
-				Directory:       directory,
-				SkipIfExists:    true,
-				ReadAfter:       true,
-				ReadOptions:     readOptions,
-				CreateMangaDir:  true,
-				CreateVolumeDir: true,
+				Format:            format,
+				Directory:         directory,
+				SkipIfExists:      true,
+				ReadAfter:         true,
+				ReadOptions:       readOptions,
+				CreateProviderDir: true,
+				CreateMangaDir:    true,
+				CreateVolumeDir:   true,
 				ImageTransformer: func(bytes []byte) ([]byte, error) {
 					return bytes, nil
 				},

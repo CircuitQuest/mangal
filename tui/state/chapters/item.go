@@ -110,6 +110,10 @@ func (i *Item) Path(format libmangal.Format) string {
 	volume := chapter.Volume()
 	manga := volume.Manga()
 
+	if config.Config.Download.Provider.CreateDir.Get() {
+		path = filepath.Join(path, i.client.ComputeProviderFilename(i.client.Info()))
+	}
+
 	if config.Config.Download.Manga.CreateDir.Get() {
 		path = filepath.Join(path, i.client.ComputeMangaFilename(manga))
 	}

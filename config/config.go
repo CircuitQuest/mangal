@@ -105,6 +105,25 @@ var Config = config{
 			Default:     true,
 			Description: "Skip downloading chapter if its already downloaded (exists at path). Metadata will still be created if needed.",
 		}),
+		Provider: configDownloadProvider{
+			CreateDir: reg(Field[bool, bool]{
+				Key:         "download.provider.create_dir",
+				Default:     false,
+				Description: "Create provider directory.",
+			}),
+			NameTemplate: reg(Field[string, string]{
+				Key:         "download.provider.name_template",
+				Default:     "{{ .Name | sanitize }}",
+				Description: "Template to use for naming downloaded providers.", // TODO: change these generic descriptions
+				Validate: func(s string) error {
+					_, err := template.
+						New("").
+						Funcs(funcs.FuncMap).
+						Parse(s)
+					return err
+				},
+			}),
+		},
 		Manga: configDownloadManga{
 			CreateDir: reg(Field[bool, bool]{
 				Key:         "download.manga.create_dir",
@@ -131,7 +150,6 @@ var Config = config{
 						New("").
 						Funcs(funcs.FuncMap).
 						Parse(s)
-
 					return err
 				},
 			}),
@@ -151,7 +169,6 @@ var Config = config{
 						New("").
 						Funcs(funcs.FuncMap).
 						Parse(s)
-
 					return err
 				},
 			}),

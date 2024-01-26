@@ -51,8 +51,9 @@ func RunDownload(ctx context.Context, args Args) error {
 	downloadOptions := libmangal.DownloadOptions{
 		Format:              formatOption,
 		Directory:           args.Directory,
-		CreateVolumeDir:     config.Config.Download.Volume.CreateDir.Get(),
+		CreateProviderDir:   config.Config.Download.Provider.CreateDir.Get(),
 		CreateMangaDir:      config.Config.Download.Manga.CreateDir.Get(),
+		CreateVolumeDir:     config.Config.Download.Volume.CreateDir.Get(),
 		Strict:              config.Config.Download.Strict.Get(),
 		SkipIfExists:        config.Config.Download.SkipIfExists.Get(),
 		DownloadMangaCover:  config.Config.Download.Manga.Cover.Get(),
