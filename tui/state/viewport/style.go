@@ -38,11 +38,11 @@ func DefaultStyles() Styles {
 			BorderRight(true),
 		// TODO: use style.Trim?
 		Content: func(maxSize int) lipgloss.Style {
-			return style.Normal.Base.
+			return style.Normal.Base.Copy().
 				Width(maxSize)
 		},
 		ContentWrapper: func(height, width int) lipgloss.Style {
-			return style.Normal.Base.
+			return style.Normal.Base.Copy().
 				Padding(height, width)
 		},
 	}
