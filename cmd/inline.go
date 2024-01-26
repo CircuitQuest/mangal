@@ -14,10 +14,16 @@ import (
 
 var inlineArgs = inline.Args{}
 
-func init() {
-	subcommands = append(subcommands, inlineCmd)
+func inlineCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:     "inline",
+		Short:   "Inline mode",
+		GroupID: groupMode,
+		Args:    cobra.NoArgs,
+	}
+
 	// To shorten the statements a bit
-	pF := inlineCmd.PersistentFlags()
+	pF := c.PersistentFlags()
 	cP := config.Config.Providers
 	lOpts := loader.Options{}
 
@@ -39,52 +45,53 @@ func init() {
 	pF.StringVar(&lOpts.HeadlessFlaresolverrURL, "headless-flaresolverr-url", cP.Headless.FlaresolverrURL.Get(), "Flaresolverr service URL")
 	inlineArgs.LoaderOptions = &lOpts
 
-	inlineCmd.MarkPersistentFlagRequired("provider")
-	inlineCmd.MarkPersistentFlagRequired("query")
-	inlineCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
+	c.MarkPersistentFlagRequired("provider")
+	c.MarkPersistentFlagRequired("query")
+	c.RegisterFlagCompletionFunc("provider", completionProviderIDs)
+
+	// Define inlineJSONCmd outside to be able to mark mutually exclusive flags from parent (this cmd)
+	cJSON := inlineJSONCmd()
+	c.AddCommand(cJSON)
+	cJSON.MarkFlagsMutuallyExclusive("anilist-id", "anilist-disable")
+
+	c.AddCommand(inlineDownloadCmd())
+
+	return c
 }
 
-var inlineCmd = &cobra.Command{
-	Use:     "inline",
-	Short:   "Inline mode",
-	GroupID: groupMode,
-	Args:    cobra.NoArgs,
+func inlineJSONCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:   "json",
+		Short: "Output search results",
+		Args:  cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := inline.RunJSON(context.Background(), inlineArgs); err != nil {
+				errorf(cmd, err.Error())
+			}
+		},
+	}
+
+	c.Flags().BoolVar(&inlineArgs.ChapterPopulate, "chapter-populate", false, "Populate chapter metadata")
+	c.Flags().BoolVar(&inlineArgs.AnilistDisable, "anilist-disable", false, "Disable anilist search")
+
+	return c
 }
 
-func init() {
-	inlineCmd.AddCommand(inlineJSONCmd)
-	inlineJSONCmd.Flags().BoolVar(&inlineArgs.ChapterPopulate, "chapter-populate", false, "Populate chapter metadata")
-	inlineJSONCmd.Flags().BoolVar(&inlineArgs.AnilistDisable, "anilist-disable", false, "Disable anilist search")
+func inlineDownloadCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:   "download",
+		Short: "Download manga",
+		Args:  cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			if err := inline.RunDownload(context.Background(), inlineArgs); err != nil {
+				errorf(cmd, err.Error())
+			}
+		},
+	}
 
-	inlineJSONCmd.MarkFlagsMutuallyExclusive("anilist-id", "anilist-disable")
-}
-
-var inlineJSONCmd = &cobra.Command{
-	Use:   "json",
-	Short: "Output search results",
-	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := inline.RunJSON(context.Background(), inlineArgs); err != nil {
-			errorf(cmd, err.Error())
-		}
-	},
-}
-
-func init() {
-	inlineCmd.AddCommand(inlineDownloadCmd)
 	formatDesc := fmt.Sprintf("Download format (%s)", strings.Join(libmangal.FormatStrings(), "|"))
-	// TODO: fix configs getting the default values instead of the configured mangal.toml, it is something to do regarding init order
-	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Format, "format", "f", config.Config.Download.Format.Get().String(), formatDesc)
-	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Directory, "directory", "d", config.Config.Download.Path.Get(), "Download directory")
-}
+	c.Flags().StringVarP(&inlineArgs.Format, "format", "f", config.Config.Download.Format.Get().String(), formatDesc)
+	c.Flags().StringVarP(&inlineArgs.Directory, "directory", "d", config.Config.Download.Path.Get(), "Download directory")
 
-var inlineDownloadCmd = &cobra.Command{
-	Use:   "download",
-	Short: "Download manga",
-	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		if err := inline.RunDownload(context.Background(), inlineArgs); err != nil {
-			errorf(cmd, err.Error())
-		}
-	},
+	return c
 }

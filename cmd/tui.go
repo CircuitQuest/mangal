@@ -8,23 +8,21 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	subcommands = append(subcommands, tuiCmd)
-}
+func tuiCmd() *cobra.Command {
+	return &cobra.Command{
+		Use:     "tui",
+		Short:   "Run mangal in TUI mode",
+		GroupID: groupMode,
+		Args:    cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			loaders, err := manager.Loaders(loader.DefaultOptions())
+			if err != nil {
+				errorf(cmd, err.Error())
+			}
 
-var tuiCmd = &cobra.Command{
-	Use:     "tui",
-	Short:   "Run mangal in TUI mode",
-	GroupID: groupMode,
-	Args:    cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		loaders, err := manager.Loaders(loader.DefaultOptions())
-		if err != nil {
-			errorf(cmd, err.Error())
-		}
-
-		if err := tui.Run(providers.New(loaders)); err != nil {
-			errorf(cmd, err.Error())
-		}
-	},
+			if err := tui.Run(providers.New(loaders)); err != nil {
+				errorf(cmd, err.Error())
+			}
+		},
+	}
 }

@@ -13,121 +13,127 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func init() {
-	subcommands = append(subcommands, providersCmd)
+func providersCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:   "providers",
+		Short: "Providers management",
+		Args:  cobra.NoArgs,
+	}
+
+	c.AddCommand(providersAddCmd())
+	c.AddCommand(providersUpCmd())
+	c.AddCommand(providersLsCmd())
+	c.AddCommand(providersRmCmd())
+	c.AddCommand(providersNewCmd())
+
+	return c
 }
 
-var providersCmd = &cobra.Command{
-	Use:   "providers",
-	Short: "Providers management",
-	Args:  cobra.NoArgs,
+func providersAddCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:   "add <url>",
+		Short: "Install provider",
+		Args:  cobra.ExactArgs(1),
+		RunE: func(cmd *cobra.Command, args []string) error {
+			URL, err := url.Parse(args[0])
+			if err != nil {
+				return err
+			}
+
+			return manager.Add(context.Background(), manager.AddOptions{
+				URL: URL,
+			})
+		},
+	}
+
+	return c
 }
 
-func init() {
-	providersCmd.AddCommand(providersAddCmd)
+func providersUpCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:   "up",
+		Short: "Update providers",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			return manager.Update(context.Background(), manager.UpdateOptions{})
+		},
+	}
+
+	return c
 }
 
-var providersAddCmd = &cobra.Command{
-	Use:   "add <url>",
-	Short: "Install provider",
-	Args:  cobra.ExactArgs(1),
-	RunE: func(cmd *cobra.Command, args []string) error {
-		URL, err := url.Parse(args[0])
-		if err != nil {
-			return err
-		}
+func providersLsCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:   "ls",
+		Short: "List installed providers",
+		Args:  cobra.NoArgs,
+		RunE: func(cmd *cobra.Command, args []string) error {
+			loaders, err := manager.Loaders(loader.DefaultOptions())
+			if err != nil {
+				return err
+			}
 
-		return manager.Add(context.Background(), manager.AddOptions{
-			URL: URL,
-		})
-	},
+			for _, loader := range loaders {
+				fmt.Println(loader.Info().ID)
+			}
+
+			return nil
+		},
+	}
+
+	return c
 }
 
-func init() {
-	providersCmd.AddCommand(providersUpCmd)
+func providersRmCmd() *cobra.Command {
+	c := &cobra.Command{
+		Use:   "rm tags",
+		Short: "Remove provider",
+		Args:  cobra.MinimumNArgs(1),
+		Run: func(cmd *cobra.Command, args []string) {
+			for _, tag := range args {
+				if err := manager.Remove(tag); err != nil {
+					errorf(cmd, err.Error())
+				}
+			}
+		},
+	}
+
+	return c
 }
 
-var providersUpCmd = &cobra.Command{
-	Use:   "up",
-	Short: "Update providers",
-	Args:  cobra.NoArgs,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		return manager.Update(context.Background(), manager.UpdateOptions{})
-	},
-}
+func providersNewCmd() *cobra.Command {
+	providersNewArgs := struct {
+		Dir string
+	}{}
 
-func init() {
-	providersCmd.AddCommand(providersLsCmd)
-}
+	c := &cobra.Command{
+		Use:   "new",
+		Short: "Create new provider",
+		Args:  cobra.NoArgs,
+		Run: func(cmd *cobra.Command, args []string) {
+			options := manager.NewOptions{
+				Dir: providersNewArgs.Dir,
+				Info: info.Info{
+					ProviderInfo: libmangal.ProviderInfo{
+						ID:          "test",
+						Name:        "test",
+						Version:     "0.1.0",
+						Description: "Lorem ipsum",
+						Website:     "example.com",
+					},
+					Type: info.TypeLua,
+				},
+			}
 
-var providersLsCmd = &cobra.Command{
-	Use:   "ls",
-	Short: "List installed providers",
-	Args:  cobra.NoArgs,
-	RunE: func(cmd *cobra.Command, args []string) error {
-		loaders, err := manager.Loaders(loader.DefaultOptions())
-		if err != nil {
-			return err
-		}
-
-		for _, loader := range loaders {
-			fmt.Println(loader.Info().ID)
-		}
-
-		return nil
-	},
-}
-
-func init() {
-	providersCmd.AddCommand(providersRmCmd)
-}
-
-var providersRmCmd = &cobra.Command{
-	Use:   "rm [tags]",
-	Short: "Remove provider",
-	Args:  cobra.MinimumNArgs(1),
-	Run: func(cmd *cobra.Command, args []string) {
-		for _, tag := range args {
-			if err := manager.Remove(tag); err != nil {
+			if err := manager.New(options); err != nil {
 				errorf(cmd, err.Error())
 			}
-		}
-	},
-}
+		},
+	}
 
-var providersNewArgs = struct {
-	Dir string
-}{}
+	c.Flags().StringVarP(&providersNewArgs.Dir, "dir", "d", path.ProvidersDir(), "directory inside which create a new provider")
 
-func init() {
-	providersCmd.AddCommand(providersNewCmd)
+	c.MarkFlagDirname("dir")
 
-	providersNewCmd.Flags().StringVarP(&providersNewArgs.Dir, "dir", "d", path.ProvidersDir(), "directory inside which create a new provider")
-
-	providersNewCmd.MarkFlagDirname("dir")
-}
-
-var providersNewCmd = &cobra.Command{
-	Use:   "new",
-	Short: "Create new provider",
-	Args:  cobra.NoArgs,
-	Run: func(cmd *cobra.Command, args []string) {
-		options := manager.NewOptions{
-			Dir: providersNewArgs.Dir,
-			Info: info.Info{
-				ProviderInfo: libmangal.ProviderInfo{
-					ID:          "test",
-					Name:        "test",
-					Version:     "0.1.0",
-					Description: "Lorem ipsum",
-					Website:     "example.com",
-				},
-				Type: info.TypeLua,
-			},
-		}
-
-		if err := manager.New(options); err != nil {
-			errorf(cmd, err.Error())
-		}
-	},
+	return c
 }

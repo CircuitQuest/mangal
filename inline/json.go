@@ -46,6 +46,7 @@ func RunJSON(ctx context.Context, args Args) error {
 	if err != nil {
 		return err
 	}
+
 	fmt.Println(string(queryResultJSON))
 	return nil
 }

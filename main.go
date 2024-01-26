@@ -12,5 +12,6 @@ func main() {
 		panic(err)
 	}
 
+	cmd := cmd.NewCmd()
 	cmd.Execute()
 }
