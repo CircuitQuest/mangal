@@ -32,8 +32,7 @@ func RunDownload(ctx context.Context, args Args) error {
 		return fmt.Errorf("invalid manga selector %q, needs to select 1 manga only", args.MangaSelector)
 	}
 
-	// TODO: fix this (should be 0), include it in json.go
-	if args.AnilistID != -1 {
+	if args.AnilistID != 0 {
 		err := anilist.Anilist.BindTitleWithID(mangaResults[0].Manga.Info().AnilistSearch, args.AnilistID)
 		if err != nil {
 			return err
@@ -49,7 +48,6 @@ func RunDownload(ctx context.Context, args Args) error {
 		return err
 	}
 
-	// TODO: fix args.Directory using default instead of mangal.toml config set
 	downloadOptions := libmangal.DownloadOptions{
 		Format:              formatOption,
 		Directory:           args.Directory,

@@ -3,7 +3,6 @@ package inline
 import (
 	"context"
 	"fmt"
-	"reflect"
 	"regexp"
 	"strconv"
 	"strings"
@@ -55,44 +54,18 @@ func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult
 
 func assignAnilist(ctx context.Context, args Args, mangaResults *[]MangaResult) {
 	for i, mangaResult := range *mangaResults {
-		var anilist libmangal.AnilistManga
+		var aniManga libmangal.AnilistManga
 		var found bool
 		var aniErr error
 		if args.AnilistID != 0 {
-			anilist, found, aniErr = anilistSearch(ctx, args.AnilistID)
+			aniManga, found, aniErr = anilist.Anilist.GetByID(ctx, args.AnilistID)
 		} else {
-			anilist, found, aniErr = anilistSearch(ctx, mangaResult.Manga.Info().AnilistSearch)
+			aniManga, found, aniErr = anilist.Anilist.FindClosestManga(ctx, mangaResult.Manga.Info().AnilistSearch)
 		}
 		if aniErr == nil && found {
-			(*mangaResults)[i].Anilist = &anilist
+			(*mangaResults)[i].Anilist = &aniManga
 		}
 	}
-}
-
-// TODO: remove this function? not really necessary, doesn't do much
-// TODO: probably change the return "methodology" (explicit returns)
-func anilistSearch[T string | int](ctx context.Context, queryID T) (aniManga libmangal.AnilistManga, found bool, err error) {
-	switch v := reflect.ValueOf(queryID); v.Kind() {
-	case reflect.String:
-		aniManga, found, err = anilist.Anilist.FindClosestManga(ctx, v.String())
-		if err != nil {
-			return
-		}
-	case reflect.Int:
-		aniManga, found, err = anilist.Anilist.GetByID(ctx, int(v.Int()))
-		if err != nil {
-			return
-		}
-	default:
-		err = fmt.Errorf("unexpected error while searching manga on anilist with query/id %q (of type %T)", queryID, queryID)
-		return
-	}
-
-	if !found {
-		err = fmt.Errorf("no manga found on anilist with query/id %q", queryID)
-		return
-	}
-	return
 }
 
 func populateChapters(ctx context.Context, client *libmangal.Client, args Args, mangaResults *[]MangaResult) error {
