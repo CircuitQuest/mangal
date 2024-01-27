@@ -12,7 +12,7 @@ import (
 	"github.com/philippgille/gokv/encoding"
 )
 
-func httpStoreProvider(providerID string) (gokv.Store, error) {
+func httpStore(providerID string) (gokv.Store, error) {
 	ttl, err := time.ParseDuration(config.Config.Providers.Cache.TTL.Get())
 	if err != nil {
 		log.Fatal(err)

@@ -113,11 +113,11 @@ func newLoader(info libmangal.ProviderInfo, dir string) (libmangal.ProviderLoade
 	}
 
 	options := luaprovider.Options{
-		PackagePaths: []string{dir},
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
-		HTTPStoreProvider: httpStoreProvider,
+		HTTPStore: httpStore,
+		PackagePaths: []string{dir},
 	}
 
 	return luaprovider.NewLoader(providerMainFileContents, info, options)

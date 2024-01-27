@@ -16,8 +16,8 @@ require (
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/luevano/gopher-luadoc v0.3.1
 	github.com/luevano/libmangal v0.10.0
-	github.com/luevano/luaprovider v0.8.0
-	github.com/luevano/mangoprovider v0.7.2
+	github.com/luevano/luaprovider v0.9.1
+	github.com/luevano/mangoprovider v0.7.3
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -135,7 +135,7 @@ require (
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
 	github.com/skeema/knownhosts v1.2.1 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.5
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/ysmood/fetchup v0.2.4 // indirect
 	github.com/ysmood/goob v0.4.0 // indirect

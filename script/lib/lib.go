@@ -8,7 +8,6 @@ import (
 	"github.com/luevano/mangal/script/lib/client"
 	"github.com/luevano/mangal/script/lib/json"
 	"github.com/luevano/mangal/script/lib/prompt"
-	"github.com/luevano/mangal/util/afs"
 	lua "github.com/yuin/gopher-lua"
 )
 
@@ -19,7 +18,8 @@ type Options struct {
 
 func Lib(state *lua.LState, options Options) *luadoc.Lib {
 	SDKOptions := sdk.DefaultOptions()
-	SDKOptions.FS = afs.Afero.Fs
+	// Unused, now removed from luaprovider
+	// SDKOptions.FS = afs.Afero.Fs
 
 	return &luadoc.Lib{
 		Name:        meta.AppName,

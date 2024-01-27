@@ -215,12 +215,12 @@ github.com/luevano/gopher-luadoc v0.3.1 h1:+XvV+VbWXy1b4dnddoQS65WG6Hq6+HAjG5aAT
 github.com/luevano/gopher-luadoc v0.3.1/go.mod h1:0jxRplOdnRq/tJ49bYWS/JBAtx/cXzCPb0MJ7E/8mFA=
 github.com/luevano/libmangal v0.10.0 h1:4X00SBEfbB0JRIQzDDvgy/uTRFxMMYWki0QPeWBqU78=
 github.com/luevano/libmangal v0.10.0/go.mod h1:mefcp7rGxJmzsVI7ogHANCMDNYvikZMNvJ5byZNVs0s=
-github.com/luevano/luaprovider v0.8.0 h1:ov4uvYQLVZTSdMVpuV/Ynp8b2VOhynWiFo5Q7AUaId0=
-github.com/luevano/luaprovider v0.8.0/go.mod h1:NAZtHQVESQIYWFrGW3NR2cOFqihTzVCXAkGEC+uqrcY=
+github.com/luevano/luaprovider v0.9.1 h1:Eo8A5R8Fxxoh/4HgixJSBCLynQu0XT9ggiI5tOpfRDI=
+github.com/luevano/luaprovider v0.9.1/go.mod h1:yQR7CNr8we1pQEmL7wVj2gbjZiQds+YcSyb54PZE77A=
 github.com/luevano/mangodex v0.3.2 h1:XSsxJrg7mUxfSIrb7Z3FmApzjs9leDu0PihSz2/2P70=
 github.com/luevano/mangodex v0.3.2/go.mod h1:eTLfG76HUxj8aQJgBAnoNEsYHAgBS/du6+HKdXFytRo=
-github.com/luevano/mangoprovider v0.7.2 h1:BCrIu2M7YxIx4gJoLficPoEJgmzwoGZTlLpOzIZibtg=
-github.com/luevano/mangoprovider v0.7.2/go.mod h1:8r+QdGHS0zACUi2GNGnLLG6QqKbnsiKTuaolTAVnrG8=
+github.com/luevano/mangoprovider v0.7.3 h1:okbXQhuWhoi1hLKhtyZz5Cw0tjs0T9o+pR/5nkhcKpU=
+github.com/luevano/mangoprovider v0.7.3/go.mod h1:8r+QdGHS0zACUi2GNGnLLG6QqKbnsiKTuaolTAVnrG8=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
 github.com/magiconair/properties v1.8.7/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
 github.com/mailru/easyjson v0.7.7 h1:UGYAvKxe3sBsEDzO8ZeWOSlIQfWFlxbzLZe7hwFURr0=

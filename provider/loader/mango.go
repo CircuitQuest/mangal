@@ -23,8 +23,8 @@ func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
-		HTTPStoreProvider: httpStoreProvider,
-		Parallelism:       options.Parallelism,
+		HTTPStore:   httpStore,
+		Parallelism: options.Parallelism,
 		Headless: mango.Headless{
 			UseFlaresolverr: options.HeadlessUseFlaresolverr,
 			FlaresolverrURL: options.HeadlessFlaresolverrURL,
