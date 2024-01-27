@@ -48,23 +48,10 @@ func RunDownload(ctx context.Context, args Args) error {
 		return err
 	}
 
-	downloadOptions := libmangal.DownloadOptions{
-		Format:              formatOption,
-		Directory:           args.Directory,
-		CreateProviderDir:   config.Config.Download.Provider.CreateDir.Get(),
-		CreateMangaDir:      config.Config.Download.Manga.CreateDir.Get(),
-		CreateVolumeDir:     config.Config.Download.Volume.CreateDir.Get(),
-		Strict:              config.Config.Download.Strict.Get(),
-		SkipIfExists:        config.Config.Download.SkipIfExists.Get(),
-		DownloadMangaCover:  config.Config.Download.Manga.Cover.Get(),
-		DownloadMangaBanner: config.Config.Download.Manga.Banner.Get(),
-		WriteSeriesJson:     config.Config.Download.Metadata.SeriesJSON.Get(),
-		WriteComicInfoXml:   config.Config.Download.Metadata.ComicInfoXML.Get(),
-		ComicInfoXMLOptions: libmangal.DefaultComicInfoOptions(),
-		ImageTransformer: func(bytes []byte) ([]byte, error) {
-			return bytes, nil
-		},
-	}
+	// Take the download options from the config and apply necessary changes
+	downloadOptions := config.Config.DownloadOptions()
+	downloadOptions.Format = formatOption
+	downloadOptions.Directory = args.Directory
 
 	for _, manga := range mangaResults {
 		for _, chapter := range *manga.Chapters {

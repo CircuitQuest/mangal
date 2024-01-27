@@ -2,6 +2,7 @@ package chapters
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 	"time"
 
@@ -21,7 +22,6 @@ import (
 	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
-	"golang.org/x/exp/slices"
 )
 
 var _ base.State = (*State)(nil)
@@ -138,24 +138,6 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				},
 			)
 		case key.Matches(msg, s.keyMap.Download) || (s.selected.Size() > 0 && key.Matches(msg, s.keyMap.Confirm)):
-			options := libmangal.DownloadOptions{
-				Format:              config.Config.Download.Format.Get(),
-				Directory:           config.Config.Download.Path.Get(),
-				CreateProviderDir:   config.Config.Download.Provider.CreateDir.Get(),
-				CreateMangaDir:      config.Config.Download.Manga.CreateDir.Get(),
-				CreateVolumeDir:     config.Config.Download.Volume.CreateDir.Get(),
-				Strict:              config.Config.Download.Strict.Get(),
-				SkipIfExists:        config.Config.Download.SkipIfExists.Get(),
-				DownloadMangaCover:  config.Config.Download.Manga.Cover.Get(),
-				DownloadMangaBanner: config.Config.Download.Manga.Banner.Get(),
-				WriteSeriesJson:     config.Config.Download.Metadata.SeriesJSON.Get(),
-				WriteComicInfoXml:   config.Config.Download.Metadata.ComicInfoXML.Get(),
-				ComicInfoXMLOptions: libmangal.DefaultComicInfoOptions(),
-				ImageTransformer: func(bytes []byte) ([]byte, error) {
-					return bytes, nil
-				},
-			}
-
 			var chapters []libmangal.Chapter
 
 			if s.selected.Size() == 0 {
@@ -166,12 +148,8 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				}
 			}
 
-			slices.SortFunc(chapters, func(a, b libmangal.Chapter) int {
-				if a.Info().Number < b.Info().Number {
-					return -1
-				}
-
-				return 1
+			sort.SliceStable(chapters, func(i, j int) bool {
+				return chapters[i].Info().Number < chapters[j].Info().Number
 			})
 
 			return func() tea.Msg {
@@ -182,20 +160,30 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 							return base.Back
 						}
 
-						return s.downloadChaptersCmd(chapters, options)
+						return s.downloadChaptersCmd(chapters, config.Config.DownloadOptions())
 					},
 				)
 			}
 		case key.Matches(msg, s.keyMap.Read) || (s.selected.Size() == 0 && key.Matches(msg, s.keyMap.Confirm)):
-			format := config.Config.Read.Format.Get()
-
-			// TODO change this
-			readOptions := libmangal.ReadOptions{
-				SaveHistory: config.Config.Read.History.Local.Get(),
-				SaveAnilist: config.Config.Read.History.Anilist.Get(),
+			// If download on read is wanted, then use the normal download path
+			var directory string
+			if config.Config.Read.DownloadOnRead.Get() {
+				directory = config.Config.Download.Path.Get()
+			} else {
+				directory = path.TempDir()
 			}
 
-			if item.DownloadedFormats().Has(format) {
+			// Modify a bit the configured download options for this
+			downloadOptions := config.Config.DownloadOptions()
+			downloadOptions.Format = config.Config.Read.Format.Get()
+			downloadOptions.Directory = directory
+			downloadOptions.SkipIfExists = true
+			downloadOptions.ReadAfter = true
+			downloadOptions.CreateProviderDir = true
+			downloadOptions.CreateMangaDir = true
+			downloadOptions.CreateVolumeDir = true
+
+			if item.DownloadedFormats().Has(downloadOptions.Format) {
 				return tea.Sequence(
 					func() tea.Msg {
 						return loading.New("Opening for reading", item.chapter.String())
@@ -203,9 +191,9 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					func() tea.Msg {
 						err := s.client.ReadChapter(
 							model.Context(),
-							item.Path(format),
+							item.Path(downloadOptions.Format),
 							item.chapter,
-							readOptions,
+							downloadOptions.ReadOptions,
 						)
 						if err != nil {
 							return err
@@ -216,34 +204,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				)
 			}
 
-			var directory string
-
-			if config.Config.Read.DownloadOnRead.Get() {
-				directory = config.Config.Download.Path.Get()
-			} else {
-				directory = path.TempDir()
-			}
-
-			// TODO: change this
-			options := libmangal.DownloadOptions{
-				Format:            format,
-				Directory:         directory,
-				SkipIfExists:      true,
-				ReadAfter:         true,
-				ReadOptions:       readOptions,
-				CreateProviderDir: true,
-				CreateMangaDir:    true,
-				CreateVolumeDir:   true,
-				ImageTransformer: func(bytes []byte) ([]byte, error) {
-					return bytes, nil
-				},
-			}
-
-			return s.downloadChapterCmd(
-				model.Context(),
-				item.chapter,
-				options,
-			)
+			return s.downloadChapterCmd(model.Context(), item.chapter, downloadOptions)
 		case key.Matches(msg, s.keyMap.Anilist):
 			return tea.Sequence(
 				func() tea.Msg {
