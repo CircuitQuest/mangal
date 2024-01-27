@@ -14,10 +14,10 @@ import (
 
 func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
 	// httpStoreProvider uses gob, it needs to register custom types
-	gob.Register(mango.Manga{})
-	gob.Register(mango.Volume{})
-	gob.Register(mango.Chapter{})
-	gob.Register(mango.Page{})
+	gob.Register(&mango.Manga{})
+	gob.Register(&mango.Volume{})
+	gob.Register(&mango.Chapter{})
+	gob.Register(&mango.Page{})
 
 	o := mango.Options{
 		HTTPClient: &http.Client{

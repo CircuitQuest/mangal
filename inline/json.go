@@ -34,9 +34,12 @@ func RunJSON(ctx context.Context, args Args) error {
 	}
 
 	if args.ChapterPopulate {
-		err := populateChapters(ctx, client, args, &mangaResults)
-		if err != nil {
-			return err
+		for i, mangaResult := range mangaResults {
+			chapters, err := getChapters(ctx, client, args, mangaResult.Manga)
+			if err != nil {
+				return err
+			}
+			mangaResults[i].Chapters = &chapters
 		}
 	}
 

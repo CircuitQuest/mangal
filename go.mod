@@ -15,9 +15,9 @@ require (
 	github.com/ktr0731/go-fuzzyfinder v0.8.0
 	github.com/labstack/echo/v4 v4.11.4
 	github.com/luevano/gopher-luadoc v0.3.1
-	github.com/luevano/libmangal v0.10.0
-	github.com/luevano/luaprovider v0.9.1
-	github.com/luevano/mangoprovider v0.7.3
+	github.com/luevano/libmangal v0.11.0
+	github.com/luevano/luaprovider v0.9.2
+	github.com/luevano/mangoprovider v0.7.4
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -129,7 +129,7 @@ require (
 	github.com/pdfcpu/pdfcpu v0.6.0 // indirect
 	github.com/philippgille/gokv/syncmap v0.6.0 // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
-	github.com/rivo/uniseg v0.4.4 // indirect
+	github.com/rivo/uniseg v0.4.5 // indirect
 	github.com/robertkrimen/otto v0.3.0 // indirect
 	github.com/sahilm/fuzzy v0.1.1-0.20230530133925-c48e322e2a8f // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect

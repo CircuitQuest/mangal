@@ -1,9 +1,12 @@
 package chapters
 
 import (
+	"path/filepath"
+
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/util"
 	"github.com/zyedidia/generic/set"
@@ -14,11 +17,33 @@ func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal
 	showGroup := config.Config.TUI.Chapter.ShowGroup.Get()
 	showDate := config.Config.TUI.Chapter.ShowDate.Get()
 	selectedSet := set.NewMapset[*Item]()
+
 	listWrapper := listwrapper.New(util.NewList(
 		3,
 		"chapter", "chapters",
 		chapters,
 		func(chapter libmangal.Chapter) list.DefaultItem {
+			volume := chapter.Volume()
+			manga := volume.Manga()
+
+			tmpPath := filepath.Join(
+				path.TempDir(),
+				client.ComputeProviderFilename(client.Info()),
+				client.ComputeMangaFilename(manga),
+				client.ComputeVolumeFilename(volume),
+			)
+
+			tmpDownPath := config.Config.Download.Path.Get()
+			if config.Config.Download.Provider.CreateDir.Get() {
+				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeProviderFilename(client.Info()))
+			}
+			if config.Config.Download.Manga.CreateDir.Get() {
+				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeMangaFilename(manga))
+			}
+			if config.Config.Download.Volume.CreateDir.Get() {
+				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeVolumeFilename(volume))
+			}
+
 			return &Item{
 				chapter:           chapter,
 				selectedItems:     &selectedSet,
@@ -26,6 +51,8 @@ func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal
 				showChapterNumber: &showChapterNumber,
 				showGroup:         &showGroup,
 				showDate:          &showDate,
+				tmpPath:           &tmpPath,
+				tmpDownPath:       &tmpDownPath,
 			}
 		},
 	))

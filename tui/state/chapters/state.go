@@ -205,6 +205,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			}
 
 			return s.downloadChapterCmd(model.Context(), item.chapter, downloadOptions)
+		// TODO: this should be set some levels before
 		case key.Matches(msg, s.keyMap.Anilist):
 			return tea.Sequence(
 				func() tea.Msg {
@@ -213,7 +214,14 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				func() tea.Msg {
 					var mangas []libmangal.AnilistManga
 
-					mangaTitle := item.chapter.Volume().Manga().Info().Title
+					// TODO: revert to just Title instead of AnilistSearch?
+					var mangaTitle string
+					mangaInfo := item.chapter.Volume().Manga().Info()
+					if mangaInfo.AnilistSearch != "" {
+						mangaTitle = mangaInfo.AnilistSearch
+					} else {
+						mangaTitle = mangaInfo.Title
+					}
 
 					closest, ok, err := s.client.Anilist().FindClosestManga(model.Context(), mangaTitle)
 					if err != nil {
@@ -247,6 +255,8 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 									if err != nil {
 										return err
 									}
+									// TODO: need to set the AnilistManga to the root Manga...
+									// s.volume.Manga().SetAnilistManga(*response)
 
 									return base.MsgBack{}
 								},

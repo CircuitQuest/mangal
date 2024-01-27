@@ -68,32 +68,30 @@ func assignAnilist(ctx context.Context, args Args, mangaResults *[]MangaResult) 
 	}
 }
 
-func populateChapters(ctx context.Context, client *libmangal.Client, args Args, mangaResults *[]MangaResult) error {
-	for i, mangaResult := range *mangaResults {
-		volumes, err := client.MangaVolumes(ctx, mangaResult.Manga)
-		if err != nil {
-			return err
-		}
-		if len(volumes) == 0 {
-			// TODO: use query instead of title?
-			return fmt.Errorf("no manga volumes found with provider %q title %q", args.Provider, mangaResult.Manga.Info().Title)
-		}
-
-		chapters, err := getChapters(ctx, client, args, volumes)
-		if err != nil {
-			return err
-		}
-
-		selectedChapters, err := getSelectedChapters(args, chapters)
-		if err != nil {
-			return err
-		}
-		(*mangaResults)[i].Chapters = &selectedChapters
+func getChapters(ctx context.Context, client *libmangal.Client, args Args, manga libmangal.Manga) ([]libmangal.Chapter, error) {
+	volumes, err := client.MangaVolumes(ctx, manga)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	if len(volumes) == 0 {
+		// TODO: use query instead of title?
+		return nil, fmt.Errorf("no manga volumes found with provider %q title %q", args.Provider, manga.Info().Title)
+	}
+
+	chapters, err := getAllVolumeChapters(ctx, client, args, volumes)
+	if err != nil {
+		return nil, err
+	}
+
+	selectedChapters, err := getSelectedChapters(args, chapters)
+	if err != nil {
+		return nil, err
+	}
+
+	return selectedChapters, nil
 }
 
-func getChapters(ctx context.Context, client *libmangal.Client, args Args, volumes []libmangal.Volume) ([]libmangal.Chapter, error) {
+func getAllVolumeChapters(ctx context.Context, client *libmangal.Client, args Args, volumes []libmangal.Volume) ([]libmangal.Chapter, error) {
 	var chapters []libmangal.Chapter
 	for _, volume := range volumes {
 		volumeChapters, err := client.VolumeChapters(ctx, volume)

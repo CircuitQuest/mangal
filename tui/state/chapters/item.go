@@ -7,7 +7,6 @@ import (
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/util/afs"
@@ -21,6 +20,8 @@ type Item struct {
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
+	tmpPath           *string
+	tmpDownPath       *string
 }
 
 func (i *Item) FilterValue() string {
@@ -103,42 +104,48 @@ func (i *Item) Toggle() {
 	}
 }
 
+// Updated to avoid computing filenames each frame/update
+// TODO: Update tmpPath only when the format changes.
 func (i *Item) Path(format libmangal.Format) string {
-	path := config.Config.Download.Path.Get()
+	// path := config.Config.Download.Path.Get()
 
-	chapter := i.chapter
-	volume := chapter.Volume()
-	manga := volume.Manga()
+	// chapter := i.chapter
+	// volume := chapter.Volume()
+	// manga := volume.Manga()
 
-	if config.Config.Download.Provider.CreateDir.Get() {
-		path = filepath.Join(path, i.client.ComputeProviderFilename(i.client.Info()))
-	}
+	// if config.Config.Download.Provider.CreateDir.Get() {
+	// 	path = filepath.Join(path, i.client.ComputeProviderFilename(i.client.Info()))
+	// }
 
-	if config.Config.Download.Manga.CreateDir.Get() {
-		path = filepath.Join(path, i.client.ComputeMangaFilename(manga))
-	}
+	// if config.Config.Download.Manga.CreateDir.Get() {
+	// 	path = filepath.Join(path, i.client.ComputeMangaFilename(manga))
+	// }
 
-	if config.Config.Download.Volume.CreateDir.Get() {
-		path = filepath.Join(path, i.client.ComputeVolumeFilename(volume))
-	}
+	// if config.Config.Download.Volume.CreateDir.Get() {
+	// 	path = filepath.Join(path, i.client.ComputeVolumeFilename(volume))
+	// }
 
-	return filepath.Join(path, i.client.ComputeChapterFilename(chapter, format))
+	return filepath.Join(*i.tmpDownPath, i.client.ComputeChapterFilename(i.chapter, format))
 }
 
+// Updated to avoid computing filenames each frame/update
+// TODO: Update tmpPath only when the format changes.
 func (i *Item) IsRecent() bool {
-	format := config.Config.Read.Format.Get()
-	chapter := i.chapter
-	volume := chapter.Volume()
-	manga := volume.Manga()
+	// format := config.Config.Read.Format.Get()
+	// chapter := i.chapter
+	// volume := chapter.Volume()
+	// manga := volume.Manga()
 
-	tempPath := filepath.Join(
-		path.TempDir(),
-		i.client.ComputeMangaFilename(manga),
-		i.client.ComputeVolumeFilename(volume),
-		i.client.ComputeChapterFilename(chapter, format),
-	)
+	// tmpPath := filepath.Join(
+	// 	path.TempDir(),
+	// 	i.client.ComputeProviderFilename(i.client.Info()),
+	// 	i.client.ComputeMangaFilename(manga),
+	// 	i.client.ComputeVolumeFilename(volume),
+	// 	i.client.ComputeChapterFilename(chapter, format),
+	// )
 
-	exists, err := afs.Afero.Exists(tempPath)
+	tmpPath := filepath.Join(*i.tmpPath, i.client.ComputeChapterFilename(i.chapter, config.Config.Read.Format.Get()))
+	exists, err := afs.Afero.Exists(tmpPath)
 	if err != nil {
 		return false
 	}

@@ -32,14 +32,26 @@ func RunDownload(ctx context.Context, args Args) error {
 		return fmt.Errorf("invalid manga selector %q, needs to select 1 manga only", args.MangaSelector)
 	}
 
+	manga := mangaResults[0].Manga
 	if args.AnilistID != 0 {
-		err := anilist.Anilist.BindTitleWithID(mangaResults[0].Manga.Info().AnilistSearch, args.AnilistID)
+		err := anilist.Anilist.BindTitleWithID(manga.Info().AnilistSearch, args.AnilistID)
 		if err != nil {
 			return err
 		}
 	}
 
-	if err := populateChapters(ctx, client, args, &mangaResults); err != nil {
+	// Ignore errors or if not found?
+	anilistManga, found, err := anilist.Anilist.FindClosestManga(ctx, manga.Info().AnilistSearch)
+	if err != nil {
+		return err
+	}
+	if !found {
+		return fmt.Errorf("couldn't find anilist manga for query %q", manga.Info().AnilistSearch)
+	}
+
+	manga.SetAnilistManga(anilistManga)
+	chapters, err := getChapters(ctx, client, args, manga)
+	if err != nil {
 		return err
 	}
 
@@ -53,14 +65,12 @@ func RunDownload(ctx context.Context, args Args) error {
 	downloadOptions.Format = formatOption
 	downloadOptions.Directory = args.Directory
 
-	for _, manga := range mangaResults {
-		for _, chapter := range *manga.Chapters {
-			downloadedPath, err := client.DownloadChapter(ctx, chapter, downloadOptions)
-			if err != nil {
-				return err
-			}
-			fmt.Println(downloadedPath)
+	for _, chapter := range chapters {
+		downloadedPath, err := client.DownloadChapter(ctx, chapter, downloadOptions)
+		if err != nil {
+			return err
 		}
+		fmt.Println(downloadedPath)
 	}
 
 	return nil
