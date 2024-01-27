@@ -140,11 +140,22 @@ var Config = config{
 				Default:     false,
 				Description: "Download manga banner.",
 			}),
-			// TODO: in the future change this to a standardized name, maybe coming from anilist
 			NameTemplate: reg(Field[string, string]{
 				Key:         "download.manga.name_template",
+				Default:     `{{ printf "%s (%d) [alid-%d]" .AnilistManga.String .AnilistManga.StartDate.Year .AnilistManga.ID | sanitize }}`,
+				Description: "Template to use for naming downloaded mangas, when Anilist data available.",
+				Validate: func(s string) error {
+					_, err := template.
+						New("").
+						Funcs(funcs.FuncMap).
+						Parse(s)
+					return err
+				},
+			}),
+			NameTemplateFallback: reg(Field[string, string]{
+				Key:         "download.manga.name_template_fallback",
 				Default:     `{{ .Title | sanitize }}`,
-				Description: "Template to use for naming downloaded mangas.",
+				Description: "Template to use for naming downloaded mangas, when no Anilist data is available.",
 				Validate: func(s string) error {
 					_, err := template.
 						New("").

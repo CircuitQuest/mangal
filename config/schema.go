@@ -53,10 +53,11 @@ type configDownloadProvider struct {
 }
 
 type configDownloadManga struct {
-	CreateDir    *registered[bool, bool]
-	Cover        *registered[bool, bool]
-	Banner       *registered[bool, bool]
-	NameTemplate *registered[string, string]
+	CreateDir            *registered[bool, bool]
+	Cover                *registered[bool, bool]
+	Banner               *registered[bool, bool]
+	NameTemplate         *registered[string, string]
+	NameTemplateFallback *registered[string, string]
 }
 
 type configDownloadVolume struct {

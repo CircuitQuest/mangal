@@ -30,17 +30,23 @@ func Provider(provider libmangal.ProviderInfo) string {
 }
 
 func Manga(_ string, manga libmangal.Manga) string {
+	var sb strings.Builder
+
+	// Prioritize the NameTemplate (includes AnilistManga data)
+	var plt string
 	_, err := manga.AnilistManga()
 	if err != nil {
 		// TODO: remove this log?
 		log.Log("[manga-template] manga doesn't have anilist data")
+		plt = config.Config.Download.Manga.NameTemplateFallback.Get()
+	} else {
+		plt = config.Config.Download.Manga.NameTemplate.Get()
 	}
-	var sb strings.Builder
 
 	err = template.Must(template.New("manga").
 		Funcs(funcs.FuncMap).
-		Parse(config.Config.Download.Manga.NameTemplate.Get())).
-		Execute(&sb, manga.Info())
+		Parse(plt)).
+		Execute(&sb, manga)
 	if err != nil {
 		log.Log(fmt.Sprintf("error during execution of the manga name template: %s", err))
 		os.Exit(1)
