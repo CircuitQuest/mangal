@@ -21,10 +21,10 @@ require (
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
-	github.com/philippgille/gokv v0.6.0
-	github.com/philippgille/gokv/bigcache v0.6.0
-	github.com/philippgille/gokv/encoding v0.6.0
-	github.com/philippgille/gokv/util v0.6.0
+	github.com/philippgille/gokv v0.7.0
+	github.com/philippgille/gokv/bigcache v0.7.0
+	github.com/philippgille/gokv/encoding v0.7.0
+	github.com/philippgille/gokv/util v0.7.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.31.0
 	github.com/samber/lo v1.39.0
@@ -41,7 +41,7 @@ require (
 )
 
 require (
-	github.com/allegro/bigcache v1.2.1 // indirect
+	github.com/allegro/bigcache/v3 v3.1.0 // indirect
 	github.com/antchfx/htmlquery v1.3.0 // indirect
 	github.com/antchfx/xmlquery v1.3.18 // indirect
 	github.com/antchfx/xpath v1.2.5 // indirect
@@ -127,9 +127,9 @@ require (
 	github.com/mvdan/xurls v1.1.0 // indirect
 	github.com/nsf/termbox-go v1.1.1 // indirect
 	github.com/pdfcpu/pdfcpu v0.6.0 // indirect
-	github.com/philippgille/gokv/syncmap v0.6.0 // indirect
+	github.com/philippgille/gokv/syncmap v0.7.0 // indirect
 	github.com/pjbgf/sha1cd v0.3.0 // indirect
-	github.com/rivo/uniseg v0.4.5 // indirect
+	github.com/rivo/uniseg v0.4.6 // indirect
 	github.com/robertkrimen/otto v0.3.0 // indirect
 	github.com/sahilm/fuzzy v0.1.1-0.20230530133925-c48e322e2a8f // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
