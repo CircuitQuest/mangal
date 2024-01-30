@@ -6,12 +6,21 @@ import (
 	cc "github.com/ivanpirog/coloredcobra"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/meta"
+	"github.com/luevano/mangal/path"
 	"github.com/spf13/cobra"
 )
 
 const groupMode = "mode"
 
 func init() {
+	// This doesn't really work, not reliable; same with PersistentPreRun
+	// cobra.OnInitialize(initConfig)
+	//
+	// It just so happens that config/config.go runs before anything in cmd/,
+	// so then we can load the mangal.toml into the config.Config fields/entries,
+	// so they're available for all of the cmd/* commands.
+	initConfig()
+
 	rootCmd.AddGroup(&cobra.Group{
 		ID:    groupMode,
 		Title: "Mode Commands:",
@@ -34,6 +43,12 @@ func init() {
 			NoExtraNewlines: true,
 			NoBottomNewline: true,
 		})
+	}
+}
+
+func initConfig() {
+	if err := config.Load(path.ConfigDir()); err != nil {
+		errorf(rootCmd, "failed to load config")
 	}
 }
 
