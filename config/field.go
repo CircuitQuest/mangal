@@ -6,9 +6,10 @@ import (
 	"github.com/spf13/viper"
 )
 
-var Fields = make(map[string]Entry)
+// Fields are all the registered fields.
+var Fields = make(map[string]entry)
 
-type Entry struct {
+type entry struct {
 	Key         string
 	Description string
 	Default     any
@@ -18,7 +19,7 @@ type Entry struct {
 	SetValue    func(any) error
 }
 
-type Field[Raw, Value any] struct {
+type field[Raw, Value any] struct {
 	Key         string
 	Description string
 	Default     Value
@@ -28,7 +29,7 @@ type Field[Raw, Value any] struct {
 }
 
 type registered[Raw, Value any] struct {
-	Field[Raw, Value]
+	field[Raw, Value]
 	value Value
 }
 
@@ -36,6 +37,7 @@ func (r *registered[Raw, Value]) Get() Value {
 	return r.value
 }
 
+// Set the value for the registered entry and viper.
 func (r *registered[Raw, Value]) Set(value Value) error {
 	marshalled, err := r.Marshal(value)
 	if err != nil {
@@ -47,46 +49,48 @@ func (r *registered[Raw, Value]) Set(value Value) error {
 	return nil
 }
 
-func reg[Raw, Value any](field Field[Raw, Value]) *registered[Raw, Value] {
-	if field.Marshal == nil {
-		field.Marshal = func(value Value) (raw Raw, err error) {
+// Register a new config entry.
+func reg[Raw, Value any](f field[Raw, Value]) *registered[Raw, Value] {
+	if f.Marshal == nil {
+		f.Marshal = func(value Value) (raw Raw, err error) {
 			return reflect.
 				ValueOf(value).
 				Convert(reflect.ValueOf(raw).Type()).
 				Interface().(Raw), nil
 		}
 	}
-	if field.Unmarshal == nil {
-		field.Unmarshal = func(raw Raw) (value Value, err error) {
+	if f.Unmarshal == nil {
+		f.Unmarshal = func(raw Raw) (value Value, err error) {
 			return reflect.
 				ValueOf(raw).
 				Convert(reflect.ValueOf(value).Type()).
 				Interface().(Value), nil
 		}
 	}
-	if field.Validate == nil {
-		field.Validate = func(Value) error {
+	if f.Validate == nil {
+		f.Validate = func(Value) error {
 			return nil
 		}
 	}
 
 	r := &registered[Raw, Value]{
-		Field: field,
-		value: field.Default,
+		field: f,
+		value: f.Default,
 	}
 
-	Fields[field.Key] = Entry{
-		Key:         field.Key,
-		Description: field.Description,
-		Default:     field.Default,
+	// Add the entry to the exported Fields
+	Fields[f.Key] = entry{
+		Key:         f.Key,
+		Description: f.Description,
+		Default:     f.Default,
 		Marshal: func(a any) (any, error) {
-			return field.Marshal(a.(Value))
+			return f.Marshal(a.(Value))
 		},
 		Unmarshal: func(a any) (any, error) {
-			return field.Unmarshal(a.(Raw))
+			return f.Unmarshal(a.(Raw))
 		},
 		Validate: func(a any) error {
-			return field.Validate(a.(Value))
+			return f.Validate(a.(Value))
 		},
 		SetValue: func(a any) error {
 			return r.Set(a.(Value))

@@ -14,17 +14,9 @@ import (
 
 const groupMode = "mode"
 
-func init() {
-	// This doesn't really work, not reliable; same with PersistentPreRun
-	// cobra.OnInitialize(initConfig)
-	//
-	// It just so happens that config/config.go runs before anything in cmd/,
-	// so then we can load the mangal.toml into the config.Config fields/entries,
-	// so they're available for all of the cmd/* commands.
-	if err := config.Load(path.ConfigDir()); err != nil {
-		errorf(rootCmd, "failed to load config")
-	}
-}
+var rootArgs = struct {
+	Config string
+}{}
 
 var subcommands []*cobra.Command
 
@@ -56,6 +48,14 @@ func Execute() {
 		ID:    groupMode,
 		Title: "Mode Commands:",
 	})
+
+	// Load the config before any command execution
+	root.PersistentFlags().StringVar(&rootArgs.Config, "config", path.ConfigDir(), "Config directory")
+	root.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
+		if err := config.Load(rootArgs.Config); err != nil {
+			errorf(cmd, "failed to load config: %s", err.Error())
+		}
+	}
 
 	for _, subcommand := range subcommands {
 		if subcommand == root {

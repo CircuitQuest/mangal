@@ -84,24 +84,3 @@ func Chapter(_ string, chapter libmangal.Chapter) string {
 
 	return sb.String()
 }
-
-// Currently unused.
-func Config(field config.Entry) string {
-	var sb strings.Builder
-
-	err := template.Must(template.New("field").
-		Funcs(funcs.FuncMap).
-		Parse(`
-{{ .Description }}
-
-Key: {{ .Key }}
-Value: {{ getConfig .Key }}
-Default: {{ .Default }}
-		`)).Execute(&sb, field)
-	if err != nil {
-		log.Log(fmt.Sprintf("error during execution of the config name template: %s", err))
-		os.Exit(1)
-	}
-
-	return sb.String()
-}
