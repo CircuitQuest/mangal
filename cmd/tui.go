@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/tui"
@@ -8,21 +9,24 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func tuiCmd() *cobra.Command {
-	return &cobra.Command{
-		Use:     "tui",
-		Short:   "Run mangal in TUI mode",
-		GroupID: groupMode,
-		Args:    cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			loaders, err := manager.Loaders(loader.DefaultOptions())
-			if err != nil {
-				errorf(cmd, err.Error())
-			}
+func init() {
+	rootCmd.AddCommand(tuiCmd)
+	setDefaultModeShort(tuiCmd)
+}
 
-			if err := tui.Run(providers.New(loaders)); err != nil {
-				errorf(cmd, err.Error())
-			}
-		},
-	}
+var tuiCmd = &cobra.Command{
+	Use:     config.ModeTUI.String(),
+	Short:   "Start TUI",
+	GroupID: groupMode,
+	Args:    cobra.NoArgs,
+	Run: func(cmd *cobra.Command, _ []string) {
+		loaders, err := manager.Loaders(loader.DefaultOptions())
+		if err != nil {
+			errorf(cmd, err.Error())
+		}
+
+		if err := tui.Run(providers.New(loaders)); err != nil {
+			errorf(cmd, err.Error())
+		}
+	},
 }

@@ -5,15 +5,17 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func formatsCmd() *cobra.Command {
-	return &cobra.Command{
-		Use:   "formats",
-		Short: "Show available download formats",
-		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			for _, format := range libmangal.FormatStrings() {
-				cmd.Println(format)
-			}
-		},
-	}
+func init() {
+	rootCmd.AddCommand(formatsCmd)
+}
+
+var formatsCmd = &cobra.Command{
+	Use:   "formats",
+	Short: "Show available download formats",
+	Args:  cobra.NoArgs,
+	Run: func(cmd *cobra.Command, _ []string) {
+		for _, format := range libmangal.FormatStrings() {
+			cmd.Println(format)
+		}
+	},
 }

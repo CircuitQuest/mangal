@@ -18,6 +18,15 @@ type Entry struct {
 	SetValue    func(any) error
 }
 
+type Field[Raw, Value any] struct {
+	Key         string
+	Description string
+	Default     Value
+	Unmarshal   func(Raw) (Value, error)
+	Marshal     func(Value) (Raw, error)
+	Validate    func(Value) error
+}
+
 type registered[Raw, Value any] struct {
 	Field[Raw, Value]
 	value Value
@@ -32,9 +41,9 @@ func (r *registered[Raw, Value]) Set(value Value) error {
 	if err != nil {
 		return err
 	}
-
 	r.value = value
 	viper.Set(r.Key, marshalled)
+
 	return nil
 }
 
@@ -70,9 +79,6 @@ func reg[Raw, Value any](field Field[Raw, Value]) *registered[Raw, Value] {
 		Key:         field.Key,
 		Description: field.Description,
 		Default:     field.Default,
-		SetValue: func(a any) error {
-			return r.Set(a.(Value))
-		},
 		Marshal: func(a any) (any, error) {
 			return field.Marshal(a.(Value))
 		},
@@ -82,16 +88,10 @@ func reg[Raw, Value any](field Field[Raw, Value]) *registered[Raw, Value] {
 		Validate: func(a any) error {
 			return field.Validate(a.(Value))
 		},
+		SetValue: func(a any) error {
+			return r.Set(a.(Value))
+		},
 	}
 
 	return r
-}
-
-type Field[Raw, Value any] struct {
-	Key         string
-	Description string
-	Default     Value
-	Validate    func(Value) error
-	Unmarshal   func(Raw) (Value, error)
-	Marshal     func(Value) (Raw, error)
 }

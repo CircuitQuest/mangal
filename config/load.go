@@ -4,16 +4,19 @@ import (
 	"fmt"
 
 	"github.com/luevano/mangal/meta"
-	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/util/afs"
 	"github.com/spf13/viper"
 )
 
-func Load() error {
+func Load(path string) error {
+	if path == "" {
+		return fmt.Errorf("empty config directory provided")
+	}
+
 	viper.SetConfigName(meta.AppName)
 	viper.SetConfigType("toml")
 	viper.SetFs(afs.Afero.Fs)
-	viper.AddConfigPath(path.ConfigDir())
+	viper.AddConfigPath(path)
 	viper.KeyDelimiter(".")
 	viper.SetTypeByDefaultValue(false)
 

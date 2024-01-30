@@ -5,26 +5,26 @@ import (
 	"github.com/spf13/cobra"
 )
 
-func versionCmd() *cobra.Command {
-	versionArgs := struct {
-		Short bool
-	}{}
+var versionArgs = struct {
+	Short bool
+}{}
 
-	c := &cobra.Command{
-		Use:   "version",
-		Short: "Show version information",
-		Args:  cobra.NoArgs,
-		Run: func(cmd *cobra.Command, args []string) {
-			if versionArgs.Short {
-				cmd.Println(meta.Version)
-				return
-			}
+func init() {
+	rootCmd.AddCommand(versionCmd)
 
-			cmd.Println(meta.PrettyVersion())
-		},
-	}
+	versionCmd.Flags().BoolVarP(&versionArgs.Short, "short", "s", false, "Only show mangal version number")
+}
 
-	c.Flags().BoolVarP(&versionArgs.Short, "short", "s", false, "Only show mangal version number")
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "Show version information",
+	Args:  cobra.NoArgs,
+	Run: func(cmd *cobra.Command, _ []string) {
+		if versionArgs.Short {
+			cmd.Println(meta.Version)
+			return
+		}
 
-	return c
+		cmd.Println(meta.PrettyVersion())
+	},
 }

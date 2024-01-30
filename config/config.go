@@ -74,7 +74,7 @@ var Config = config{
 		}),
 	},
 	Download: configDownload{
-		// Don't use config.Config.Download.Path.Get()
+		// Don't use path.DownloadDir()
 		// as it creates a directory when called, may be unwanted?
 		Path: reg(Field[string, string]{
 			Key:         "download.path",

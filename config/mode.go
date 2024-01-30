@@ -1,6 +1,6 @@
 package config
 
-//go:generate enumer -type=Mode -trimprefix=Mode -json -yaml -text
+//go:generate enumer -type=Mode -trimprefix=Mode -json -yaml -text -transform=lower
 type Mode uint8
 
 const (
