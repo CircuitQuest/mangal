@@ -15,7 +15,7 @@ import (
 var inlineArgs = inline.Args{}
 
 func init() {
-	rootCmd.AddCommand(inlineCmd)
+	subcommands = append(subcommands, inlineCmd)
 	setDefaultModeShort(inlineCmd)
 	// To shorten the statements a bit
 	f := inlineCmd.PersistentFlags()
@@ -37,7 +37,7 @@ func init() {
 
 var inlineCmd = &cobra.Command{
 	Use:     config.ModeInline.String(),
-	Short:   "Headless, useful for automation",
+	Short:   "Inline, useful for automation",
 	GroupID: groupMode,
 	Args:    cobra.NoArgs,
 }

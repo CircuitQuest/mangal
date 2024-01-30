@@ -10,7 +10,7 @@ var versionArgs = struct {
 }{}
 
 func init() {
-	rootCmd.AddCommand(versionCmd)
+	subcommands = append(subcommands, versionCmd)
 
 	versionCmd.Flags().BoolVarP(&versionArgs.Short, "short", "s", false, "Only show mangal version number")
 }

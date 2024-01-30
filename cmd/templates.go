@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(templatesCmd)
+	subcommands = append(subcommands, templatesCmd)
 }
 
 var templatesCmd = &cobra.Command{

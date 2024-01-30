@@ -1,7 +1,9 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
+	"strings"
 
 	cc "github.com/ivanpirog/coloredcobra"
 	"github.com/luevano/mangal/config"
@@ -19,20 +21,61 @@ func init() {
 	// It just so happens that config/config.go runs before anything in cmd/,
 	// so then we can load the mangal.toml into the config.Config fields/entries,
 	// so they're available for all of the cmd/* commands.
-	initConfig()
+	if err := config.Load(path.ConfigDir()); err != nil {
+		errorf(rootCmd, "failed to load config")
+	}
+}
 
-	rootCmd.AddGroup(&cobra.Group{
+var subcommands []*cobra.Command
+
+var rootCmd = &cobra.Command{
+	Use:  meta.AppName,
+	Args: cobra.NoArgs,
+	// A default completion option is always added, this would disable it.
+	// CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true}
+}
+
+func Execute() {
+	// Actual root Cmd
+	var root *cobra.Command
+
+	switch config.Config.CLI.Mode.Default.Get() {
+	case config.ModeTUI:
+		root = tuiCmd
+	case config.ModeWeb:
+		root = webCmd
+	case config.ModeScript:
+		root = scriptCmd
+	case config.ModeInline:
+		root = inlineCmd
+	default:
+		// ModeNone basically
+		root = rootCmd
+	}
+	root.AddGroup(&cobra.Group{
 		ID:    groupMode,
 		Title: "Mode Commands:",
 	})
 
-	rootCmd.SetOut(os.Stdout)
-	rootCmd.SetErr(os.Stderr)
-	rootCmd.SetIn(os.Stdin)
+	for _, subcommand := range subcommands {
+		if subcommand == root {
+			continue
+		}
+		root.AddCommand(subcommand)
+	}
+
+	root.SetOut(os.Stdout)
+	root.SetErr(os.Stderr)
+	root.SetIn(os.Stdin)
+
+	if config.Config.CLI.Mode.Default.Get() != config.ModeNone {
+		root.Use = strings.Replace(root.Use, root.Name(), rootCmd.Name(), 1)
+	}
+	root.Long = fmt.Sprintf("The ultimate CLI manga downloader\n\n%s", root.Short)
 
 	if config.Config.CLI.ColoredHelp.Get() {
 		cc.Init(&cc.Config{
-			RootCmd:         rootCmd,
+			RootCmd:         root,
 			Headings:        cc.HiCyan + cc.Bold + cc.Underline,
 			Commands:        cc.HiYellow + cc.Bold,
 			Example:         cc.Italic,
@@ -44,39 +87,7 @@ func init() {
 			NoBottomNewline: true,
 		})
 	}
-}
-
-func initConfig() {
-	if err := config.Load(path.ConfigDir()); err != nil {
-		errorf(rootCmd, "failed to load config")
-	}
-}
-
-var rootCmd = &cobra.Command{
-	Use:  meta.AppName,
-	Long: "The ultimate CLI manga downloader",
-	Args: cobra.NoArgs,
-	// A default completion option is always added, this would disable it.
-	// CompletionOptions: cobra.CompletionOptions{DisableDefaultCmd: true}
-	// PersistentPreRun: func(cmd *cobra.Command, _ []string){
-	// 	cmd.Printf("%s: PersistentPreRun\n", cmd.Name())
-	// },
-	// Run: func(cmd *cobra.Command, _ []string) {
-	// 	// For more on setting a "default cmd":
-	// 	// https://github.com/spf13/cobra/issues/823
-	// 	// I'm not passing a default command via CLI so it doesn't apply that well
-	// 	if config.Config.CLI.Mode.Default.Get() != config.ModeNone {
-	// 		cmd.SetArgs([]string{config.Config.CLI.Mode.Default.Get().String()})
-	// 		cmd.Execute()
-	// 		return
-	// 	}
-	// 	cmd.Println(config.Config.CLI.Mode.Default.Get())
-	// 	cmd.Help()
-	// },
-}
-
-func Execute() {
-	if err := rootCmd.Execute(); err != nil {
-		errorf(rootCmd, err.Error())
+	if err := root.Execute(); err != nil {
+		errorf(root, err.Error())
 	}
 }

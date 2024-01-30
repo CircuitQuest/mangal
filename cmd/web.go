@@ -9,7 +9,7 @@ import (
 var webArgs = web.Args{}
 
 func init() {
-	rootCmd.AddCommand(webCmd)
+	subcommands = append(subcommands, webCmd)
 	setDefaultModeShort(webCmd)
 
 	webCmd.Flags().BoolVarP(&webArgs.Open, "open", "o", false, "Open served page in the default browser")
@@ -18,7 +18,7 @@ func init() {
 
 var webCmd = &cobra.Command{
 	Use:     config.ModeWeb.String(),
-	Short:   "Start server, accessible through Web UI",
+	Short:   "Web UI, start server",
 	GroupID: groupMode,
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {

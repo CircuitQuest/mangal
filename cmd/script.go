@@ -20,7 +20,7 @@ import (
 var scriptArgs = script.Args{}
 
 func init() {
-	rootCmd.AddCommand(scriptCmd)
+	subcommands = append(subcommands, scriptCmd)
 	setDefaultModeShort(scriptCmd)
 	// To shorten the statements a bit
 	f := scriptCmd.Flags()
@@ -43,7 +43,7 @@ func init() {
 
 var scriptCmd = &cobra.Command{
 	Use:     config.ModeScript.String(),
-	Short:   "Headless, useful for custom process with Lua",
+	Short:   "Script, useful for custom process with Lua",
 	GroupID: groupMode,
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {

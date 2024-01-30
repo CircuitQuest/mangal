@@ -29,7 +29,6 @@ var Config = config{
 			Description: "Enable colors in cli help.",
 		}),
 		Mode: configCLIMode{
-			// TODO: change mode to either none or some (new) "inline" mode
 			Default: reg(Field[string, Mode]{
 				Key:         "cli.mode.default",
 				Default:     ModeTUI,

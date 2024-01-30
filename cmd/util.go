@@ -26,7 +26,7 @@ func errorf(cmd *cobra.Command, format string, a ...any) {
 
 func setDefaultModeShort(cmd *cobra.Command) {
 	if config.Config.CLI.Mode.Default.Get().String() == cmd.Use {
-		cmd.Short = fmt.Sprintf("%s (default)", cmd.Short)
+		cmd.Short = fmt.Sprintf("%s (configured as default)", cmd.Short)
 	}
 }
 

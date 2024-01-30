@@ -20,7 +20,7 @@ var pathArgs = struct {
 }{}
 
 func init() {
-	rootCmd.AddCommand(pathCmd)
+	subcommands = append(subcommands, pathCmd)
 
 	pathCmd.Flags().BoolVar(&pathArgs.Config, "config", false, "Path to the config directory")
 	pathCmd.Flags().BoolVar(&pathArgs.Cache, "cache", false, "Path to the cache directory")

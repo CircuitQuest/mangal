@@ -10,13 +10,13 @@ import (
 )
 
 func init() {
-	rootCmd.AddCommand(tuiCmd)
+	subcommands = append(subcommands, tuiCmd)
 	setDefaultModeShort(tuiCmd)
 }
 
 var tuiCmd = &cobra.Command{
 	Use:     config.ModeTUI.String(),
-	Short:   "Start TUI",
+	Short:   "TUI, interactive in-terminal",
 	GroupID: groupMode,
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {
