@@ -4,8 +4,8 @@ import (
 	"text/template"
 	"time"
 
-	"github.com/adrg/xdg"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/template/funcs"
 	"github.com/luevano/mangal/theme/icon"
 )
@@ -23,6 +23,25 @@ var Config = config{
 			return i.String(), nil
 		},
 	}),
+	Cache: configCache{
+		Path: reg(field[string, string]{
+			Key:         "cache.path",
+			Default:     path.CacheDir(),
+			Description: "Path where cache will be written to.",
+			Unmarshal: func(s string) (string, error) {
+				return expandPath(s)
+			},
+		}),
+		TTL: reg(field[string, string]{
+			Key:         "cache.ttl",
+			Default:     "24h",
+			Description: `Time to live. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".`,
+			Validate: func(s string) error {
+				_, err := time.ParseDuration(s)
+				return err
+			},
+		}),
+	},
 	CLI: configCLI{
 		ColoredHelp: reg(field[bool, bool]{
 			Key:         "cli.colored_help",
@@ -74,11 +93,9 @@ var Config = config{
 		}),
 	},
 	Download: configDownload{
-		// Don't use path.DownloadDir()
-		// as it creates a directory when called, may be unwanted?
 		Path: reg(field[string, string]{
 			Key:         "download.path",
-			Default:     xdg.UserDirs.Download,
+			Default:     path.DownloadsDir(),
 			Description: "Path where chapters will be downloaded.",
 			Unmarshal: func(s string) (string, error) {
 				return expandPath(s)
@@ -243,22 +260,19 @@ var Config = config{
 		},
 	},
 	Providers: configProviders{
+		Path: reg(field[string, string]{
+			Key:         "providers.path",
+			Default:     path.ProvidersDir(),
+			Description: "Path where chapters will be placed/looked for.",
+			Unmarshal: func(s string) (string, error) {
+				return expandPath(s)
+			},
+		}),
 		Parallelism: reg(field[int64, uint8]{
 			Key:         "providers.parallelism",
 			Default:     15,
 			Description: "Parallelism to use for the scrapers that support it.",
 		}),
-		Cache: configProvidersCache{
-			TTL: reg(field[string, string]{
-				Key:         "providers.cache.ttl",
-				Default:     "24h",
-				Description: `Time to live. A duration string is a possibly signed sequence of decimal numbers, each with optional fraction and a unit suffix, such as "300ms", "-1.5h" or "2h45m". Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h".`,
-				Validate: func(s string) error {
-					_, err := time.ParseDuration(s)
-					return err
-				},
-			}),
-		},
 		Headless: configProvidersHeadless{
 			UseFlaresolverr: reg(field[bool, bool]{
 				Key:         "providers.headless.use_flaresolverr",
@@ -310,6 +324,9 @@ var Config = config{
 			Key:         "library.path",
 			Default:     "",
 			Description: "Path to the manga library. Empty string will fallback to the download.path.",
+			Unmarshal: func(s string) (string, error) {
+				return expandPath(s)
+			},
 		}),
 	},
 }

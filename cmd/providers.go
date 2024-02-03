@@ -5,7 +5,7 @@ import (
 	"net/url"
 
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
@@ -101,7 +101,7 @@ var providersNewArgs = struct {
 func init() {
 	providersCmd.AddCommand(providersNewCmd)
 
-	providersNewCmd.Flags().StringVarP(&providersNewArgs.Dir, "dir", "d", path.ProvidersDir(), "directory inside which create a new provider")
+	providersNewCmd.Flags().StringVarP(&providersNewArgs.Dir, "dir", "d", config.Config.Providers.Path.Get(), "directory inside which create a new provider")
 
 	providersNewCmd.MarkFlagDirname("dir")
 }

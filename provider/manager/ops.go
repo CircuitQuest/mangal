@@ -12,6 +12,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/luaprovider"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/provider/loader"
@@ -74,13 +75,13 @@ func Add(ctx context.Context, options AddOptions) error {
 		return fmt.Errorf("provider with ID %q already exists", ID)
 	}
 
-	target := filepath.Join(path.ProvidersDir(), ID)
+	target := filepath.Join(config.Config.Providers.Path.Get(), ID)
 	fmt.Println(target)
 	return afs.Afero.Rename(tempDir, target)
 }
 
 func Update(ctx context.Context, options UpdateOptions) error {
-	providersDir := path.ProvidersDir()
+	providersDir := config.Config.Providers.Path.Get()
 	dirEntries, err := afs.Afero.ReadDir(providersDir)
 	if err != nil {
 		return err
@@ -116,7 +117,7 @@ func Update(ctx context.Context, options UpdateOptions) error {
 }
 
 func Remove(tag string) error {
-	return afs.Afero.RemoveAll(filepath.Join(path.ProvidersDir(), tag))
+	return afs.Afero.RemoveAll(filepath.Join(config.Config.Providers.Path.Get(), tag))
 }
 
 type NewOptions struct {

@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/util/afs"
 	"github.com/luevano/mangal/util/cache/bbolt"
@@ -17,7 +18,7 @@ var Anilist = newAnilist()
 
 func newAnilist() *libmangal.Anilist {
 	newPersistentStore := func(name string, ttl time.Duration) (gokv.Store, error) {
-		dir := filepath.Join(path.CacheDir(), "anilist")
+		dir := filepath.Join(config.Config.Cache.Path.Get(), "anilist")
 		if err := afs.Afero.MkdirAll(dir, path.ModeDir); err != nil {
 			return nil, err
 		}

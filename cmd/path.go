@@ -58,16 +58,17 @@ var pathCmd = &cobra.Command{
 
 		switch {
 		case pathArgs.Config:
+			// TODO: get config directory based on passed --config flag on the persisted flags
 			pathToShow = path.ConfigDir()
 			pathToShowName = "config"
 		case pathArgs.Providers:
-			pathToShow = path.ProvidersDir()
+			pathToShow = config.Config.Providers.Path.Get()
 			pathToShowName = "providers"
 		case pathArgs.Downloads:
 			pathToShow = config.Config.Download.Path.Get()
 			pathToShowName = "downloads"
 		case pathArgs.Cache:
-			pathToShow = path.CacheDir()
+			pathToShow = config.Config.Cache.Path.Get()
 			pathToShowName = "cache"
 		case pathArgs.Temp:
 			pathToShow = path.TempDir()
@@ -79,12 +80,13 @@ var pathCmd = &cobra.Command{
 			if pathArgs.JSON {
 				err := json.NewEncoder(cmd.OutOrStdout()).Encode([]pathEntry{
 					{
+						// TODO: get config directory based on passed --config flag on the persisted flags
 						Name: "config",
 						Path: path.ConfigDir(),
 					},
 					{
 						Name: "providers",
-						Path: path.ProvidersDir(),
+						Path: config.Config.Providers.Path.Get(),
 					},
 					{
 						Name: "downloads",
@@ -92,7 +94,7 @@ var pathCmd = &cobra.Command{
 					},
 					{
 						Name: "cache",
-						Path: path.CacheDir(),
+						Path: config.Config.Cache.Path.Get(),
 					},
 					{
 						Name: "logs",

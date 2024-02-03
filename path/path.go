@@ -9,12 +9,6 @@ import (
 	"github.com/luevano/mangal/meta"
 )
 
-func HomeDir() string {
-	dir := xdg.Home
-	createDirIfAbsent(dir)
-	return dir
-}
-
 func CacheDir() string {
 	dir := filepath.Join(xdg.CacheHome, meta.AppName)
 	createDirIfAbsent(dir)
@@ -46,6 +40,8 @@ func TempDir() string {
 	return dir
 }
 
+// TODO: this references ConfigDir() it should instead use the
+// configured config dir in case that it is passed as a flag; e.g. use a parameter
 func ProvidersDir() string {
 	dir := filepath.Join(ConfigDir(), "providers")
 	createDirIfAbsent(dir)

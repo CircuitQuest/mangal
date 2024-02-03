@@ -35,7 +35,7 @@ func newModel() *Model {
 		},
 		{
 			"providers",
-			path.ProvidersDir(),
+			config.Config.Providers.Path.Get(),
 		},
 		{
 			"downloads",
@@ -43,7 +43,7 @@ func newModel() *Model {
 		},
 		{
 			"cache",
-			path.CacheDir(),
+			config.Config.Cache.Path.Get(),
 		},
 		{
 			"logs",

@@ -7,6 +7,7 @@ import (
 
 type config struct {
 	Icons     *registered[string, icon.Type]
+	Cache     configCache
 	CLI       configCLI
 	Read      configRead
 	Download  configDownload
@@ -87,14 +88,15 @@ type configTUIChapter struct {
 }
 
 type configProviders struct {
+	Path        *registered[string, string]
 	Parallelism *registered[int64, uint8]
-	Cache       configProvidersCache
 	Headless    configProvidersHeadless
 	Filter      configProvidersFilter
 }
 
-type configProvidersCache struct {
-	TTL *registered[string, string]
+type configCache struct {
+	Path *registered[string, string]
+	TTL  *registered[string, string]
 }
 
 type configProvidersHeadless struct {
