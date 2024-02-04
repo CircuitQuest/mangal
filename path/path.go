@@ -3,33 +3,25 @@ package path
 import (
 	"os"
 	"path/filepath"
-	"runtime"
 
-	"github.com/adrg/xdg"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/meta"
 )
 
 func CacheDir() string {
-	dir := filepath.Join(xdg.CacheHome, meta.AppName)
+	dir := config.Config.Cache.Path.Get()
 	createDirIfAbsent(dir)
 	return dir
 }
 
 func ConfigDir() string {
-	var dir string
-
-	if runtime.GOOS == "darwin" {
-		dir = filepath.Join(xdg.Home, ".config", meta.AppName)
-	} else {
-		dir = filepath.Join(xdg.ConfigHome, meta.AppName)
-	}
-
+	var dir string = config.Dir
 	createDirIfAbsent(dir)
 	return dir
 }
 
 func DownloadsDir() string {
-	dir := xdg.UserDirs.Download
+	dir := config.Config.Download.Path.Get()
 	createDirIfAbsent(dir)
 	return dir
 }
@@ -40,10 +32,8 @@ func TempDir() string {
 	return dir
 }
 
-// TODO: this references ConfigDir() it should instead use the
-// configured config dir in case that it is passed as a flag; e.g. use a parameter
 func ProvidersDir() string {
-	dir := filepath.Join(ConfigDir(), "providers")
+	dir := config.Config.Providers.Path.Get()
 	createDirIfAbsent(dir)
 	return dir
 }

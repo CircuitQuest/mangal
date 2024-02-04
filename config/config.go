@@ -1,16 +1,34 @@
 package config
 
 import (
+	"path/filepath"
+	"runtime"
 	"text/template"
 	"time"
 
+	"github.com/adrg/xdg"
 	"github.com/luevano/libmangal"
-	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/template/funcs"
 	"github.com/luevano/mangal/theme/icon"
 )
 
-// Register all possible config options.
+// Dir is the default config directory which is also set by the --config flag.
+//
+// This should only be used inside cmd/cmd.go, anywhere else path.Dir() should be used
+// as it uses this variable but also has the option to create the directories if needed.
+var Dir string = func() string {
+	var dir string
+	if runtime.GOOS == "darwin" {
+		dir = filepath.Join(xdg.Home, ".config", meta.AppName)
+	} else {
+		dir = filepath.Join(xdg.ConfigHome, meta.AppName)
+	}
+
+	return dir
+}()
+
+// Config registers all possible config options and it's exported.
 var Config = config{
 	Icons: reg(field[string, icon.Type]{
 		Key:         "icons",
@@ -26,7 +44,7 @@ var Config = config{
 	Cache: configCache{
 		Path: reg(field[string, string]{
 			Key:         "cache.path",
-			Default:     path.CacheDir(),
+			Default:     filepath.Join(xdg.CacheHome, meta.AppName),
 			Description: "Path where cache will be written to.",
 			Unmarshal: func(s string) (string, error) {
 				return expandPath(s)
@@ -95,7 +113,7 @@ var Config = config{
 	Download: configDownload{
 		Path: reg(field[string, string]{
 			Key:         "download.path",
-			Default:     path.DownloadsDir(),
+			Default:     xdg.UserDirs.Download,
 			Description: "Path where chapters will be downloaded.",
 			Unmarshal: func(s string) (string, error) {
 				return expandPath(s)
@@ -262,7 +280,7 @@ var Config = config{
 	Providers: configProviders{
 		Path: reg(field[string, string]{
 			Key:         "providers.path",
-			Default:     path.ProvidersDir(),
+			Default:     filepath.Join(Dir, "providers"),
 			Description: "Path where chapters will be placed/looked for.",
 			Unmarshal: func(s string) (string, error) {
 				return expandPath(s)

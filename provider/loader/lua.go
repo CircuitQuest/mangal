@@ -9,7 +9,6 @@ import (
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/luaprovider"
-	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/util/afs"
@@ -18,7 +17,7 @@ import (
 const mainLua = "main.lua"
 
 func LuaLoaders() ([]libmangal.ProviderLoader, error) {
-	return getLoaderBundles("", config.Config.Providers.Path.Get())
+	return getLoaderBundles("", path.ProvidersDir())
 }
 
 // getLoaderBundles returns a linear list of all providers with their parent bundle id attached.

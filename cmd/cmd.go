@@ -14,10 +14,6 @@ import (
 
 const groupMode = "mode"
 
-var rootArgs = struct {
-	Config string
-}{}
-
 var subcommands []*cobra.Command
 
 var rootCmd = &cobra.Command{
@@ -50,9 +46,11 @@ func Execute() {
 	})
 
 	// Load the config before any command execution
-	root.PersistentFlags().StringVar(&rootArgs.Config, "config", path.ConfigDir(), "Config directory")
+	// Looks weird, it sets the same variable it uses for default and then path.ConfigDir
+	// will also read this set flag but it also creates the directory if doesn't exist.
+	root.PersistentFlags().StringVar(&config.Dir, "config", config.Dir, "Config directory")
 	root.PersistentPreRun = func(cmd *cobra.Command, _ []string) {
-		if err := config.Load(rootArgs.Config); err != nil {
+		if err := config.Load(path.ConfigDir()); err != nil {
 			errorf(cmd, "failed to load config: %s", err.Error())
 		}
 	}

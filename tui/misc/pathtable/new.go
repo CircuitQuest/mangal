@@ -4,7 +4,6 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/table"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/util"
@@ -35,15 +34,15 @@ func newModel() *Model {
 		},
 		{
 			"providers",
-			config.Config.Providers.Path.Get(),
+			path.ProvidersDir(),
 		},
 		{
 			"downloads",
-			config.Config.Download.Path.Get(),
+			path.DownloadsDir(),
 		},
 		{
 			"cache",
-			config.Config.Cache.Path.Get(),
+			path.CacheDir(),
 		},
 		{
 			"logs",

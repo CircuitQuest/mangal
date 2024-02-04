@@ -8,6 +8,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/inline"
+	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/spf13/cobra"
 )
@@ -67,7 +68,7 @@ func init() {
 
 	formatDesc := fmt.Sprintf("Download format (%s)", strings.Join(libmangal.FormatStrings(), "|"))
 	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Format, "format", "f", config.Config.Download.Format.Get().String(), formatDesc)
-	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Directory, "directory", "d", config.Config.Download.Path.Get(), "Download directory")
+	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Directory, "directory", "d", path.DownloadsDir(), "Download directory")
 }
 
 var inlineDownloadCmd = &cobra.Command{

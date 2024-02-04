@@ -3,7 +3,6 @@ package cmd
 import (
 	"encoding/json"
 
-	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/misc/pathtable"
 	"github.com/spf13/cobra"
@@ -62,13 +61,13 @@ var pathCmd = &cobra.Command{
 			pathToShow = path.ConfigDir()
 			pathToShowName = "config"
 		case pathArgs.Providers:
-			pathToShow = config.Config.Providers.Path.Get()
+			pathToShow = path.ProvidersDir()
 			pathToShowName = "providers"
 		case pathArgs.Downloads:
-			pathToShow = config.Config.Download.Path.Get()
+			pathToShow = path.DownloadsDir()
 			pathToShowName = "downloads"
 		case pathArgs.Cache:
-			pathToShow = config.Config.Cache.Path.Get()
+			pathToShow = path.CacheDir()
 			pathToShowName = "cache"
 		case pathArgs.Temp:
 			pathToShow = path.TempDir()
@@ -80,21 +79,20 @@ var pathCmd = &cobra.Command{
 			if pathArgs.JSON {
 				err := json.NewEncoder(cmd.OutOrStdout()).Encode([]pathEntry{
 					{
-						// TODO: get config directory based on passed --config flag on the persisted flags
 						Name: "config",
 						Path: path.ConfigDir(),
 					},
 					{
 						Name: "providers",
-						Path: config.Config.Providers.Path.Get(),
+						Path: path.ProvidersDir(),
 					},
 					{
 						Name: "downloads",
-						Path: config.Config.Download.Path.Get(),
+						Path: path.DownloadsDir(),
 					},
 					{
 						Name: "cache",
-						Path: config.Config.Cache.Path.Get(),
+						Path: path.CacheDir(),
 					},
 					{
 						Name: "logs",

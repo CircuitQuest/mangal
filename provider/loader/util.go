@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/util/cache/bbolt"
 	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/encoding"
@@ -20,7 +21,7 @@ func httpStore(providerID string) (gokv.Store, error) {
 	return bbolt.NewStore(bbolt.Options{
 		TTL:        ttl,
 		BucketName: providerID,
-		Path:       filepath.Join(config.Config.Cache.Path.Get(), providerID+".db"),
+		Path:       filepath.Join(path.CacheDir(), providerID+".db"),
 		Codec:      encoding.Gob,
 	})
 }

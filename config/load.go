@@ -2,7 +2,6 @@ package config
 
 import (
 	"fmt"
-	"path"
 
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/util/afs"
@@ -13,13 +12,20 @@ import (
 // then reads the config file and sets the keys found in viper,
 // validating that it is a valid config value.
 func Load(configDir string) error {
-	configFile := path.Join(configDir, fmt.Sprintf("%s.toml", meta.AppName))
 	// Without Reset it wouldn't be possible to specify a
 	// different config file after one has been loaded.
 	//
 	// Uncomment if different config files might be loaded in the same session.
 	// viper.Reset()
-	viper.SetConfigFile(configFile)
+
+	// When the config file is specified, it will fail on fail not found, when
+	// using directories it just tries to find any file named mangal.toml and loads it (won't fail),
+	// this is needed for dynamic directory location.
+	// configFile := path.Join(configDir, fmt.Sprintf("%s.toml", meta.AppName))
+	// viper.SetConfigFile(configFile)
+	viper.SetConfigName(meta.AppName)
+	viper.SetConfigType("toml")
+	viper.AddConfigPath(configDir)
 	viper.KeyDelimiter(".")
 	viper.SetFs(afs.Afero.Fs)
 	viper.SetTypeByDefaultValue(false)

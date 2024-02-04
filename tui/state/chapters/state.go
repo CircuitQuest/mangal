@@ -168,7 +168,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			// If download on read is wanted, then use the normal download path
 			var directory string
 			if config.Config.Read.DownloadOnRead.Get() {
-				directory = config.Config.Download.Path.Get()
+				directory = path.DownloadsDir()
 			} else {
 				directory = path.TempDir()
 			}

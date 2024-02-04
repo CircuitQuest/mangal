@@ -33,7 +33,7 @@ func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal
 				client.ComputeVolumeFilename(volume),
 			)
 
-			tmpDownPath := config.Config.Download.Path.Get()
+			tmpDownPath := path.DownloadsDir()
 			if config.Config.Download.Provider.CreateDir.Get() {
 				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeProviderFilename(client.Info()))
 			}
