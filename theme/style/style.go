@@ -42,7 +42,7 @@ func newStyle(base lipgloss.Style, color lipgloss.TerminalColor) lipgloss.Style 
 }
 
 func Trim(max int) lipgloss.Style {
-	return lipgloss.NewStyle().MaxWidth(max - 1)
+	return lipgloss.NewStyle().MaxWidth(max)
 }
 
 func FlipGrounds(style lipgloss.Style) lipgloss.Style {
