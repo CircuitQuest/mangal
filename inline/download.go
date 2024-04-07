@@ -33,20 +33,25 @@ func RunDownload(ctx context.Context, args Args) error {
 	}
 
 	manga := mangaResults[0].Manga
+	var anilistManga libmangal.AnilistManga
+	var found bool
+
 	if args.AnilistID != 0 {
-		err := anilist.Anilist.BindTitleWithID(manga.Info().AnilistSearch, args.AnilistID)
+		anilistManga, found, err = anilist.Anilist.GetByID(ctx, args.AnilistID)
 		if err != nil {
 			return err
 		}
-	}
-
-	// Ignore errors or if not found?
-	anilistManga, found, err := anilist.Anilist.FindClosestManga(ctx, manga.Info().AnilistSearch)
-	if err != nil {
-		return err
-	}
-	if !found {
-		return fmt.Errorf("couldn't find anilist manga for query %q", manga.Info().AnilistSearch)
+		if !found {
+			return fmt.Errorf("couldn't find anilist manga with id %q", args.AnilistID)
+		}
+	} else {
+		anilistManga, found, err = anilist.Anilist.FindClosestManga(ctx, manga.Info().AnilistSearch)
+		if err != nil {
+			return err
+		}
+		if !found {
+			return fmt.Errorf("couldn't find anilist manga for query %q", manga.Info().AnilistSearch)
+		}
 	}
 
 	manga.SetAnilistManga(anilistManga)
