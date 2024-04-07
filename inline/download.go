@@ -60,15 +60,18 @@ func RunDownload(ctx context.Context, args Args) error {
 		return err
 	}
 
-	formatOption, err := libmangal.FormatString(args.Format)
-	if err != nil {
-		return err
-	}
-
 	// Take the download options from the config and apply necessary changes
 	downloadOptions := config.Config.DownloadOptions()
-	downloadOptions.Format = formatOption
-	downloadOptions.Directory = args.Directory
+	if args.Format != "" {
+		formatOption, err := libmangal.FormatString(args.Format)
+		if err != nil {
+			return err
+		}
+		downloadOptions.Format = formatOption
+	}
+	if args.Directory != "" {
+		downloadOptions.Directory = args.Directory
+	}
 
 	for _, chapter := range chapters {
 		downloadedPath, err := client.DownloadChapter(ctx, chapter, downloadOptions)
