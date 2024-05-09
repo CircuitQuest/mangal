@@ -80,9 +80,9 @@ func RunDownload(ctx context.Context, args Args) error {
 			return err
 		}
 		fmt.Println(downloadedPath)
-		// TODO: make the delay configurable
+		// TODO: make the delay configurable and for all mangal "versions"
 		// A bit of delay to avoid abusing sites/APIs
-		time.Sleep(5 * time.Second)
+		time.Sleep(1 * time.Second)
 	}
 
 	return nil
