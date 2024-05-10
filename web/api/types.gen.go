@@ -96,7 +96,7 @@ type GetChapterParams struct {
 	Manga string `form:"manga" json:"manga"`
 
 	// Volume volume number
-	Volume int `form:"volume" json:"volume"`
+	Volume float32 `form:"volume" json:"volume"`
 }
 
 // GetImageParams defines parameters for GetImage.

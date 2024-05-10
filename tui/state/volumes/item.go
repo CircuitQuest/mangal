@@ -10,7 +10,7 @@ type Item struct {
 }
 
 func (i Item) FilterValue() string {
-	return fmt.Sprintf("Volume %d", i.Info().Number)
+	return fmt.Sprintf("Volume %.1f", i.Info().Number)
 }
 
 func (i Item) Title() string {

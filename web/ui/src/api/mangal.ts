@@ -82,6 +82,7 @@ export interface components {
       description?: string;
     };
     Volume: {
+      /** Format: float */
       number: number;
     };
     Chapter: {

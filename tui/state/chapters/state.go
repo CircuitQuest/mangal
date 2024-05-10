@@ -49,7 +49,7 @@ func (s *State) Title() base.Title {
 	volume := s.volume
 	manga := volume.Manga()
 
-	return base.Title{Text: fmt.Sprintf("%s / Vol. %d", manga, volume.Info().Number)}
+	return base.Title{Text: fmt.Sprintf("%s / Vol. %.1f", manga, volume.Info().Number)}
 }
 
 func (s *State) Subtitle() string {
