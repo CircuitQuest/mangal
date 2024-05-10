@@ -3,7 +3,6 @@ package web
 import (
 	"context"
 	"fmt"
-	"strconv"
 
 	"github.com/luevano/libmangal"
 )
@@ -27,7 +26,7 @@ func mangaVolumes(ctx context.Context, client *libmangal.Client, query, mangaID 
 	return nil, fmt.Errorf("manga %q not found", mangaID)
 }
 
-func volumeChapters(ctx context.Context, client *libmangal.Client, query, mangaID string, volumeNumber int) ([]libmangal.Chapter, error) {
+func volumeChapters(ctx context.Context, client *libmangal.Client, query, mangaID string, volumeNumber float32) ([]libmangal.Chapter, error) {
 	volumes, err := mangaVolumes(ctx, client, query, mangaID)
 	if err != nil {
 		return nil, err
@@ -39,5 +38,5 @@ func volumeChapters(ctx context.Context, client *libmangal.Client, query, mangaI
 		}
 	}
 
-	return nil, fmt.Errorf("volume %q not found", strconv.Itoa(volumeNumber))
+	return nil, fmt.Errorf("volume %.1f not found", volumeNumber)
 }

@@ -75,7 +75,7 @@ type Provider struct {
 
 // Volume defines model for Volume.
 type Volume struct {
-	Number int `json:"number"`
+	Number float32 `json:"number"`
 }
 
 // VolumeWithChapters defines model for VolumeWithChapters.
@@ -171,5 +171,5 @@ type GetVolumeChaptersParams struct {
 	Manga string `form:"manga" json:"manga"`
 
 	// Volume volume number
-	Volume int `form:"volume" json:"volume"`
+	Volume float32 `form:"volume" json:"volume"`
 }

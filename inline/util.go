@@ -99,7 +99,7 @@ func getAllVolumeChapters(ctx context.Context, client *libmangal.Client, args Ar
 			return nil, err
 		}
 		if len(volumeChapters) == 0 {
-			return nil, fmt.Errorf("no manga chapters found for volume %d (provider %q, title %q)", volume.Info().Number, args.Provider, args.Query)
+			return nil, fmt.Errorf("no manga chapters found for volume %.1f (provider %q, title %q)", volume.Info().Number, args.Provider, args.Query)
 		}
 
 		chapters = append(chapters, volumeChapters...)
