@@ -65,8 +65,8 @@ func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal
 		keyMap: KeyMap{
 			UnselectAll:         util.Bind("unselect all", "backspace"),
 			SelectAll:           util.Bind("select all", "a"),
-			ToggleChapterNumber: util.Bind("toggle group", "c"),
-			ToggleGroup:         util.Bind("toggle group", "g"),
+			ToggleChapterNumber: util.Bind("toggle ch num", "c"),
+			ToggleGroup:         util.Bind("toggle group", "ctrl+g"),
 			ToggleDate:          util.Bind("toggle date", "ctrl+d"),
 			Toggle:              util.Bind("toggle", " "),
 			Read:                util.Bind("read", "r"),
