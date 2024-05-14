@@ -12,7 +12,7 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
-func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal.Chapter) *State {
+func New(client *libmangal.Client, manga *libmangal.Manga, volume *libmangal.Volume, chapters []*libmangal.Chapter) *State {
 	showChapterNumber := config.Config.TUI.Chapter.ShowNumber.Get()
 	showGroup := config.Config.TUI.Chapter.ShowGroup.Get()
 	showDate := config.Config.TUI.Chapter.ShowDate.Get()
@@ -22,15 +22,12 @@ func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal
 		3,
 		"chapter", "chapters",
 		chapters,
-		func(chapter libmangal.Chapter) list.DefaultItem {
-			volume := chapter.Volume()
-			manga := volume.Manga()
-
+		func(chapter *libmangal.Chapter) list.DefaultItem {
 			tmpPath := filepath.Join(
 				path.TempDir(),
 				client.ComputeProviderFilename(client.Info()),
-				client.ComputeMangaFilename(manga),
-				client.ComputeVolumeFilename(volume),
+				client.ComputeMangaFilename(*manga),
+				client.ComputeVolumeFilename(*volume),
 			)
 
 			tmpDownPath := path.DownloadsDir()
@@ -38,10 +35,10 @@ func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal
 				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeProviderFilename(client.Info()))
 			}
 			if config.Config.Download.Manga.CreateDir.Get() {
-				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeMangaFilename(manga))
+				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeMangaFilename(*manga))
 			}
 			if config.Config.Download.Volume.CreateDir.Get() {
-				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeVolumeFilename(volume))
+				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeVolumeFilename(*volume))
 			}
 
 			return &Item{
@@ -59,6 +56,7 @@ func New(client *libmangal.Client, volume libmangal.Volume, chapters []libmangal
 
 	return &State{
 		client:   client,
+		manga:    manga,
 		volume:   volume,
 		selected: selectedSet,
 		list:     listWrapper,

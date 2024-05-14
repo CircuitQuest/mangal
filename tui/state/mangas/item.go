@@ -3,11 +3,11 @@ package mangas
 import "github.com/luevano/libmangal"
 
 type Item struct {
-	libmangal.Manga
+	manga *libmangal.Manga
 }
 
 func (i Item) FilterValue() string {
-	return i.String()
+	return (*i.manga).String()
 }
 
 func (i Item) Title() string {
@@ -15,5 +15,5 @@ func (i Item) Title() string {
 }
 
 func (i Item) Description() string {
-	return i.Info().URL
+	return (*i.manga).Info().URL
 }

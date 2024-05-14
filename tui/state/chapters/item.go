@@ -15,7 +15,7 @@ import (
 
 type Item struct {
 	client            *libmangal.Client
-	chapter           libmangal.Chapter
+	chapter           *libmangal.Chapter
 	selectedItems     *set.Set[*Item]
 	showChapterNumber *bool
 	showGroup         *bool
@@ -25,14 +25,14 @@ type Item struct {
 }
 
 func (i *Item) FilterValue() string {
-	return i.chapter.String()
+	return (*i.chapter).String()
 }
 
 func (i *Item) Title() string {
 	var title strings.Builder
 
 	if *i.showChapterNumber {
-		chapterNumber := fmt.Sprintf(config.Config.TUI.Chapter.NumberFormat.Get(), i.chapter.Info().Number)
+		chapterNumber := fmt.Sprintf(config.Config.TUI.Chapter.NumberFormat.Get(), (*i.chapter).Info().Number)
 		chapterNumberFmt := style.Bold.Base.Render(chapterNumber)
 		title.WriteString(chapterNumberFmt)
 		title.WriteString(" ")
@@ -71,14 +71,15 @@ func (i *Item) Title() string {
 func (i *Item) Description() string {
 	var extraInfo strings.Builder
 
+	chapterInfo := (*i.chapter).Info()
 	if *i.showDate {
-		chapterDate := style.Bold.Secondary.Render(i.chapter.Info().Date.String())
+		chapterDate := style.Bold.Secondary.Render(chapterInfo.Date.String())
 		extraInfo.WriteString(chapterDate)
 		extraInfo.WriteString(" ")
 	}
 
 	if *i.showGroup {
-		scanlationGroup := style.Italic.Secondary.Render(i.chapter.Info().ScanlationGroup)
+		scanlationGroup := style.Italic.Secondary.Render(chapterInfo.ScanlationGroup)
 		extraInfo.WriteString(scanlationGroup)
 	}
 
@@ -86,10 +87,10 @@ func (i *Item) Description() string {
 		return fmt.Sprintf(
 			"%s\n%s",
 			extraInfo.String(),
-			i.chapter.Info().URL)
+			chapterInfo.URL)
 	}
 
-	return i.chapter.Info().URL
+	return chapterInfo.URL
 }
 
 func (i *Item) IsSelected() bool {
@@ -125,7 +126,7 @@ func (i *Item) Path(format libmangal.Format) string {
 	// 	path = filepath.Join(path, i.client.ComputeVolumeFilename(volume))
 	// }
 
-	return filepath.Join(*i.tmpDownPath, i.client.ComputeChapterFilename(i.chapter, format))
+	return filepath.Join(*i.tmpDownPath, i.client.ComputeChapterFilename(*i.chapter, format))
 }
 
 // Updated to avoid computing filenames each frame/update
@@ -144,7 +145,7 @@ func (i *Item) IsRecent() bool {
 	// 	i.client.ComputeChapterFilename(chapter, format),
 	// )
 
-	tmpPath := filepath.Join(*i.tmpPath, i.client.ComputeChapterFilename(i.chapter, config.Config.Read.Format.Get()))
+	tmpPath := filepath.Join(*i.tmpPath, i.client.ComputeChapterFilename(*i.chapter, config.Config.Read.Format.Get()))
 	exists, err := afs.Afero.Exists(tmpPath)
 	if err != nil {
 		return false

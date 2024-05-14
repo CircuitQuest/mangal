@@ -1,18 +1,21 @@
 package mangas
 
 import (
+	"context"
 	"fmt"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapters"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/volumes"
-	"github.com/luevano/libmangal"
 )
 
 var _ base.State = (*State)(nil)
@@ -20,7 +23,7 @@ var _ base.State = (*State)(nil)
 type State struct {
 	query  string
 	client *libmangal.Client
-	mangas []libmangal.Manga
+	mangas []*libmangal.Manga
 	list   *listwrapper.State
 	keyMap KeyMap
 }
@@ -69,25 +72,52 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.Confirm):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Getting volumes for %q", item.Manga))
+					return loading.New("Searching", fmt.Sprintf("Finding Anilist for %q", *item.manga))
 				},
 				func() tea.Msg {
-					v, err := s.client.MangaVolumes(model.Context(), item.Manga)
+					// Find anilist manga closest to the selected manga and assign it
+					anilistManga, found, err := s.client.Anilist().FindClosestMangaByManga(context.Background(), *item.manga)
+					if err != nil {
+						return err
+					}
+					if !found {
+						log.Log(fmt.Sprintf("Couldn't find Anilist for %q", *item.manga))
+					}
+					(*item.manga).SetAnilistManga(anilistManga)
+					log.Log(fmt.Sprintf("Found and set Anilist for %q: %q (%d)", *item.manga, anilistManga.String(), anilistManga.ID))
+
+					return nil
+				},
+				func() tea.Msg {
+					return loading.New("Searching", fmt.Sprintf("Getting volumes for %q", *item.manga))
+				},
+				func() tea.Msg {
+					vL, err := s.client.MangaVolumes(model.Context(), *item.manga)
 					if err != nil {
 						return err
 					}
 
-					if len(v) != 1 || !config.Config.TUI.ExpandSingleVolume.Get() {
-						return volumes.New(s.client, item.Manga, v)
+					var volumeList []*libmangal.Volume
+					for _, v := range vL {
+						volumeList = append(volumeList, &v)
 					}
 
-					volume := v[0]
-					c, err := s.client.VolumeChapters(model.Context(), volume)
+					if len(vL) != 1 || !config.Config.TUI.ExpandSingleVolume.Get() {
+						return volumes.New(s.client, item.manga, volumeList)
+					}
+
+					volume := volumeList[0]
+					cL, err := s.client.VolumeChapters(model.Context(), *volume)
 					if err != nil {
 						return err
 					}
 
-					return chapters.New(s.client, volume, c)
+					var chapterList []*libmangal.Chapter
+					for _, c := range cL {
+						chapterList = append(chapterList, &c)
+					}
+
+					return chapters.New(s.client, item.manga, volume, chapterList)
 				},
 			)
 		}

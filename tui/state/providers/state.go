@@ -108,13 +108,16 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 									return loading.New("Searching", fmt.Sprintf("Searching for %q", response))
 								},
 								func() tea.Msg {
-									// TODO: assign AnilistManga to all found mangas here?
-									m, err := client.SearchMangas(model.Context(), response)
+									mL, err := client.SearchMangas(model.Context(), response)
 									if err != nil {
 										return err
 									}
+									var mangaList []*libmangal.Manga
+									for _, m := range mL {
+										mangaList = append(mangaList, &m)
+									}
 
-									return mangas.New(client, response, m)
+									return mangas.New(client, response, mangaList)
 								},
 							)
 						},

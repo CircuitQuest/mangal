@@ -6,11 +6,11 @@ import (
 )
 
 type Item struct {
-	libmangal.Volume
+	volume *libmangal.Volume
 }
 
 func (i Item) FilterValue() string {
-	return fmt.Sprintf("Volume %.1f", i.Info().Number)
+	return fmt.Sprintf("Volume %s", (*i.volume).String())
 }
 
 func (i Item) Title() string {

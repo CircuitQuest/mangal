@@ -12,6 +12,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/anilistmangas"
@@ -28,7 +29,8 @@ var _ base.State = (*State)(nil)
 
 type State struct {
 	client            *libmangal.Client
-	volume            libmangal.Volume
+	manga             *libmangal.Manga
+	volume            *libmangal.Volume
 	selected          set.Set[*Item]
 	list              *listwrapper.State
 	keyMap            KeyMap
@@ -46,10 +48,7 @@ func (s *State) KeyMap() help.KeyMap {
 }
 
 func (s *State) Title() base.Title {
-	volume := s.volume
-	manga := volume.Manga()
-
-	return base.Title{Text: fmt.Sprintf("%s / Vol. %.1f", manga, volume.Info().Number)}
+	return base.Title{Text: fmt.Sprintf("%s / Vol. %s", *s.manga, (*s.volume).String())}
 }
 
 func (s *State) Subtitle() string {
@@ -108,6 +107,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			return nil
 		case key.Matches(msg, s.keyMap.SelectAll):
 			for _, listItem := range s.list.Items() {
+				// TODO: possibly issue here? item is re-declared, need to keep an eye
 				item, ok := listItem.(*Item)
 				if !ok {
 					continue
@@ -126,10 +126,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.OpenURL):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Opening", item.chapter.String())
+					return loading.New("Opening", (*item.chapter).String())
 				},
 				func() tea.Msg {
-					err := open.Run(item.chapter.Info().URL)
+					err := open.Run((*item.chapter).Info().URL)
 					if err != nil {
 						return err
 					}
@@ -141,10 +141,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			var chapters []libmangal.Chapter
 
 			if s.selected.Size() == 0 {
-				chapters = append(chapters, item.chapter)
+				chapters = append(chapters, *item.chapter)
 			} else {
 				for _, item := range s.selected.Keys() {
-					chapters = append(chapters, item.chapter)
+					chapters = append(chapters, *item.chapter)
 				}
 			}
 
@@ -186,13 +186,13 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			if item.DownloadedFormats().Has(downloadOptions.Format) {
 				return tea.Sequence(
 					func() tea.Msg {
-						return loading.New("Opening for reading", item.chapter.String())
+						return loading.New("Opening for reading", (*item.chapter).String())
 					},
 					func() tea.Msg {
 						err := s.client.ReadChapter(
 							model.Context(),
 							item.Path(downloadOptions.Format),
-							item.chapter,
+							*item.chapter,
 							downloadOptions.ReadOptions,
 						)
 						if err != nil {
@@ -204,7 +204,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				)
 			}
 
-			return s.downloadChapterCmd(model.Context(), item.chapter, downloadOptions)
+			return s.downloadChapterCmd(model.Context(), *item.chapter, downloadOptions)
 		// TODO: this should be set some levels before
 		case key.Matches(msg, s.keyMap.Anilist):
 			return tea.Sequence(
@@ -216,7 +216,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 
 					// TODO: revert to just Title instead of AnilistSearch?
 					var mangaTitle string
-					mangaInfo := item.chapter.Volume().Manga().Info()
+					mangaInfo := (*item.chapter).Volume().Manga().Info()
 					if mangaInfo.AnilistSearch != "" {
 						mangaTitle = mangaInfo.AnilistSearch
 					} else {
@@ -251,16 +251,13 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						func(response *libmangal.AnilistManga) tea.Cmd {
 							return tea.Sequence(
 								func() tea.Msg {
-									err := s.client.Anilist().BindTitleWithID(mangaTitle, response.ID)
-									if err != nil {
-										return err
-									}
-									// TODO: need to set the AnilistManga to the root Manga...
-									// s.volume.Manga().SetAnilistManga(*response)
+									log.Log(fmt.Sprintf("Setting Anilist manga %q (%d)", response.String(), response.ID))
+									(*s.manga).SetAnilistManga(*response)
+									// (*s.volume).Manga().SetAnilistManga(*response)
 
 									return base.MsgBack{}
 								},
-								s.list.Notify("Binded to "+response.Title.English, time.Second*3),
+								s.list.Notify(fmt.Sprintf("Set Anilist %s (%d)", response.String(), response.ID), 3*time.Second),
 							)
 						},
 					)

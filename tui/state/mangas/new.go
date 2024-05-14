@@ -7,12 +7,12 @@ import (
 	"github.com/luevano/libmangal"
 )
 
-func New(client *libmangal.Client, query string, mangas []libmangal.Manga) *State {
+func New(client *libmangal.Client, query string, mangas []*libmangal.Manga) *State {
 	listWrapper := listwrapper.New(util.NewList(
 		2,
 		"manga", "mangas",
 		mangas,
-		func(manga libmangal.Manga) list.DefaultItem {
+		func(manga *libmangal.Manga) list.DefaultItem {
 			return Item{manga}
 		},
 	))

@@ -17,8 +17,8 @@ var _ base.State = (*State)(nil)
 
 type State struct {
 	client  *libmangal.Client
-	manga   libmangal.Manga
-	volumes []libmangal.Volume
+	manga   *libmangal.Manga
+	volumes []*libmangal.Volume
 	list    *listwrapper.State
 	keyMap  KeyMap
 }
@@ -32,7 +32,7 @@ func (s *State) KeyMap() help.KeyMap {
 }
 
 func (s *State) Title() base.Title {
-	return base.Title{Text: s.manga.String()}
+	return base.Title{Text: (*s.manga).String()}
 }
 
 func (s *State) Subtitle() string {
@@ -67,15 +67,20 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.Confirm):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Getting chapters for volume %q", item.Volume))
+					return loading.New("Searching", fmt.Sprintf("Getting chapters for volume %s", *item.volume))
 				},
 				func() tea.Msg {
-					c, err := s.client.VolumeChapters(model.Context(), item.Volume)
+					cL, err := s.client.VolumeChapters(model.Context(), *item.volume)
 					if err != nil {
 						return err
 					}
 
-					return chapters.New(s.client, item.Volume, c)
+					var chapterList []*libmangal.Chapter
+					for _, c := range cL {
+						chapterList = append(chapterList, &c)
+					}
+
+					return chapters.New(s.client, s.manga, item.volume, chapterList)
 				},
 			)
 		}
