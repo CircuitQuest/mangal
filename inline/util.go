@@ -9,6 +9,7 @@ import (
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/client/anilist"
+	"github.com/luevano/mangal/log"
 )
 
 func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult, error) {
@@ -99,6 +100,10 @@ func getAllVolumeChapters(ctx context.Context, client *libmangal.Client, args Ar
 			return nil, err
 		}
 		if len(volumeChapters) == 0 {
+			if volume.Info().Number == float32(-1.0) {
+				log.Log("Skipping 'none' volume as it doesn't contain chapters.")
+				continue
+			}
 			return nil, fmt.Errorf("no manga chapters found for volume %.1f (provider %q, title %q)", volume.Info().Number, args.Provider, args.Query)
 		}
 
