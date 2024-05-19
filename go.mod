@@ -2,6 +2,12 @@ module github.com/luevano/mangal
 
 go 1.22
 
+// Mistakenly "uploaded" when importing in a separate package...
+retract (
+	v0.0.0-20240517101323-1d20eb78430f
+	v0.0.0-20240514061342-bf49b6004548
+)
+
 require (
 	github.com/adrg/xdg v0.4.0
 	github.com/charmbracelet/bubbles v0.18.0
@@ -17,7 +23,7 @@ require (
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.14.1
 	github.com/luevano/luaprovider v0.10.1
-	github.com/luevano/mangoprovider v0.8.4
+	github.com/luevano/mangoprovider v0.9.0
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -61,7 +67,9 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
+	github.com/lithammer/fuzzysearch v1.1.8 // indirect
 	github.com/luevano/mangodex v0.3.3 // indirect
+	github.com/luevano/mangoplus v0.2.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect

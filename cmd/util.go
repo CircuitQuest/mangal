@@ -57,6 +57,7 @@ func setupLoaderOptions(f *pflag.FlagSet, o *loader.Options) {
 	c := config.Config.Providers
 	f.BoolVar(&o.NSFW, "nsfw", c.Filter.NSFW.Get(), "Include NSFW content (when supported)")
 	f.StringVar(&o.Language, "language", c.Filter.Language.Get(), "Manga/Chapter language")
+	f.StringVar(&o.MangaPlusQuality, "mangaplus-quality", c.Filter.MangaPlusQuality.Get(), "'low', 'high' or 'super_high'")
 	f.BoolVar(&o.MangaDexDataSaver, "mangadex-data-saver", c.Filter.MangaDexDataSaver.Get(), "Use 'data-saver'")
 	f.BoolVar(&o.TitleChapterNumber, "title-chapter-number", c.Filter.TitleChapterNumber.Get(), "Include 'Chapter #' always")
 	f.BoolVar(&o.AvoidDuplicateChapters, "avoid-duplicate-chapters", c.Filter.AvoidDuplicateChapters.Get(), "No duplicate chapters")

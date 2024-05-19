@@ -80,9 +80,13 @@ func RunDownload(ctx context.Context, args Args) error {
 			return err
 		}
 		fmt.Println(downloadedPath)
-		// TODO: make the delay configurable and for all mangal "versions"
+		// TODO: make the delay configurable and for each provider
+		//
 		// A bit of delay to avoid abusing sites/APIs
-		time.Sleep(1 * time.Second)
+		if client.Info().ID == "mango-mangadex" ||
+			client.Info().ID == "mango-mangaplus" {
+			time.Sleep(2 * time.Second)
+		}
 	}
 
 	return nil

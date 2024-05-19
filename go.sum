@@ -208,6 +208,8 @@ github.com/labstack/echo/v4 v4.12.0 h1:IKpw49IMryVB2p1a4dzwlhP1O2Tf2E0Ir/450lH+k
 github.com/labstack/echo/v4 v4.12.0/go.mod h1:UP9Cr2DJXbOK3Kr9ONYzNowSh7HP0aG0ShAyycHSJvM=
 github.com/labstack/gommon v0.4.2 h1:F8qTUNXgG1+6WQmqoUWnz8WiEU60mXVVw0P4ht1WRA0=
 github.com/labstack/gommon v0.4.2/go.mod h1:QlUFxVM+SNXhDL/Z7YhocGIBYOiwB0mXm1+1bAPHPyU=
+github.com/lithammer/fuzzysearch v1.1.8 h1:/HIuJnjHuXS8bKaiTMeeDlW2/AyIWk2brx1V8LFgLN4=
+github.com/lithammer/fuzzysearch v1.1.8/go.mod h1:IdqeyBClc3FFqSzYq/MXESsS4S0FsZ5ajtkr5xPLts4=
 github.com/lucasb-eyer/go-colorful v1.2.0 h1:1nnpGOrhyZZuNyfu1QjKiUICQ74+3FNCN69Aj6K7nkY=
 github.com/lucasb-eyer/go-colorful v1.2.0/go.mod h1:R4dSotOR9KMtayYi1e77YzuveK+i7ruzyGqttikkLy0=
 github.com/luevano/gopher-luadoc v0.3.2 h1:BHzm127Jf7Ahdgpsv08+FuCidR/FoJnO+XshDnkXHSc=
@@ -218,8 +220,10 @@ github.com/luevano/luaprovider v0.10.1 h1:jb15bdYeDWCwRfhtuKP+TS93o0pMJgIyrGiMyl
 github.com/luevano/luaprovider v0.10.1/go.mod h1:5rfeEWEf7XLdpvbcEUQPO1zwc0PE+7X2mD2HC7SDtjQ=
 github.com/luevano/mangodex v0.3.3 h1:aHryrIjW/NrkVHq3nKHq4qnFdrz8ZF/vl+k4OTC/S/Q=
 github.com/luevano/mangodex v0.3.3/go.mod h1:FdjJzUAr0Xo+gUMakiEMA2ogJKHPIXit+cVvJbroG6Y=
-github.com/luevano/mangoprovider v0.8.4 h1:DOXYQAog2ZTnPy0qF5gdX15/R2f3aKmPjD0kK1YvgX0=
-github.com/luevano/mangoprovider v0.8.4/go.mod h1:15G0h6dMh+SKOAv2QwwMKMgMo6wI7AeSg34fixGgI6s=
+github.com/luevano/mangoplus v0.2.1 h1:ekDV1Ngeu4W9IXCKWAbVIZz40dfB5Nw8hb5HvTJDayg=
+github.com/luevano/mangoplus v0.2.1/go.mod h1:COOFVXrEEEccRUp2be5YXkv9+lreiW/s4PYIpq4/RcE=
+github.com/luevano/mangoprovider v0.9.0 h1:/58h4ZtGOSvy7+1E6P1Z+drHQnhtLYlqnFB6a76H1e8=
+github.com/luevano/mangoprovider v0.9.0/go.mod h1:VxX/J/r9VhOOkFVd7VRu5OVPzW99gVoiGxpHAF7DzoQ=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
 github.com/magiconair/properties v1.8.7/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
 github.com/mailru/easyjson v0.7.7 h1:UGYAvKxe3sBsEDzO8ZeWOSlIQfWFlxbzLZe7hwFURr0=

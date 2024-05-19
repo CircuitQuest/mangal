@@ -111,6 +111,7 @@ type configLibrary struct {
 type configProvidersFilter struct {
 	NSFW                    *registered[bool, bool]
 	Language                *registered[string, string]
+	MangaPlusQuality        *registered[string, string]
 	MangaDexDataSaver       *registered[bool, bool]
 	TitleChapterNumber      *registered[bool, bool]
 	AvoidDuplicateChapters  *registered[bool, bool]

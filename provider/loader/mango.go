@@ -32,6 +32,7 @@ func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
 		Filter: mango.Filter{
 			NSFW:                    options.NSFW,
 			Language:                options.Language,
+			MangaPlusQuality:        options.MangaPlusQuality,
 			MangaDexDataSaver:       options.MangaDexDataSaver,
 			TitleChapterNumber:      options.TitleChapterNumber,
 			AvoidDuplicateChapters:  options.AvoidDuplicateChapters,

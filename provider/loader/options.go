@@ -5,6 +5,7 @@ import "github.com/luevano/mangal/config"
 type Options struct {
 	NSFW                    bool   `json:"nsfw"`
 	Language                string `json:"language"`
+	MangaPlusQuality        string `json:"manga_plus_quality"`
 	MangaDexDataSaver       bool   `json:"manga_dex_data_saver"`
 	TitleChapterNumber      bool   `json:"title_chapter_number"`
 	AvoidDuplicateChapters  bool   `json:"avoid_duplicate_chapters"`
@@ -19,7 +20,8 @@ func DefaultOptions() Options {
 	return Options{
 		NSFW:                    config.Config.Providers.Filter.NSFW.Get(),
 		Language:                config.Config.Providers.Filter.Language.Get(),
-		MangaDexDataSaver:       config.Config.Providers.Filter.TitleChapterNumber.Get(),
+		MangaPlusQuality:        config.Config.Providers.Filter.MangaPlusQuality.Get(),
+		MangaDexDataSaver:       config.Config.Providers.Filter.MangaDexDataSaver.Get(),
 		TitleChapterNumber:      config.Config.Providers.Filter.TitleChapterNumber.Get(),
 		AvoidDuplicateChapters:  config.Config.Providers.Filter.AvoidDuplicateChapters.Get(),
 		ShowUnavailableChapters: config.Config.Providers.Filter.ShowUnavailableChapters.Get(),

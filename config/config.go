@@ -315,6 +315,11 @@ var Config = config{
 				Default:     "en",
 				Description: "The language the manga should be on.",
 			}),
+			MangaPlusQuality: reg(field[string, string]{
+				Key:         "providers.filter.mangaplus_quality",
+				Default:     "super_high",
+				Description: `MangaPlus page image quality, one of "low", "high" or "super_high".`,
+			}),
 			MangaDexDataSaver: reg(field[bool, bool]{
 				Key:         "providers.filter.mangadex_datasaver",
 				Default:     false,
