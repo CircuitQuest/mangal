@@ -235,15 +235,20 @@ var Config = config{
 			}),
 		},
 		Metadata: configDownloadMetadata{
-			ComicInfoXML: reg(field[bool, bool]{
-				Key:         "download.metadata.comicinfo_xml",
-				Default:     true,
-				Description: "Generate `ComicInfo.xml` file.",
-			}),
 			SeriesJSON: reg(field[bool, bool]{
 				Key:         "download.metadata.series_json",
 				Default:     true,
 				Description: "Generate `series.json` file.",
+			}),
+			SkipSeriesJSONIfOngoing: reg(field[bool, bool]{
+				Key:         "download.metadata.skip_series_json_if_ongoing",
+				Default:     true,
+				Description: "Avoid writing the `series.json` file if the manga is ongoing (publishing).",
+			}),
+			ComicInfoXML: reg(field[bool, bool]{
+				Key:         "download.metadata.comicinfo_xml",
+				Default:     true,
+				Description: "Generate `ComicInfo.xml` file.",
 			}),
 		},
 	},

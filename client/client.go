@@ -43,6 +43,7 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 		Timeout: time.Minute,
 	}
 
+	// TODO: add configuration options for user agent and dir/file modes
 	options := libmangal.DefaultClientOptions()
 	options.FS = afs.Afero
 	options.Anilist = anilist.Anilist
