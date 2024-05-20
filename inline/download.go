@@ -75,11 +75,11 @@ func RunDownload(ctx context.Context, args Args) error {
 	}
 
 	for _, chapter := range chapters {
-		downloadedPath, err := client.DownloadChapter(ctx, chapter, downloadOptions)
+		downChap, err := client.DownloadChapter(ctx, chapter, downloadOptions)
 		if err != nil {
 			return err
 		}
-		fmt.Println(downloadedPath)
+		fmt.Println(downChap.Path())
 		// TODO: make the delay configurable and for each provider
 		//
 		// A bit of delay to avoid abusing sites/APIs

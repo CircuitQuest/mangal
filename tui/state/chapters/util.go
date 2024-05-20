@@ -18,15 +18,15 @@ func (s *State) downloadChaptersCmd(chapters []libmangal.Chapter, options libman
 		state := chapsdownloading.New(
 			chapters,
 			chapsdownloading.Options{
-				DownloadChapter: func(ctx context.Context, chapter libmangal.Chapter) (string, error) {
+				DownloadChapter: func(ctx context.Context, chapter libmangal.Chapter) (libmangal.DownloadedChapter, error) {
 					return s.client.DownloadChapter(ctx, chapter, options)
 				},
-				OnDownloadFinished: func(paths []string, succeed, failed []libmangal.Chapter) tea.Cmd {
+				OnDownloadFinished: func(downChaps []libmangal.DownloadedChapter, succeed, failed []libmangal.Chapter) tea.Cmd {
 					return func() tea.Msg {
 						return chapsdownloaded.New(chapsdownloaded.Options{
-							Succeed:      succeed,
-							Failed:       failed,
-							SucceedPaths: paths,
+							Succeed:          succeed,
+							Failed:           failed,
+							SucceedDownloads: downChaps,
 							DownloadChapters: func(chapters []libmangal.Chapter) tea.Cmd {
 								return s.downloadChaptersCmd(chapters, options)
 							},
@@ -60,6 +60,7 @@ func (s *State) downloadChapterCmd(ctx context.Context, chapter libmangal.Chapte
 				log.Log(msg)
 			})
 
+			// TODO: make use of the returned data for data aggregation?
 			_, err := s.client.DownloadChapter(ctx, chapter, options)
 			if err != nil {
 				return err

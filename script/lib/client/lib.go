@@ -10,11 +10,12 @@ import (
 const (
 	libName = "client"
 
-	mangaTypeName         = libName + "_manga"
-	volumeTypeName        = libName + "_volume"
-	chapterTypeName       = libName + "_chapter"
-	pageTypeName          = libName + "_page"
-	pageWithImageTypeName = libName + "_page_with_image"
+	mangaTypeName             = libName + "_manga"
+	volumeTypeName            = libName + "_volume"
+	chapterTypeName           = libName + "_chapter"
+	downloadedChapterTypeName = libName + "_downloaded_chapter"
+	pageTypeName              = libName + "_page"
+	pageWithImageTypeName     = libName + "_page_with_image"
 )
 
 func Lib(client *libmangal.Client) *luadoc.Lib {
@@ -86,6 +87,11 @@ func Lib(client *libmangal.Client) *luadoc.Lib {
 				},
 			},
 		},
+	}
+
+	classDownloadedChapter := &luadoc.Class{
+		Name:        downloadedChapterTypeName,
+		Description: "Downloaded chapter data",
 	}
 
 	classPage := &luadoc.Class{
@@ -219,6 +225,23 @@ func Lib(client *libmangal.Client) *luadoc.Lib {
 					},
 				},
 			},
+			{
+				Name:        "download_chapter",
+				Description: "Download chapter",
+				Value:       newDownloadChapter(client),
+				Params: []*luadoc.Param{
+					{
+						Name: "chapter",
+						Type: classChapter.Name,
+					},
+				},
+				Returns: []*luadoc.Param{
+					{
+						Name: "downloaded_chapter",
+						Type: classDownloadedChapter.Name,
+					},
+				},
+			},
 		},
 	}
 }
@@ -230,11 +253,11 @@ func mangaInfo(state *lua.LState) int {
 	table := state.NewTable()
 
 	table.RawSetString("title", lua.LString(info.Title))
+	table.RawSetString("anilist_search", lua.LString(info.AnilistSearch))
 	table.RawSetString("url", lua.LString(info.URL))
 	table.RawSetString("id", lua.LString(info.ID))
 	table.RawSetString("banner", lua.LString(info.Banner))
 	table.RawSetString("cover", lua.LString(info.Cover))
-	table.RawSetString("anilist_search", lua.LString(info.AnilistSearch))
 
 	state.Push(table)
 	return 1
@@ -391,10 +414,11 @@ func newDownloadChapter(client *libmangal.Client) lua.LGFunction {
 	return func(state *lua.LState) int {
 		chapter := util.Check[libmangal.Chapter](state, 1)
 
-		path, err := client.DownloadChapter(state.Context(), chapter, libmangal.DefaultDownloadOptions())
+		// TODO: use a custom download options
+		downChap, err := client.DownloadChapter(state.Context(), chapter, libmangal.DefaultDownloadOptions())
 		util.Must(state, err)
 
-		state.Push(lua.LString(path))
+		util.Push(state, downChap, downloadedChapterTypeName)
 		return 1
 	}
 }

@@ -9,10 +9,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
-	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
+	stringutil "github.com/luevano/mangal/util/string"
 )
 
 var _ base.State = (*State)(nil)
@@ -25,9 +25,9 @@ type State struct {
 	progress progress.Model
 	spinner  spinner.Model
 
-	succeedPaths    []string
-	succeed, failed []libmangal.Chapter
-	currentIdx      int
+	succeedDownloads []libmangal.DownloadedChapter
+	succeed, failed  []libmangal.Chapter
+	currentIdx       int
 
 	size base.Size
 
@@ -77,12 +77,12 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		return tea.Sequence(
 			func() tea.Msg {
 				chapter := s.chapters[msg]
-				path, err := s.options.DownloadChapter(model.Context(), chapter)
+				downChap, err := s.options.DownloadChapter(model.Context(), chapter)
 
 				if err != nil {
 					s.failed = append(s.failed, chapter)
 				} else {
-					s.succeedPaths = append(s.succeedPaths, path)
+					s.succeedDownloads = append(s.succeedDownloads, downChap)
 					s.succeed = append(s.succeed, chapter)
 				}
 
@@ -96,7 +96,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			},
 		)
 	case downloadCompletedMsg:
-		return s.options.OnDownloadFinished(s.succeedPaths, s.succeed, s.failed)
+		return s.options.OnDownloadFinished(s.succeedDownloads, s.succeed, s.failed)
 	default:
 		return nil
 	}

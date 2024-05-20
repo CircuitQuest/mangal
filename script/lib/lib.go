@@ -24,7 +24,7 @@ func Lib(state *lua.LState, options Options) *luadoc.Lib {
 	return &luadoc.Lib{
 		Name:        meta.AppName,
 		Description: meta.AppName + " scripting mode utilities",
-		// TODO: addd anilist lib, why isn't it added?
+		// TODO: add anilist lib, why isn't it added?
 		Libs: []*luadoc.Lib{
 			sdk.Lib(state, SDKOptions),
 			prompt.Lib(),

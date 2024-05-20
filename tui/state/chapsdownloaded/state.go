@@ -2,15 +2,14 @@ package chapsdownloaded
 
 import (
 	"fmt"
-	"path/filepath"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
-	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
+	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/skratchdot/open-golang/open"
 )
 
@@ -54,8 +53,9 @@ func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 		switch {
 		case key.Matches(msg, s.keyMap.Quit):
 			return tea.Quit
-		case key.Matches(msg, s.keyMap.Open) && len(s.options.SucceedPaths) > 0:
-			err := open.Start(filepath.Dir(s.options.SucceedPaths[0]))
+		case key.Matches(msg, s.keyMap.Open) && len(s.options.SucceedDownloads) > 0:
+			err := open.Start(s.options.SucceedDownloads[0].Directory)
+			// err := open.Start(filepath.Dir(s.options.SucceedDownloads[0].Path()))
 			if err != nil {
 				return func() tea.Msg {
 					return err

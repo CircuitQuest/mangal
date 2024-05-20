@@ -7,6 +7,6 @@ import (
 
 type Options struct {
 	Succeed, Failed  []libmangal.Chapter
-	SucceedPaths     []string
+	SucceedDownloads []libmangal.DownloadedChapter
 	DownloadChapters func(chapters []libmangal.Chapter) tea.Cmd
 }
