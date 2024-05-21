@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"strconv"
+	"strings"
 	"time"
 
 	"github.com/luevano/libmangal"
@@ -75,27 +77,39 @@ func RunDownload(ctx context.Context, args Args) error {
 		downloadOptions.Directory = args.Directory
 	}
 
+	retryCount := 0
 	for _, chapter := range chapters {
-		downChap, err := client.DownloadChapter(ctx, chapter, downloadOptions)
-		if err != nil {
-			return err
-		}
-		if args.JSONOutput {
-			dc, err := json.Marshal(downChap)
+		retry := true
+		for retry {
+			retry = false
+			downChap, err := client.DownloadChapter(ctx, chapter, downloadOptions)
 			if err != nil {
+				errMsg := err.Error()
+				// TODO: handle other responses here too if possible
+				if strings.Contains(errMsg, "429") && strings.Contains(errMsg, "Retry-After") {
+					retry = true
+					retryCount += 1
+					rcTemp := strings.Split(errMsg, ":")
+					retryAfter, err := strconv.Atoi(strings.TrimSpace(rcTemp[len(rcTemp)-1]))
+					if err != nil {
+						return fmt.Errorf("Error while parsing Retry-Count from error mesage: %s", err.Error())
+					}
+					fmt.Printf("429 status code while downloading chapter. Waiting %d seconds until retry (retry #%d)\n", retryAfter, retryCount)
+					time.Sleep(time.Duration(retryAfter) * time.Second)
+					continue
+				}
 				return err
 			}
-			fmt.Println(string(dc))
-		} else {
-			fmt.Println(downChap.Path())
-		}
-		// TODO: make the delay configurable and for each provider
-		// or even better, handle the too many requests response
-		//
-		// A bit of delay to avoid abusing sites/APIs
-		if client.Info().ID == "mango-mangadex" ||
-			client.Info().ID == "mango-mangaplus" {
-			time.Sleep(2 * time.Second)
+
+			if args.JSONOutput {
+				dc, err := json.Marshal(downChap)
+				if err != nil {
+					return err
+				}
+				fmt.Println(string(dc))
+			} else {
+				fmt.Println(downChap.Path())
+			}
 		}
 	}
 
