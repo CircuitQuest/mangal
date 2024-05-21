@@ -3,10 +3,12 @@ package inline
 import (
 	"context"
 	"fmt"
+	"math"
 	"regexp"
 	"strconv"
 	"strings"
 
+	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/log"
@@ -17,7 +19,7 @@ func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult
 	var mangaResults []MangaResult
 
 	totalMangas := len(mangas)
-	selector := args.MangaSelector
+	selector := strings.ReplaceAll(args.MangaSelector, " ", "")
 	switch selector {
 	case "all":
 		for i, manga := range mangas {
@@ -41,6 +43,26 @@ func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult
 			return nil, &MangaSelectorError{selector, fmt.Sprintf("no manga found with provider %q and exact match %q", args.Provider, args.Query)}
 		}
 		return mangaResults, nil
+	case "closest":
+		var manga *libmangal.Manga
+		index := -1
+		rank := math.MaxInt
+
+		for i, m := range mangas {
+			r := fuzzy.RankMatchNormalizedFold(args.Query, m.Info().Title)
+			// Grabs the first ranked match, subsequent
+			// with the same rank will not be considered
+			if r != -1 && r < rank {
+				rank = r
+				index = i
+				manga = &m
+			}
+		}
+		if index == -1 {
+			return nil, &MangaSelectorError{selector, fmt.Sprintf("no manga found with provider %q and closest match %q", args.Provider, args.Query)}
+		}
+
+		return []MangaResult{{Index: index, Manga: *manga}}, nil
 	default:
 		index, err := strconv.Atoi(selector)
 		if err != nil {
