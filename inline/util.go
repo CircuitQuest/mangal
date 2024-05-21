@@ -164,7 +164,7 @@ func getSelectedChapters(args Args, chapters []libmangal.Chapter) ([]libmangal.C
 				return nil, &ChapterSelectorError{selector, "failed to match regex pattern to selector"}
 			}
 
-			groups := reGroups(selectorRegex, selector)
+			groups := reNamedGroups(selectorRegex, selector)
 			fromS := groups[selectorFrom]
 			toS := groups[selectorTo]
 			if fromS == "" && toS == "" {
@@ -228,13 +228,13 @@ func numPattern(name string) string {
 	return fmt.Sprintf(`(?P<%s>\d+(\.\d+)?)?`, name)
 }
 
-func reGroups(pattern *regexp.Regexp, str string) map[string]string {
+func reNamedGroups(pattern *regexp.Regexp, str string) map[string]string {
 	groups := make(map[string]string)
 	match := pattern.FindStringSubmatch(str)
-
-	for i, name := range pattern.SubexpNames() {
-		if i > 0 && i <= len(match) {
-			groups[name] = match[i]
+	for i, value := range match {
+		name := pattern.SubexpNames()[i]
+		if name != "" {
+			groups[name] = value
 		}
 	}
 	return groups
