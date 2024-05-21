@@ -3,7 +3,7 @@ package bbolt
 import (
 	"time"
 
-	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/config"
 	"github.com/philippgille/gokv/encoding"
 	"github.com/philippgille/gokv/util"
 	bolt "go.etcd.io/bbolt"
@@ -170,7 +170,7 @@ func NewStore(options Options) (Store, error) {
 	}
 
 	// Open DB
-	db, err := bolt.Open(options.Path, path.ModeDB, nil)
+	db, err := bolt.Open(options.Path, config.Config.Download.ModeDB.Get(), nil)
 	if err != nil {
 		return result, err
 	}

@@ -9,6 +9,7 @@ import (
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/client/anilist"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/template"
@@ -43,11 +44,13 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 		Timeout: time.Minute,
 	}
 
-	// TODO: add configuration options for user agent and dir/file modes
 	options := libmangal.DefaultClientOptions()
 	options.FS = afs.Afero
 	options.Anilist = anilist.Anilist
 	options.HTTPClient = HTTPClient
+	options.UserAgent = config.Config.Download.UserAgent.Get()
+	options.ModeDir = config.Config.Download.ModeDir.Get()
+	options.ModeFile = config.Config.Download.ModeFile.Get()
 	options.ProviderNameTemplate = template.Provider
 	options.MangaNameTemplate = template.Manga
 	options.VolumeNameTemplate = template.Volume

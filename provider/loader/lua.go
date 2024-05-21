@@ -9,6 +9,7 @@ import (
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/luaprovider"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/util/afs"
@@ -64,7 +65,7 @@ func getLoaders(bundleID, dir string) ([]libmangal.ProviderLoader, error) {
 	infoFile, err := afs.Afero.OpenFile(
 		filepath.Join(dir, info.Filename),
 		os.O_RDONLY,
-		path.ModeDir,
+		config.Config.Download.ModeFile.Get(),
 	)
 	if err != nil {
 		return nil, err
@@ -116,6 +117,7 @@ func newLoader(info libmangal.ProviderInfo, dir string) (libmangal.ProviderLoade
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
+		UserAgent:    config.Config.Download.UserAgent.Get(),
 		HTTPStore:    httpStore,
 		PackagePaths: []string{dir},
 	}

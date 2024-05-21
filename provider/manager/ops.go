@@ -12,6 +12,7 @@ import (
 	"github.com/go-git/go-git/v5"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/luaprovider"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/provider/loader"
@@ -40,12 +41,11 @@ func Add(ctx context.Context, options AddOptions) error {
 		URL:      options.URL.String(),
 		Progress: os.Stdout, // TODO: change this
 	})
-
 	if err != nil {
 		return err
 	}
 
-	infoFile, err := afs.Afero.OpenFile(filepath.Join(tempDir, info.Filename), os.O_RDONLY, path.ModeDir)
+	infoFile, err := afs.Afero.OpenFile(filepath.Join(tempDir, info.Filename), os.O_RDONLY, config.Config.Download.ModeFile.Get())
 	if err != nil {
 		return err
 	}
@@ -142,7 +142,7 @@ func New(options NewOptions) error {
 		return fmt.Errorf("unsupported provider type %s", options.Type)
 	}
 
-	err := files.WriteFile("README.md", []byte(options.Markdown()), path.ModeDir)
+	err := files.WriteFile("README.md", []byte(options.Markdown()), config.Config.Download.ModeFile.Get())
 	if err != nil {
 		return err
 	}
@@ -151,7 +151,7 @@ func New(options NewOptions) error {
 }
 
 func newLua(af afero.Afero, information info.Info) error {
-	err := af.WriteFile(".gitignore", []byte("sdk.lua"), path.ModeDir)
+	err := af.WriteFile(".gitignore", []byte("sdk.lua"), config.Config.Download.ModeFile.Get())
 	if err != nil {
 		return err
 	}
@@ -170,12 +170,12 @@ func newLua(af afero.Afero, information info.Info) error {
 		return err
 	}
 
-	err = af.WriteFile("main.lua", []byte(luaprovider.LuaTemplate()), path.ModeDir)
+	err = af.WriteFile("main.lua", []byte(luaprovider.LuaTemplate()), config.Config.Download.ModeFile.Get())
 	if err != nil {
 		return err
 	}
 
-	return af.WriteFile("sdk.lua", []byte(luaprovider.LuaDoc()), path.ModeDir)
+	return af.WriteFile("sdk.lua", []byte(luaprovider.LuaDoc()), config.Config.Download.ModeFile.Get())
 }
 
 func createRepo(dir string, files afero.Fs) error {

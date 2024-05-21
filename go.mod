@@ -20,10 +20,11 @@ require (
 	github.com/json-iterator/go v1.1.12
 	github.com/ktr0731/go-fuzzyfinder v0.8.0
 	github.com/labstack/echo/v4 v4.12.0
+	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.15.2
-	github.com/luevano/luaprovider v0.10.5
-	github.com/luevano/mangoprovider v0.9.4
+	github.com/luevano/luaprovider v0.10.6
+	github.com/luevano/mangoprovider v0.9.5
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -67,8 +68,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
-	github.com/lithammer/fuzzysearch v1.1.8 // indirect
-	github.com/luevano/mangodex v0.3.3 // indirect
+	github.com/luevano/mangodex v0.3.4 // indirect
 	github.com/luevano/mangoplus v0.2.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect

@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/config"
 	mango "github.com/luevano/mangoprovider"
 	"github.com/luevano/mangoprovider/apis"
 	"github.com/luevano/mangoprovider/scrapers"
@@ -23,6 +24,7 @@ func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
+		UserAgent:   config.Config.Download.UserAgent.Get(),
 		HTTPStore:   httpStore,
 		Parallelism: options.Parallelism,
 		Headless: mango.Headless{

@@ -1,6 +1,7 @@
 package config
 
 import (
+	"io/fs"
 	"path/filepath"
 	"runtime"
 	"text/template"
@@ -128,6 +129,44 @@ var Config = config{
 			},
 			Marshal: func(format libmangal.Format) (string, error) {
 				return format.String(), nil
+			},
+		}),
+		UserAgent: reg(field[string, string]{
+			Key:         "download.user_agent",
+			Default:     "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:126.0) Gecko/20100101 Firefox/126.0",
+			Description: "User-Agent to use for making HTTP requests.",
+		}),
+		ModeDir: reg(field[int, fs.FileMode]{
+			Key:         "download.mode_dir_decimal",
+			Default:     fs.FileMode(0o755),
+			Description: "Permission bits used for all dirs created. Encodes into `int` (decimal).",
+			Unmarshal: func(i int) (fs.FileMode, error) {
+				return fs.FileMode(i), nil
+			},
+			Marshal: func(mode fs.FileMode) (int, error) {
+				return int(mode), nil
+			},
+		}),
+		ModeFile: reg(field[int, fs.FileMode]{
+			Key:         "download.mode_file_decimal",
+			Default:     fs.FileMode(0o644),
+			Description: "Permission bits used for all files created. Encodes into `int` (decimal).",
+			Unmarshal: func(i int) (fs.FileMode, error) {
+				return fs.FileMode(i), nil
+			},
+			Marshal: func(mode fs.FileMode) (int, error) {
+				return int(mode), nil
+			},
+		}),
+		ModeDB: reg(field[int, fs.FileMode]{
+			Key:         "download.mode_db_decimal",
+			Default:     fs.FileMode(0o600),
+			Description: "Permission bits used for database files created. Encodes into `int` (decimal).",
+			Unmarshal: func(i int) (fs.FileMode, error) {
+				return fs.FileMode(i), nil
+			},
+			Marshal: func(mode fs.FileMode) (int, error) {
+				return int(mode), nil
 			},
 		}),
 		Strict: reg(field[bool, bool]{

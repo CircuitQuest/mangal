@@ -3,13 +3,8 @@ package path
 import (
 	"log"
 
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/util/afs"
-)
-
-const (
-	ModeDir  = 0755
-	ModeFile = 0644
-	ModeDB   = 0600
 )
 
 func createDirIfAbsent(path string) {
@@ -23,7 +18,7 @@ func createDirIfAbsent(path string) {
 		return
 	}
 
-	if err := afs.Afero.MkdirAll(path, ModeDir); err != nil {
+	if err := afs.Afero.MkdirAll(path, config.Config.Download.ModeDir.Get()); err != nil {
 		log.Fatal(err)
 	}
 

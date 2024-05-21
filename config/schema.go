@@ -1,6 +1,8 @@
 package config
 
 import (
+	"io/fs"
+
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/theme/icon"
 )
@@ -39,6 +41,10 @@ type configReadHistory struct {
 type configDownload struct {
 	Format       *registered[string, libmangal.Format]
 	Path         *registered[string, string]
+	UserAgent    *registered[string, string]
+	ModeDir      *registered[int, fs.FileMode]
+	ModeFile     *registered[int, fs.FileMode]
+	ModeDB       *registered[int, fs.FileMode]
 	Strict       *registered[bool, bool]
 	SkipIfExists *registered[bool, bool]
 	Provider     configDownloadProvider
