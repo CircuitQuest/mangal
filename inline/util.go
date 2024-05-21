@@ -10,6 +10,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/log"
+	"github.com/samber/lo"
 )
 
 func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult, error) {
@@ -99,100 +100,110 @@ func getAllVolumeChapters(ctx context.Context, client *libmangal.Client, args Ar
 		if err != nil {
 			return nil, err
 		}
-		if len(volumeChapters) == 0 {
-			if volume.Info().Number == float32(-1.0) {
-				log.Log("Skipping 'none' volume as it doesn't contain chapters.")
-				continue
-			}
-			return nil, fmt.Errorf("no manga chapters found for volume %.1f (provider %q, title %q)", volume.Info().Number, args.Provider, args.Query)
-		}
 
-		chapters = append(chapters, volumeChapters...)
+		if len(volumeChapters) != 0 {
+			chapters = append(chapters, volumeChapters...)
+		} else {
+			log.Log("No chapters found for volume %.1f", volume.Info().Number)
+		}
 	}
 	return chapters, nil
 }
 
 func getSelectedChapters(args Args, chapters []libmangal.Chapter) ([]libmangal.Chapter, error) {
 	const (
-		all   = "all"
-		first = "first"
-		last  = "last"
-		from  = "From"
-		to    = "To"
+		selectorAll   = "all"
+		selectorFirst = "first"
+		selectorLast  = "last"
+		selectorFrom  = "from"
+		selectorTo    = "to"
 	)
 
-	pattern := fmt.Sprintf(`^(%s|%s|%s|(?P<%s>\d+)?-(?P<%s>\d+)?)$`, all, first, last, from, to)
+	pattern := fmt.Sprintf(`^(%s|%s|%s|%s-%s)$`, selectorAll, selectorFirst, selectorLast, numPattern(selectorFrom), numPattern(selectorTo))
 	selectorRegex, err := regexp.Compile(pattern)
 	if err != nil {
 		return nil, err
 	}
 
-	totalChapters := len(chapters)
-	selector := args.ChapterSelector
+	// Assumes that the chapters are in ascending order
+	firstChapNum := chapters[0].Info().Number
+	lastChapNum := chapters[len(chapters)-1].Info().Number
+	selector := strings.ReplaceAll(args.ChapterSelector, " ", "")
 	switch selector {
-	case all:
+	case selectorAll:
 		return chapters, nil
-	case first:
+	case selectorFirst:
 		return chapters[0:1], nil
-	case last:
-		return chapters[totalChapters-1:], nil
+	case selectorLast:
+		return chapters[len(chapters)-1:], nil
 	default:
 		if strings.Contains(selector, "-") {
 			if !selectorRegex.MatchString(selector) {
-				return nil, &ChapterSelectorError{selector, "failed to compile regex, check extra spaces or characters"}
+				return nil, &ChapterSelectorError{selector, "failed to match regex pattern to selector"}
 			}
-			// default values
-			fromI := 0
-			toI := totalChapters - 1
 
 			groups := reGroups(selectorRegex, selector)
-
-			fromS := groups[from]
-			toS := groups[to]
-
+			fromS := groups[selectorFrom]
+			toS := groups[selectorTo]
 			if fromS == "" && toS == "" {
 				return nil, &ChapterSelectorError{selector, "no 'from' or 'to' specified"}
 			}
 
-			if fromS != "" {
-				fromITemp, err := strconv.Atoi(fromS)
-				if err != nil {
-					return nil, &ChapterSelectorError{selector, err.Error()}
-				}
-				if fromITemp >= totalChapters {
-					return nil, &ChapterSelectorError{selector, fmt.Sprintf("'from' index out of range(%d)", totalChapters-1)}
-				}
-				fromI = fromITemp
+			from, err := parseNumSelector(selector, "from", fromS, chapters[0].Info().Number, lastChapNum)
+			if err != nil {
+				return nil, err
+			}
+			to, err := parseNumSelector(selector, "to", toS, lastChapNum, lastChapNum)
+			if err != nil {
+				return nil, err
 			}
 
-			if toS != "" {
-				toITemp, err := strconv.Atoi(toS)
-				if err != nil {
-					return nil, &ChapterSelectorError{selector, err.Error()}
-				}
-				if toITemp >= totalChapters {
-					return nil, &ChapterSelectorError{selector, fmt.Sprintf("'to' index out of range(%d)", totalChapters-1)}
-				}
-				toI = toITemp
+			if from > to {
+				return nil, &ChapterSelectorError{selector, fmt.Sprintf("'from' (%s) greater than 'to' (%s)", fmtFloat(from), fmtFloat(to))}
 			}
 
-			if fromI > toI {
-				return nil, &ChapterSelectorError{selector, "'from' greater than 'to'"}
-			}
-
-			return chapters[fromI : toI+1], nil
+			return lo.Filter(chapters, func(chapter libmangal.Chapter, i int) bool {
+				return chapter.Info().Number >= from && chapter.Info().Number <= to
+			}), nil
 
 		} else {
-			index, err := strconv.Atoi(selector)
+			numberTemp, err := strconv.ParseFloat(selector, 32)
 			if err != nil {
 				return nil, &ChapterSelectorError{selector, err.Error()}
 			}
-			if index < 0 || index >= totalChapters {
-				return nil, &ChapterSelectorError{selector, fmt.Sprintf("index out of range(0, %d)", totalChapters-1)}
+			number := float32(numberTemp)
+			if number < firstChapNum || number > lastChapNum {
+				return nil, &ChapterSelectorError{selector, fmt.Sprintf("chapter number (%s) out of range(%s, %s)", fmtFloat(number), fmtFloat(firstChapNum), fmtFloat(lastChapNum))}
 			}
-			return []libmangal.Chapter{chapters[index]}, nil
+			// Could return more than one chapter if multiple have the same chapter number for some reason
+			return lo.Filter(chapters, func(chapter libmangal.Chapter, i int) bool {
+				return chapter.Info().Number == number
+			}), nil
 		}
 	}
+}
+
+// try to parse the from/to number selector
+func parseNumSelector(selector, matchName, match string, defaultNum, lastChapNum float32) (float32, error) {
+	if match != "" {
+		fromTemp, err := strconv.ParseFloat(match, 32)
+		if err != nil {
+			return 0, &ChapterSelectorError{selector, err.Error()}
+		}
+		if float32(fromTemp) > lastChapNum {
+			return 0, &ChapterSelectorError{selector, fmt.Sprintf("'%s' (%s) greater than last chapter number (%s)", matchName, fmtFloat(float32(fromTemp)), fmtFloat(lastChapNum))}
+		}
+		return float32(fromTemp), nil
+	}
+	return defaultNum, nil
+}
+
+func fmtFloat(n float32) string {
+	return strconv.FormatFloat(float64(n), 'f', -1, 32)
+}
+
+func numPattern(name string) string {
+	return fmt.Sprintf(`(?P<%s>\d+(\.\d+)?)?`, name)
 }
 
 func reGroups(pattern *regexp.Regexp, str string) map[string]string {

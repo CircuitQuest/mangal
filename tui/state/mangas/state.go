@@ -81,10 +81,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						return err
 					}
 					if !found {
-						log.Log(fmt.Sprintf("Couldn't find Anilist for %q", *item.manga))
+						log.Log("Couldn't find Anilist for %q", *item.manga)
 					}
 					(*item.manga).SetAnilistManga(anilistManga)
-					log.Log(fmt.Sprintf("Found and set Anilist for %q: %q (%d)", *item.manga, anilistManga.String(), anilistManga.ID))
+					log.Log("Found and set Anilist for %q: %q (%d)", *item.manga, anilistManga.String(), anilistManga.ID)
 
 					return nil
 				},

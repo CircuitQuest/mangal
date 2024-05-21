@@ -251,7 +251,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						func(response *libmangal.AnilistManga) tea.Cmd {
 							return tea.Sequence(
 								func() tea.Msg {
-									log.Log(fmt.Sprintf("Setting Anilist manga %q (%d)", response.String(), response.ID))
+									log.Log("Setting Anilist manga %q (%d)", response.String(), response.ID)
 									(*s.manga).SetAnilistManga(*response)
 									// (*s.volume).Manga().SetAnilistManga(*response)
 
