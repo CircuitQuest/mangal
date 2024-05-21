@@ -1,18 +1,14 @@
 package template
 
 import (
-	"fmt"
-	"os"
 	"strings"
 	"text/template"
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/template/funcs"
+	"github.com/luevano/mangal/util"
 )
-
-// TODO: change logger?
 
 func Provider(provider libmangal.ProviderInfo) string {
 	var sb strings.Builder
@@ -22,8 +18,7 @@ func Provider(provider libmangal.ProviderInfo) string {
 		Parse(config.Config.Download.Provider.NameTemplate.Get())).
 		Execute(&sb, provider)
 	if err != nil {
-		log.Log(fmt.Sprintf("error during execution of the provider name template: %s", err))
-		os.Exit(1)
+		util.Errorf("error during execution of the provider name template: %s\n", err)
 	}
 
 	return sb.String()
@@ -32,14 +27,10 @@ func Provider(provider libmangal.ProviderInfo) string {
 func Manga(_ string, manga libmangal.Manga) string {
 	var sb strings.Builder
 
+	plt := config.Config.Download.Manga.NameTemplateFallback.Get()
 	// Prioritize the NameTemplate (includes AnilistManga data)
-	var plt string
 	_, err := manga.AnilistManga()
-	if err != nil {
-		// TODO: remove this log?
-		log.Log("[manga-template] manga doesn't have anilist data")
-		plt = config.Config.Download.Manga.NameTemplateFallback.Get()
-	} else {
+	if err == nil {
 		plt = config.Config.Download.Manga.NameTemplate.Get()
 	}
 
@@ -48,8 +39,7 @@ func Manga(_ string, manga libmangal.Manga) string {
 		Parse(plt)).
 		Execute(&sb, manga)
 	if err != nil {
-		log.Log(fmt.Sprintf("error during execution of the manga name template: %s", err))
-		os.Exit(1)
+		util.Errorf("error during execution of the manga name template: %s\n", err)
 	}
 
 	return sb.String()
@@ -63,8 +53,7 @@ func Volume(_ string, manga libmangal.Volume) string {
 		Parse(config.Config.Download.Volume.NameTemplate.Get())).
 		Execute(&sb, manga.Info())
 	if err != nil {
-		log.Log(fmt.Sprintf("error during execution of the volume name template: %s", err))
-		os.Exit(1)
+		util.Errorf("error during execution of the volume name template: %s\n", err)
 	}
 
 	return sb.String()
@@ -78,8 +67,7 @@ func Chapter(_ string, chapter libmangal.Chapter) string {
 		Parse(config.Config.Download.Chapter.NameTemplate.Get())).
 		Execute(&sb, chapter.Info())
 	if err != nil {
-		log.Log(fmt.Sprintf("error during execution of the chapter name template: %s", err))
-		os.Exit(1)
+		util.Errorf("Error during execution of the chapter name template: %s\n", err)
 	}
 
 	return sb.String()

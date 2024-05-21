@@ -29,6 +29,7 @@ type Args struct {
 	AnilistDisable  bool            `json:"anilist_disable"`
 	Format          string          `json:"format,omitempty"`
 	Directory       string          `json:"directory,omitempty"`
+	JSONOutput      bool            `json:"json_output,omitempty"`
 	LoaderOptions   *loader.Options `json:"loader_options"`
 }
 

@@ -2,6 +2,7 @@ package inline
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -79,8 +80,17 @@ func RunDownload(ctx context.Context, args Args) error {
 		if err != nil {
 			return err
 		}
-		fmt.Println(downChap.Path())
+		if args.JSONOutput {
+			dc, err := json.Marshal(downChap)
+			if err != nil {
+				return err
+			}
+			fmt.Println(string(dc))
+		} else {
+			fmt.Println(downChap.Path())
+		}
 		// TODO: make the delay configurable and for each provider
+		// or even better, handle the too many requests response
 		//
 		// A bit of delay to avoid abusing sites/APIs
 		if client.Info().ID == "mango-mangadex" ||

@@ -32,7 +32,6 @@ func init() {
 	inlineCmd.MarkPersistentFlagRequired("provider")
 	inlineCmd.MarkPersistentFlagRequired("query")
 	inlineCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
-
 }
 
 var inlineCmd = &cobra.Command{
@@ -68,6 +67,7 @@ func init() {
 	formatDesc := fmt.Sprintf("Download format (%s)", strings.Join(libmangal.FormatStrings(), "|"))
 	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Format, "format", "f", "", formatDesc)
 	inlineDownloadCmd.Flags().StringVarP(&inlineArgs.Directory, "directory", "d", "", "Download directory")
+	inlineDownloadCmd.Flags().BoolVar(&inlineArgs.JSONOutput, "json-output", false, "JSON format for individual chapter download output")
 }
 
 var inlineDownloadCmd = &cobra.Command{
