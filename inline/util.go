@@ -228,6 +228,7 @@ func numPattern(name string) string {
 	return fmt.Sprintf(`(?P<%s>\d+(\.\d+)?)?`, name)
 }
 
+// https://stackoverflow.com/a/53587770
 func reNamedGroups(pattern *regexp.Regexp, str string) map[string]string {
 	groups := make(map[string]string)
 	match := pattern.FindStringSubmatch(str)
