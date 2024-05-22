@@ -15,11 +15,26 @@ import (
 	"github.com/samber/lo"
 )
 
+const mangaQueryIDName = "id"
+
+var mangaQueryIDRegex = regexp.MustCompile(`(?i)\s*(m((anga)?[-_]?)?id)\s*:\s*(?P<id>.*\S)\s*$`)
+
 func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult, error) {
 	var mangaResults []MangaResult
-
 	totalMangas := len(mangas)
 	selector := strings.ReplaceAll(args.MangaSelector, " ", "")
+
+	matchGroups := reNamedGroups(mangaQueryIDRegex, args.Query)
+	mangaID, byID := matchGroups[mangaQueryIDName]
+	// If query is an id query then switch to using the id selector if the selector is all (default)
+	if byID && selector != "id" {
+		if selector == "all" {
+			selector = "id"
+		} else {
+			return nil, &MangaSelectorError{selector, fmt.Sprintf("unexpected error, query %q is an id query but manga selector isn't 'id' (or default 'all')", args.Query)}
+		}
+	}
+
 	switch selector {
 	case "all":
 		for i, manga := range mangas {
@@ -30,6 +45,14 @@ func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult
 		return []MangaResult{{Index: 0, Manga: mangas[0]}}, nil
 	case "last":
 		return []MangaResult{{Index: totalMangas - 1, Manga: mangas[totalMangas-1]}}, nil
+	case "id":
+		if len(mangas) > 1 {
+			return nil, &MangaSelectorError{selector, fmt.Sprintf("unexpected error, more than one manga found (%d) with provider %q and id %q", len(mangaResults), args.Provider, mangaID)}
+		}
+		if len(mangas) == 0 {
+			return nil, &MangaSelectorError{selector, fmt.Sprintf("no manga found with provider %q and id %q", args.Provider, mangaID)}
+		}
+		return []MangaResult{{Index: 0, Manga: mangas[0]}}, nil
 	case "exact":
 		ok := false
 		for i, manga := range mangas {
@@ -126,7 +149,7 @@ func getAllVolumeChapters(ctx context.Context, client *libmangal.Client, args Ar
 		if len(volumeChapters) != 0 {
 			chapters = append(chapters, volumeChapters...)
 		} else {
-			log.Log("No chapters found for volume %.1f", volume.Info().Number)
+			log.Log("no chapters found for volume %.1f", volume.Info().Number)
 		}
 	}
 	return chapters, nil
