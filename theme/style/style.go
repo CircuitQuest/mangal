@@ -25,7 +25,7 @@ var (
 
 func newStyles(base lipgloss.Style) styles {
 	return styles{
-		Base:       base.Copy(),
+		Base:       base,
 		Accent:     newStyle(base, color.Accent),
 		Secondary:  newStyle(base, color.Secondary),
 		Background: newStyle(base, color.Background),
@@ -38,7 +38,7 @@ func newStyles(base lipgloss.Style) styles {
 }
 
 func newStyle(base lipgloss.Style, color lipgloss.TerminalColor) lipgloss.Style {
-	return base.Copy().Foreground(color)
+	return base.Foreground(color)
 }
 
 func Trim(max int) lipgloss.Style {
@@ -48,5 +48,5 @@ func Trim(max int) lipgloss.Style {
 func FlipGrounds(style lipgloss.Style) lipgloss.Style {
 	fg := style.GetForeground()
 	bg := style.GetBackground()
-	return style.Copy().Background(fg).Foreground(bg)
+	return style.Background(fg).Foreground(bg)
 }

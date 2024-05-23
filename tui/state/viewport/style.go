@@ -27,23 +27,16 @@ func DefaultStyles() Styles {
 
 	boxStyle := lipgloss.NewStyle().BorderForeground(color.Viewport).Padding(0, 1)
 	return Styles{
-		Title: boxStyle.Copy().
-			BorderStyle(borderRight),
-		Info: boxStyle.Copy().
-			BorderStyle(borderLeft),
-		Line: style.Normal.Viewport,
-		Viewport: boxStyle.Copy().
-			BorderStyle(lipgloss.RoundedBorder()).
-			BorderLeft(true).
-			BorderRight(true),
+		Title:    boxStyle.BorderStyle(borderRight),
+		Info:     boxStyle.BorderStyle(borderLeft),
+		Line:     style.Normal.Viewport,
+		Viewport: boxStyle.BorderStyle(lipgloss.RoundedBorder()).BorderLeft(true).BorderRight(true),
 		// TODO: use style.Trim?
 		Content: func(maxSize int) lipgloss.Style {
-			return style.Normal.Base.Copy().
-				Width(maxSize)
+			return style.Normal.Base.Width(maxSize)
 		},
 		ContentWrapper: func(height, width int) lipgloss.Style {
-			return style.Normal.Base.Copy().
-				Padding(height, width)
+			return style.Normal.Base.Padding(height, width)
 		},
 	}
 }

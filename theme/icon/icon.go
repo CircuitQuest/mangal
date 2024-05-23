@@ -14,9 +14,7 @@ type icon struct {
 type symbols map[Type]string
 
 func (i icon) String() string {
-	return style.Bold.Base.Copy().
-		Foreground(i.color).
-		Render(i.symbols[currentType])
+	return style.Bold.Base.Foreground(i.color).Render(i.symbols[currentType])
 }
 
 var (

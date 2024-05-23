@@ -16,14 +16,11 @@ type Styles struct {
 
 func DefaultStyles() Styles {
 	// Flipped Accent
-	tempAccent := style.Bold.Accent.Copy().Background(color.Background)
+	tempAccent := style.Bold.Accent.Background(color.Background)
 	return Styles{
-		Title: style.FlipGrounds(tempAccent).
-			Padding(0, 1),
-		TitleBar: style.Normal.Base.Copy().
-			Padding(0, 0, 1, 2),
+		Title:    style.FlipGrounds(tempAccent).Padding(0, 1),
+		TitleBar: style.Normal.Base.Padding(0, 0, 1, 2),
 		Subtitle: style.Normal.Secondary,
-		HelpBar: style.Normal.Base.Copy().
-			Padding(0, 1),
+		HelpBar:  style.Normal.Base.Padding(0, 1),
 	}
 }

@@ -12,7 +12,7 @@ func (m *Model) View() string {
 	const newline = "\n"
 
 	title := m.state.Title()
-	titleStyle := m.styles.Title.Copy()
+	titleStyle := m.styles.Title
 
 	if title.Background != "" {
 		titleStyle.Background(title.Background)

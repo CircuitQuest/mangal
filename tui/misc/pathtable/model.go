@@ -70,7 +70,7 @@ func (m *Model) View() string {
 		return ""
 	}
 
-	style := style.Normal.Base.Copy().Margin(1, 2)
+	style := style.Normal.Base.Margin(1, 2)
 
 	return style.Render(strings.Join([]string{
 		m.table.View(),
