@@ -60,8 +60,10 @@ github.com/charmbracelet/bubbletea v0.26.2 h1:Eeb+n75Om9gQ+I6YpbCXQRKHt5Pn4vMwus
 github.com/charmbracelet/bubbletea v0.26.2/go.mod h1:6I0nZ3YHUrQj7YHIHlM8RySX4ZIthTliMY+W8X8b+Gs=
 github.com/charmbracelet/harmonica v0.2.0 h1:8NxJWRWg/bzKqqEaaeFNipOu77YR5t8aSwG4pgaUBiQ=
 github.com/charmbracelet/harmonica v0.2.0/go.mod h1:KSri/1RMQOZLbw7AHqgcBycp8pgJnQMYYT8QZRqZ1Ao=
-github.com/charmbracelet/lipgloss v0.10.0 h1:KWeXFSexGcfahHX+54URiZGkBFazf70JNMtwg/AFW3s=
-github.com/charmbracelet/lipgloss v0.10.0/go.mod h1:Wig9DSfvANsxqkRsqj6x87irdy123SR4dOXlKa91ciE=
+github.com/charmbracelet/lipgloss v0.11.0 h1:UoAcbQ6Qml8hDwSWs0Y1cB5TEQuZkDPH/ZqwWWYTG4g=
+github.com/charmbracelet/lipgloss v0.11.0/go.mod h1:1UdRTH9gYgpcdNN5oBtjbu/IzNKtzVtb7sqN1t9LNn8=
+github.com/charmbracelet/x/ansi v0.1.1 h1:CGAduulr6egay/YVbGc8Hsu8deMg1xZ/bkaXTPi1JDk=
+github.com/charmbracelet/x/ansi v0.1.1/go.mod h1:dk73KoMTT5AX5BsX0KrqhsTqAnhZZoCBjs7dGWp4Ktw=
 github.com/cixtor/readability v1.0.0 h1:6YZo0JJsxt4Xor9lYpln3eSJeuQGukxIBois9wpQI6g=
 github.com/cixtor/readability v1.0.0/go.mod h1:WDrZcthrR2RVDxfMu3q0q59UKhReo5mIZAM6w1+MgFo=
 github.com/client9/misspell v0.3.4/go.mod h1:qj6jICC3Q7zFZvVWo7KLAzC3yx5G7kyvSDkc90ppPyw=
@@ -222,8 +224,8 @@ github.com/luevano/mangodex v0.3.4 h1:M6jJr5hCoUYz/H8iapsd3kTu/cg8SZQmgX4g/jmKir
 github.com/luevano/mangodex v0.3.4/go.mod h1:FdjJzUAr0Xo+gUMakiEMA2ogJKHPIXit+cVvJbroG6Y=
 github.com/luevano/mangoplus v0.3.1 h1:8Nr7tZYtdSa2zijssHf9F+ptlErl8qygUFT03oCjegY=
 github.com/luevano/mangoplus v0.3.1/go.mod h1:COOFVXrEEEccRUp2be5YXkv9+lreiW/s4PYIpq4/RcE=
-github.com/luevano/mangoprovider v0.10.5 h1:fsRje2xWjecM9Gkibx2ANwc96OY8oh8I4jf6oB8f3jA=
-github.com/luevano/mangoprovider v0.10.5/go.mod h1:dLwK0xMV8A6VjipDsOFSBGpO2TvJ+eglVl+aLwr8oD0=
+github.com/luevano/mangoprovider v0.10.6 h1:4kTHtTEi7Ttj85bWbX2IHT5lB6k2VMlfoZ783vdbsVs=
+github.com/luevano/mangoprovider v0.10.6/go.mod h1:dLwK0xMV8A6VjipDsOFSBGpO2TvJ+eglVl+aLwr8oD0=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
 github.com/magiconair/properties v1.8.7/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
 github.com/mailru/easyjson v0.7.7 h1:UGYAvKxe3sBsEDzO8ZeWOSlIQfWFlxbzLZe7hwFURr0=

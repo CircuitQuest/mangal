@@ -12,7 +12,7 @@ require (
 	github.com/adrg/xdg v0.4.0
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.26.2
-	github.com/charmbracelet/lipgloss v0.10.0
+	github.com/charmbracelet/lipgloss v0.11.0
 	github.com/fatih/camelcase v1.0.0
 	github.com/getkin/kin-openapi v0.124.0
 	github.com/go-git/go-git/v5 v5.12.0
@@ -24,7 +24,7 @@ require (
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.15.2
 	github.com/luevano/luaprovider v0.10.6
-	github.com/luevano/mangoprovider v0.10.5
+	github.com/luevano/mangoprovider v0.10.6
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -53,6 +53,7 @@ require (
 	github.com/antchfx/xmlquery v1.4.0 // indirect
 	github.com/antchfx/xpath v1.3.0 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
+	github.com/charmbracelet/x/ansi v0.1.1 // indirect
 	github.com/cyphar/filepath-securejoin v0.2.5 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/fatih/color v1.17.0 // indirect
