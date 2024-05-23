@@ -13,6 +13,9 @@ type Options struct {
 	Parallelism             uint8  `json:"parallelism"`
 	HeadlessUseFlaresolverr bool   `json:"headless_use_flaresolverr"`
 	HeadlessFlaresolverrURL string `json:"headless_flaresolverr_url"`
+	MangaPlusOSVersion      string `json:"manga_plus_os_version"`
+	MangaPlusAppVersion     string `json:"manga_plus_app_version"`
+	MangaPlusAndroidID      string `json:"manga_plus_android_id"`
 }
 
 // DefaultOptions gets configured options or default ones.
@@ -28,5 +31,8 @@ func DefaultOptions() Options {
 		Parallelism:             config.Config.Providers.Parallelism.Get(),
 		HeadlessUseFlaresolverr: config.Config.Providers.Headless.UseFlaresolverr.Get(),
 		HeadlessFlaresolverrURL: config.Config.Providers.Headless.FlaresolverrURL.Get(),
+		MangaPlusOSVersion:      config.Config.Providers.MangaPlus.OSVersion.Get(),
+		MangaPlusAppVersion:     config.Config.Providers.MangaPlus.AppVersion.Get(),
+		MangaPlusAndroidID:      config.Config.Providers.MangaPlus.AndroidID.Get(),
 	}
 }

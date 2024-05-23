@@ -99,6 +99,7 @@ type configProviders struct {
 	Parallelism *registered[int64, uint8]
 	Headless    configProvidersHeadless
 	Filter      configProvidersFilter
+	MangaPlus   configProvidersMangaPlus
 }
 
 type configCache struct {
@@ -123,4 +124,10 @@ type configProvidersFilter struct {
 	TitleChapterNumber      *registered[bool, bool]
 	AvoidDuplicateChapters  *registered[bool, bool]
 	ShowUnavailableChapters *registered[bool, bool]
+}
+
+type configProvidersMangaPlus struct {
+	OSVersion  *registered[string, string]
+	AppVersion *registered[string, string]
+	AndroidID  *registered[string, string]
 }

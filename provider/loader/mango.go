@@ -40,6 +40,12 @@ func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
 			AvoidDuplicateChapters:  options.AvoidDuplicateChapters,
 			ShowUnavailableChapters: options.ShowUnavailableChapters,
 		},
+		// These will only be set upstream if they're non-empty
+		MangaPlus: mango.MangaPlusOptions{
+			OSVersion:  options.MangaPlusOSVersion,
+			AppVersion: options.MangaPlusAppVersion,
+			AndroidID:  options.MangaPlusAndroidID,
+		},
 	}
 	var loaders []libmangal.ProviderLoader
 	loaders = append(loaders, apis.Loaders(o)...)

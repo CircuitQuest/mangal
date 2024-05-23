@@ -77,8 +77,9 @@ func RunDownload(ctx context.Context, args Args) error {
 		downloadOptions.Directory = args.Directory
 	}
 
+	totalChapters := len(chapters)
 	retryCount := 0
-	for _, chapter := range chapters {
+	for i, chapter := range chapters {
 		retry := true
 		for retry {
 			retry = false
@@ -109,6 +110,11 @@ func RunDownload(ctx context.Context, args Args) error {
 				fmt.Println(string(dc))
 			} else {
 				fmt.Println(downChap.Path())
+			}
+			// To avoid abusing the mangaplus api, since there are no status codes returned to check
+			// sleep for a second on after each chapter download
+			if args.Provider == "mango-mangaplus" && i != totalChapters-1 {
+				time.Sleep(time.Second)
 			}
 		}
 	}

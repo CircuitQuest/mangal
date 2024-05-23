@@ -385,6 +385,23 @@ var Config = config{
 				Description: "When there are non-downloadable chapters, show them anyways. Should only be used to search around.",
 			}),
 		},
+		MangaPlus: configProvidersMangaPlus{
+			OSVersion: reg(field[string, string]{
+				Key:         "providers.mangaplus.os_version",
+				Default:     "30",
+				Description: "The OS Version used for the MangaPlus API calls.",
+			}),
+			AppVersion: reg(field[string, string]{
+				Key:         "providers.mangaplus.app_version",
+				Default:     "133",
+				Description: "The App Version used for the MangaPlus API calls.",
+			}),
+			AndroidID: reg(field[string, string]{
+				Key:         "providers.mangaplus.android_id",
+				Default:     "",
+				Description: "The Android ID used for the MangaPlus API calls. If empty will be randomly generated.",
+			}),
+		},
 	},
 	Library: configLibrary{
 		Path: reg(field[string, string]{

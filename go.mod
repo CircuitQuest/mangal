@@ -24,7 +24,7 @@ require (
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.15.2
 	github.com/luevano/luaprovider v0.10.6
-	github.com/luevano/mangoprovider v0.10.0
+	github.com/luevano/mangoprovider v0.10.2
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -33,7 +33,7 @@ require (
 	github.com/philippgille/gokv/encoding v0.7.0
 	github.com/philippgille/gokv/util v0.7.0
 	github.com/pkg/errors v0.9.1
-	github.com/rs/zerolog v1.32.0
+	github.com/rs/zerolog v1.33.0
 	github.com/samber/lo v1.39.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/afero v1.11.0
@@ -69,7 +69,7 @@ require (
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
 	github.com/luevano/mangodex v0.3.4 // indirect
-	github.com/luevano/mangoplus v0.2.1 // indirect
+	github.com/luevano/mangoplus v0.3.1 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
