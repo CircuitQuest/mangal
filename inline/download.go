@@ -113,7 +113,7 @@ func RunDownload(ctx context.Context, args Args) error {
 			}
 			// To avoid abusing the mangaplus api, since there are no status codes returned to check
 			// sleep for a second on after each chapter download
-			if args.Provider == "mango-mangaplus" && i != totalChapters-1 {
+			if downChap.ChapterStatus == libmangal.DownloadStatusNew && args.Provider == "mango-mangaplus" && i != totalChapters-1 {
 				time.Sleep(time.Second)
 			}
 		}
