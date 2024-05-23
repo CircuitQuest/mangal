@@ -24,7 +24,7 @@ require (
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.15.2
 	github.com/luevano/luaprovider v0.10.6
-	github.com/luevano/mangoprovider v0.10.3
+	github.com/luevano/mangoprovider v0.10.4
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
