@@ -5,6 +5,7 @@ import (
 	"io"
 
 	"github.com/luevano/libmangal"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/provider/loader"
@@ -25,7 +26,7 @@ type Args struct {
 
 type Options struct {
 	Client    *libmangal.Client
-	Anilist   *libmangal.Anilist
+	Anilist   *lmanilist.Anilist
 	Variables Variables
 }
 

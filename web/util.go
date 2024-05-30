@@ -5,13 +5,14 @@ import (
 	"fmt"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 )
 
-func searchMangas(ctx context.Context, client *libmangal.Client, query string) ([]libmangal.Manga, error) {
+func searchMangas(ctx context.Context, client *libmangal.Client, query string) ([]mangadata.Manga, error) {
 	return client.SearchMangas(ctx, query)
 }
 
-func mangaVolumes(ctx context.Context, client *libmangal.Client, query, mangaID string) ([]libmangal.Volume, error) {
+func mangaVolumes(ctx context.Context, client *libmangal.Client, query, mangaID string) ([]mangadata.Volume, error) {
 	mangas, err := searchMangas(ctx, client, query)
 	if err != nil {
 		return nil, err
@@ -26,7 +27,7 @@ func mangaVolumes(ctx context.Context, client *libmangal.Client, query, mangaID 
 	return nil, fmt.Errorf("manga %q not found", mangaID)
 }
 
-func volumeChapters(ctx context.Context, client *libmangal.Client, query, mangaID string, volumeNumber float32) ([]libmangal.Chapter, error) {
+func volumeChapters(ctx context.Context, client *libmangal.Client, query, mangaID string, volumeNumber float32) ([]mangadata.Chapter, error) {
 	volumes, err := mangaVolumes(ctx, client, query, mangaID)
 	if err != nil {
 		return nil, err

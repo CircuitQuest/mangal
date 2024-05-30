@@ -2,11 +2,12 @@ package chapsdownloaded
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/libmangal/metadata"
 )
 
 type Options struct {
-	Succeed, Failed  []libmangal.Chapter
-	SucceedDownloads []libmangal.DownloadedChapter
-	DownloadChapters func(chapters []libmangal.Chapter) tea.Cmd
+	Succeed, Failed  []mangadata.Chapter
+	SucceedDownloads []*metadata.DownloadedChapter
+	DownloadChapters func(chapters []mangadata.Chapter) tea.Cmd
 }

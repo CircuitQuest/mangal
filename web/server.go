@@ -12,6 +12,7 @@ import (
 
 	"github.com/labstack/echo/v4"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/meta"
@@ -58,7 +59,7 @@ func (s *Server) GetMangaPage(ctx context.Context, request api.GetMangaPageReque
 		return nil, err
 	}
 
-	manga, ok := lo.Find(mangas, func(manga libmangal.Manga) bool {
+	manga, ok := lo.Find(mangas, func(manga mangadata.Manga) bool {
 		return manga.Info().ID == request.Params.Manga
 	})
 	if !ok {
@@ -193,7 +194,7 @@ func (s *Server) GetMangaVolumes(ctx context.Context, request api.GetMangaVolume
 	}
 
 	return api.GetMangaVolumes200JSONResponse(
-		lo.Map(volumes, func(volume libmangal.Volume, _ int) api.Volume {
+		lo.Map(volumes, func(volume mangadata.Volume, _ int) api.Volume {
 			return api.Volume{
 				Number: volume.Info().Number,
 			}
@@ -226,7 +227,7 @@ func (s *Server) GetVolumeChapters(ctx context.Context, request api.GetVolumeCha
 	}
 
 	return api.GetVolumeChapters200JSONResponse(
-		lo.Map(chapters, func(chapter libmangal.Chapter, _ int) api.Chapter {
+		lo.Map(chapters, func(chapter mangadata.Chapter, _ int) api.Chapter {
 			info := chapter.Info()
 			return api.Chapter{
 				Number: info.Number,
@@ -323,7 +324,7 @@ func (s *Server) SearchMangas(ctx context.Context, request api.SearchMangasReque
 		}, nil
 	}
 
-	return api.SearchMangas200JSONResponse(lo.Map(mangas, func(manga libmangal.Manga, _ int) api.Manga {
+	return api.SearchMangas200JSONResponse(lo.Map(mangas, func(manga mangadata.Manga, _ int) api.Manga {
 		info := manga.Info()
 		return api.Manga{
 			Banner: &info.Banner,

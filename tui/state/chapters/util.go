@@ -6,6 +6,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapsdownloaded"
@@ -13,21 +15,21 @@ import (
 	"github.com/luevano/mangal/tui/state/loading"
 )
 
-func (s *State) downloadChaptersCmd(chapters []libmangal.Chapter, options libmangal.DownloadOptions) tea.Cmd {
+func (s *State) downloadChaptersCmd(chapters []mangadata.Chapter, options libmangal.DownloadOptions) tea.Cmd {
 	return func() tea.Msg {
 		state := chapsdownloading.New(
 			chapters,
 			chapsdownloading.Options{
-				DownloadChapter: func(ctx context.Context, chapter libmangal.Chapter) (libmangal.DownloadedChapter, error) {
+				DownloadChapter: func(ctx context.Context, chapter mangadata.Chapter) (*metadata.DownloadedChapter, error) {
 					return s.client.DownloadChapter(ctx, chapter, options)
 				},
-				OnDownloadFinished: func(downChaps []libmangal.DownloadedChapter, succeed, failed []libmangal.Chapter) tea.Cmd {
+				OnDownloadFinished: func(downChaps []*metadata.DownloadedChapter, succeed, failed []mangadata.Chapter) tea.Cmd {
 					return func() tea.Msg {
 						return chapsdownloaded.New(chapsdownloaded.Options{
 							Succeed:          succeed,
 							Failed:           failed,
 							SucceedDownloads: downChaps,
-							DownloadChapters: func(chapters []libmangal.Chapter) tea.Cmd {
+							DownloadChapters: func(chapters []mangadata.Chapter) tea.Cmd {
 								return s.downloadChaptersCmd(chapters, options)
 							},
 						})
@@ -36,16 +38,16 @@ func (s *State) downloadChaptersCmd(chapters []libmangal.Chapter, options libman
 			},
 		)
 
-		s.client.Logger().SetOnLog(func(msg string) {
-			state.SetMessage(msg)
-			log.Log(msg)
+		s.client.Logger().SetOnLog(func(format string, a ...any) {
+			state.SetMessage(fmt.Sprintf(format, a...))
+			log.Log(format, a...)
 		})
 
 		return state
 	}
 }
 
-func (s *State) downloadChapterCmd(ctx context.Context, chapter libmangal.Chapter, options libmangal.DownloadOptions) tea.Cmd {
+func (s *State) downloadChapterCmd(ctx context.Context, chapter mangadata.Chapter, options libmangal.DownloadOptions) tea.Cmd {
 	volume := chapter.Volume()
 	manga := volume.Manga()
 
@@ -55,9 +57,9 @@ func (s *State) downloadChapterCmd(ctx context.Context, chapter libmangal.Chapte
 			return loadingState
 		},
 		func() tea.Msg {
-			s.client.Logger().SetOnLog(func(msg string) {
-				loadingState.SetMessage(msg)
-				log.Log(msg)
+			s.client.Logger().SetOnLog(func(format string, a ...any) {
+				loadingState.SetMessage(fmt.Sprintf(format, a...))
+				log.Log(format, a...)
 			})
 
 			// TODO: make use of the returned data for data aggregation?

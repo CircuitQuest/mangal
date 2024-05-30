@@ -1,30 +1,35 @@
 package config
 
-import "github.com/luevano/libmangal"
+import (
+	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/metadata"
+)
 
-// DownloadOptions returns the libmangal.DownloadOptions fields populated by the set Config.
+// DownloadOptions constructs the libmangal.DownloadOptions populated by the Config.
 func (c config) DownloadOptions() libmangal.DownloadOptions {
-	return libmangal.DownloadOptions{
-		Format:                  c.Download.Format.Get(),
-		Directory:               c.Download.Path.Get(),
-		CreateProviderDir:       c.Download.Provider.CreateDir.Get(),
-		CreateMangaDir:          c.Download.Manga.CreateDir.Get(),
-		CreateVolumeDir:         c.Download.Volume.CreateDir.Get(),
-		Strict:                  c.Download.Strict.Get(),
-		SkipIfExists:            c.Download.SkipIfExists.Get(),
-		DownloadMangaCover:      c.Download.Manga.Cover.Get(),
-		DownloadMangaBanner:     c.Download.Manga.Banner.Get(),
-		WriteSeriesJSON:         c.Download.Metadata.SeriesJSON.Get(),
-		SkipSeriesJSONIfOngoing: c.Download.Metadata.SkipSeriesJSONIfOngoing.Get(),
-		WriteComicInfoXML:       c.Download.Metadata.ComicInfoXML.Get(),
-		ReadAfter:               false,
-		ReadOptions: libmangal.ReadOptions{
-			SaveHistory: c.Read.History.Local.Get(),
-			SaveAnilist: c.Read.History.Anilist.Get(),
-		},
-		ComicInfoXMLOptions: libmangal.DefaultComicInfoOptions(),
-		ImageTransformer: func(bytes []byte) ([]byte, error) {
-			return bytes, nil
-		},
+	// start from the defaults in case of new additions and build on top of it.
+	o := libmangal.DefaultDownloadOptions()
+	o.Format = c.Download.Format.Get()
+	o.Directory = c.Download.Path.Get()
+	o.CreateProviderDir = c.Download.Provider.CreateDir.Get()
+	o.CreateMangaDir = c.Download.Manga.CreateDir.Get()
+	o.CreateVolumeDir = c.Download.Volume.CreateDir.Get()
+	o.Strict = c.Download.Strict.Get()
+	o.SkipIfExists = c.Download.SkipIfExists.Get()
+	o.SearchMissingMetadata = c.Download.Metadata.SearchMissingMetadata.Get()
+	o.DownloadMangaCover = c.Download.Manga.Cover.Get()
+	o.DownloadMangaBanner = c.Download.Manga.Banner.Get()
+	o.WriteSeriesJSON = c.Download.Metadata.SeriesJSON.Get()
+	o.SkipSeriesJSONIfOngoing = c.Download.Metadata.SkipSeriesJSONIfOngoing.Get()
+	o.WriteComicInfoXML = c.Download.Metadata.ComicInfoXML.Get()
+	o.ReadAfter = false
+	o.ReadOptions = libmangal.ReadOptions{
+		SaveHistory: c.Read.History.Local.Get(),
+		SaveAnilist: c.Read.History.Anilist.Get(),
 	}
+	o.ComicInfoXMLOptions = metadata.DefaultComicInfoOptions()
+	o.ImageTransformer = func(bytes []byte) ([]byte, error) {
+		return bytes, nil
+	}
+	return o
 }

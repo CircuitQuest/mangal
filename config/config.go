@@ -216,7 +216,7 @@ var Config = config{
 			}),
 			NameTemplate: reg(field[string, string]{
 				Key:         "download.manga.name_template",
-				Default:     `{{ printf "%s (%d) [alid-%d]" .AnilistManga.String .AnilistManga.StartDate.Year .AnilistManga.ID | sanitize }}`,
+				Default:     `{{ printf "%s (%d) [%sid-%d]" .Metadata.Title .Metadata.StartDate.Year .Metadata.IDSource .Metadata.ID | sanitize }}`,
 				Description: "Template to use for naming downloaded mangas, when Anilist data available.",
 				Validate: func(s string) error {
 					_, err := template.
@@ -274,6 +274,11 @@ var Config = config{
 			}),
 		},
 		Metadata: configDownloadMetadata{
+			SearchMissingMetadata: reg(field[bool, bool]{
+				Key:         "download.metadata.search_missing_metadata",
+				Default:     true,
+				Description: "Search missing metadata with the available metadata providers. Priority is always search by ID then by title",
+			}),
 			SeriesJSON: reg(field[bool, bool]{
 				Key:         "download.metadata.series_json",
 				Default:     true,

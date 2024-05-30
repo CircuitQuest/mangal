@@ -3,6 +3,7 @@ package client
 import (
 	luadoc "github.com/luevano/gopher-luadoc"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/script/lib/util"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -247,7 +248,7 @@ func Lib(client *libmangal.Client) *luadoc.Lib {
 }
 
 func mangaInfo(state *lua.LState) int {
-	manga := util.Check[libmangal.Manga](state, 1)
+	manga := util.Check[mangadata.Manga](state, 1)
 	info := manga.Info()
 
 	table := state.NewTable()
@@ -264,7 +265,7 @@ func mangaInfo(state *lua.LState) int {
 }
 
 func volumeInfo(state *lua.LState) int {
-	volume := util.Check[libmangal.Volume](state, 1)
+	volume := util.Check[mangadata.Volume](state, 1)
 	info := volume.Info()
 
 	table := state.NewTable()
@@ -276,7 +277,7 @@ func volumeInfo(state *lua.LState) int {
 }
 
 func chapterInfo(state *lua.LState) int {
-	chapter := util.Check[libmangal.Chapter](state, 1)
+	chapter := util.Check[mangadata.Chapter](state, 1)
 	info := chapter.Info()
 
 	table := state.NewTable()
@@ -305,7 +306,7 @@ func newSearchMangas(client *libmangal.Client) lua.LGFunction {
 		mangas, err := client.SearchMangas(state.Context(), query)
 		util.Must(state, err)
 
-		table := util.SliceToTable(state, mangas, func(manga libmangal.Manga) lua.LValue {
+		table := util.SliceToTable(state, mangas, func(manga mangadata.Manga) lua.LValue {
 			return util.NewUserData(state, manga, mangaTypeName)
 		})
 
@@ -320,12 +321,12 @@ func newMangaVolumes(client *libmangal.Client) lua.LGFunction {
 	}
 
 	return func(state *lua.LState) int {
-		manga := util.Check[libmangal.Manga](state, 1)
+		manga := util.Check[mangadata.Manga](state, 1)
 
 		volumes, err := client.MangaVolumes(state.Context(), manga)
 		util.Must(state, err)
 
-		table := util.SliceToTable(state, volumes, func(volume libmangal.Volume) lua.LValue {
+		table := util.SliceToTable(state, volumes, func(volume mangadata.Volume) lua.LValue {
 			return util.NewUserData(state, volume, volumeTypeName)
 		})
 
@@ -340,12 +341,12 @@ func newVolumeChapters(client *libmangal.Client) lua.LGFunction {
 	}
 
 	return func(state *lua.LState) int {
-		volume := util.Check[libmangal.Volume](state, 1)
+		volume := util.Check[mangadata.Volume](state, 1)
 
 		chapters, err := client.VolumeChapters(state.Context(), volume)
 		util.Must(state, err)
 
-		table := util.SliceToTable(state, chapters, func(chapter libmangal.Chapter) lua.LValue {
+		table := util.SliceToTable(state, chapters, func(chapter mangadata.Chapter) lua.LValue {
 			return util.NewUserData(state, chapter, chapterTypeName)
 		})
 
@@ -360,12 +361,12 @@ func newChapterPages(client *libmangal.Client) lua.LGFunction {
 	}
 
 	return func(state *lua.LState) int {
-		chapter := util.Check[libmangal.Chapter](state, 1)
+		chapter := util.Check[mangadata.Chapter](state, 1)
 
 		pages, err := client.ChapterPages(state.Context(), chapter)
 		util.Must(state, err)
 
-		table := util.SliceToTable(state, pages, func(page libmangal.Page) lua.LValue {
+		table := util.SliceToTable(state, pages, func(page mangadata.Page) lua.LValue {
 			return util.NewUserData(state, page, pageTypeName)
 		})
 
@@ -380,7 +381,7 @@ func newDownloadPage(client *libmangal.Client) lua.LGFunction {
 	}
 
 	return func(state *lua.LState) int {
-		page := util.Check[libmangal.Page](state, 1)
+		page := util.Check[mangadata.Page](state, 1)
 
 		pageWithImage, err := client.DownloadPage(state.Context(), page)
 		util.Must(state, err)
@@ -391,16 +392,16 @@ func newDownloadPage(client *libmangal.Client) lua.LGFunction {
 }
 
 func pageImage(state *lua.LState) int {
-	page := util.Check[libmangal.PageWithImage](state, 1)
-	image := page.GetImage()
+	page := util.Check[mangadata.PageWithImage](state, 1)
+	image := page.Image()
 
 	state.Push(lua.LString(image))
 	return 1
 }
 
 func pageExtension(state *lua.LState) int {
-	page := util.Check[libmangal.PageWithImage](state, 1)
-	extension := page.GetExtension()
+	page := util.Check[mangadata.PageWithImage](state, 1)
+	extension := page.Extension()
 
 	state.Push(lua.LString(extension))
 	return 1
@@ -412,7 +413,7 @@ func newDownloadChapter(client *libmangal.Client) lua.LGFunction {
 	}
 
 	return func(state *lua.LState) int {
-		chapter := util.Check[libmangal.Chapter](state, 1)
+		chapter := util.Check[mangadata.Chapter](state, 1)
 
 		// TODO: use a custom download options
 		downChap, err := client.DownloadChapter(state.Context(), chapter, libmangal.DefaultDownloadOptions())

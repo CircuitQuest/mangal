@@ -3,7 +3,8 @@ package inline
 import (
 	"fmt"
 
-	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/provider/loader"
 )
 
@@ -13,10 +14,10 @@ type QueryResult struct {
 }
 
 type MangaResult struct {
-	Index    int                     `json:"index"`
-	Manga    libmangal.Manga         `json:"manga"`
-	Chapters *[]libmangal.Chapter    `json:"chapters"`
-	Anilist  *libmangal.AnilistManga `json:"anilist"`
+	Index    int                  `json:"index"`
+	Manga    mangadata.Manga      `json:"manga"`
+	Chapters *[]mangadata.Chapter `json:"chapters"`
+	Anilist  *lmanilist.Manga       `json:"anilist"`
 }
 
 type Args struct {

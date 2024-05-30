@@ -2,17 +2,18 @@ package mangas
 
 import (
 	"github.com/charmbracelet/bubbles/list"
+	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/util"
-	"github.com/luevano/libmangal"
 )
 
-func New(client *libmangal.Client, query string, mangas []*libmangal.Manga) *State {
+func New(client *libmangal.Client, query string, mangas []*mangadata.Manga) *State {
 	listWrapper := listwrapper.New(util.NewList(
 		2,
 		"manga", "mangas",
 		mangas,
-		func(manga *libmangal.Manga) list.DefaultItem {
+		func(manga *mangadata.Manga) list.DefaultItem {
 			return Item{manga}
 		},
 	))

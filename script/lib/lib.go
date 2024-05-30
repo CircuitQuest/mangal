@@ -3,6 +3,7 @@ package lib
 import (
 	luadoc "github.com/luevano/gopher-luadoc"
 	"github.com/luevano/libmangal"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	sdk "github.com/luevano/luaprovider/lib"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/script/lib/client"
@@ -13,7 +14,7 @@ import (
 
 type Options struct {
 	Client  *libmangal.Client
-	Anilist *libmangal.Anilist
+	Anilist *lmanilist.Anilist
 }
 
 func Lib(state *lua.LState, options Options) *luadoc.Lib {

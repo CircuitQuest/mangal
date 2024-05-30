@@ -6,7 +6,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/luevano/libmangal"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/spf13/cobra"
@@ -59,12 +59,11 @@ var anilistAuthCmd = &cobra.Command{
 		}
 		code = strings.TrimSpace(code)
 
-		err = anilist.Anilist.Authorize(context.Background(), libmangal.AnilistLoginCredentials{
+		err = anilist.Anilist.Authorize(context.Background(), lmanilist.LoginCredentials{
 			ID:     id,
 			Secret: secret,
 			Code:   code,
 		})
-
 		if err != nil {
 			errorf(cmd, err.Error())
 		}

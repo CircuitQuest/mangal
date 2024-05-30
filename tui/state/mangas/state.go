@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
@@ -23,7 +24,7 @@ var _ base.State = (*State)(nil)
 type State struct {
 	query  string
 	client *libmangal.Client
-	mangas []*libmangal.Manga
+	mangas []*mangadata.Manga
 	list   *listwrapper.State
 	keyMap KeyMap
 }
@@ -75,16 +76,18 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					return loading.New("Searching", fmt.Sprintf("Finding Anilist for %q", *item.manga))
 				},
 				func() tea.Msg {
+					// TODO: handle more cases for missing/partial metadata
 					// Find anilist manga closest to the selected manga and assign it
-					anilistManga, found, err := s.client.Anilist().FindClosestMangaByManga(context.Background(), *item.manga)
+					anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), *item.manga)
 					if err != nil {
 						return err
 					}
 					if !found {
 						log.Log("Couldn't find Anilist for %q", *item.manga)
+					} else {
+						(*item.manga).SetMetadata(anilistManga.Metadata())
+						log.Log("Found and set Anilist for %q: %q (%d)", *item.manga, anilistManga.String(), anilistManga.ID)
 					}
-					(*item.manga).SetAnilistManga(anilistManga)
-					log.Log("Found and set Anilist for %q: %q (%d)", *item.manga, anilistManga.String(), anilistManga.ID)
 
 					return nil
 				},
@@ -97,7 +100,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						return err
 					}
 
-					var volumeList []*libmangal.Volume
+					var volumeList []*mangadata.Volume
 					for _, v := range vL {
 						volumeList = append(volumeList, &v)
 					}
@@ -112,7 +115,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						return err
 					}
 
-					var chapterList []*libmangal.Chapter
+					var chapterList []*mangadata.Chapter
 					for _, c := range cL {
 						chapterList = append(chapterList, &c)
 					}

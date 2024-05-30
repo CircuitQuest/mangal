@@ -4,7 +4,7 @@ import (
 	"context"
 
 	luadoc "github.com/luevano/gopher-luadoc"
-	"github.com/luevano/libmangal"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/script/lib/util"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -16,7 +16,7 @@ const (
 )
 
 // TODO: add this to main lib, currently not being used
-func Lib(anilist *libmangal.Anilist) *luadoc.Lib {
+func Lib(anilist *lmanilist.Anilist) *luadoc.Lib {
 	return &luadoc.Lib{
 		Name:        libName,
 		Description: "Anilist operations",
@@ -90,7 +90,7 @@ func missingAnilistError(state *lua.LState) int {
 	return 0
 }
 
-func newSearchMangas(anilist *libmangal.Anilist) lua.LGFunction {
+func newSearchMangas(anilist *lmanilist.Anilist) lua.LGFunction {
 	if anilist == nil {
 		return missingAnilistError
 	}
@@ -101,7 +101,7 @@ func newSearchMangas(anilist *libmangal.Anilist) lua.LGFunction {
 		mangas, err := anilist.SearchMangas(state.Context(), query)
 		util.Must(state, err)
 
-		table := util.SliceToTable(state, mangas, func(manga libmangal.AnilistManga) lua.LValue {
+		table := util.SliceToTable(state, mangas, func(manga lmanilist.Manga) lua.LValue {
 			return util.NewUserData(state, manga, mangaTypeName)
 		})
 
@@ -110,7 +110,7 @@ func newSearchMangas(anilist *libmangal.Anilist) lua.LGFunction {
 	}
 }
 
-func newFindClosestManga(anilist *libmangal.Anilist) lua.LGFunction {
+func newFindClosestManga(anilist *lmanilist.Anilist) lua.LGFunction {
 	if anilist == nil {
 		return missingAnilistError
 	}
@@ -127,7 +127,7 @@ func newFindClosestManga(anilist *libmangal.Anilist) lua.LGFunction {
 	}
 }
 
-func newBindTitleWithID(anilist *libmangal.Anilist) lua.LGFunction {
+func newBindTitleWithID(anilist *lmanilist.Anilist) lua.LGFunction {
 	if anilist == nil {
 		return missingAnilistError
 	}

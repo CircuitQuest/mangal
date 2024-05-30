@@ -9,6 +9,8 @@ import (
 	"time"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/metadata"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/config"
@@ -37,28 +39,35 @@ func RunDownload(ctx context.Context, args Args) error {
 	}
 
 	manga := mangaResults[0].Manga
-	var anilistManga libmangal.AnilistManga
+	var anilistManga lmanilist.Manga
 	var found bool
 
+	// If AnilistID is provided via config, then search for it and replace the manga metadata,
+	// error out as it is expected to find some metadata
 	if args.AnilistID != 0 {
-		anilistManga, found, err = anilist.Anilist.GetByID(ctx, args.AnilistID)
+		anilistManga, found, err = anilist.Anilist.SearchByID(ctx, args.AnilistID)
 		if err != nil {
 			return err
 		}
 		if !found {
-			return fmt.Errorf("couldn't find anilist manga with id %q", args.AnilistID)
+			return fmt.Errorf("couldn't find anilist manga with id %q (from config)", args.AnilistID)
 		}
-	} else {
-		anilistManga, found, err = anilist.Anilist.FindClosestManga(ctx, manga.Info().AnilistSearch)
-		if err != nil {
-			return err
-		}
-		if !found {
-			return fmt.Errorf("couldn't find anilist manga for query %q", manga.Info().AnilistSearch)
-		}
+		manga.SetMetadata(anilistManga.Metadata())
 	}
 
-	manga.SetAnilistManga(anilistManga)
+	// TODO: handle partial metadata (non-nil) and merges/full replacements/fills
+	// TODO: make checks for "valid" metadata (enough fields to use) instead of nil checks
+	if manga.Metadata() == nil && config.Config.Download.Metadata.SearchMissingMetadata.Get() {
+		metadata, err := client.SearchMetadata(ctx, manga)
+		if err != nil {
+			return err
+		}
+		if metadata == nil {
+			return fmt.Errorf("couldn't find anilist metadata for manga %q", manga)
+		}
+		manga.SetMetadata(metadata)
+	}
+
 	chapters, err := getChapters(ctx, client, args, manga)
 	if err != nil {
 		return err
@@ -113,7 +122,7 @@ func RunDownload(ctx context.Context, args Args) error {
 			}
 			// To avoid abusing the mangaplus api, since there are no status codes returned to check
 			// sleep for a second on after each chapter download
-			if downChap.ChapterStatus == libmangal.DownloadStatusNew && args.Provider == "mango-mangaplus" && i != totalChapters-1 {
+			if downChap.ChapterStatus == metadata.DownloadStatusNew && args.Provider == "mango-mangaplus" && i != totalChapters-1 {
 				time.Sleep(time.Second)
 			}
 		}

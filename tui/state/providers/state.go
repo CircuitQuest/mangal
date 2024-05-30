@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
@@ -95,8 +96,8 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						return err
 					}
 
-					client.Logger().SetOnLog(func(msg string) {
-						log.Log(msg)
+					client.Logger().SetOnLog(func(format string, a ...any) {
+						log.Log(format, a...)
 					})
 
 					return textinput.New(textinput.Options{
@@ -112,7 +113,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 									if err != nil {
 										return err
 									}
-									var mangaList []*libmangal.Manga
+									var mangaList []*mangadata.Manga
 									for _, m := range mL {
 										mangaList = append(mangaList, &m)
 									}

@@ -5,6 +5,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/state/listwrapper"
@@ -12,7 +13,7 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
-func New(client *libmangal.Client, manga *libmangal.Manga, volume *libmangal.Volume, chapters []*libmangal.Chapter) *State {
+func New(client *libmangal.Client, manga *mangadata.Manga, volume *mangadata.Volume, chapters []*mangadata.Chapter) *State {
 	showChapterNumber := config.Config.TUI.Chapter.ShowNumber.Get()
 	showGroup := config.Config.TUI.Chapter.ShowGroup.Get()
 	showDate := config.Config.TUI.Chapter.ShowDate.Get()
@@ -22,7 +23,7 @@ func New(client *libmangal.Client, manga *libmangal.Manga, volume *libmangal.Vol
 		3,
 		"chapter", "chapters",
 		chapters,
-		func(chapter *libmangal.Chapter) list.DefaultItem {
+		func(chapter *mangadata.Chapter) list.DefaultItem {
 			tmpPath := filepath.Join(
 				path.TempDir(),
 				client.ComputeProviderFilename(client.Info()),

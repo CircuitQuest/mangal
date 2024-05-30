@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/libmangal"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
@@ -16,10 +16,10 @@ import (
 
 var _ base.State = (*State)(nil)
 
-type OnResponseFunc func(response *libmangal.AnilistManga) tea.Cmd
+type OnResponseFunc func(response *lmanilist.Manga) tea.Cmd
 
 type State struct {
-	anilist *libmangal.Anilist
+	anilist *lmanilist.Anilist
 	list    *listwrapper.State
 
 	onResponse OnResponseFunc

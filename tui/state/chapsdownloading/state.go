@@ -8,7 +8,8 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
@@ -19,14 +20,14 @@ var _ base.State = (*State)(nil)
 
 type State struct {
 	options  Options
-	chapters []libmangal.Chapter
+	chapters []mangadata.Chapter
 	message  string
 
 	progress progress.Model
 	spinner  spinner.Model
 
-	succeedDownloads []libmangal.DownloadedChapter
-	succeed, failed  []libmangal.Chapter
+	succeedDownloads []*metadata.DownloadedChapter
+	succeed, failed  []mangadata.Chapter
 	currentIdx       int
 
 	size base.Size

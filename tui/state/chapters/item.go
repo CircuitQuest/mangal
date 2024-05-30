@@ -6,6 +6,7 @@ import (
 	"strings"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/theme/style"
@@ -15,7 +16,7 @@ import (
 
 type Item struct {
 	client            *libmangal.Client
-	chapter           *libmangal.Chapter
+	chapter           *mangadata.Chapter
 	selectedItems     *set.Set[*Item]
 	showChapterNumber *bool
 	showGroup         *bool

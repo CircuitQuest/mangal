@@ -11,6 +11,8 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/path"
@@ -29,8 +31,8 @@ var _ base.State = (*State)(nil)
 
 type State struct {
 	client            *libmangal.Client
-	manga             *libmangal.Manga
-	volume            *libmangal.Volume
+	manga             *mangadata.Manga
+	volume            *mangadata.Volume
 	selected          set.Set[*Item]
 	list              *listwrapper.State
 	keyMap            KeyMap
@@ -138,7 +140,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				},
 			)
 		case key.Matches(msg, s.keyMap.Download) || (s.selected.Size() > 0 && key.Matches(msg, s.keyMap.Confirm)):
-			var chapters []libmangal.Chapter
+			var chapters []mangadata.Chapter
 
 			if s.selected.Size() == 0 {
 				chapters = append(chapters, *item.chapter)
@@ -212,8 +214,9 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					return loading.New("Searching", "Getting Anilist Mangas")
 				},
 				func() tea.Msg {
-					var mangas []libmangal.AnilistManga
+					var mangas []lmanilist.Manga
 
+					// TODO: solidify the metadata gathering, missing/partial
 					// TODO: revert to just Title instead of AnilistSearch?
 					var mangaTitle string
 					mangaInfo := (*item.chapter).Volume().Manga().Info()
@@ -248,12 +251,11 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					return anilistmangas.New(
 						s.client.Anilist(),
 						mangas,
-						func(response *libmangal.AnilistManga) tea.Cmd {
+						func(response *lmanilist.Manga) tea.Cmd {
 							return tea.Sequence(
 								func() tea.Msg {
 									log.Log("Setting Anilist manga %q (%d)", response.String(), response.ID)
-									(*s.manga).SetAnilistManga(*response)
-									// (*s.volume).Manga().SetAnilistManga(*response)
+									(*s.manga).SetMetadata(response.Metadata())
 
 									return base.MsgBack{}
 								},

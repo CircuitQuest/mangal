@@ -1,9 +1,9 @@
 package mangas
 
-import "github.com/luevano/libmangal"
+import "github.com/luevano/libmangal/mangadata"
 
 type Item struct {
-	manga *libmangal.Manga
+	manga *mangadata.Manga
 }
 
 func (i Item) FilterValue() string {

@@ -2,23 +2,25 @@ package volumes
 
 import (
 	"fmt"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapters"
 	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
-	"github.com/luevano/libmangal"
 )
 
 var _ base.State = (*State)(nil)
 
 type State struct {
 	client  *libmangal.Client
-	manga   *libmangal.Manga
-	volumes []*libmangal.Volume
+	manga   *mangadata.Manga
+	volumes []*mangadata.Volume
 	list    *listwrapper.State
 	keyMap  KeyMap
 }
@@ -75,7 +77,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						return err
 					}
 
-					var chapterList []*libmangal.Chapter
+					var chapterList []*mangadata.Chapter
 					for _, c := range cL {
 						chapterList = append(chapterList, &c)
 					}

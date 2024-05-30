@@ -3,11 +3,11 @@ package chapsdownloading
 import (
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
-	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/theme/style"
 )
 
-func New(chapters []libmangal.Chapter, options Options) *State {
+func New(chapters []mangadata.Chapter, options Options) *State {
 	return &State{
 		options:  options,
 		chapters: chapters,

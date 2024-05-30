@@ -2,11 +2,12 @@ package volumes
 
 import (
 	"fmt"
-	"github.com/luevano/libmangal"
+
+	"github.com/luevano/libmangal/mangadata"
 )
 
 type Item struct {
-	volume *libmangal.Volume
+	volume *mangadata.Volume
 }
 
 func (i Item) FilterValue() string {

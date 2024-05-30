@@ -2,11 +2,12 @@ package anilistmangas
 
 import (
 	"fmt"
-	"github.com/luevano/libmangal"
+
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 )
 
 type Item struct {
-	Manga *libmangal.AnilistManga
+	Manga *lmanilist.Manga
 }
 
 func (i Item) FilterValue() string {

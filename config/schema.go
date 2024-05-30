@@ -77,6 +77,7 @@ type configDownloadChapter struct {
 }
 
 type configDownloadMetadata struct {
+	SearchMissingMetadata   *registered[bool, bool]
 	ComicInfoXML            *registered[bool, bool]
 	SeriesJSON              *registered[bool, bool]
 	SkipSeriesJSONIfOngoing *registered[bool, bool]

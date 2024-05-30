@@ -10,6 +10,8 @@ import (
 
 	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/mangadata"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/log"
 	"github.com/samber/lo"
@@ -19,7 +21,7 @@ const mangaQueryIDName = "id"
 
 var mangaQueryIDRegex = regexp.MustCompile(`(?i)\s*(m((anga)?[-_]?)?id)\s*:\s*(?P<id>.*\S)\s*$`)
 
-func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult, error) {
+func getSelectedMangaResults(args Args, mangas []mangadata.Manga) ([]MangaResult, error) {
 	var mangaResults []MangaResult
 	totalMangas := len(mangas)
 	selector := strings.ReplaceAll(args.MangaSelector, " ", "")
@@ -67,7 +69,7 @@ func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult
 		}
 		return mangaResults, nil
 	case "closest":
-		var manga *libmangal.Manga
+		var manga *mangadata.Manga
 		index := -1
 		rank := math.MaxInt
 
@@ -101,13 +103,13 @@ func getSelectedMangaResults(args Args, mangas []libmangal.Manga) ([]MangaResult
 
 func assignAnilist(ctx context.Context, args Args, mangaResults *[]MangaResult) {
 	for i, mangaResult := range *mangaResults {
-		var aniManga libmangal.AnilistManga
+		var aniManga lmanilist.Manga
 		var found bool
 		var aniErr error
 		if args.AnilistID != 0 {
-			aniManga, found, aniErr = anilist.Anilist.GetByID(ctx, args.AnilistID)
+			aniManga, found, aniErr = anilist.Anilist.SearchByID(ctx, args.AnilistID)
 		} else {
-			aniManga, found, aniErr = anilist.Anilist.FindClosestManga(ctx, mangaResult.Manga.Info().AnilistSearch)
+			aniManga, found, aniErr = anilist.Anilist.SearchByManga(ctx, mangaResult.Manga)
 		}
 		if aniErr == nil && found {
 			(*mangaResults)[i].Anilist = &aniManga
@@ -115,7 +117,7 @@ func assignAnilist(ctx context.Context, args Args, mangaResults *[]MangaResult) 
 	}
 }
 
-func getChapters(ctx context.Context, client *libmangal.Client, args Args, manga libmangal.Manga) ([]libmangal.Chapter, error) {
+func getChapters(ctx context.Context, client *libmangal.Client, args Args, manga mangadata.Manga) ([]mangadata.Chapter, error) {
 	volumes, err := client.MangaVolumes(ctx, manga)
 	if err != nil {
 		return nil, err
@@ -138,8 +140,8 @@ func getChapters(ctx context.Context, client *libmangal.Client, args Args, manga
 	return selectedChapters, nil
 }
 
-func getAllVolumeChapters(ctx context.Context, client *libmangal.Client, args Args, volumes []libmangal.Volume) ([]libmangal.Chapter, error) {
-	var chapters []libmangal.Chapter
+func getAllVolumeChapters(ctx context.Context, client *libmangal.Client, args Args, volumes []mangadata.Volume) ([]mangadata.Chapter, error) {
+	var chapters []mangadata.Chapter
 	for _, volume := range volumes {
 		volumeChapters, err := client.VolumeChapters(ctx, volume)
 		if err != nil {
@@ -155,7 +157,7 @@ func getAllVolumeChapters(ctx context.Context, client *libmangal.Client, args Ar
 	return chapters, nil
 }
 
-func getSelectedChapters(args Args, chapters []libmangal.Chapter) ([]libmangal.Chapter, error) {
+func getSelectedChapters(args Args, chapters []mangadata.Chapter) ([]mangadata.Chapter, error) {
 	const (
 		selectorAll   = "all"
 		selectorFirst = "first"
@@ -207,7 +209,7 @@ func getSelectedChapters(args Args, chapters []libmangal.Chapter) ([]libmangal.C
 				return nil, &ChapterSelectorError{selector, fmt.Sprintf("'from' (%s) greater than 'to' (%s)", fmtFloat(from), fmtFloat(to))}
 			}
 
-			return lo.Filter(chapters, func(chapter libmangal.Chapter, i int) bool {
+			return lo.Filter(chapters, func(chapter mangadata.Chapter, i int) bool {
 				return chapter.Info().Number >= from && chapter.Info().Number <= to
 			}), nil
 
@@ -221,7 +223,7 @@ func getSelectedChapters(args Args, chapters []libmangal.Chapter) ([]libmangal.C
 				return nil, &ChapterSelectorError{selector, fmt.Sprintf("chapter number (%s) out of range(%s, %s)", fmtFloat(number), fmtFloat(firstChapNum), fmtFloat(lastChapNum))}
 			}
 			// Could return more than one chapter if multiple have the same chapter number for some reason
-			return lo.Filter(chapters, func(chapter libmangal.Chapter, i int) bool {
+			return lo.Filter(chapters, func(chapter mangadata.Chapter, i int) bool {
 				return chapter.Info().Number == number
 			}), nil
 		}
