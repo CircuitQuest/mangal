@@ -15,11 +15,11 @@ func (m *Model) View() string {
 	titleStyle := m.styles.Title
 
 	if title.Background != "" {
-		titleStyle.Background(title.Background)
+		titleStyle = titleStyle.Background(title.Background)
 	}
 
 	if title.Foreground != "" {
-		titleStyle.Foreground(title.Foreground)
+		titleStyle = titleStyle.Foreground(title.Foreground)
 	}
 
 	titleText := stringutil.Trim(title.Text, m.size.Width/2)

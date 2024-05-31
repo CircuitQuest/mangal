@@ -21,16 +21,21 @@ func NewList[T any](
 	border := lipgloss.ThickBorder()
 	delegate := list.NewDefaultDelegate()
 
-	delegate.Styles.NormalTitle.Bold(true)
-	delegate.Styles.SelectedTitle.Bold(true)
-	delegate.Styles.SelectedTitle.Border(border, false, false, false, true)
-	delegate.Styles.SelectedDesc.
+	// TODO: possibly use the current "window" (where the list is being displayed) accent color,
+	// instead of always hardcoding color.Accent
+	//
+	// Styles don't use mangal/theme/style, as they are more specialized with paddings and whatnot
+	styles := delegate.Styles
+	styles.NormalTitle = styles.NormalTitle.Bold(true)
+	styles.SelectedTitle = styles.SelectedTitle.Bold(true).
+		Foreground(color.Accent).
 		Border(border, false, false, false, true).
-		Foreground(delegate.Styles.NormalDesc.GetForeground())
-
-	delegate.Styles.SelectedTitle.Foreground(color.Accent)
-	delegate.Styles.SelectedTitle.BorderLeftForeground(color.Accent)
-	delegate.Styles.SelectedDesc.BorderLeftForeground(color.Accent)
+		BorderForeground(color.Accent)
+	styles.SelectedDesc = styles.SelectedDesc.
+		Foreground(delegate.Styles.NormalDesc.GetForeground()).
+		Border(border, false, false, false, true).
+		BorderForeground(color.Accent)
+	delegate.Styles = styles
 
 	if delegateHeight == 1 {
 		delegate.ShowDescription = false
