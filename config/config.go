@@ -228,7 +228,7 @@ var Config = config{
 			}),
 			NameTemplateFallback: reg(field[string, string]{
 				Key:         "download.manga.name_template_fallback",
-				Default:     `{{ .Title | sanitize }}`,
+				Default:     `{{ .Manga.Title | sanitize }}`,
 				Description: "Template to use for naming downloaded mangas, when no Anilist data is available.",
 				Validate: func(s string) error {
 					_, err := template.
@@ -247,7 +247,7 @@ var Config = config{
 			}),
 			NameTemplate: reg(field[string, string]{
 				Key:         "download.volume.name_template",
-				Default:     `{{ printf "Vol. %d" .Number | sanitize }}`,
+				Default:     `{{ printf "Vol. %.1f" .Volume.Number | sanitize }}`,
 				Description: "Template to use for naming downloaded volumes.",
 				Validate: func(s string) error {
 					_, err := template.
@@ -261,7 +261,7 @@ var Config = config{
 		Chapter: configDownloadChapter{
 			NameTemplate: reg(field[string, string]{
 				Key:         "download.chapter.name_template",
-				Default:     `{{ printf "[%06.1f] %s" .Number .Title | sanitize }}`,
+				Default:     `{{ printf "[%06.1f] %s" .Chapter.Number .Chapter.Title | sanitize }}`,
 				Description: "Template to use for naming downloaded chapters.",
 				Validate: func(s string) error {
 					_, err := template.
