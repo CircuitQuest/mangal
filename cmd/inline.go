@@ -19,7 +19,7 @@ func init() {
 	setDefaultModeShort(inlineCmd)
 	// To shorten the statements a bit
 	f := inlineCmd.PersistentFlags()
-	lOpts := loader.Options{}
+	lOpts := loader.DefaultOptions()
 
 	f.StringVarP(&inlineArgs.Query, "query", "q", "", "Query to search")
 	f.StringVarP(&inlineArgs.Provider, "provider", "p", "", "Provider id to use")

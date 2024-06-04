@@ -398,7 +398,7 @@ var Config = config{
 			}),
 			AppVersion: reg(field[string, string]{
 				Key:         "providers.mangaplus.app_version",
-				Default:     "133",
+				Default:     "150",
 				Description: "The App Version used for the MangaPlus API calls.",
 			}),
 			AndroidID: reg(field[string, string]{

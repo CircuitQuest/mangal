@@ -45,6 +45,8 @@ func Execute() {
 		Title: "Mode Commands:",
 	})
 
+	// TODO: fix/remove this once the config load order is fixed
+	//
 	// Load the config before any command execution
 	// Looks weird, it sets the same variable it uses for default and then path.ConfigDir
 	// will also read this set flag but it also creates the directory if doesn't exist.

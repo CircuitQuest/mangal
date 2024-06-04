@@ -6,9 +6,15 @@ import (
 	"fmt"
 
 	"github.com/luevano/mangal/client"
+	"github.com/luevano/mangal/config"
 )
 
 func RunJSON(ctx context.Context, args Args) error {
+	// TODO: actually fix the config loading order, this is a temporary hotfix
+	args.LoaderOptions.MangaPlusOSVersion = config.Config.Providers.MangaPlus.OSVersion.Get()
+	args.LoaderOptions.MangaPlusAppVersion = config.Config.Providers.MangaPlus.AppVersion.Get()
+	args.LoaderOptions.MangaPlusAndroidID = config.Config.Providers.MangaPlus.AndroidID.Get()
+
 	client, err := client.NewClientByID(ctx, args.Provider, *args.LoaderOptions)
 	if err != nil {
 		return err
