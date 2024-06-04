@@ -25,13 +25,19 @@ func init() {
 	f.StringVarP(&inlineArgs.Provider, "provider", "p", "", "Provider id to use")
 	f.StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "all", "Manga selector (all|first|last|id|exact|closest|<index>)")
 	f.StringVarP(&inlineArgs.ChapterSelector, "chapter-selector", "c", "all", "Chapter selector (all|first|last|<num>|[from]-[to])")
-	f.IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", 0, "Anilist ID to bind title to")
+	f.BoolVar(&inlineArgs.PreferProviderMetadata, "prefer-provider-metadata", false, "Prefer provider metadata if valid (skips --search-metadata)")
+	f.BoolVar(&inlineArgs.SearchMetadata, "search-metadata", config.Config.Download.Metadata.Search.Get(), "Search metadata and replace the provider metadata")
+	f.IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", 0, "Anilist ID to search for metadata")
 	setupLoaderOptions(f, &lOpts)
 	inlineArgs.LoaderOptions = &lOpts
 
 	inlineCmd.MarkPersistentFlagRequired("provider")
 	inlineCmd.MarkPersistentFlagRequired("query")
 	inlineCmd.RegisterFlagCompletionFunc("provider", completionProviderIDs)
+
+	// when anilist-id is provided, then use that exclusively
+	inlineCmd.MarkFlagsMutuallyExclusive("anilist-id", "search-metadata")
+	inlineCmd.MarkFlagsMutuallyExclusive("anilist-id", "prefer-provider-metadata")
 }
 
 var inlineCmd = &cobra.Command{

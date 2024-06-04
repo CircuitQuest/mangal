@@ -14,6 +14,7 @@ import (
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/log"
 )
 
 func RunDownload(ctx context.Context, args Args) error {
@@ -44,33 +45,32 @@ func RunDownload(ctx context.Context, args Args) error {
 	}
 
 	manga := mangaResults[0].Manga
+	useMangaMetadata := false
+	if args.PreferProviderMetadata {
+		if err := manga.Metadata().Validate(); err != nil {
+			// TODO: this logger is only really used for TUI, better handle logs
+			log.Log("provider metadata is preferred but it's not valid: %s\n", err.Error())
+		} else {
+			useMangaMetadata = true
+		}
+	}
 	var anilistManga lmanilist.Manga
 	var found bool
 
-	// If AnilistID is provided via config, then search for it and replace the manga metadata,
-	// error out as it is expected to find some metadata
-	if args.AnilistID != 0 {
+	// TODO: handle merges/full replacements/fills
+	//
+	// If AnilistID is provided via argument, then search for it and replace the manga metadata,
+	// error out as it is expected to find some metadata (given the id).
+	// Otherwise, if prefer provider metadata is true and the metadata is valid, libmangal will search for metadata.
+	if !useMangaMetadata && args.AnilistID != 0 {
 		anilistManga, found, err = anilist.Anilist.SearchByID(ctx, args.AnilistID)
 		if err != nil {
 			return err
 		}
 		if !found {
-			return fmt.Errorf("couldn't find anilist manga with id %q (from config)", args.AnilistID)
+			return fmt.Errorf("couldn't find anilist manga with id %q (from argument)", args.AnilistID)
 		}
 		manga.SetMetadata(anilistManga.Metadata())
-	}
-
-	// TODO: handle partial metadata (non-nil) and merges/full replacements/fills
-	// TODO: make checks for "valid" metadata (enough fields to use) instead of nil checks
-	if manga.Metadata() == nil && config.Config.Download.Metadata.SearchMissingMetadata.Get() {
-		metadata, err := client.SearchMetadata(ctx, manga)
-		if err != nil {
-			return err
-		}
-		if metadata == nil {
-			return fmt.Errorf("couldn't find anilist metadata for manga %q", manga)
-		}
-		manga.SetMetadata(metadata)
 	}
 
 	chapters, err := getChapters(ctx, client, args, manga)
@@ -89,6 +89,10 @@ func RunDownload(ctx context.Context, args Args) error {
 	}
 	if args.Directory != "" {
 		downloadOptions.Directory = args.Directory
+	}
+	// Don't search metadata when preferring the provider metadata (and its valid)
+	if useMangaMetadata {
+		downloadOptions.SearchMetadata = false
 	}
 
 	totalChapters := len(chapters)

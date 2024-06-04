@@ -169,11 +169,6 @@ var Config = config{
 				return int64(mode), nil
 			},
 		}),
-		Strict: reg(field[bool, bool]{
-			Key:         "download.strict",
-			Default:     true,
-			Description: "If during metadata/banner/cover creation error occurs downloader will return it immediately and chapter won't be downloaded.",
-		}),
 		SkipIfExists: reg(field[bool, bool]{
 			Key:         "download.skip_if_exists",
 			Default:     true,
@@ -274,10 +269,15 @@ var Config = config{
 			}),
 		},
 		Metadata: configDownloadMetadata{
-			SearchMissingMetadata: reg(field[bool, bool]{
-				Key:         "download.metadata.search_missing_metadata",
+			Strict: reg(field[bool, bool]{
+				Key:         "download.metadata.strict",
 				Default:     true,
-				Description: "Search missing metadata with the available metadata providers. Priority is always search by ID then by title",
+				Description: "If metadata is invalid (nil/missing necessary fields) or if during metadata/banner/cover creation an error occurs the chapter won't be downloaded. Some metadata is potentially written to disk.",
+			}),
+			Search: reg(field[bool, bool]{
+				Key:         "download.metadata.search",
+				Default:     true,
+				Description: "Search metadata with the available metadata providers, replaces the incoming (from providers usually) metadata even if not found. Priority is always to search by ID if available then by title.",
 			}),
 			SeriesJSON: reg(field[bool, bool]{
 				Key:         "download.metadata.series_json",

@@ -101,6 +101,8 @@ func getSelectedMangaResults(args Args, mangas []mangadata.Manga) ([]MangaResult
 	}
 }
 
+// TODO: refactor to handle metadata in general, not just anilist;
+// use the provider metadata if preferred and search metadata in general otherwise
 func assignAnilist(ctx context.Context, args Args, mangaResults *[]MangaResult) {
 	for i, mangaResult := range *mangaResults {
 		var aniManga lmanilist.Manga

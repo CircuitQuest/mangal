@@ -33,6 +33,7 @@ func RunJSON(ctx context.Context, args Args) error {
 		return err
 	}
 
+	// TODO: refactor to handle metadata in general, not just anilist
 	if !args.AnilistDisable {
 		// It is only assigned to the result to preview which anilist manga would be set,
 		// it needs to be passed to the download too to actually bind the title and id

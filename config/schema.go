@@ -45,7 +45,6 @@ type configDownload struct {
 	ModeDir      *registered[int64, fs.FileMode]
 	ModeFile     *registered[int64, fs.FileMode]
 	ModeDB       *registered[int64, fs.FileMode]
-	Strict       *registered[bool, bool]
 	SkipIfExists *registered[bool, bool]
 	Provider     configDownloadProvider
 	Manga        configDownloadManga
@@ -77,7 +76,8 @@ type configDownloadChapter struct {
 }
 
 type configDownloadMetadata struct {
-	SearchMissingMetadata   *registered[bool, bool]
+	Strict                  *registered[bool, bool]
+	Search                  *registered[bool, bool]
 	ComicInfoXML            *registered[bool, bool]
 	SeriesJSON              *registered[bool, bool]
 	SkipSeriesJSONIfOngoing *registered[bool, bool]

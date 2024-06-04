@@ -13,25 +13,28 @@ type QueryResult struct {
 	Results     []MangaResult `json:"results"`
 }
 
+// TODO: change Anilist to Metadata in general
 type MangaResult struct {
 	Index    int                  `json:"index"`
 	Manga    mangadata.Manga      `json:"manga"`
 	Chapters *[]mangadata.Chapter `json:"chapters"`
-	Anilist  *lmanilist.Manga       `json:"anilist"`
+	Anilist  *lmanilist.Manga     `json:"anilist"`
 }
 
 type Args struct {
-	Query           string          `json:"query"`
-	Provider        string          `json:"provider"`
-	MangaSelector   string          `json:"manga_selector"`
-	ChapterSelector string          `json:"chapter_selector"`
-	ChapterPopulate bool            `json:"chapter_populate"`
-	AnilistID       int             `json:"anilist_id"`
-	AnilistDisable  bool            `json:"anilist_disable"`
-	Format          string          `json:"format,omitempty"`
-	Directory       string          `json:"directory,omitempty"`
-	JSONOutput      bool            `json:"json_output,omitempty"`
-	LoaderOptions   *loader.Options `json:"loader_options"`
+	Query                  string          `json:"query"`
+	Provider               string          `json:"provider"`
+	MangaSelector          string          `json:"manga_selector"`
+	ChapterSelector        string          `json:"chapter_selector"`
+	ChapterPopulate        bool            `json:"chapter_populate"`
+	PreferProviderMetadata bool            `json:"prefer_provider_metadata"`
+	SearchMetadata         bool            `json:"search_metadata"`
+	AnilistID              int             `json:"anilist_id"`
+	AnilistDisable         bool            `json:"anilist_disable"`
+	Format                 string          `json:"format,omitempty"`
+	Directory              string          `json:"directory,omitempty"`
+	JSONOutput             bool            `json:"json_output,omitempty"`
+	LoaderOptions          *loader.Options `json:"loader_options"`
 }
 
 type MangaSelectorError struct {
