@@ -22,9 +22,9 @@ require (
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
-	github.com/luevano/libmangal v0.16.2
-	github.com/luevano/luaprovider v0.11.2
-	github.com/luevano/mangoprovider v0.12.2
+	github.com/luevano/libmangal v0.16.3
+	github.com/luevano/luaprovider v0.11.3
+	github.com/luevano/mangoprovider v0.12.3
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
