@@ -90,8 +90,8 @@ func RunDownload(ctx context.Context, args Args) error {
 	if args.Directory != "" {
 		downloadOptions.Directory = args.Directory
 	}
-	// Don't search metadata when preferring the provider metadata (and its valid)
-	if useMangaMetadata {
+	// SearchMetadata would overwrite provider meta or anilist meta with specified id
+	if useMangaMetadata || args.AnilistID != 0 {
 		downloadOptions.SearchMetadata = false
 	}
 

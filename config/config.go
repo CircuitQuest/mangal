@@ -211,8 +211,8 @@ var Config = config{
 			}),
 			NameTemplate: reg(field[string, string]{
 				Key:         "download.manga.name_template",
-				Default:     `{{ printf "%s (%d) [%sid-%d]" .Metadata.Title .Metadata.StartDate.Year .Metadata.IDSource .Metadata.ID | sanitize }}`,
-				Description: "Template to use for naming downloaded mangas, when Anilist data available.",
+				Default:     `{{ .Metadata.String | sanitize }}`,
+				Description: "Template to use for naming downloaded mangas, when valid Metadata is available.",
 				Validate: func(s string) error {
 					_, err := template.
 						New("").
@@ -224,7 +224,7 @@ var Config = config{
 			NameTemplateFallback: reg(field[string, string]{
 				Key:         "download.manga.name_template_fallback",
 				Default:     `{{ .Manga.Title | sanitize }}`,
-				Description: "Template to use for naming downloaded mangas, when no Anilist data is available.",
+				Description: "Template to use for naming downloaded mangas, when no valid Metadata is available.",
 				Validate: func(s string) error {
 					_, err := template.
 						New("").
