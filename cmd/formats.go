@@ -6,7 +6,7 @@ import (
 )
 
 func init() {
-	subcommands = append(subcommands, formatsCmd)
+	rootCmd.AddCommand(formatsCmd)
 }
 
 var formatsCmd = &cobra.Command{

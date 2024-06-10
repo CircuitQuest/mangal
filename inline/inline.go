@@ -5,7 +5,6 @@ import (
 
 	"github.com/luevano/libmangal/mangadata"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
-	"github.com/luevano/mangal/provider/loader"
 )
 
 type QueryResult struct {
@@ -22,19 +21,15 @@ type MangaResult struct {
 }
 
 type Args struct {
-	Query                  string          `json:"query"`
-	Provider               string          `json:"provider"`
-	MangaSelector          string          `json:"manga_selector"`
-	ChapterSelector        string          `json:"chapter_selector"`
-	ChapterPopulate        bool            `json:"chapter_populate"`
-	PreferProviderMetadata bool            `json:"prefer_provider_metadata"`
-	SearchMetadata         bool            `json:"search_metadata"`
-	AnilistID              int             `json:"anilist_id"`
-	AnilistDisable         bool            `json:"anilist_disable"`
-	Format                 string          `json:"format,omitempty"`
-	Directory              string          `json:"directory,omitempty"`
-	JSONOutput             bool            `json:"json_output,omitempty"`
-	LoaderOptions          *loader.Options `json:"loader_options"`
+	Query                  string `json:"query"`
+	Provider               string `json:"provider"`
+	MangaSelector          string `json:"manga_selector"`
+	ChapterSelector        string `json:"chapter_selector"`
+	ChapterPopulate        bool   `json:"chapter_populate"`
+	PreferProviderMetadata bool   `json:"prefer_provider_metadata"`
+	AnilistID              int    `json:"anilist_id"`
+	AnilistDisable         bool   `json:"anilist_disable"`
+	JSONOutput             bool   `json:"json_output,omitempty"`
 }
 
 type MangaSelectorError struct {

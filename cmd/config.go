@@ -11,7 +11,7 @@ import (
 )
 
 func init() {
-	subcommands = append(subcommands, configCmd)
+	rootCmd.AddCommand(configCmd)
 }
 
 var configCmd = &cobra.Command{
@@ -28,8 +28,10 @@ var configInfoArgs = struct {
 func init() {
 	configCmd.AddCommand(configInfoCmd)
 
-	configInfoCmd.Flags().BoolVarP(&configInfoArgs.JSON, "json", "j", false, "JSON output")
-	configInfoCmd.Flags().BoolVarP(&configInfoArgs.Short, "short", "s", false, "Only print 'key: value'")
+	f := configInfoCmd.Flags()
+	f.BoolVarP(&configInfoArgs.JSON, "json", "j", false, "JSON output")
+	f.BoolVarP(&configInfoArgs.Short, "short", "s", false, "Only print 'key: value'")
+
 	configInfoCmd.MarkFlagsMutuallyExclusive("json", "short")
 }
 
@@ -45,11 +47,11 @@ var configInfoCmd = &cobra.Command{
 		}
 
 		configEntries := map[string]configEntry{}
-		for _, field := range config.Fields {
-			configEntries[field.Key] = configEntry{
-				Value:       config.Get(field.Key),
-				Default:     field.Default,
-				Description: field.Description,
+		for _, key := range config.Keys() {
+			configEntries[key] = configEntry{
+				Value:       config.Get(key),
+				Default:     config.Default(key),
+				Description: config.Description(key),
 			}
 		}
 

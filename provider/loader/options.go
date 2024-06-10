@@ -2,6 +2,8 @@ package loader
 
 import "github.com/luevano/mangal/config"
 
+// TODO: these options won't be necessary once script cmd is refactored/removed
+
 type Options struct {
 	NSFW                    bool   `json:"nsfw"`
 	Language                string `json:"language"`

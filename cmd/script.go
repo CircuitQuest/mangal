@@ -19,11 +19,9 @@ import (
 var scriptArgs = script.Args{}
 
 func init() {
-	subcommands = append(subcommands, scriptCmd)
-	setDefaultModeShort(scriptCmd)
-	// To shorten the statements a bit
+	rootCmd.AddCommand(scriptCmd)
 	f := scriptCmd.Flags()
-	lOpts := loader.Options{}
+	lOpts := loader.DefaultOptions()
 
 	f.StringVarP(&scriptArgs.File, "file", "f", "", "Read script from file")
 	f.StringVarP(&scriptArgs.String, "string", "s", "", "Read script from script")
@@ -42,7 +40,8 @@ func init() {
 
 var scriptCmd = &cobra.Command{
 	Use:     config.ModeScript.String(),
-	Short:   "Script, useful for custom process with Lua",
+	Short:   "Useful for custom process with Lua",
+	Long:    fmt.Sprintf("%s, useful for custom process with Lua", config.ModeScript),
 	GroupID: groupMode,
 	Args:    cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {

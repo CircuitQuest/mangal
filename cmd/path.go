@@ -19,15 +19,16 @@ var pathArgs = struct {
 }{}
 
 func init() {
-	subcommands = append(subcommands, pathCmd)
+	rootCmd.AddCommand(pathCmd)
 
-	pathCmd.Flags().BoolVar(&pathArgs.Config, "config", false, "Path to the config directory")
-	pathCmd.Flags().BoolVar(&pathArgs.Cache, "cache", false, "Path to the cache directory")
-	pathCmd.Flags().BoolVar(&pathArgs.Temp, "temp", false, "Path to a temporary directory")
-	pathCmd.Flags().BoolVar(&pathArgs.Downloads, "downloads", false, "Path to the downloads directory")
-	pathCmd.Flags().BoolVar(&pathArgs.Providers, "providers", false, "Path to the providers directory")
-	pathCmd.Flags().BoolVar(&pathArgs.Logs, "logs", false, "Path to the logs directory")
-	pathCmd.Flags().BoolVarP(&pathArgs.JSON, "json", "j", false, "Output in JSON format for parsing")
+	f := pathCmd.Flags()
+	f.BoolVar(&pathArgs.Config, "config", false, "Path to the config directory")
+	f.BoolVar(&pathArgs.Cache, "cache", false, "Path to the cache directory")
+	f.BoolVar(&pathArgs.Temp, "temp", false, "Path to a temporary directory")
+	f.BoolVar(&pathArgs.Downloads, "downloads", false, "Path to the downloads directory")
+	f.BoolVar(&pathArgs.Providers, "providers", false, "Path to the providers directory")
+	f.BoolVar(&pathArgs.Logs, "logs", false, "Path to the logs directory")
+	f.BoolVarP(&pathArgs.JSON, "json", "j", false, "Output in JSON format for parsing")
 
 	pathCmd.MarkFlagsMutuallyExclusive(
 		"config",

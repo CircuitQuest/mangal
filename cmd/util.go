@@ -24,12 +24,6 @@ func errorf(cmd *cobra.Command, format string, a ...any) {
 	os.Exit(1)
 }
 
-func setDefaultModeShort(cmd *cobra.Command) {
-	if config.Config.CLI.Mode.Default.Get().String() == cmd.Use {
-		cmd.Short = fmt.Sprintf("%s (configured as default)", cmd.Short)
-	}
-}
-
 func completionProviderIDs(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
 	loaders, err := manager.Loaders(loader.DefaultOptions())
 	if err != nil {
@@ -65,7 +59,4 @@ func setupLoaderOptions(f *pflag.FlagSet, o *loader.Options) {
 	f.Uint8Var(&o.Parallelism, "parallelism", c.Parallelism.Get(), "Provider parallelism to use (when supported)")
 	f.BoolVar(&o.HeadlessUseFlaresolverr, "headless-use-flaresolverr", c.Headless.UseFlaresolverr.Get(), "Use Flaresolverr for headlessproviders")
 	f.StringVar(&o.HeadlessFlaresolverrURL, "headless-flaresolverr-url", c.Headless.FlaresolverrURL.Get(), "Flaresolverr service URL")
-	f.StringVar(&o.MangaPlusOSVersion, "mangaplus-os-version", c.MangaPlus.OSVersion.Get(), "MangaPlus Android OS Version")
-	f.StringVar(&o.MangaPlusAppVersion, "mangaplus-app-version", c.MangaPlus.AppVersion.Get(), "MangaPlus Android App Version")
-	f.StringVar(&o.MangaPlusAndroidID, "mangaplus-android-id", c.MangaPlus.AndroidID.Get(), "MangaPlus Android ID")
 }

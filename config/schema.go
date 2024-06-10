@@ -8,7 +8,7 @@ import (
 )
 
 type config struct {
-	Icons     *registered[string, icon.Type]
+	Icons     *entry[string, icon.Type]
 	Cache     configCache
 	CLI       configCLI
 	Read      configRead
@@ -19,33 +19,28 @@ type config struct {
 }
 
 type configCLI struct {
-	ColoredHelp *registered[bool, bool]
-	Mode        configCLIMode
-}
-
-type configCLIMode struct {
-	Default *registered[string, Mode]
+	ColoredHelp *entry[bool, bool]
 }
 
 type configRead struct {
-	Format         *registered[string, libmangal.Format]
+	Format         *entry[string, libmangal.Format]
 	History        configReadHistory
-	DownloadOnRead *registered[bool, bool]
+	DownloadOnRead *entry[bool, bool]
 }
 
 type configReadHistory struct {
-	Anilist *registered[bool, bool]
-	Local   *registered[bool, bool]
+	Anilist *entry[bool, bool]
+	Local   *entry[bool, bool]
 }
 
 type configDownload struct {
-	Format       *registered[string, libmangal.Format]
-	Path         *registered[string, string]
-	UserAgent    *registered[string, string]
-	ModeDir      *registered[int64, fs.FileMode]
-	ModeFile     *registered[int64, fs.FileMode]
-	ModeDB       *registered[int64, fs.FileMode]
-	SkipIfExists *registered[bool, bool]
+	Format       *entry[string, libmangal.Format]
+	Path         *entry[string, string]
+	UserAgent    *entry[string, string]
+	ModeDir      *entry[int64, fs.FileMode]
+	ModeFile     *entry[int64, fs.FileMode]
+	ModeDB       *entry[int64, fs.FileMode]
+	SkipIfExists *entry[bool, bool]
 	Provider     configDownloadProvider
 	Manga        configDownloadManga
 	Volume       configDownloadVolume
@@ -54,81 +49,81 @@ type configDownload struct {
 }
 
 type configDownloadProvider struct {
-	CreateDir    *registered[bool, bool]
-	NameTemplate *registered[string, string]
+	CreateDir    *entry[bool, bool]
+	NameTemplate *entry[string, string]
 }
 
 type configDownloadManga struct {
-	CreateDir            *registered[bool, bool]
-	Cover                *registered[bool, bool]
-	Banner               *registered[bool, bool]
-	NameTemplate         *registered[string, string]
-	NameTemplateFallback *registered[string, string]
+	CreateDir            *entry[bool, bool]
+	Cover                *entry[bool, bool]
+	Banner               *entry[bool, bool]
+	NameTemplate         *entry[string, string]
+	NameTemplateFallback *entry[string, string]
 }
 
 type configDownloadVolume struct {
-	CreateDir    *registered[bool, bool]
-	NameTemplate *registered[string, string]
+	CreateDir    *entry[bool, bool]
+	NameTemplate *entry[string, string]
 }
 
 type configDownloadChapter struct {
-	NameTemplate *registered[string, string]
+	NameTemplate *entry[string, string]
 }
 
 type configDownloadMetadata struct {
-	Strict                  *registered[bool, bool]
-	Search                  *registered[bool, bool]
-	ComicInfoXML            *registered[bool, bool]
-	SeriesJSON              *registered[bool, bool]
-	SkipSeriesJSONIfOngoing *registered[bool, bool]
+	Strict                  *entry[bool, bool]
+	Search                  *entry[bool, bool]
+	ComicInfoXML            *entry[bool, bool]
+	SeriesJSON              *entry[bool, bool]
+	SkipSeriesJSONIfOngoing *entry[bool, bool]
 }
 
 type configTUI struct {
-	ExpandSingleVolume *registered[bool, bool]
+	ExpandSingleVolume *entry[bool, bool]
 	Chapter            configTUIChapter
 }
 
 type configTUIChapter struct {
-	NumberFormat *registered[string, string]
-	ShowNumber   *registered[bool, bool]
-	ShowDate     *registered[bool, bool]
-	ShowGroup    *registered[bool, bool]
+	NumberFormat *entry[string, string]
+	ShowNumber   *entry[bool, bool]
+	ShowDate     *entry[bool, bool]
+	ShowGroup    *entry[bool, bool]
 }
 
 type configProviders struct {
-	Path        *registered[string, string]
-	Parallelism *registered[int64, uint8]
+	Path        *entry[string, string]
+	Parallelism *entry[int64, uint8]
 	Headless    configProvidersHeadless
 	Filter      configProvidersFilter
 	MangaPlus   configProvidersMangaPlus
 }
 
 type configCache struct {
-	Path *registered[string, string]
-	TTL  *registered[string, string]
+	Path *entry[string, string]
+	TTL  *entry[string, string]
 }
 
 type configProvidersHeadless struct {
-	UseFlaresolverr *registered[bool, bool]
-	FlaresolverrURL *registered[string, string]
+	UseFlaresolverr *entry[bool, bool]
+	FlaresolverrURL *entry[string, string]
 }
 
 type configLibrary struct {
-	Path *registered[string, string]
+	Path *entry[string, string]
 }
 
 type configProvidersFilter struct {
-	NSFW                    *registered[bool, bool]
-	Language                *registered[string, string]
-	MangaPlusQuality        *registered[string, string]
-	MangaDexDataSaver       *registered[bool, bool]
-	TitleChapterNumber      *registered[bool, bool]
-	AvoidDuplicateChapters  *registered[bool, bool]
-	ShowUnavailableChapters *registered[bool, bool]
+	NSFW                    *entry[bool, bool]
+	Language                *entry[string, string]
+	MangaPlusQuality        *entry[string, string]
+	MangaDexDataSaver       *entry[bool, bool]
+	TitleChapterNumber      *entry[bool, bool]
+	AvoidDuplicateChapters  *entry[bool, bool]
+	ShowUnavailableChapters *entry[bool, bool]
 }
 
 type configProvidersMangaPlus struct {
-	OSVersion  *registered[string, string]
-	AppVersion *registered[string, string]
-	AndroidID  *registered[string, string]
+	OSVersion  *entry[string, string]
+	AppVersion *entry[string, string]
+	AndroidID  *entry[string, string]
 }

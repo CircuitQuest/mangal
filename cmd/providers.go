@@ -5,6 +5,7 @@ import (
 	"net/url"
 
 	"github.com/luevano/libmangal"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/provider/loader"
@@ -13,7 +14,7 @@ import (
 )
 
 func init() {
-	subcommands = append(subcommands, providersCmd)
+	rootCmd.AddCommand(providersCmd)
 }
 
 var providersCmd = &cobra.Command{
@@ -94,25 +95,24 @@ var providersRmCmd = &cobra.Command{
 	},
 }
 
-var providersNewArgs = struct {
-	Dir string
-}{}
-
 func init() {
 	providersCmd.AddCommand(providersNewCmd)
 
-	providersNewCmd.Flags().StringVarP(&providersNewArgs.Dir, "dir", "d", path.ProvidersDir(), "directory inside which create a new provider")
+	f := providersNewCmd.Flags()
+	f.StringP("directory", "d", config.Config.Providers.Path.Get(), "Directory in which new providers will be created")
+	config.BindPFlag(config.Config.Providers.Path.Key, f.Lookup("directory"))
 
-	providersNewCmd.MarkFlagDirname("dir")
+	providersNewCmd.MarkFlagDirname("directory")
 }
 
+// TODO: provide more options for the new provider
 var providersNewCmd = &cobra.Command{
 	Use:   "new",
 	Short: "Create new provider",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {
 		options := manager.NewOptions{
-			Dir: providersNewArgs.Dir,
+			Dir: path.ProvidersDir(),
 			Info: info.Info{
 				ProviderInfo: libmangal.ProviderInfo{
 					ID:          "test",

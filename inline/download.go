@@ -8,22 +8,19 @@ import (
 	"strings"
 	"time"
 
-	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/metadata"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
+	"github.com/luevano/mangal/provider/loader"
 )
 
 func RunDownload(ctx context.Context, args Args) error {
-	// TODO: actually fix the config loading order, this is a temporary hotfix
-	args.LoaderOptions.MangaPlusOSVersion = config.Config.Providers.MangaPlus.OSVersion.Get()
-	args.LoaderOptions.MangaPlusAppVersion = config.Config.Providers.MangaPlus.AppVersion.Get()
-	args.LoaderOptions.MangaPlusAndroidID = config.Config.Providers.MangaPlus.AndroidID.Get()
-
-	client, err := client.NewClientByID(ctx, args.Provider, *args.LoaderOptions)
+	// TODO: once script cmd is refactored/removed, this wont be necessary
+	loaderOptions := loader.DefaultOptions()
+	client, err := client.NewClientByID(ctx, args.Provider, loaderOptions)
 	if err != nil {
 		return err
 	}
@@ -47,7 +44,7 @@ func RunDownload(ctx context.Context, args Args) error {
 	manga := mangaResults[0].Manga
 	useMangaMetadata := false
 	if args.PreferProviderMetadata {
-		if err := manga.Metadata().Validate(); err != nil {
+		if err = manga.Metadata().Validate(); err != nil {
 			// TODO: this logger is only really used for TUI, better handle logs
 			log.Log("provider metadata is preferred but it's not valid: %s\n", err.Error())
 		} else {
@@ -80,17 +77,6 @@ func RunDownload(ctx context.Context, args Args) error {
 
 	// Take the download options from the config and apply necessary changes
 	downloadOptions := config.Config.DownloadOptions()
-	if args.Format != "" {
-		formatOption, err := libmangal.FormatString(args.Format)
-		if err != nil {
-			return err
-		}
-		downloadOptions.Format = formatOption
-	}
-	if args.Directory != "" {
-		downloadOptions.Directory = args.Directory
-	}
-	// SearchMetadata would overwrite provider meta or anilist meta with specified id
 	if useMangaMetadata || args.AnilistID != 0 {
 		downloadOptions.SearchMetadata = false
 	}
@@ -136,6 +122,5 @@ func RunDownload(ctx context.Context, args Args) error {
 			}
 		}
 	}
-
 	return nil
 }

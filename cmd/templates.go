@@ -12,7 +12,7 @@ import (
 )
 
 func init() {
-	subcommands = append(subcommands, templatesCmd)
+	rootCmd.AddCommand(templatesCmd)
 }
 
 var templatesCmd = &cobra.Command{
@@ -54,7 +54,8 @@ func init() {
 	}
 	marshalled := lo.Must(json.Marshal(exampleValue))
 
-	templatesExecCmd.Flags().StringVarP(&templatesExecArgs.Value, "value", "v", string(marshalled), "JSON object to use as value")
+	f := templatesExecCmd.Flags()
+	f.StringVarP(&templatesExecArgs.Value, "value", "v", string(marshalled), "JSON object to use as value")
 }
 
 var templatesExecCmd = &cobra.Command{

@@ -13,7 +13,7 @@ import (
 )
 
 func init() {
-	subcommands = append(subcommands, anilistCmd)
+	rootCmd.AddCommand(anilistCmd)
 }
 
 var anilistCmd = &cobra.Command{

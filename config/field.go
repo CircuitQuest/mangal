@@ -1,25 +1,23 @@
 package config
 
 import (
+	"fmt"
 	"reflect"
-
-	"github.com/spf13/viper"
 )
 
-// Fields are all the registered fields.
-var Fields = make(map[string]entry)
+// fields are all the registered fields from the config entries,
+// essentially a config as a flattened map
+var fields = make(map[string]field)
 
-type entry struct {
-	Key         string
-	Description string
+type field struct {
 	Default     any
-	Marshal     func(any) (any, error)
+	Description string
 	Unmarshal   func(any) (any, error)
+	Marshal     func(any) (any, error)
 	Validate    func(any) error
-	SetValue    func(any) error
 }
 
-type field[Raw, Value any] struct {
+type entry[Raw, Value any] struct {
 	Key         string
 	Description string
 	Default     Value
@@ -28,74 +26,78 @@ type field[Raw, Value any] struct {
 	Validate    func(Value) error
 }
 
-type registered[Raw, Value any] struct {
-	field[Raw, Value]
-	value Value
-}
-
-func (r *registered[Raw, Value]) Get() Value {
-	return r.value
-}
-
-// Set the value for the registered entry and viper.
-func (r *registered[Raw, Value]) Set(value Value) error {
-	marshalled, err := r.Marshal(value)
-	if err != nil {
-		return err
+func (e *entry[Raw, Value]) Get() Value {
+	v := Get(e.Key)
+	value, ok := v.(Value)
+	if !ok {
+		v, err := e.Unmarshal(v.(Raw))
+		if err != nil {
+			panic(fmt.Errorf("config entry Get: error unmarshaling raw value %v (%T) from key %q: %s", v, v, e.Key, err.Error()))
+		}
+		value = v
 	}
-	r.value = value
-	viper.Set(r.Key, marshalled)
+	return value
+}
 
-	return nil
+func (e *entry[Raw, Value]) Set(value Value) error {
+	raw, err := e.Marshal(value)
+	if err != nil {
+		return fmt.Errorf("config entry Set: error marshaling value %v (%T) from key %q: %s", value, value, e.Key, err.Error())
+	}
+	return Set(e.Key, raw)
 }
 
 // Register a new config entry.
-func reg[Raw, Value any](f field[Raw, Value]) *registered[Raw, Value] {
-	if f.Marshal == nil {
-		f.Marshal = func(value Value) (raw Raw, err error) {
+//
+// Returns itself as a pointer for later access through Config.
+func reg[Raw, Value any](e entry[Raw, Value]) *entry[Raw, Value] {
+	if e.Marshal == nil {
+		e.Marshal = func(value Value) (raw Raw, err error) {
 			return reflect.
 				ValueOf(value).
 				Convert(reflect.ValueOf(raw).Type()).
 				Interface().(Raw), nil
 		}
 	}
-	if f.Unmarshal == nil {
-		f.Unmarshal = func(raw Raw) (value Value, err error) {
+	if e.Unmarshal == nil {
+		e.Unmarshal = func(raw Raw) (value Value, err error) {
 			return reflect.
 				ValueOf(raw).
 				Convert(reflect.ValueOf(value).Type()).
 				Interface().(Value), nil
 		}
 	}
-	if f.Validate == nil {
-		f.Validate = func(Value) error {
+	if e.Validate == nil {
+		e.Validate = func(value Value) error {
 			return nil
 		}
 	}
 
-	r := &registered[Raw, Value]{
-		field: f,
-		value: f.Default,
-	}
-
-	// Add the entry to the exported Fields
-	Fields[f.Key] = entry{
-		Key:         f.Key,
-		Description: f.Description,
-		Default:     f.Default,
+	fields[e.Key] = field{
+		Description: e.Description,
+		Default:     e.Default,
 		Marshal: func(a any) (any, error) {
-			return f.Marshal(a.(Value))
+			raw, ok := a.(Raw)
+			if !ok {
+				return e.Marshal(a.(Value))
+			}
+			return raw, nil
 		},
 		Unmarshal: func(a any) (any, error) {
-			return f.Unmarshal(a.(Raw))
+			value, ok := a.(Value)
+			if !ok {
+				return e.Unmarshal(a.(Raw))
+			}
+			return value, nil
 		},
 		Validate: func(a any) error {
-			return f.Validate(a.(Value))
-		},
-		SetValue: func(a any) error {
-			return r.Set(a.(Value))
+			return e.Validate(a.(Value))
 		},
 	}
-
-	return r
+	// Default must be set after the field has been "registered"
+	// as SetDefault validates the value by a Fields map lookup
+	if err := SetDefault(e.Key, e.Default); err != nil {
+		panic(fmt.Errorf("error setting default value for key %q: %s", e.Key, err.Error()))
+	}
+	return &e
 }
