@@ -14,9 +14,9 @@ import (
 )
 
 func New(client *libmangal.Client, manga *mangadata.Manga, volume *mangadata.Volume, chapters []*mangadata.Chapter) *State {
-	showChapterNumber := config.Config.TUI.Chapter.ShowNumber.Get()
-	showGroup := config.Config.TUI.Chapter.ShowGroup.Get()
-	showDate := config.Config.TUI.Chapter.ShowDate.Get()
+	showChapterNumber := config.TUI.Chapter.ShowNumber.Get()
+	showGroup := config.TUI.Chapter.ShowGroup.Get()
+	showDate := config.TUI.Chapter.ShowDate.Get()
 	selectedSet := set.NewMapset[*Item]()
 
 	listWrapper := listwrapper.New(util.NewList(
@@ -32,13 +32,13 @@ func New(client *libmangal.Client, manga *mangadata.Manga, volume *mangadata.Vol
 			)
 
 			tmpDownPath := path.DownloadsDir()
-			if config.Config.Download.Provider.CreateDir.Get() {
+			if config.Download.Provider.CreateDir.Get() {
 				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeProviderFilename(client.Info()))
 			}
-			if config.Config.Download.Manga.CreateDir.Get() {
+			if config.Download.Manga.CreateDir.Get() {
 				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeMangaFilename(*manga))
 			}
-			if config.Config.Download.Volume.CreateDir.Get() {
+			if config.Download.Volume.CreateDir.Get() {
 				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeVolumeFilename(*volume))
 			}
 

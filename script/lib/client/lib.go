@@ -416,7 +416,7 @@ func newDownloadChapter(client *libmangal.Client) lua.LGFunction {
 	return func(state *lua.LState) int {
 		chapter := util.Check[mangadata.Chapter](state, 1)
 
-		downChap, err := client.DownloadChapter(state.Context(), chapter, config.Config.DownloadOptions())
+		downChap, err := client.DownloadChapter(state.Context(), chapter, config.DownloadOptions())
 		util.Must(state, err)
 
 		util.Push(state, downChap, downloadedChapterTypeName)

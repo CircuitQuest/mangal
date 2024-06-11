@@ -98,8 +98,8 @@ func init() {
 	providersCmd.AddCommand(providersNewCmd)
 
 	f := providersNewCmd.Flags()
-	f.StringP("directory", "d", config.Config.Providers.Path.Get(), "Directory in which new providers will be created")
-	config.BindPFlag(config.Config.Providers.Path.Key, f.Lookup("directory"))
+	f.StringP("directory", "d", config.Providers.Path.Get(), "Directory in which new providers will be created")
+	config.BindPFlag(config.Providers.Path.Key, f.Lookup("directory"))
 
 	providersNewCmd.MarkFlagDirname("directory")
 }

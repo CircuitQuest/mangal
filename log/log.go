@@ -20,7 +20,7 @@ func newLogger() (*zerolog.Logger, error) {
 
 	logPath := filepath.Join(path.LogDir(), fmt.Sprint(today, ".log"))
 
-	file, err := afs.Afero.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, config.Config.Download.ModeFile.Get())
+	file, err := afs.Afero.OpenFile(logPath, os.O_WRONLY|os.O_CREATE|os.O_APPEND, config.Download.ModeFile.Get())
 	if err != nil {
 		return nil, err
 	}

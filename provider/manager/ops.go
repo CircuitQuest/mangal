@@ -44,7 +44,7 @@ func Add(ctx context.Context, options AddOptions) error {
 		return err
 	}
 
-	infoFile, err := afs.Afero.OpenFile(filepath.Join(tempDir, info.Filename), os.O_RDONLY, config.Config.Download.ModeFile.Get())
+	infoFile, err := afs.Afero.OpenFile(filepath.Join(tempDir, info.Filename), os.O_RDONLY, config.Download.ModeFile.Get())
 	if err != nil {
 		return err
 	}
@@ -141,7 +141,7 @@ func New(options NewOptions) error {
 		return fmt.Errorf("unsupported provider type %s", options.Type)
 	}
 
-	err := files.WriteFile("README.md", []byte(options.Markdown()), config.Config.Download.ModeFile.Get())
+	err := files.WriteFile("README.md", []byte(options.Markdown()), config.Download.ModeFile.Get())
 	if err != nil {
 		return err
 	}
@@ -150,7 +150,7 @@ func New(options NewOptions) error {
 }
 
 func newLua(af afero.Afero, information info.Info) error {
-	err := af.WriteFile(".gitignore", []byte("sdk.lua"), config.Config.Download.ModeFile.Get())
+	err := af.WriteFile(".gitignore", []byte("sdk.lua"), config.Download.ModeFile.Get())
 	if err != nil {
 		return err
 	}
@@ -169,12 +169,12 @@ func newLua(af afero.Afero, information info.Info) error {
 		return err
 	}
 
-	err = af.WriteFile("main.lua", []byte(luaprovider.LuaTemplate()), config.Config.Download.ModeFile.Get())
+	err = af.WriteFile("main.lua", []byte(luaprovider.LuaTemplate()), config.Download.ModeFile.Get())
 	if err != nil {
 		return err
 	}
 
-	return af.WriteFile("sdk.lua", []byte(luaprovider.LuaDoc()), config.Config.Download.ModeFile.Get())
+	return af.WriteFile("sdk.lua", []byte(luaprovider.LuaDoc()), config.Download.ModeFile.Get())
 }
 
 func createRepo(dir string, files afero.Fs) error {

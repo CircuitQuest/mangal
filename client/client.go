@@ -47,9 +47,9 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 	options.FS = afs.Afero
 	options.Anilist = anilist.Anilist
 	options.HTTPClient = HTTPClient
-	options.UserAgent = config.Config.Download.UserAgent.Get()
-	options.ModeDir = config.Config.Download.ModeDir.Get()
-	options.ModeFile = config.Config.Download.ModeFile.Get()
+	options.UserAgent = config.Download.UserAgent.Get()
+	options.ModeDir = config.Download.ModeDir.Get()
+	options.ModeFile = config.Download.ModeFile.Get()
 	options.ProviderNameTemplate = template.Provider
 	options.MangaNameTemplate = template.Manga
 	options.VolumeNameTemplate = template.Volume

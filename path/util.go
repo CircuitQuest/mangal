@@ -18,7 +18,7 @@ func createDirIfAbsent(path string) {
 		return
 	}
 
-	if err := afs.Afero.MkdirAll(path, config.Config.Download.ModeDir.Get()); err != nil {
+	if err := afs.Afero.MkdirAll(path, config.Download.ModeDir.Get()); err != nil {
 		log.Fatal(err)
 	}
 

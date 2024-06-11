@@ -25,19 +25,19 @@ func init() {
 	f.IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", 0, "Anilist ID to search for metadata")
 	f.BoolVar(&inlineArgs.PreferProviderMetadata, "prefer-provider-metadata", false, "Prefer provider metadata if valid (skips --search-metadata)")
 
-	f.Bool("search-metadata", config.Config.Download.Metadata.Search.Get(), "Search metadata and replace the provider metadata")
+	f.Bool("search-metadata", config.Download.Metadata.Search.Get(), "Search metadata and replace the provider metadata")
 
 	// Loader options, these are reused for script cmd
-	f.Bool("nsfw", config.Config.Providers.Filter.NSFW.Get(), "Include NSFW content (when supported)")
-	f.String("language", config.Config.Providers.Filter.Language.Get(), "Manga/Chapter language")
-	f.String("mangaplus-quality", config.Config.Providers.Filter.MangaPlusQuality.Get(), "'low', 'high' or 'super_high'")
-	f.Bool("mangadex-data-saver", config.Config.Providers.Filter.MangaDexDataSaver.Get(), "Use 'data-saver'")
-	f.Bool("title-chapter-number", config.Config.Providers.Filter.TitleChapterNumber.Get(), "Include 'Chapter #' always")
-	f.Bool("avoid-duplicate-chapters", config.Config.Providers.Filter.AvoidDuplicateChapters.Get(), "No duplicate chapters")
-	f.Bool("show-unavailable-chapters", config.Config.Providers.Filter.ShowUnavailableChapters.Get(), "Show undownloadable chapters")
-	f.Uint8("parallelism", config.Config.Providers.Parallelism.Get(), "Provider parallelism to use (when supported)")
-	f.Bool("headless-use-flaresolverr", config.Config.Providers.Headless.UseFlaresolverr.Get(), "Use Flaresolverr for headlessproviders")
-	f.String("headless-flaresolverr-url", config.Config.Providers.Headless.FlaresolverrURL.Get(), "Flaresolverr service URL")
+	f.Bool("nsfw", config.Providers.Filter.NSFW.Get(), "Include NSFW content (when supported)")
+	f.String("language", config.Providers.Filter.Language.Get(), "Manga/Chapter language")
+	f.String("mangaplus-quality", config.Providers.Filter.MangaPlusQuality.Get(), "'low', 'high' or 'super_high'")
+	f.Bool("mangadex-data-saver", config.Providers.Filter.MangaDexDataSaver.Get(), "Use 'data-saver'")
+	f.Bool("title-chapter-number", config.Providers.Filter.TitleChapterNumber.Get(), "Include 'Chapter #' always")
+	f.Bool("avoid-duplicate-chapters", config.Providers.Filter.AvoidDuplicateChapters.Get(), "No duplicate chapters")
+	f.Bool("show-unavailable-chapters", config.Providers.Filter.ShowUnavailableChapters.Get(), "Show undownloadable chapters")
+	f.Uint8("parallelism", config.Providers.Parallelism.Get(), "Provider parallelism to use (when supported)")
+	f.Bool("headless-use-flaresolverr", config.Providers.Headless.UseFlaresolverr.Get(), "Use Flaresolverr for headlessproviders")
+	f.String("headless-flaresolverr-url", config.Providers.Headless.FlaresolverrURL.Get(), "Flaresolverr service URL")
 
 	inlineCmd.MarkPersistentFlagRequired("provider")
 	inlineCmd.MarkPersistentFlagRequired("query")
@@ -48,17 +48,17 @@ func init() {
 	inlineCmd.MarkFlagsMutuallyExclusive("anilist-id", "prefer-provider-metadata")
 
 	// config(viper) flag binds
-	config.BindPFlag(config.Config.Download.Metadata.Search.Key, f.Lookup("search-metadata"))
-	config.BindPFlag(config.Config.Providers.Filter.NSFW.Key, f.Lookup("nsfw"))
-	config.BindPFlag(config.Config.Providers.Filter.Language.Key, f.Lookup("language"))
-	config.BindPFlag(config.Config.Providers.Filter.MangaPlusQuality.Key, f.Lookup("mangaplus-quality"))
-	config.BindPFlag(config.Config.Providers.Filter.MangaDexDataSaver.Key, f.Lookup("mangadex-data-saver"))
-	config.BindPFlag(config.Config.Providers.Filter.TitleChapterNumber.Key, f.Lookup("title-chapter-number"))
-	config.BindPFlag(config.Config.Providers.Filter.AvoidDuplicateChapters.Key, f.Lookup("avoid-duplicate-chapters"))
-	config.BindPFlag(config.Config.Providers.Filter.ShowUnavailableChapters.Key, f.Lookup("show-unavailable-chapters"))
-	config.BindPFlag(config.Config.Providers.Parallelism.Key, f.Lookup("parallelism"))
-	config.BindPFlag(config.Config.Providers.Headless.UseFlaresolverr.Key, f.Lookup("headless-use-flaresolverr"))
-	config.BindPFlag(config.Config.Providers.Headless.FlaresolverrURL.Key, f.Lookup("headless-flaresolverr-url"))
+	config.BindPFlag(config.Download.Metadata.Search.Key, f.Lookup("search-metadata"))
+	config.BindPFlag(config.Providers.Filter.NSFW.Key, f.Lookup("nsfw"))
+	config.BindPFlag(config.Providers.Filter.Language.Key, f.Lookup("language"))
+	config.BindPFlag(config.Providers.Filter.MangaPlusQuality.Key, f.Lookup("mangaplus-quality"))
+	config.BindPFlag(config.Providers.Filter.MangaDexDataSaver.Key, f.Lookup("mangadex-data-saver"))
+	config.BindPFlag(config.Providers.Filter.TitleChapterNumber.Key, f.Lookup("title-chapter-number"))
+	config.BindPFlag(config.Providers.Filter.AvoidDuplicateChapters.Key, f.Lookup("avoid-duplicate-chapters"))
+	config.BindPFlag(config.Providers.Filter.ShowUnavailableChapters.Key, f.Lookup("show-unavailable-chapters"))
+	config.BindPFlag(config.Providers.Parallelism.Key, f.Lookup("parallelism"))
+	config.BindPFlag(config.Providers.Headless.UseFlaresolverr.Key, f.Lookup("headless-use-flaresolverr"))
+	config.BindPFlag(config.Providers.Headless.FlaresolverrURL.Key, f.Lookup("headless-flaresolverr-url"))
 }
 
 var inlineCmd = &cobra.Command{
@@ -96,13 +96,13 @@ func init() {
 	f := inlineDownloadCmd.Flags()
 	fmtDesc := fmt.Sprintf("Download format (%s)", strings.Join(libmangal.FormatStrings(), "|"))
 	f.BoolVar(&inlineArgs.JSONOutput, "json-output", false, "JSON format for individual chapter download output")
-	f.StringP("format", "f", config.Config.Download.Format.Get().String(), fmtDesc)
-	f.StringP("directory", "d", config.Config.Download.Path.Get(), "Download directory")
+	f.StringP("format", "f", config.Download.Format.Get().String(), fmtDesc)
+	f.StringP("directory", "d", config.Download.Path.Get(), "Download directory")
 
 	inlineDownloadCmd.MarkFlagDirname("directory")
 
-	config.BindPFlag(config.Config.Download.Format.Key, f.Lookup("format"))
-	config.BindPFlag(config.Config.Download.Path.Key, f.Lookup("directory"))
+	config.BindPFlag(config.Download.Format.Key, f.Lookup("format"))
+	config.BindPFlag(config.Download.Path.Key, f.Lookup("directory"))
 }
 
 var inlineDownloadCmd = &cobra.Command{

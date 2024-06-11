@@ -33,7 +33,7 @@ func (i *Item) Title() string {
 	var title strings.Builder
 
 	if *i.showChapterNumber {
-		chapterNumber := fmt.Sprintf(config.Config.TUI.Chapter.NumberFormat.Get(), (*i.chapter).Info().Number)
+		chapterNumber := fmt.Sprintf(config.TUI.Chapter.NumberFormat.Get(), (*i.chapter).Info().Number)
 		chapterNumberFmt := style.Bold.Base.Render(chapterNumber)
 		title.WriteString(chapterNumberFmt)
 		title.WriteString(" ")
@@ -109,21 +109,21 @@ func (i *Item) Toggle() {
 // Updated to avoid computing filenames each frame/update
 // TODO: Update tmpPath only when the format changes.
 func (i *Item) Path(format libmangal.Format) string {
-	// path := config.Config.Download.Path.Get()
+	// path := config.Download.Path.Get()
 
 	// chapter := i.chapter
 	// volume := chapter.Volume()
 	// manga := volume.Manga()
 
-	// if config.Config.Download.Provider.CreateDir.Get() {
+	// if config.Download.Provider.CreateDir.Get() {
 	// 	path = filepath.Join(path, i.client.ComputeProviderFilename(i.client.Info()))
 	// }
 
-	// if config.Config.Download.Manga.CreateDir.Get() {
+	// if config.Download.Manga.CreateDir.Get() {
 	// 	path = filepath.Join(path, i.client.ComputeMangaFilename(manga))
 	// }
 
-	// if config.Config.Download.Volume.CreateDir.Get() {
+	// if config.Download.Volume.CreateDir.Get() {
 	// 	path = filepath.Join(path, i.client.ComputeVolumeFilename(volume))
 	// }
 
@@ -133,7 +133,7 @@ func (i *Item) Path(format libmangal.Format) string {
 // Updated to avoid computing filenames each frame/update
 // TODO: Update tmpPath only when the format changes.
 func (i *Item) IsRecent() bool {
-	// format := config.Config.Read.Format.Get()
+	// format := config.Read.Format.Get()
 	// chapter := i.chapter
 	// volume := chapter.Volume()
 	// manga := volume.Manga()
@@ -146,7 +146,7 @@ func (i *Item) IsRecent() bool {
 	// 	i.client.ComputeChapterFilename(chapter, format),
 	// )
 
-	tmpPath := filepath.Join(*i.tmpPath, i.client.ComputeChapterFilename(*i.chapter, config.Config.Read.Format.Get()))
+	tmpPath := filepath.Join(*i.tmpPath, i.client.ComputeChapterFilename(*i.chapter, config.Read.Format.Get()))
 	exists, err := afs.Afero.Exists(tmpPath)
 	if err != nil {
 		return false

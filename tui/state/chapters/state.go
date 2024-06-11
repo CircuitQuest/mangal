@@ -65,9 +65,9 @@ func (s *State) Subtitle() string {
 	}
 
 	subtitle.WriteString(". Download ")
-	subtitle.WriteString(config.Config.Download.Format.Get().String())
+	subtitle.WriteString(config.Download.Format.Get().String())
 	subtitle.WriteString(" & Read ")
-	subtitle.WriteString(config.Config.Read.Format.Get().String())
+	subtitle.WriteString(config.Read.Format.Get().String())
 
 	return subtitle.String()
 }
@@ -162,22 +162,22 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 							return base.Back
 						}
 
-						return s.downloadChaptersCmd(chapters, config.Config.DownloadOptions())
+						return s.downloadChaptersCmd(chapters, config.DownloadOptions())
 					},
 				)
 			}
 		case key.Matches(msg, s.keyMap.Read) || (s.selected.Size() == 0 && key.Matches(msg, s.keyMap.Confirm)):
 			// If download on read is wanted, then use the normal download path
 			var directory string
-			if config.Config.Read.DownloadOnRead.Get() {
+			if config.Read.DownloadOnRead.Get() {
 				directory = path.DownloadsDir()
 			} else {
 				directory = path.TempDir()
 			}
 
 			// Modify a bit the configured download options for this
-			downloadOptions := config.Config.DownloadOptions()
-			downloadOptions.Format = config.Config.Read.Format.Get()
+			downloadOptions := config.DownloadOptions()
+			downloadOptions.Format = config.Read.Format.Get()
 			downloadOptions.Directory = directory
 			downloadOptions.SkipIfExists = true
 			downloadOptions.ReadAfter = true

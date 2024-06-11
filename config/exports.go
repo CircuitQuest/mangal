@@ -6,26 +6,26 @@ import (
 )
 
 // DownloadOptions constructs the libmangal.DownloadOptions populated by the Config.
-func (c config) DownloadOptions() libmangal.DownloadOptions {
+func DownloadOptions() libmangal.DownloadOptions {
 	// start from the defaults in case of new additions and build on top of it.
 	o := libmangal.DefaultDownloadOptions()
-	o.Format = c.Download.Format.Get()
-	o.Directory = c.Download.Path.Get()
-	o.CreateProviderDir = c.Download.Provider.CreateDir.Get()
-	o.CreateMangaDir = c.Download.Manga.CreateDir.Get()
-	o.CreateVolumeDir = c.Download.Volume.CreateDir.Get()
-	o.SkipIfExists = c.Download.SkipIfExists.Get()
-	o.Strict = c.Download.Metadata.Strict.Get()
-	o.SearchMetadata = c.Download.Metadata.Search.Get()
-	o.DownloadMangaCover = c.Download.Manga.Cover.Get()
-	o.DownloadMangaBanner = c.Download.Manga.Banner.Get()
-	o.WriteSeriesJSON = c.Download.Metadata.SeriesJSON.Get()
-	o.SkipSeriesJSONIfOngoing = c.Download.Metadata.SkipSeriesJSONIfOngoing.Get()
-	o.WriteComicInfoXML = c.Download.Metadata.ComicInfoXML.Get()
+	o.Format = Download.Format.Get()
+	o.Directory = Download.Path.Get()
+	o.CreateProviderDir = Download.Provider.CreateDir.Get()
+	o.CreateMangaDir = Download.Manga.CreateDir.Get()
+	o.CreateVolumeDir = Download.Volume.CreateDir.Get()
+	o.SkipIfExists = Download.SkipIfExists.Get()
+	o.Strict = Download.Metadata.Strict.Get()
+	o.SearchMetadata = Download.Metadata.Search.Get()
+	o.DownloadMangaCover = Download.Manga.Cover.Get()
+	o.DownloadMangaBanner = Download.Manga.Banner.Get()
+	o.WriteSeriesJSON = Download.Metadata.SeriesJSON.Get()
+	o.SkipSeriesJSONIfOngoing = Download.Metadata.SkipSeriesJSONIfOngoing.Get()
+	o.WriteComicInfoXML = Download.Metadata.ComicInfoXML.Get()
 	o.ReadAfter = false
 	o.ReadOptions = libmangal.ReadOptions{
-		SaveHistory: c.Read.History.Local.Get(),
-		SaveAnilist: c.Read.History.Anilist.Get(),
+		SaveHistory: Read.History.Local.Get(),
+		SaveAnilist: Read.History.Anilist.Get(),
 	}
 	o.ComicInfoXMLOptions = metadata.DefaultComicInfoOptions()
 	o.ImageTransformer = func(bytes []byte) ([]byte, error) {

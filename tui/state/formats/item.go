@@ -45,19 +45,19 @@ func (i Item) Description() string {
 }
 
 func (i Item) IsSelectedForDownloading() bool {
-	format := config.Config.Download.Format.Get()
+	format := config.Download.Format.Get()
 
 	return i.format == format
 }
 
 func (i Item) IsSelectedForReading() bool {
-	format := config.Config.Read.Format.Get()
+	format := config.Read.Format.Get()
 
 	return i.format == format
 }
 
 func (i Item) SelectForDownloading() error {
-	if err := config.Config.Download.Format.Set(i.format); err != nil {
+	if err := config.Download.Format.Set(i.format); err != nil {
 		return err
 	}
 
@@ -65,7 +65,7 @@ func (i Item) SelectForDownloading() error {
 }
 
 func (i Item) SelectForReading() error {
-	if err := config.Config.Read.Format.Set(i.format); err != nil {
+	if err := config.Read.Format.Set(i.format); err != nil {
 		return err
 	}
 

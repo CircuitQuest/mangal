@@ -105,7 +105,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						volumeList = append(volumeList, &v)
 					}
 
-					if len(vL) != 1 || !config.Config.TUI.ExpandSingleVolume.Get() {
+					if len(vL) != 1 || !config.TUI.ExpandSingleVolume.Get() {
 						return volumes.New(s.client, item.manga, volumeList)
 					}
 

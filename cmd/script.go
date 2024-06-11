@@ -61,7 +61,7 @@ var scriptCmd = &cobra.Command{
 			file, err := afs.Afero.OpenFile(
 				scriptArgs.File,
 				os.O_RDONLY,
-				config.Config.Download.ModeFile.Get(),
+				config.Download.ModeFile.Get(),
 			)
 			if err != nil {
 				errorf(cmd, err.Error())
@@ -93,7 +93,7 @@ var scriptDocCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, _ []string) {
 		// TODO: use Sprintf?
 		filename := fmt.Sprint(meta.AppName, ".lua")
-		err := afs.Afero.WriteFile(filename, []byte(lib.LuaDoc()), config.Config.Download.ModeFile.Get())
+		err := afs.Afero.WriteFile(filename, []byte(lib.LuaDoc()), config.Download.ModeFile.Get())
 		if err != nil {
 			errorf(cmd, "Error writting library specs: %s", err.Error())
 		}

@@ -15,12 +15,30 @@ import (
 	"github.com/luevano/mangal/theme/icon"
 )
 
+// TODO: cleanup the config setup, register each config directly into
+// the variable instead of in the config struct?
+
 var (
 	dir      string = xdgConfig()
 	filename string = fmt.Sprintf("%s.toml", meta.AppName)
+	// variable declarations run before init() functions,
+	// this ensures the config is initialized before any cmd
+	cfg config = initConfig()
 )
 
-var Path string = filepath.Join(dir, filename)
+// Exported config
+var (
+	// Path to the config file
+	Path      = filepath.Join(dir, filename)
+	Icons     = cfg.Icons
+	Cache     = cfg.Cache
+	CLI       = cfg.CLI
+	Read      = cfg.Read
+	Download  = cfg.Download
+	TUI       = cfg.TUI
+	Providers = cfg.Providers
+	Library   = cfg.Library
+)
 
 func xdgConfig() string {
 	var d string
@@ -31,8 +49,6 @@ func xdgConfig() string {
 	}
 	return d
 }
-
-var Config = initConfig()
 
 func initConfig() config {
 	// setups viper

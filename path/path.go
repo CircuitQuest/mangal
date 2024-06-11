@@ -9,7 +9,7 @@ import (
 )
 
 func CacheDir() string {
-	dir := config.Config.Cache.Path.Get()
+	dir := config.Cache.Path.Get()
 	createDirIfAbsent(dir)
 	return dir
 }
@@ -21,7 +21,7 @@ func ConfigDir() string {
 }
 
 func DownloadsDir() string {
-	dir := config.Config.Download.Path.Get()
+	dir := config.Download.Path.Get()
 	createDirIfAbsent(dir)
 	return dir
 }
@@ -33,7 +33,7 @@ func TempDir() string {
 }
 
 func ProvidersDir() string {
-	dir := config.Config.Providers.Path.Get()
+	dir := config.Providers.Path.Get()
 	createDirIfAbsent(dir)
 	return dir
 }

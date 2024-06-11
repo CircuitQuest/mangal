@@ -33,7 +33,7 @@ func Provider(provider libmangal.ProviderInfo) string {
 
 	err := template.Must(template.New("provider").
 		Funcs(funcs.FuncMap).
-		Parse(config.Config.Download.Provider.NameTemplate.Get())).
+		Parse(config.Download.Provider.NameTemplate.Get())).
 		Execute(&sb, provider)
 	if err != nil {
 		util.Errorf("error during execution of the provider name template: %s\n", err)
@@ -45,11 +45,11 @@ func Provider(provider libmangal.ProviderInfo) string {
 func Manga(_ string, manga mangadata.Manga) string {
 	var sb strings.Builder
 
-	plt := config.Config.Download.Manga.NameTemplateFallback.Get()
+	plt := config.Download.Manga.NameTemplateFallback.Get()
 	// Prioritize the NameTemplate (includes AnilistManga data)
 	mangaMetadata := manga.Metadata()
 	if mangaMetadata != nil {
-		plt = config.Config.Download.Manga.NameTemplate.Get()
+		plt = config.Download.Manga.NameTemplate.Get()
 	} else {
 		mangaMetadata = &metadata.Metadata{}
 	}
@@ -73,7 +73,7 @@ func Volume(_ string, volume mangadata.Volume) string {
 
 	err := template.Must(template.New("volume").
 		Funcs(funcs.FuncMap).
-		Parse(config.Config.Download.Volume.NameTemplate.Get())).
+		Parse(config.Download.Volume.NameTemplate.Get())).
 		Execute(&sb, volumeTemplateData{
 			Volume: volume.Info(),
 			Manga:  volume.Manga().Info(),
@@ -90,7 +90,7 @@ func Chapter(_ string, chapter mangadata.Chapter) string {
 
 	err := template.Must(template.New("chapter").
 		Funcs(funcs.FuncMap).
-		Parse(config.Config.Download.Chapter.NameTemplate.Get())).
+		Parse(config.Download.Chapter.NameTemplate.Get())).
 		Execute(&sb, chapterTemplateData{
 			Chapter: chapter.Info(),
 			Volume:  chapter.Volume().Info(),

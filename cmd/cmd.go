@@ -50,7 +50,7 @@ func Execute() {
 	rootCmd.PersistentFlags().StringVar(&config.Path, "config", config.Path, "Config file path")
 	cobra.OnInitialize(initConfig(rootCmd.PersistentFlags().Lookup("config")))
 
-	if config.Config.CLI.ColoredHelp.Get() {
+	if config.CLI.ColoredHelp.Get() {
 		cc.Init(&cc.Config{
 			RootCmd:         rootCmd,
 			Headings:        cc.HiCyan + cc.Bold + cc.Underline,

@@ -170,7 +170,7 @@ func NewStore(options Options) (Store, error) {
 	}
 
 	// Open DB
-	db, err := bolt.Open(options.Path, config.Config.Download.ModeDB.Get(), nil)
+	db, err := bolt.Open(options.Path, config.Download.ModeDB.Get(), nil)
 	if err != nil {
 		return result, err
 	}

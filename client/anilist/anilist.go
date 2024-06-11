@@ -19,7 +19,7 @@ var Anilist = newAnilist()
 func newAnilist() *anilist.Anilist {
 	newPersistentStore := func(name string, ttl time.Duration) (gokv.Store, error) {
 		dir := filepath.Join(path.CacheDir(), "anilist")
-		if err := afs.Afero.MkdirAll(dir, config.Config.Download.ModeDir.Get()); err != nil {
+		if err := afs.Afero.MkdirAll(dir, config.Download.ModeDir.Get()); err != nil {
 			return nil, err
 		}
 

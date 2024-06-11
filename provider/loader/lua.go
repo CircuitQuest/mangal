@@ -65,7 +65,7 @@ func getLoaders(bundleID, dir string) ([]libmangal.ProviderLoader, error) {
 	infoFile, err := afs.Afero.OpenFile(
 		filepath.Join(dir, info.Filename),
 		os.O_RDONLY,
-		config.Config.Download.ModeFile.Get(),
+		config.Download.ModeFile.Get(),
 	)
 	if err != nil {
 		return nil, err
@@ -117,7 +117,7 @@ func newLoader(info libmangal.ProviderInfo, dir string) (libmangal.ProviderLoade
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
-		UserAgent:    config.Config.Download.UserAgent.Get(),
+		UserAgent:    config.Download.UserAgent.Get(),
 		HTTPStore:    httpStore,
 		PackagePaths: []string{dir},
 	}

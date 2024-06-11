@@ -13,7 +13,7 @@ import (
 )
 
 func httpStore(providerID string) (gokv.Store, error) {
-	ttl, err := time.ParseDuration(config.Config.Cache.TTL.Get())
+	ttl, err := time.ParseDuration(config.Cache.TTL.Get())
 	if err != nil {
 		log.Fatal(err)
 	}
