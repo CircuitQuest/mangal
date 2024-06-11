@@ -1,12 +1,13 @@
 package textinput
 
 import (
+	"strings"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/tui/base"
-	"strings"
 )
 
 var _ base.State = (*State)(nil)
@@ -33,7 +34,7 @@ func (s *State) Title() base.Title {
 }
 
 func (s *State) Subtitle() string {
-	return s.options.Prompt
+	return s.options.Subtitle
 }
 
 func (s *State) Status() string {

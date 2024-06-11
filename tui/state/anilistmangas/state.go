@@ -73,9 +73,9 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.Search):
 			return func() tea.Msg {
 				return textinput.New(textinput.Options{
-					Title:        base.Title{Text: "Search Mangas"},
-					Prompt:       "Enter Anilist manga title",
-					Placeholder:  "",
+					Title:        base.Title{Text: "Search Anilist"},
+					Subtitle:     "Search Anilist manga",
+					Placeholder:  "Anilist manga title...",
 					Intermediate: true,
 					OnResponse: func(response string) tea.Cmd {
 						return tea.Sequence(

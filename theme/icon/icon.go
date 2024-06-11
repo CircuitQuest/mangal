@@ -38,7 +38,7 @@ var (
 		color: color.Accent,
 		symbols: symbols{
 			TypeASCII: "*",
-			TypeNerd:  "\uF019",
+			TypeNerd:  "\U000F0F22",
 		},
 	}
 
@@ -54,7 +54,7 @@ var (
 		color: color.Success,
 		symbols: symbols{
 			TypeASCII: "~",
-			TypeNerd:  "\uF00C",
+			TypeNerd:  "\uF05D",
 		},
 	}
 
@@ -62,7 +62,7 @@ var (
 		color: color.Error,
 		symbols: symbols{
 			TypeASCII: "x",
-			TypeNerd:  "\uEA87",
+			TypeNerd:  "\uF05C",
 		},
 	}
 
@@ -78,7 +78,7 @@ var (
 		color: color.Secondary,
 		symbols: symbols{
 			TypeASCII: "~",
-			TypeNerd:  "\uE641",
+			TypeNerd:  "\uF017",
 		},
 	}
 )

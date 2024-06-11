@@ -101,8 +101,9 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					})
 
 					return textinput.New(textinput.Options{
-						Title:  base.Title{Text: "Search"},
-						Prompt: fmt.Sprintf("Using %q provider", client),
+						Title:       base.Title{Text: "Search Manga"},
+						Subtitle:    fmt.Sprintf("Search using %q provider", client),
+						Placeholder: "Manga title...",
 						OnResponse: func(response string) tea.Cmd {
 							return tea.Sequence(
 								func() tea.Msg {

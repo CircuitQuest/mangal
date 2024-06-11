@@ -8,6 +8,7 @@ import (
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/provider/manager"
+	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/tui"
 	"github.com/luevano/mangal/tui/state/providers"
 	"github.com/spf13/cobra"
@@ -77,5 +78,7 @@ func initConfig(flag *pflag.Flag) func() {
 				panic(fmt.Errorf("error loading config from path %s: %s", config.Path, err.Error()))
 			}
 		}
+		// once the config finishes initializing (using custom config path or not), set the actual icon type
+		icon.SetType(config.Icons.Get())
 	}
 }

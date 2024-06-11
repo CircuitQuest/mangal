@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/luevano/mangal/tui/util"
 	"github.com/luevano/mangal/theme/icon"
+	"github.com/luevano/mangal/tui/util"
 )
 
 func New(options Options) *State {
@@ -21,7 +21,7 @@ func New(options Options) *State {
 		input.Placeholder = options.Placeholder
 	}
 
-	input.Prompt = fmt.Sprint(icon.Search, " ")
+	input.Prompt = fmt.Sprint(" ", icon.Search, " ")
 
 	return &State{
 		options:   options,
