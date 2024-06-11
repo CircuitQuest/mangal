@@ -95,6 +95,7 @@ type configProviders struct {
 	Parallelism *entry[int64, uint8]
 	Headless    configProvidersHeadless
 	Filter      configProvidersFilter
+	MangaDex    configProvidersMangaDex
 	MangaPlus   configProvidersMangaPlus
 }
 
@@ -115,15 +116,18 @@ type configLibrary struct {
 type configProvidersFilter struct {
 	NSFW                    *entry[bool, bool]
 	Language                *entry[string, string]
-	MangaPlusQuality        *entry[string, string]
-	MangaDexDataSaver       *entry[bool, bool]
 	TitleChapterNumber      *entry[bool, bool]
 	AvoidDuplicateChapters  *entry[bool, bool]
 	ShowUnavailableChapters *entry[bool, bool]
 }
 
 type configProvidersMangaPlus struct {
+	Quality    *entry[string, string]
 	OSVersion  *entry[string, string]
 	AppVersion *entry[string, string]
 	AndroidID  *entry[string, string]
+}
+
+type configProvidersMangaDex struct {
+	DataSaver *entry[bool, bool]
 }

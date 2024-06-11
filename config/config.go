@@ -399,16 +399,6 @@ func initConfig() config {
 					Default:     "en",
 					Description: "The language the manga should be on.",
 				}),
-				MangaPlusQuality: reg(entry[string, string]{
-					Key:         "providers.filter.mangaplus_quality",
-					Default:     "super_high",
-					Description: `MangaPlus page image quality, one of "low", "high" or "super_high".`,
-				}),
-				MangaDexDataSaver: reg(entry[bool, bool]{
-					Key:         "providers.filter.mangadex_datasaver",
-					Default:     false,
-					Description: `Use MangaDex "data-saver" option for chapter pages.`,
-				}),
 				TitleChapterNumber: reg(entry[bool, bool]{
 					Key:         "providers.filter.title_chapter_number",
 					Default:     false,
@@ -425,7 +415,25 @@ func initConfig() config {
 					Description: "When there are non-downloadable chapters, show them anyways. Should only be used to search around.",
 				}),
 			},
+			MangaDex: configProvidersMangaDex{
+				DataSaver: reg(entry[bool, bool]{
+					Key:         "providers.mangadex.data_saver",
+					Default:     false,
+					Description: `Use MangaDex "data-saver" option for chapter pages.`,
+				}),
+			},
 			MangaPlus: configProvidersMangaPlus{
+				Quality: reg(entry[string, string]{
+					Key:         "providers.mangaplus.quality",
+					Default:     "super_high",
+					Description: `MangaPlus page image quality, one of "low", "high" or "super_high".`,
+					Validate: func(s string) error {
+						if s != "low" && s != "high" && s != "super_high" {
+							return fmt.Errorf("MangaPlus image quality %q not supported, needs to be one of %q, %q or %q", s, "low", "high", "super_high")
+						}
+						return nil
+					},
+				}),
 				OSVersion: reg(entry[string, string]{
 					Key:         "providers.mangaplus.os_version",
 					Default:     "30",

@@ -28,14 +28,12 @@ func init() {
 	f.Bool("search-metadata", config.Download.Metadata.Search.Get(), "Search metadata and replace the provider metadata")
 
 	// Loader options, these are reused for script cmd
+	f.Uint8("parallelism", config.Providers.Parallelism.Get(), "Provider parallelism to use (when supported)")
 	f.Bool("nsfw", config.Providers.Filter.NSFW.Get(), "Include NSFW content (when supported)")
 	f.String("language", config.Providers.Filter.Language.Get(), "Manga/Chapter language")
-	f.String("mangaplus-quality", config.Providers.Filter.MangaPlusQuality.Get(), "'low', 'high' or 'super_high'")
-	f.Bool("mangadex-data-saver", config.Providers.Filter.MangaDexDataSaver.Get(), "Use 'data-saver'")
 	f.Bool("title-chapter-number", config.Providers.Filter.TitleChapterNumber.Get(), "Include 'Chapter #' always")
 	f.Bool("avoid-duplicate-chapters", config.Providers.Filter.AvoidDuplicateChapters.Get(), "No duplicate chapters")
 	f.Bool("show-unavailable-chapters", config.Providers.Filter.ShowUnavailableChapters.Get(), "Show undownloadable chapters")
-	f.Uint8("parallelism", config.Providers.Parallelism.Get(), "Provider parallelism to use (when supported)")
 	f.Bool("headless-use-flaresolverr", config.Providers.Headless.UseFlaresolverr.Get(), "Use Flaresolverr for headlessproviders")
 	f.String("headless-flaresolverr-url", config.Providers.Headless.FlaresolverrURL.Get(), "Flaresolverr service URL")
 
@@ -49,14 +47,12 @@ func init() {
 
 	// config(viper) flag binds
 	config.BindPFlag(config.Download.Metadata.Search.Key, f.Lookup("search-metadata"))
+	config.BindPFlag(config.Providers.Parallelism.Key, f.Lookup("parallelism"))
 	config.BindPFlag(config.Providers.Filter.NSFW.Key, f.Lookup("nsfw"))
 	config.BindPFlag(config.Providers.Filter.Language.Key, f.Lookup("language"))
-	config.BindPFlag(config.Providers.Filter.MangaPlusQuality.Key, f.Lookup("mangaplus-quality"))
-	config.BindPFlag(config.Providers.Filter.MangaDexDataSaver.Key, f.Lookup("mangadex-data-saver"))
 	config.BindPFlag(config.Providers.Filter.TitleChapterNumber.Key, f.Lookup("title-chapter-number"))
 	config.BindPFlag(config.Providers.Filter.AvoidDuplicateChapters.Key, f.Lookup("avoid-duplicate-chapters"))
 	config.BindPFlag(config.Providers.Filter.ShowUnavailableChapters.Key, f.Lookup("show-unavailable-chapters"))
-	config.BindPFlag(config.Providers.Parallelism.Key, f.Lookup("parallelism"))
 	config.BindPFlag(config.Providers.Headless.UseFlaresolverr.Key, f.Lookup("headless-use-flaresolverr"))
 	config.BindPFlag(config.Providers.Headless.FlaresolverrURL.Key, f.Lookup("headless-flaresolverr-url"))
 }

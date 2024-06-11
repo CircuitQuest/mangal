@@ -27,12 +27,11 @@ func init() {
 	f.StringVarP(&scriptArgs.Provider, "provider", "p", "", "Load provider by tag")
 	f.StringToStringVarP(&scriptArgs.Variables, "vars", "v", nil, "Variables to set in the `Vars` table")
 
-	// Reused loader options from inlineCmd
+	// Reused loader options from inlineCmd, this only
+	// works because inline init() runs before script init()
 	inlineFlags := inlineCmd.Flags()
 	f.AddFlag(inlineFlags.Lookup("nsfw"))
 	f.AddFlag(inlineFlags.Lookup("language"))
-	f.AddFlag(inlineFlags.Lookup("mangaplus-quality"))
-	f.AddFlag(inlineFlags.Lookup("mangadex-data-saver"))
 	f.AddFlag(inlineFlags.Lookup("title-chapter-number"))
 	f.AddFlag(inlineFlags.Lookup("avoid-duplicate-chapters"))
 	f.AddFlag(inlineFlags.Lookup("show-unavailable-chapters"))

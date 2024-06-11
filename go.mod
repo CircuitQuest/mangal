@@ -14,7 +14,7 @@ require (
 	github.com/charmbracelet/bubbletea v0.26.4
 	github.com/charmbracelet/lipgloss v0.11.0
 	github.com/fatih/camelcase v1.0.0
-	github.com/getkin/kin-openapi v0.124.0
+	github.com/getkin/kin-openapi v0.125.0
 	github.com/go-git/go-git/v5 v5.12.0
 	github.com/itchyny/gojq v0.12.16
 	github.com/json-iterator/go v1.1.12
@@ -24,7 +24,7 @@ require (
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.16.3
 	github.com/luevano/luaprovider v0.11.3
-	github.com/luevano/mangoprovider v0.12.3
+	github.com/luevano/mangoprovider v0.13.0
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -72,8 +72,8 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
-	github.com/luevano/mangodex v0.3.5 // indirect
-	github.com/luevano/mangoplus v0.4.1 // indirect
+	github.com/luevano/mangodex v0.3.7 // indirect
+	github.com/luevano/mangoplus v0.4.4 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect

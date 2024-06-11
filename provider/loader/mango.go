@@ -3,7 +3,6 @@ package loader
 import (
 	"encoding/gob"
 	"fmt"
-	"net/http"
 	"time"
 
 	"github.com/luevano/libmangal"
@@ -20,39 +19,37 @@ func MangoLoaders() ([]libmangal.ProviderLoader, error) {
 	gob.Register(&mango.Chapter{})
 	gob.Register(&mango.Page{})
 
-	o := mango.Options{
-		HTTPClient: &http.Client{
-			Timeout: time.Minute,
-		},
-		UserAgent:   config.Download.UserAgent.Get(),
-		HTTPStore:   httpStore,
-		Parallelism: config.Providers.Parallelism.Get(),
-		Headless: mango.Headless{
-			UseFlaresolverr: config.Providers.Headless.UseFlaresolverr.Get(),
-			FlaresolverrURL: config.Providers.Headless.FlaresolverrURL.Get(),
-		},
-		Filter: mango.Filter{
-			NSFW:                    config.Providers.Filter.NSFW.Get(),
-			Language:                config.Providers.Filter.Language.Get(),
-			MangaPlusQuality:        config.Providers.Filter.MangaPlusQuality.Get(),
-			MangaDexDataSaver:       config.Providers.Filter.MangaDexDataSaver.Get(),
-			TitleChapterNumber:      config.Providers.Filter.TitleChapterNumber.Get(),
-			AvoidDuplicateChapters:  config.Providers.Filter.AvoidDuplicateChapters.Get(),
-			ShowUnavailableChapters: config.Providers.Filter.ShowUnavailableChapters.Get(),
-		},
-		// These will only be set upstream if they're non-empty
-		MangaPlus: mango.MangaPlusOptions{
-			OSVersion:  config.Providers.MangaPlus.OSVersion.Get(),
-			AppVersion: config.Providers.MangaPlus.AppVersion.Get(),
-			AndroidID:  config.Providers.MangaPlus.AndroidID.Get(),
-		},
+	// Generates overall default options then overriding as necessary
+	o := mango.DefaultOptions()
+
+	o.HTTPClient.Timeout = time.Minute
+	o.UserAgent = config.Download.UserAgent.Get()
+	o.HTTPStore = httpStore
+	o.Parallelism = config.Providers.Parallelism.Get()
+	o.Filter.NSFW = config.Providers.Filter.NSFW.Get()
+	o.Filter.Language = config.Providers.Filter.Language.Get()
+	o.Filter.TitleChapterNumber = config.Providers.Filter.TitleChapterNumber.Get()
+	o.Filter.AvoidDuplicateChapters = config.Providers.Filter.AvoidDuplicateChapters.Get()
+	o.Filter.ShowUnavailableChapters = config.Providers.Filter.ShowUnavailableChapters.Get()
+	o.Headless.UseFlaresolverr = config.Providers.Headless.UseFlaresolverr.Get()
+	o.Headless.FlaresolverrURL = config.Providers.Headless.FlaresolverrURL.Get()
+	o.MangaDex.DataSaver = config.Providers.MangaDex.DataSaver.Get()
+	o.MangaPlus.Quality = config.Providers.MangaPlus.Quality.Get()
+	o.MangaPlus.OSVersion = config.Providers.MangaPlus.OSVersion.Get()
+	o.MangaPlus.AppVersion = config.Providers.MangaPlus.AppVersion.Get()
+	// AndroidID is the only config defaulted to empty string,
+	// mangoprovider generates a random one when using default options
+	if androidID := config.Providers.MangaPlus.AndroidID.Get(); androidID != "" {
+		o.MangaPlus.AndroidID = androidID
 	}
+
 	var loaders []libmangal.ProviderLoader
 	loaders = append(loaders, apis.Loaders(o)...)
 	loaders = append(loaders, scrapers.Loaders(o)...)
 
 	for _, loader := range loaders {
 		if loader == nil {
+			// TODO: need to provide more info
 			return nil, fmt.Errorf("failed while loading providers")
 		}
 	}
