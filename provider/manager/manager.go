@@ -5,10 +5,10 @@ import (
 	"github.com/luevano/mangal/provider/loader"
 )
 
-func Loaders(options loader.Options) ([]libmangal.ProviderLoader, error) {
+func Loaders() ([]libmangal.ProviderLoader, error) {
 	var loaders []libmangal.ProviderLoader
 
-	mangoLoaders, err := loader.MangoLoaders(options)
+	mangoLoaders, err := loader.MangoLoaders()
 	if err != nil {
 		return nil, err
 	}

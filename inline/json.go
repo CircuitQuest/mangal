@@ -6,13 +6,10 @@ import (
 	"fmt"
 
 	"github.com/luevano/mangal/client"
-	"github.com/luevano/mangal/provider/loader"
 )
 
 func RunJSON(ctx context.Context, args Args) error {
-	// TODO: once script cmd is refactored/removed, this wont be necessary
-	loaderOptions := loader.DefaultOptions()
-	client, err := client.NewClientByID(ctx, args.Provider, loaderOptions)
+	client, err := client.NewClientByID(ctx, args.Provider)
 	if err != nil {
 		return err
 	}

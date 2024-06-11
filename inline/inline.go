@@ -50,8 +50,6 @@ func (m *ChapterSelectorError) Error() string {
 	return GenericSelectorError("chapter", m.selector, m.extraInfo)
 }
 
-type SelectorError struct{}
-
 func GenericSelectorError(selectorType string, selector string, extraInfo string) string {
 	msg := fmt.Sprintf("invalid %s selector %q", selectorType, selector)
 	if extraInfo == "" {

@@ -4,6 +4,7 @@ import (
 	luadoc "github.com/luevano/gopher-luadoc"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/script/lib/util"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -415,8 +416,7 @@ func newDownloadChapter(client *libmangal.Client) lua.LGFunction {
 	return func(state *lua.LState) int {
 		chapter := util.Check[mangadata.Chapter](state, 1)
 
-		// TODO: use a custom download options
-		downChap, err := client.DownloadChapter(state.Context(), chapter, libmangal.DefaultDownloadOptions())
+		downChap, err := client.DownloadChapter(state.Context(), chapter, config.Config.DownloadOptions())
 		util.Must(state, err)
 
 		util.Push(state, downChap, downloadedChapterTypeName)

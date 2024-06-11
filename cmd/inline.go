@@ -8,7 +8,6 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/inline"
-	"github.com/luevano/mangal/provider/loader"
 	"github.com/spf13/cobra"
 )
 
@@ -23,13 +22,22 @@ func init() {
 	f.StringVarP(&inlineArgs.Provider, "provider", "p", "", "Provider id to use")
 	f.StringVarP(&inlineArgs.MangaSelector, "manga-selector", "m", "all", "Manga selector (all|first|last|id|exact|closest|<index>)")
 	f.StringVarP(&inlineArgs.ChapterSelector, "chapter-selector", "c", "all", "Chapter selector (all|first|last|<num>|[from]-[to])")
-	f.BoolVar(&inlineArgs.PreferProviderMetadata, "prefer-provider-metadata", false, "Prefer provider metadata if valid (skips --search-metadata)")
 	f.IntVarP(&inlineArgs.AnilistID, "anilist-id", "a", 0, "Anilist ID to search for metadata")
+	f.BoolVar(&inlineArgs.PreferProviderMetadata, "prefer-provider-metadata", false, "Prefer provider metadata if valid (skips --search-metadata)")
+
 	f.Bool("search-metadata", config.Config.Download.Metadata.Search.Get(), "Search metadata and replace the provider metadata")
 
-	// TODO: remove loaderOptions once script cmd is refactored/removed, these are not used by inline
-	loaderOptions := loader.DefaultOptions()
-	setupLoaderOptions(f, &loaderOptions)
+	// Loader options, these are reused for script cmd
+	f.Bool("nsfw", config.Config.Providers.Filter.NSFW.Get(), "Include NSFW content (when supported)")
+	f.String("language", config.Config.Providers.Filter.Language.Get(), "Manga/Chapter language")
+	f.String("mangaplus-quality", config.Config.Providers.Filter.MangaPlusQuality.Get(), "'low', 'high' or 'super_high'")
+	f.Bool("mangadex-data-saver", config.Config.Providers.Filter.MangaDexDataSaver.Get(), "Use 'data-saver'")
+	f.Bool("title-chapter-number", config.Config.Providers.Filter.TitleChapterNumber.Get(), "Include 'Chapter #' always")
+	f.Bool("avoid-duplicate-chapters", config.Config.Providers.Filter.AvoidDuplicateChapters.Get(), "No duplicate chapters")
+	f.Bool("show-unavailable-chapters", config.Config.Providers.Filter.ShowUnavailableChapters.Get(), "Show undownloadable chapters")
+	f.Uint8("parallelism", config.Config.Providers.Parallelism.Get(), "Provider parallelism to use (when supported)")
+	f.Bool("headless-use-flaresolverr", config.Config.Providers.Headless.UseFlaresolverr.Get(), "Use Flaresolverr for headlessproviders")
+	f.String("headless-flaresolverr-url", config.Config.Providers.Headless.FlaresolverrURL.Get(), "Flaresolverr service URL")
 
 	inlineCmd.MarkPersistentFlagRequired("provider")
 	inlineCmd.MarkPersistentFlagRequired("query")

@@ -15,7 +15,6 @@ import (
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
-	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/util/afs"
 	"github.com/pelletier/go-toml"
 	"github.com/pkg/errors"
@@ -61,7 +60,7 @@ func Add(ctx context.Context, options AddOptions) error {
 		return fmt.Errorf("ID is empty")
 	}
 
-	loaders, err := Loaders(loader.DefaultOptions())
+	loaders, err := Loaders()
 	if err != nil {
 		return err
 	}

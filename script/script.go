@@ -4,11 +4,8 @@ import (
 	"context"
 	"io"
 
-	"github.com/luevano/libmangal"
-	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/client/anilist"
-	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/script/lib"
 	lua "github.com/yuin/gopher-lua"
 )
@@ -16,17 +13,10 @@ import (
 type Variables = map[string]string
 
 type Args struct {
-	File          string
-	String        string
-	Stdin         bool
-	Provider      string
-	Variables     Variables
-	LoaderOptions *loader.Options
-}
-
-type Options struct {
-	Client    *libmangal.Client
-	Anilist   *lmanilist.Anilist
+	File      string
+	String    string
+	Stdin     bool
+	Provider  string
 	Variables Variables
 }
 
@@ -44,7 +34,7 @@ func addLibraries(state *lua.LState, options lib.Options) {
 }
 
 func Run(ctx context.Context, args Args, script io.Reader) error {
-	client, err := client.NewClientByID(context.Background(), args.Provider, *args.LoaderOptions)
+	client, err := client.NewClientByID(context.Background(), args.Provider)
 	if err != nil {
 		return err
 	}

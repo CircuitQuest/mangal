@@ -13,7 +13,7 @@ import (
 	"github.com/luevano/mangoprovider/scrapers"
 )
 
-func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
+func MangoLoaders() ([]libmangal.ProviderLoader, error) {
 	// httpStoreProvider uses gob, it needs to register custom types
 	gob.Register(&mango.Manga{})
 	gob.Register(&mango.Volume{})
@@ -26,25 +26,25 @@ func MangoLoaders(options Options) ([]libmangal.ProviderLoader, error) {
 		},
 		UserAgent:   config.Config.Download.UserAgent.Get(),
 		HTTPStore:   httpStore,
-		Parallelism: options.Parallelism,
+		Parallelism: config.Config.Providers.Parallelism.Get(),
 		Headless: mango.Headless{
-			UseFlaresolverr: options.HeadlessUseFlaresolverr,
-			FlaresolverrURL: options.HeadlessFlaresolverrURL,
+			UseFlaresolverr: config.Config.Providers.Headless.UseFlaresolverr.Get(),
+			FlaresolverrURL: config.Config.Providers.Headless.FlaresolverrURL.Get(),
 		},
 		Filter: mango.Filter{
-			NSFW:                    options.NSFW,
-			Language:                options.Language,
-			MangaPlusQuality:        options.MangaPlusQuality,
-			MangaDexDataSaver:       options.MangaDexDataSaver,
-			TitleChapterNumber:      options.TitleChapterNumber,
-			AvoidDuplicateChapters:  options.AvoidDuplicateChapters,
-			ShowUnavailableChapters: options.ShowUnavailableChapters,
+			NSFW:                    config.Config.Providers.Filter.NSFW.Get(),
+			Language:                config.Config.Providers.Filter.Language.Get(),
+			MangaPlusQuality:        config.Config.Providers.Filter.MangaPlusQuality.Get(),
+			MangaDexDataSaver:       config.Config.Providers.Filter.MangaDexDataSaver.Get(),
+			TitleChapterNumber:      config.Config.Providers.Filter.TitleChapterNumber.Get(),
+			AvoidDuplicateChapters:  config.Config.Providers.Filter.AvoidDuplicateChapters.Get(),
+			ShowUnavailableChapters: config.Config.Providers.Filter.ShowUnavailableChapters.Get(),
 		},
 		// These will only be set upstream if they're non-empty
 		MangaPlus: mango.MangaPlusOptions{
-			OSVersion:  options.MangaPlusOSVersion,
-			AppVersion: options.MangaPlusAppVersion,
-			AndroidID:  options.MangaPlusAndroidID,
+			OSVersion:  config.Config.Providers.MangaPlus.OSVersion.Get(),
+			AppVersion: config.Config.Providers.MangaPlus.AppVersion.Get(),
+			AndroidID:  config.Config.Providers.MangaPlus.AndroidID.Get(),
 		},
 	}
 	var loaders []libmangal.ProviderLoader

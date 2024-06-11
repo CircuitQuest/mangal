@@ -7,7 +7,6 @@ import (
 	cc "github.com/ivanpirog/coloredcobra"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/meta"
-	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/tui"
 	"github.com/luevano/mangal/tui/state/providers"
@@ -22,7 +21,7 @@ var rootCmd = &cobra.Command{
 	Long: fmt.Sprintf("%s, CLI manga downloader", meta.AppName),
 	Args: cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {
-		loaders, err := manager.Loaders(loader.DefaultOptions())
+		loaders, err := manager.Loaders()
 		if err != nil {
 			errorf(cmd, err.Error())
 		}

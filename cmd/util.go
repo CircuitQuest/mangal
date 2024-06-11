@@ -7,12 +7,10 @@ import (
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/provider/loader"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/samber/lo"
 	"github.com/spf13/cobra"
-	"github.com/spf13/pflag"
 )
 
 func successf(cmd *cobra.Command, format string, a ...any) {
@@ -25,7 +23,7 @@ func errorf(cmd *cobra.Command, format string, a ...any) {
 }
 
 func completionProviderIDs(_ *cobra.Command, _ []string, _ string) ([]string, cobra.ShellCompDirective) {
-	loaders, err := manager.Loaders(loader.DefaultOptions())
+	loaders, err := manager.Loaders()
 	if err != nil {
 		return nil, cobra.ShellCompDirectiveError
 	}
@@ -45,18 +43,4 @@ func completionConfigKeys(_ *cobra.Command, _ []string, toComplete string) ([]st
 	})
 
 	return filtered, cobra.ShellCompDirectiveDefault
-}
-
-func setupLoaderOptions(f *pflag.FlagSet, o *loader.Options) {
-	c := config.Config.Providers
-	f.BoolVar(&o.NSFW, "nsfw", c.Filter.NSFW.Get(), "Include NSFW content (when supported)")
-	f.StringVar(&o.Language, "language", c.Filter.Language.Get(), "Manga/Chapter language")
-	f.StringVar(&o.MangaPlusQuality, "mangaplus-quality", c.Filter.MangaPlusQuality.Get(), "'low', 'high' or 'super_high'")
-	f.BoolVar(&o.MangaDexDataSaver, "mangadex-data-saver", c.Filter.MangaDexDataSaver.Get(), "Use 'data-saver'")
-	f.BoolVar(&o.TitleChapterNumber, "title-chapter-number", c.Filter.TitleChapterNumber.Get(), "Include 'Chapter #' always")
-	f.BoolVar(&o.AvoidDuplicateChapters, "avoid-duplicate-chapters", c.Filter.AvoidDuplicateChapters.Get(), "No duplicate chapters")
-	f.BoolVar(&o.ShowUnavailableChapters, "show-unavailable-chapters", c.Filter.ShowUnavailableChapters.Get(), "Show undownloadable chapters")
-	f.Uint8Var(&o.Parallelism, "parallelism", c.Parallelism.Get(), "Provider parallelism to use (when supported)")
-	f.BoolVar(&o.HeadlessUseFlaresolverr, "headless-use-flaresolverr", c.Headless.UseFlaresolverr.Get(), "Use Flaresolverr for headlessproviders")
-	f.StringVar(&o.HeadlessFlaresolverrURL, "headless-flaresolverr-url", c.Headless.FlaresolverrURL.Get(), "Flaresolverr service URL")
 }
