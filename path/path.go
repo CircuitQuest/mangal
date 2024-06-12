@@ -15,7 +15,7 @@ func CacheDir() string {
 }
 
 func ConfigDir() string {
-	var dir string = filepath.Base(config.Path)
+	var dir string = filepath.Dir(config.Path)
 	createDirIfAbsent(dir)
 	return dir
 }
