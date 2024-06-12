@@ -24,7 +24,7 @@ require (
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.16.3
 	github.com/luevano/luaprovider v0.11.3
-	github.com/luevano/mangoprovider v0.13.0
+	github.com/luevano/mangoprovider v0.13.1
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -92,7 +92,7 @@ require (
 	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
 	go.uber.org/multierr v1.11.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
-	google.golang.org/protobuf v1.34.1 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 
@@ -109,7 +109,7 @@ require (
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/charmbracelet/harmonica v0.2.0 // indirect
 	github.com/cixtor/readability v1.0.0 // indirect
-	github.com/cloudflare/circl v1.3.8 // indirect
+	github.com/cloudflare/circl v1.3.9 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/gdamore/tcell/v2 v2.7.4 // indirect
