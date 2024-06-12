@@ -3,29 +3,31 @@ package formats
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/luevano/mangal/tui/state/listwrapper"
 )
 
-var _ help.KeyMap = (*KeyMap)(nil)
+var _ help.KeyMap = (*keyMap)(nil)
 
-type KeyMap struct {
-	SetRead, SetDownload, SetAll key.Binding
+// keyMap implements help.keyMap.
+type keyMap struct {
+	setRead,
+	setDownload,
+	setAll key.Binding
 
-	list listwrapper.KeyMap
-}
-
-// FullHelp implements help.KeyMap.
-func (k KeyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{
-		k.ShortHelp(),
-	}
+	list help.KeyMap
 }
 
 // ShortHelp implements help.KeyMap.
-func (k KeyMap) ShortHelp() []key.Binding {
+func (k keyMap) ShortHelp() []key.Binding {
 	return append(
 		k.list.ShortHelp(),
-		k.SetRead,
-		k.SetDownload,
+		k.setRead,
+		k.setDownload,
 	)
+}
+
+// FullHelp implements help.KeyMap.
+func (k keyMap) FullHelp() [][]key.Binding {
+	return [][]key.Binding{
+		k.ShortHelp(),
+	}
 }

@@ -21,42 +21,56 @@ import (
 
 var _ base.State = (*State)(nil)
 
+// State implements base.State.
 type State struct {
-	query  string
+	list   *listwrapper.State
 	client *libmangal.Client
 	mangas []*mangadata.Manga
-	list   *listwrapper.State
-	keyMap KeyMap
+	query  string
+	keyMap keyMap
 }
 
+// Intermediate implements base.State.
 func (s *State) Intermediate() bool {
 	return false
 }
 
-func (s *State) KeyMap() help.KeyMap {
-	return s.keyMap
-}
-
-func (s *State) Title() base.Title {
-	return base.Title{Text: fmt.Sprintf("Search %q", s.query)}
-}
-
-func (s *State) Subtitle() string {
-	return s.list.Subtitle()
-}
-
-func (s *State) Status() string {
-	return s.list.Status()
-}
-
+// Backable implements base.State.
 func (s *State) Backable() bool {
 	return s.list.Backable()
 }
 
+// KeyMap implements base.State.
+func (s *State) KeyMap() help.KeyMap {
+	return s.keyMap
+}
+
+// Title implements base.State.
+func (s *State) Title() base.Title {
+	return base.Title{Text: fmt.Sprintf("Search %q", s.query)}
+}
+
+// Subtitle implements base.State.
+func (s *State) Subtitle() string {
+	return s.list.Subtitle()
+}
+
+// Status implements base.State.
+func (s *State) Status() string {
+	return s.list.Status()
+}
+
+// Resize implements base.State.
 func (s *State) Resize(size base.Size) {
 	s.list.Resize(size)
 }
 
+// Init implements base.State.
+func (s *State) Init(model base.Model) tea.Cmd {
+	return s.list.Init(model)
+}
+
+// Update implements base.State.
 func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -70,7 +84,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		}
 
 		switch {
-		case key.Matches(msg, s.keyMap.Confirm):
+		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
 				func() tea.Msg {
 					return loading.New("Searching", fmt.Sprintf("Finding Anilist for %q", *item.manga))
@@ -129,10 +143,7 @@ end:
 	return s.list.Update(model, msg)
 }
 
+// View implements base.State.
 func (s *State) View(model base.Model) string {
 	return s.list.View(model)
-}
-
-func (s *State) Init(model base.Model) tea.Cmd {
-	return s.list.Init(model)
 }

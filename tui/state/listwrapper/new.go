@@ -8,7 +8,7 @@ import (
 func New(list list.Model) *State {
 	return &State{
 		list: list,
-		keyMap: KeyMap{
+		keyMap: keyMap{
 			reverse: util.Bind("reverse", "R"),
 			list:    &list.KeyMap,
 		},

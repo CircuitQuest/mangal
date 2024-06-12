@@ -13,51 +13,62 @@ import (
 
 var _ base.State = (*State)(nil)
 
+// State implements base.State.
 type State struct {
 	message  string
 	subtitle string
 	spinner  spinner.Model
-	keyMap   KeyMap
+	keyMap   help.KeyMap
 }
 
+// Intermediate implements base.State.
 func (s *State) Intermediate() bool {
 	return true
 }
 
+// Backable implements base.State.
+func (s *State) Backable() bool {
+	return true
+}
+
+// KeyMap implements base.State.
 func (s *State) KeyMap() help.KeyMap {
 	return s.keyMap
 }
 
+// Title implements base.State.
 func (s *State) Title() base.Title {
 	// return base.Title{Text: s.message, Background: color.Loading}
 	return base.Title{Text: "Loading", Background: color.Loading}
 }
 
+// Subtitle implements base.State.
 func (s *State) Subtitle() string {
 	return s.subtitle
 }
 
+// Status implements base.State.
 func (s *State) Status() string {
 	return s.spinner.View()
 	// return ""
 }
 
-func (s *State) Backable() bool {
-	return true
-}
-
+// Resize implements base.State.
 func (s *State) Resize(size base.Size) {
 }
 
-func (s *State) SetMessage(message string) {
-	s.message = message
+// Init implements base.State.
+func (s *State) Init(model base.Model) tea.Cmd {
+	return s.spinner.Tick
 }
 
+// Update implements base.State.
 func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 	s.spinner, cmd = s.spinner.Update(msg)
 	return cmd
 }
 
+// View implements base.State.
 func (s *State) View(model base.Model) string {
 	return fmt.Sprint(
 		style.Bold.Accent.Render(s.spinner.View()),
@@ -65,6 +76,7 @@ func (s *State) View(model base.Model) string {
 	)
 }
 
-func (s *State) Init(model base.Model) tea.Cmd {
-	return s.spinner.Tick
+// SetMessage updates the message for the loading view.
+func (s *State) SetMessage(message string) {
+	s.message = message
 }

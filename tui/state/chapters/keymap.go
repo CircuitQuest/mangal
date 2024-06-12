@@ -3,42 +3,44 @@ package chapters
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/luevano/mangal/tui/state/listwrapper"
 )
 
-var _ help.KeyMap = (*KeyMap)(nil)
+var _ help.KeyMap = (*keyMap)(nil)
 
-type KeyMap struct {
-	UnselectAll,
-	SelectAll,
-	ToggleChapterNumber,
-	ToggleGroup,
-	ToggleDate,
-	Toggle,
-	Read,
-	OpenURL,
-	Download,
-	Anilist,
-	Confirm,
-	ChangeFormat key.Binding
+// keyMap implements help.keyMap.
+type keyMap struct {
+	unselectAll,
+	selectAll,
+	toggleChapterNumber,
+	toggleGroup,
+	toggleDate,
+	toggle,
+	read,
+	openURL,
+	download,
+	anilist,
+	aonfirm,
+	changeFormat key.Binding
 
-	list listwrapper.KeyMap
+	list help.KeyMap
 }
 
-func (k KeyMap) ShortHelp() []key.Binding {
+// ShortHelp implements help.keyMap.
+func (k keyMap) ShortHelp() []key.Binding {
 	return append(
 		k.list.ShortHelp(),
-		k.Toggle,
-		k.Read,
-		k.Download,
+		k.toggle,
+		k.read,
+		k.download,
 	)
 }
 
-func (k KeyMap) FullHelp() [][]key.Binding {
+// FullHelp implements help.keyMap.
+func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		k.ShortHelp(),
-		{k.SelectAll, k.UnselectAll, k.ToggleChapterNumber, k.ToggleGroup, k.ToggleDate},
-		{k.Anilist},
-		{k.ChangeFormat, k.OpenURL},
+		{k.selectAll, k.unselectAll, k.toggleChapterNumber, k.toggleGroup, k.toggleDate},
+		{k.anilist},
+		{k.changeFormat, k.openURL},
 	}
 }

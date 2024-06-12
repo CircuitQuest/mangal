@@ -5,6 +5,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/theme/style"
+	"github.com/luevano/mangal/tui/model"
 )
 
 func New(chapters []mangadata.Chapter, options Options) *State {
@@ -17,6 +18,6 @@ func New(chapters []mangadata.Chapter, options Options) *State {
 			spinner.WithSpinner(spinner.Dot),
 			spinner.WithStyle(style.Bold.Accent),
 		),
-		keyMap: KeyMap{},
+		keyMap: model.NoKeyMap{},
 	}
 }

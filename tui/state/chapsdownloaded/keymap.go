@@ -5,30 +5,33 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 )
 
-var _ help.KeyMap = (*KeyMap)(nil)
+var _ help.KeyMap = (*keyMap)(nil)
 
-type KeyMap struct {
-	Quit,
-	Open,
-	Retry key.Binding
+// keyMap implements help.keyMap.
+type keyMap struct {
+	quit,
+	open,
+	retry key.Binding
 
 	state *State
 }
 
-func (k KeyMap) ShortHelp() []key.Binding {
+// ShortHelp implements help.keyMap.
+func (k keyMap) ShortHelp() []key.Binding {
 	bindings := []key.Binding{
-		k.Quit,
-		k.Open,
+		k.quit,
+		k.open,
 	}
 
 	if len(k.state.options.Failed) > 0 {
-		bindings = append(bindings, k.Retry)
+		bindings = append(bindings, k.retry)
 	}
 
 	return bindings
 }
 
-func (k KeyMap) FullHelp() [][]key.Binding {
+// FullHelp implements help.keyMap.
+func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		k.ShortHelp(),
 	}

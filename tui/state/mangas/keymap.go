@@ -3,24 +3,27 @@ package mangas
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/luevano/mangal/tui/state/listwrapper"
 )
 
-var _ help.KeyMap = (*KeyMap)(nil)
+var _ help.KeyMap = (*keyMap)(nil)
 
-type KeyMap struct {
-	Confirm key.Binding
-	list    listwrapper.KeyMap
+// keyMap implements help.keyMap.
+type keyMap struct {
+	confirm key.Binding
+
+	list help.KeyMap
 }
 
-func (k KeyMap) ShortHelp() []key.Binding {
+// ShortHelp implements help.keyMap.
+func (k keyMap) ShortHelp() []key.Binding {
 	return append(
 		k.list.ShortHelp(),
-		k.Confirm,
+		k.confirm,
 	)
 }
 
-func (k KeyMap) FullHelp() [][]key.Binding {
+// FullHelp implements help.keyMap.
+func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		k.ShortHelp(),
 	}

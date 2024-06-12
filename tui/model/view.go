@@ -8,6 +8,7 @@ import (
 	"github.com/muesli/reflow/wordwrap"
 )
 
+// View implements base.Model.
 func (m *Model) View() string {
 	const newline = "\n"
 

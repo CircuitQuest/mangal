@@ -13,6 +13,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// Update implements base.Model.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
@@ -24,18 +25,18 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, m.keyMap.Quit):
+		case key.Matches(msg, m.keyMap.quit):
 			return m, tea.Quit
-		case key.Matches(msg, m.keyMap.Back) && m.state.Backable():
+		case key.Matches(msg, m.keyMap.back) && m.state.Backable():
 			return m, m.back()
-		case key.Matches(msg, m.keyMap.Help):
+		case key.Matches(msg, m.keyMap.help):
 			m.help.ShowAll = !m.help.ShowAll
 			m.resize(m.size)
 			return m, nil
-		case key.Matches(msg, m.keyMap.Log):
+		case key.Matches(msg, m.keyMap.log):
 			return m, m.pushState(viewport.New("Logs", log.Aggregate.String(), m.StateSize()))
 		}
-	case base.MsgBack:
+	case base.BackMsg:
 		// this msg can override Backable() output
 		return m, m.back()
 	case base.State:

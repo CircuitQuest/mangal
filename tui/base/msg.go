@@ -1,3 +1,3 @@
 package base
 
-type MsgBack struct{}
+type BackMsg struct{}

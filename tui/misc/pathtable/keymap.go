@@ -7,6 +7,7 @@ import (
 
 var _ help.KeyMap = (*keyMap)(nil)
 
+// keyMap implements help.KeyMap.
 type keyMap struct {
 	Copy,
 	Quit key.Binding

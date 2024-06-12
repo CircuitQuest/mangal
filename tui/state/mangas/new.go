@@ -23,9 +23,9 @@ func New(client *libmangal.Client, query string, mangas []*mangadata.Manga) *Sta
 		client: client,
 		mangas: mangas,
 		list:   listWrapper,
-		keyMap: KeyMap{
-			Confirm: util.Bind("confirm", "enter"),
-			list:    listWrapper.GetKeyMap(),
+		keyMap: keyMap{
+			confirm: util.Bind("confirm", "enter"),
+			list:    listWrapper.KeyMap(),
 		},
 	}
 }

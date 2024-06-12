@@ -13,8 +13,14 @@ import (
 	"github.com/zyedidia/generic/stack"
 )
 
-var _ base.Model = (*Model)(nil)
+var (
+	_ base.Model  = (*Model)(nil)
+	_ help.KeyMap = (*Model)(nil)
+)
 
+// Model implements base.Model
+//
+// Model is the parent of all States (windows), could be thought of as the main window.
 type Model struct {
 	state   base.State
 	history *stack.Stack[base.State]
@@ -30,13 +36,20 @@ type Model struct {
 	help   help.Model
 }
 
+// Context implements base.Model.
+func (m *Model) Context() context.Context {
+	return m.context
+}
+
+// ShortHelp implements help.KeyMap.
 func (m *Model) ShortHelp() []key.Binding {
-	keys := []key.Binding{m.keyMap.Back, m.keyMap.Help}
+	keys := []key.Binding{m.keyMap.back, m.keyMap.help}
 	return append(keys, m.state.KeyMap().ShortHelp()...)
 }
 
+// FullHelp implements help.KeyMap.
 func (m *Model) FullHelp() [][]key.Binding {
-	keys := [][]key.Binding{{m.keyMap.Back, m.keyMap.Help, m.keyMap.Quit, m.keyMap.Log}}
+	keys := [][]key.Binding{{m.keyMap.back, m.keyMap.help, m.keyMap.quit, m.keyMap.log}}
 	return append(keys, m.state.KeyMap().FullHelp()...)
 }
 
@@ -57,10 +70,6 @@ func (m *Model) StateSize() base.Size {
 		Width:  m.size.Width,
 		Height: height,
 	}
-}
-
-func (m *Model) Context() context.Context {
-	return m.context
 }
 
 func (m *Model) cancel() {

@@ -29,30 +29,40 @@ import (
 
 var _ base.State = (*State)(nil)
 
+// State implements base.State.
 type State struct {
 	client            *libmangal.Client
 	manga             *mangadata.Manga
 	volume            *mangadata.Volume
 	selected          set.Set[*Item]
 	list              *listwrapper.State
-	keyMap            KeyMap
+	keyMap            keyMap
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
 }
 
+// Intermediate implements base.State.
 func (s *State) Intermediate() bool {
 	return false
 }
 
+// Backable implements base.State.
+func (s *State) Backable() bool {
+	return s.list.Backable()
+}
+
+// KeyMap implements base.State.
 func (s *State) KeyMap() help.KeyMap {
 	return s.keyMap
 }
 
+// Title implements base.State.
 func (s *State) Title() base.Title {
 	return base.Title{Text: fmt.Sprintf("%s / Vol. %s", *s.manga, (*s.volume).String())}
 }
 
+// Subtitle implements base.State.
 func (s *State) Subtitle() string {
 	var subtitle strings.Builder
 
@@ -72,18 +82,22 @@ func (s *State) Subtitle() string {
 	return subtitle.String()
 }
 
+// Status implements base.State.
 func (s *State) Status() string {
 	return s.list.Status()
 }
 
-func (s *State) Backable() bool {
-	return s.list.Backable()
-}
-
+// Resize implements base.State.
 func (s *State) Resize(size base.Size) {
 	s.list.Resize(size)
 }
 
+// Init implements base.State.
+func (s *State) Init(model base.Model) tea.Cmd {
+	return s.list.Init(model)
+}
+
+// Update implements base.State.
 func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -97,17 +111,17 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		}
 
 		switch {
-		case key.Matches(msg, s.keyMap.Toggle):
+		case key.Matches(msg, s.keyMap.toggle):
 			item.Toggle()
 
 			return nil
-		case key.Matches(msg, s.keyMap.UnselectAll):
+		case key.Matches(msg, s.keyMap.unselectAll):
 			for _, item := range s.selected.Keys() {
 				item.Toggle()
 			}
 
 			return nil
-		case key.Matches(msg, s.keyMap.SelectAll):
+		case key.Matches(msg, s.keyMap.selectAll):
 			for _, listItem := range s.list.Items() {
 				// TODO: possibly issue here? item is re-declared, need to keep an eye
 				item, ok := listItem.(*Item)
@@ -121,11 +135,11 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			}
 
 			return nil
-		case key.Matches(msg, s.keyMap.ChangeFormat):
+		case key.Matches(msg, s.keyMap.changeFormat):
 			return func() tea.Msg {
 				return formats.New()
 			}
-		case key.Matches(msg, s.keyMap.OpenURL):
+		case key.Matches(msg, s.keyMap.openURL):
 			return tea.Sequence(
 				func() tea.Msg {
 					return loading.New("Opening", (*item.chapter).String())
@@ -136,10 +150,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						return err
 					}
 
-					return base.MsgBack{}
+					return base.Back
 				},
 			)
-		case key.Matches(msg, s.keyMap.Download) || (s.selected.Size() > 0 && key.Matches(msg, s.keyMap.Confirm)):
+		case key.Matches(msg, s.keyMap.download) || (s.selected.Size() > 0 && key.Matches(msg, s.keyMap.aonfirm)):
 			var chapters []mangadata.Chapter
 
 			if s.selected.Size() == 0 {
@@ -166,7 +180,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					},
 				)
 			}
-		case key.Matches(msg, s.keyMap.Read) || (s.selected.Size() == 0 && key.Matches(msg, s.keyMap.Confirm)):
+		case key.Matches(msg, s.keyMap.read) || (s.selected.Size() == 0 && key.Matches(msg, s.keyMap.aonfirm)):
 			// If download on read is wanted, then use the normal download path
 			var directory string
 			if config.Read.DownloadOnRead.Get() {
@@ -201,14 +215,14 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 							return err
 						}
 
-						return base.MsgBack{}
+						return base.Back
 					},
 				)
 			}
 
 			return s.downloadChapterCmd(model.Context(), *item.chapter, downloadOptions)
 		// TODO: this should be set some levels before
-		case key.Matches(msg, s.keyMap.Anilist):
+		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
 				func() tea.Msg {
 					return loading.New("Searching", "Getting Anilist Mangas")
@@ -257,7 +271,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 									log.Log("Setting Anilist manga %q (%d)", response.String(), response.ID)
 									(*s.manga).SetMetadata(response.Metadata())
 
-									return base.MsgBack{}
+									return base.Back
 								},
 								s.list.Notify(fmt.Sprintf("Set Anilist %s (%d)", response.String(), response.ID), 3*time.Second),
 							)
@@ -265,15 +279,15 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					)
 				},
 			)
-		case key.Matches(msg, s.keyMap.ToggleChapterNumber):
+		case key.Matches(msg, s.keyMap.toggleChapterNumber):
 			*s.showChapterNumber = !(*s.showChapterNumber)
 
 			return s.list.Update(model, msg)
-		case key.Matches(msg, s.keyMap.ToggleGroup):
+		case key.Matches(msg, s.keyMap.toggleGroup):
 			*s.showGroup = !(*s.showGroup)
 
 			return s.list.Update(model, msg)
-		case key.Matches(msg, s.keyMap.ToggleDate):
+		case key.Matches(msg, s.keyMap.toggleDate):
 			*s.showDate = !(*s.showDate)
 
 			return s.list.Update(model, msg)
@@ -284,10 +298,7 @@ end:
 	return s.list.Update(model, msg)
 }
 
+// View implements base.State.
 func (s *State) View(model base.Model) string {
 	return s.list.View(model)
-}
-
-func (s *State) Init(model base.Model) tea.Cmd {
-	return s.list.Init(model)
 }

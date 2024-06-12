@@ -18,12 +18,12 @@ func New(loaders []libmangal.ProviderLoader) *State {
 	))
 
 	return &State{
-		providersLoaders: loaders,
-		list:             listWrapper,
-		keyMap: KeyMap{
+		providerLoaders: loaders,
+		list:            listWrapper,
+		keyMap: keyMap{
 			info:    util.Bind("info", "i"),
 			confirm: util.Bind("confirm", "enter"),
-			list:    listWrapper.GetKeyMap(),
+			list:    listWrapper.KeyMap(),
 		},
 	}
 }

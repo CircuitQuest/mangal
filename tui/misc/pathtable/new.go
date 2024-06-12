@@ -10,8 +10,7 @@ import (
 )
 
 func Run() error {
-	model := newModel()
-	_, err := tea.NewProgram(model).Run()
+	_, err := tea.NewProgram(newModel()).Run()
 	return err
 }
 

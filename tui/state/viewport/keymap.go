@@ -5,15 +5,20 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 )
 
-var _ help.KeyMap = (*KeyMap)(nil)
+// TODO: add keybinds
 
-type KeyMap struct{}
+var _ help.KeyMap = (*keyMap)(nil)
 
-func (k KeyMap) ShortHelp() []key.Binding {
+// keyMap implements help.keyMap.
+type keyMap struct{}
+
+// ShortHelp implements help.keyMap.
+func (k keyMap) ShortHelp() []key.Binding {
 	return []key.Binding{}
 }
 
-func (k KeyMap) FullHelp() [][]key.Binding {
+// FullHelp implements help.keyMap.
+func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		k.ShortHelp(),
 	}

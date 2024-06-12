@@ -8,46 +8,54 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/tui/base"
 )
 
 var _ base.State = (*State)(nil)
 
+// State implements base.State.
 type State struct {
 	size     base.Size
 	title    string
 	content  string
 	viewport viewport.Model
 	padding  base.Size
-	keyMap   KeyMap
+	keyMap   keyMap
 	styles   Styles
 }
 
+// Intermediate implements base.State.
 func (s *State) Intermediate() bool {
 	return true
 }
 
+// Backable implements base.State.
 func (s *State) Backable() bool {
 	return true
 }
 
+// KeyMap implements base.State.
 func (s *State) KeyMap() help.KeyMap {
 	return s.keyMap
 }
 
+// Title implements base.State.
 func (s *State) Title() base.Title {
 	return base.Title{Text: "Viewport", Background: color.Viewport}
 }
 
+// Subtitle implements base.State.
 func (s *State) Subtitle() string {
 	return ""
 }
 
+// Status implements base.State.
 func (s *State) Status() string {
 	return ""
 }
 
+// Resize implements base.State.
 func (s *State) Resize(_size base.Size) {
 	s.size = _size
 	size := s.paddedSize()
@@ -56,17 +64,7 @@ func (s *State) Resize(_size base.Size) {
 	s.viewport.Height = size.Height
 }
 
-func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
-	var cmd tea.Cmd
-	s.viewport, cmd = s.viewport.Update(msg)
-	return cmd
-}
-
-func (s *State) View(model base.Model) string {
-	viewport := fmt.Sprintf("%s\n%s\n%s", s.headerView(), s.viewport.View(), s.footerView())
-	return s.styles.ContentWrapper(s.padding.Height, s.padding.Width).Render(viewport)
-}
-
+// Init implements base.State.
 func (s *State) Init(model base.Model) tea.Cmd {
 	size := s.paddedSize()
 
@@ -75,6 +73,19 @@ func (s *State) Init(model base.Model) tea.Cmd {
 	s.viewport.Style = s.styles.Viewport
 
 	return nil
+}
+
+// Update implements base.State.
+func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
+	var cmd tea.Cmd
+	s.viewport, cmd = s.viewport.Update(msg)
+	return cmd
+}
+
+// View implements base.State.
+func (s *State) View(model base.Model) string {
+	viewport := fmt.Sprintf("%s\n%s\n%s", s.headerView(), s.viewport.View(), s.footerView())
+	return s.styles.ContentWrapper(s.padding.Height, s.padding.Width).Render(viewport)
 }
 
 func (s *State) paddedSize() base.Size {

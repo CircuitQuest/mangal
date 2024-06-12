@@ -5,6 +5,7 @@ import (
 	"path/filepath"
 	"strings"
 
+	"github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
@@ -14,6 +15,12 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
+var (
+	_ list.Item        = (*Item)(nil)
+	_ list.DefaultItem = (*Item)(nil)
+)
+
+// Item implements list.Item.
 type Item struct {
 	client            *libmangal.Client
 	chapter           *mangadata.Chapter
@@ -25,10 +32,12 @@ type Item struct {
 	tmpDownPath       *string
 }
 
+// FilterValue implements list.Item.
 func (i *Item) FilterValue() string {
 	return (*i.chapter).String()
 }
 
+// Title implements list.DefaultItem.
 func (i *Item) Title() string {
 	var title strings.Builder
 
@@ -69,6 +78,7 @@ func (i *Item) Title() string {
 	return title.String()
 }
 
+// Description implements list.DefaultItem.
 func (i *Item) Description() string {
 	var extraInfo strings.Builder
 

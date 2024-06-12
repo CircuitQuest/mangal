@@ -7,9 +7,9 @@ import (
 func New(message string, onResponse OnResponseFunc) *State {
 	return &State{
 		message: message,
-		keyMap: KeyMap{
-			Yes: util.Bind("yes", "y", "enter"),
-			No:  util.Bind("no", "n"),
+		keyMap: keyMap{
+			yes: util.Bind("yes", "y", "enter"),
+			no:  util.Bind("no", "n"),
 		},
 		onResponse: onResponse,
 	}

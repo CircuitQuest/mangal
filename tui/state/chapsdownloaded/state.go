@@ -15,45 +15,59 @@ import (
 
 var _ base.State = (*State)(nil)
 
+// State implements base.State.
 type State struct {
 	options Options
-	keyMap  KeyMap
+	keyMap  keyMap
 }
 
+// Intermediate implements base.State.
 func (s *State) Intermediate() bool {
 	return true
 }
 
-func (s *State) KeyMap() help.KeyMap {
-	return s.keyMap
-}
-
-func (s *State) Title() base.Title {
-	return base.Title{Text: "Done"}
-}
-
-func (s *State) Subtitle() string {
-	return ""
-}
-
-func (s *State) Status() string {
-	return ""
-}
-
+// Backable implements base.State.
 func (s *State) Backable() bool {
 	return true
 }
 
+// KeyMap implements base.State.
+func (s *State) KeyMap() help.KeyMap {
+	return s.keyMap
+}
+
+// Title implements base.State.
+func (s *State) Title() base.Title {
+	return base.Title{Text: "Done"}
+}
+
+// Subtitle implements base.State.
+func (s *State) Subtitle() string {
+	return ""
+}
+
+// Status implements base.State.
+func (s *State) Status() string {
+	return ""
+}
+
+// Resize implements base.State.
 func (s *State) Resize(size base.Size) {
 }
 
+// Init implements base.State.
+func (s *State) Init(model base.Model) tea.Cmd {
+	return nil
+}
+
+// Update implements base.State.
 func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, s.keyMap.Quit):
+		case key.Matches(msg, s.keyMap.quit):
 			return tea.Quit
-		case key.Matches(msg, s.keyMap.Open) && len(s.options.SucceedDownloads) > 0:
+		case key.Matches(msg, s.keyMap.open) && len(s.options.SucceedDownloads) > 0:
 			err := open.Start(s.options.SucceedDownloads[0].Directory)
 			// err := open.Start(filepath.Dir(s.options.SucceedDownloads[0].Path()))
 			if err != nil {
@@ -63,7 +77,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 			}
 
 			return nil
-		case key.Matches(msg, s.keyMap.Retry) && len(s.options.Failed) > 0:
+		case key.Matches(msg, s.keyMap.retry) && len(s.options.Failed) > 0:
 			return s.options.DownloadChapters(s.options.Failed)
 		}
 	}
@@ -71,6 +85,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 	return nil
 }
 
+// View implements base.State.
 func (s *State) View(model base.Model) string {
 	var (
 		succeed = len(s.options.Succeed)
@@ -109,8 +124,4 @@ func (s *State) View(model base.Model) string {
 	}
 
 	return sb.String()
-}
-
-func (s *State) Init(model base.Model) tea.Cmd {
-	return nil
 }

@@ -18,6 +18,7 @@ import (
 
 var _ base.State = (*State)(nil)
 
+// State implements base.State.
 type State struct {
 	options  Options
 	chapters []mangadata.Chapter
@@ -32,38 +33,59 @@ type State struct {
 
 	size base.Size
 
-	keyMap KeyMap
+	keyMap help.KeyMap
 }
 
+// Intermediate implements base.State.
 func (s *State) Intermediate() bool {
 	return true
 }
 
-func (s *State) KeyMap() help.KeyMap {
-	return s.keyMap
-}
-
-func (s *State) Title() base.Title {
-	return base.Title{Text: "Downloading"}
-}
-
-func (s *State) Subtitle() string {
-	return ""
-}
-
-func (s *State) Status() string {
-	return ""
-}
-
+// Backable implements base.State.
 func (s *State) Backable() bool {
 	return true
 }
 
+// KeyMap implements base.State.
+func (s *State) KeyMap() help.KeyMap {
+	return s.keyMap
+}
+
+// Title implements base.State.
+func (s *State) Title() base.Title {
+	return base.Title{Text: "Downloading"}
+}
+
+// Subtitle implements base.State.
+func (s *State) Subtitle() string {
+	return ""
+}
+
+// Status implements base.State.
+func (s *State) Status() string {
+	return ""
+}
+
+// Resize implements base.State.
 func (s *State) Resize(size base.Size) {
 	s.size = size
 	s.progress.Width = size.Width
 }
 
+// Init implements base.State.
+func (s *State) Init(model base.Model) tea.Cmd {
+	return tea.Batch(
+		func() tea.Msg {
+			return nextChapterIdxMsg(0)
+		},
+		func() tea.Msg {
+			return spinner.TickMsg{}
+		},
+		s.progress.Init(),
+	)
+}
+
+// Update implements base.State.
 func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case progress.FrameMsg:
@@ -103,6 +125,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 	}
 }
 
+// View implements base.State.
 func (s *State) View(model base.Model) string {
 	spinnerView := s.spinner.View()
 	return fmt.Sprintf(`%s Downloading %s - %d/%d
@@ -119,18 +142,7 @@ func (s *State) View(model base.Model) string {
 	)
 }
 
-func (s *State) Init(model base.Model) tea.Cmd {
-	return tea.Batch(
-		func() tea.Msg {
-			return nextChapterIdxMsg(0)
-		},
-		func() tea.Msg {
-			return spinner.TickMsg{}
-		},
-		s.progress.Init(),
-	)
-}
-
+// SetMessage updates the message for the loading view.
 func (s *State) SetMessage(message string) {
 	s.message = message
 }

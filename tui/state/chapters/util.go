@@ -68,7 +68,7 @@ func (s *State) downloadChapterCmd(ctx context.Context, chapter mangadata.Chapte
 				return err
 			}
 
-			return base.MsgBack{}
+			return base.Back
 		},
 	)
 }

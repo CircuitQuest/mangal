@@ -21,9 +21,9 @@ func New(anilist *lmanilist.Anilist, chapters []lmanilist.Manga, onResponse OnRe
 		anilist:    anilist,
 		list:       listWrapper,
 		onResponse: onResponse,
-		keyMap: KeyMap{
-			Confirm: util.Bind("confirm", "enter"),
-			Search:  util.Bind("search", "s"),
+		keyMap: keyMap{
+			confirm: util.Bind("confirm", "enter"),
+			search:  util.Bind("search", "s"),
 		},
 	}
 }

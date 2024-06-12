@@ -21,15 +21,46 @@ import (
 
 var _ base.State = (*State)(nil)
 
+// State implements base.State.
 type State struct {
-	providersLoaders []libmangal.ProviderLoader
-	list             *listwrapper.State
-	keyMap           KeyMap
+	list            *listwrapper.State
+	providerLoaders []libmangal.ProviderLoader
+	keyMap          keyMap
+}
+
+// Intermediate implements base.State.
+func (s *State) Intermediate() bool {
+	return s.list.Intermediate()
 }
 
 // Backable implements base.State.
 func (s *State) Backable() bool {
 	return s.list.Backable()
+}
+
+// KeyMap implements base.State.
+func (s *State) KeyMap() help.KeyMap {
+	return s.keyMap
+}
+
+// Title implements base.State.
+func (s *State) Title() base.Title {
+	return base.Title{Text: "Providers"}
+}
+
+// Subtitle implements base.State.
+func (s *State) Subtitle() string {
+	return s.list.Subtitle()
+}
+
+// Status implements base.State.
+func (s *State) Status() string {
+	return s.list.Status()
+}
+
+// Resize implements base.State.
+func (s *State) Resize(size base.Size) {
+	s.list.Resize(size)
 }
 
 // Init implements base.State.
@@ -40,35 +71,6 @@ func (s *State) Init(model base.Model) tea.Cmd {
 		},
 		s.list.Init(model),
 	)
-}
-
-// Intermediate implements base.State.
-func (s *State) Intermediate() bool {
-	return s.list.Intermediate()
-}
-
-// KeyMap implements base.State.
-func (s *State) KeyMap() help.KeyMap {
-	return s.keyMap
-}
-
-// Resize implements base.State.
-func (s *State) Resize(size base.Size) {
-	s.list.Resize(size)
-}
-
-// Status implements base.State.
-func (s *State) Status() string {
-	return s.list.Status()
-}
-
-// Title implements base.State.
-func (s *State) Title() base.Title {
-	return base.Title{Text: "Providers"}
-}
-
-func (s *State) Subtitle() string {
-	return s.list.Subtitle()
 }
 
 // Update implements base.State.

@@ -11,23 +11,19 @@ import (
 
 var _ base.State = (*State)(nil)
 
+// State implements base.State.
 type State struct {
 	list   *listwrapper.State
-	keyMap KeyMap
-}
-
-// Backable implements base.State.
-func (*State) Backable() bool {
-	return true
-}
-
-// Init implements base.State.
-func (*State) Init(model base.Model) tea.Cmd {
-	return nil
+	keyMap keyMap
 }
 
 // Intermediate implements base.State.
 func (*State) Intermediate() bool {
+	return true
+}
+
+// Backable implements base.State.
+func (*State) Backable() bool {
 	return true
 }
 
@@ -36,14 +32,9 @@ func (s *State) KeyMap() help.KeyMap {
 	return s.keyMap
 }
 
-// Resize implements base.State.
-func (s *State) Resize(size base.Size) {
-	s.list.Resize(size)
-}
-
-// Status implements base.State.
-func (s *State) Status() string {
-	return s.list.Status()
+// Title implements base.State.
+func (*State) Title() base.Title {
+	return base.Title{Text: "Formats"}
 }
 
 // Subtitle implements base.State.
@@ -51,9 +42,19 @@ func (s *State) Subtitle() string {
 	return s.list.Subtitle()
 }
 
-// Title implements base.State.
-func (*State) Title() base.Title {
-	return base.Title{Text: "Formats"}
+// Status implements base.State.
+func (s *State) Status() string {
+	return s.list.Status()
+}
+
+// Resize implements base.State.
+func (s *State) Resize(size base.Size) {
+	s.list.Resize(size)
+}
+
+// Init implements base.State.
+func (*State) Init(model base.Model) tea.Cmd {
+	return nil
 }
 
 // Update implements base.State.
@@ -70,15 +71,15 @@ func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 		}
 
 		switch {
-		case key.Matches(msg, s.keyMap.SetDownload):
+		case key.Matches(msg, s.keyMap.setDownload):
 			return func() tea.Msg {
 				return item.SelectForDownloading()
 			}
-		case key.Matches(msg, s.keyMap.SetRead):
+		case key.Matches(msg, s.keyMap.setRead):
 			return func() tea.Msg {
 				return item.SelectForReading()
 			}
-		case key.Matches(msg, s.keyMap.SetAll):
+		case key.Matches(msg, s.keyMap.setAll):
 			return tea.Batch(
 				func() tea.Msg {
 					return item.SelectForReading()

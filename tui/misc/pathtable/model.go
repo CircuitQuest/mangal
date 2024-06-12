@@ -13,6 +13,9 @@ import (
 	"github.com/luevano/mangal/theme/style"
 )
 
+var _ tea.Model = (*Model)(nil)
+
+// Model implements tea.Model.
 type Model struct {
 	table   table.Model
 	keyMap  keyMap
@@ -22,10 +25,12 @@ type Model struct {
 	quiting bool
 }
 
+// Init implements tea.Model.
 func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
+// Update implements tea.Model.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
@@ -65,6 +70,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// View implements tea.Model.
 func (m *Model) View() string {
 	if m.quiting {
 		return ""

@@ -5,21 +5,24 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 )
 
-var _ help.KeyMap = (*KeyMap)(nil)
+var _ help.KeyMap = (*keyMap)(nil)
 
-type KeyMap struct {
-	Search,
-	Confirm key.Binding
+// keyMap implements help.keyMap.
+type keyMap struct {
+	search,
+	confirm key.Binding
 }
 
-func (k KeyMap) ShortHelp() []key.Binding {
+// ShortHelp implements help.keyMap.
+func (k keyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
-		k.Confirm,
-		k.Search,
+		k.confirm,
+		k.search,
 	}
 }
 
-func (k KeyMap) FullHelp() [][]key.Binding {
+// FullHelp implements help.keyMap.
+func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		k.ShortHelp(),
 	}

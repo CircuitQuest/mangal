@@ -19,11 +19,11 @@ func New() *State {
 
 	return &State{
 		list: listWrapper,
-		keyMap: KeyMap{
-			SetRead:     util.Bind("set for reading", "r"),
-			SetDownload: util.Bind("set for downloading", "d"),
-			SetAll:      util.Bind("set for all", "enter"),
-			list:        listWrapper.GetKeyMap(),
+		keyMap: keyMap{
+			setRead:     util.Bind("set for reading", "r"),
+			setDownload: util.Bind("set for downloading", "d"),
+			setAll:      util.Bind("set for all", "enter"),
+			list:        listWrapper.KeyMap(),
 		},
 	}
 }
