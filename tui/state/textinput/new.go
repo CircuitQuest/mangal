@@ -26,8 +26,8 @@ func New(options Options) *State {
 	return &State{
 		options:   options,
 		textinput: input,
-		keyMap: KeyMap{
-			Confirm: util.Bind("confirm", "enter"),
+		keyMap: keyMap{
+			confirm: util.Bind("confirm", "enter"),
 		},
 	}
 }

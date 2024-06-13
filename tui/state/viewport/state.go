@@ -14,7 +14,7 @@ import (
 
 var _ base.State = (*State)(nil)
 
-// State implements base.State.
+// State implements base.State. Wrapper of viewport.Model.
 type State struct {
 	size     base.Size
 	title    string
