@@ -8,7 +8,6 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
-	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
@@ -112,13 +111,13 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 									return loading.New("Searching", fmt.Sprintf("Searching for %q", response))
 								},
 								func() tea.Msg {
-									mL, err := client.SearchMangas(model.Context(), response)
+									mangaList, err := client.SearchMangas(model.Context(), response)
 									if err != nil {
 										return err
 									}
-									var mangaList []*mangadata.Manga
-									for _, m := range mL {
-										mangaList = append(mangaList, &m)
+
+									for _, m := range mangaList {
+										log.Log("%q: %p", m, m)
 									}
 
 									return mangas.New(client, response, mangaList)

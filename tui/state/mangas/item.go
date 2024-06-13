@@ -12,12 +12,12 @@ var (
 
 // Item implements list.Item.
 type Item struct {
-	manga *mangadata.Manga
+	manga mangadata.Manga
 }
 
 // FilterValue implements list.Item.
 func (i Item) FilterValue() string {
-	return (*i.manga).String()
+	return i.manga.String()
 }
 
 // Title implements list.DefaultItem.
@@ -27,5 +27,5 @@ func (i Item) Title() string {
 
 // Description implements list.DefaultItem.
 func (i Item) Description() string {
-	return (*i.manga).Info().URL
+	return i.manga.Info().URL
 }

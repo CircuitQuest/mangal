@@ -8,21 +8,21 @@ import (
 	"github.com/luevano/mangal/tui/util"
 )
 
-func New(client *libmangal.Client, manga *mangadata.Manga, volumes []*mangadata.Volume) *State {
+func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Volume) *State {
 	listWrapper := listwrapper.New(util.NewList(
 		1,
 		"volume", "volumes",
 		volumes,
-		func(volume *mangadata.Volume) list.DefaultItem {
+		func(volume mangadata.Volume) list.DefaultItem {
 			return Item{volume}
 		},
 	))
 
 	return &State{
+		list:    listWrapper,
+		volumes: volumes,
 		manga:   manga,
 		client:  client,
-		volumes: volumes,
-		list:    listWrapper,
 		keyMap: keyMap{
 			confirm: util.Bind("confirm", "enter"),
 		},

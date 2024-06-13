@@ -22,8 +22,8 @@ var (
 
 // Item implements list.Item.
 type Item struct {
+	chapter           mangadata.Chapter
 	client            *libmangal.Client
-	chapter           *mangadata.Chapter
 	selectedItems     *set.Set[*Item]
 	showChapterNumber *bool
 	showGroup         *bool
@@ -34,7 +34,7 @@ type Item struct {
 
 // FilterValue implements list.Item.
 func (i *Item) FilterValue() string {
-	return (*i.chapter).String()
+	return i.chapter.String()
 }
 
 // Title implements list.DefaultItem.
@@ -42,7 +42,7 @@ func (i *Item) Title() string {
 	var title strings.Builder
 
 	if *i.showChapterNumber {
-		chapterNumber := fmt.Sprintf(config.TUI.Chapter.NumberFormat.Get(), (*i.chapter).Info().Number)
+		chapterNumber := fmt.Sprintf(config.TUI.Chapter.NumberFormat.Get(), i.chapter.Info().Number)
 		chapterNumberFmt := style.Bold.Base.Render(chapterNumber)
 		title.WriteString(chapterNumberFmt)
 		title.WriteString(" ")
@@ -82,7 +82,7 @@ func (i *Item) Title() string {
 func (i *Item) Description() string {
 	var extraInfo strings.Builder
 
-	chapterInfo := (*i.chapter).Info()
+	chapterInfo := i.chapter.Info()
 	if *i.showDate {
 		chapterDate := style.Bold.Secondary.Render(chapterInfo.Date.String())
 		extraInfo.WriteString(chapterDate)
@@ -137,7 +137,7 @@ func (i *Item) Path(format libmangal.Format) string {
 	// 	path = filepath.Join(path, i.client.ComputeVolumeFilename(volume))
 	// }
 
-	return filepath.Join(*i.tmpDownPath, i.client.ComputeChapterFilename(*i.chapter, format))
+	return filepath.Join(*i.tmpDownPath, i.client.ComputeChapterFilename(i.chapter, format))
 }
 
 // Updated to avoid computing filenames each frame/update
@@ -156,7 +156,7 @@ func (i *Item) IsRecent() bool {
 	// 	i.client.ComputeChapterFilename(chapter, format),
 	// )
 
-	tmpPath := filepath.Join(*i.tmpPath, i.client.ComputeChapterFilename(*i.chapter, config.Read.Format.Get()))
+	tmpPath := filepath.Join(*i.tmpPath, i.client.ComputeChapterFilename(i.chapter, config.Read.Format.Get()))
 	exists, err := afs.Afero.Exists(tmpPath)
 	if err != nil {
 		return false

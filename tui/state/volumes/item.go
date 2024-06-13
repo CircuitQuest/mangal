@@ -14,12 +14,12 @@ var (
 
 // Item implements list.Item.
 type Item struct {
-	volume *mangadata.Volume
+	volume mangadata.Volume
 }
 
 // FilterValue implements list.Item.
 func (i Item) FilterValue() string {
-	return fmt.Sprintf("Volume %s", (*i.volume).String())
+	return fmt.Sprintf("Volume %s", i.volume)
 }
 
 // Title implements list.DefaultItem.

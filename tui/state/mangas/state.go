@@ -24,8 +24,8 @@ var _ base.State = (*State)(nil)
 // State implements base.State.
 type State struct {
 	list   *listwrapper.State
+	mangas []mangadata.Manga
 	client *libmangal.Client
-	mangas []*mangadata.Manga
 	query  string
 	keyMap keyMap
 }
@@ -87,51 +87,43 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Finding Anilist for %q", *item.manga))
+					return loading.New("Searching", fmt.Sprintf("Finding Anilist for %q", item.manga))
 				},
 				func() tea.Msg {
 					// TODO: handle more cases for missing/partial metadata
 					// Find anilist manga closest to the selected manga and assign it
-					anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), *item.manga)
+					anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), item.manga)
 					if err != nil {
 						return err
 					}
 					if !found {
-						log.Log("Couldn't find Anilist for %q", *item.manga)
+						log.Log("Couldn't find Anilist for %q", item.manga)
 					} else {
-						(*item.manga).SetMetadata(anilistManga.Metadata())
-						log.Log("Found and set Anilist for %q: %q (%d)", *item.manga, anilistManga.String(), anilistManga.ID)
+						item.manga.SetMetadata(anilistManga.Metadata())
+						log.Log("Found and set Anilist for %q: %q (%d)", item.manga, anilistManga.String(), anilistManga.ID)
+						log.Log("Set metadata to %q: %p", item.manga, item.manga)
 					}
 
 					return nil
 				},
 				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Getting volumes for %q", *item.manga))
+					return loading.New("Searching", fmt.Sprintf("Getting volumes for %q", item.manga))
 				},
 				func() tea.Msg {
-					vL, err := s.client.MangaVolumes(model.Context(), *item.manga)
+					volumeList, err := s.client.MangaVolumes(model.Context(), item.manga)
 					if err != nil {
 						return err
 					}
 
-					var volumeList []*mangadata.Volume
-					for _, v := range vL {
-						volumeList = append(volumeList, &v)
-					}
-
-					if len(vL) != 1 || !config.TUI.ExpandSingleVolume.Get() {
+					if len(volumeList) != 1 || !config.TUI.ExpandSingleVolume.Get() {
 						return volumes.New(s.client, item.manga, volumeList)
 					}
 
+					// It's guaranteed to at least contain 1 volume
 					volume := volumeList[0]
-					cL, err := s.client.VolumeChapters(model.Context(), *volume)
+					chapterList, err := s.client.VolumeChapters(model.Context(), volume)
 					if err != nil {
 						return err
-					}
-
-					var chapterList []*mangadata.Chapter
-					for _, c := range cL {
-						chapterList = append(chapterList, &c)
 					}
 
 					return chapters.New(s.client, item.manga, volume, chapterList)

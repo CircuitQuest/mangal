@@ -13,7 +13,7 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
-func New(client *libmangal.Client, manga *mangadata.Manga, volume *mangadata.Volume, chapters []*mangadata.Chapter) *State {
+func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volume, chapters []mangadata.Chapter) *State {
 	showChapterNumber := config.TUI.Chapter.ShowNumber.Get()
 	showGroup := config.TUI.Chapter.ShowGroup.Get()
 	showDate := config.TUI.Chapter.ShowDate.Get()
@@ -23,23 +23,21 @@ func New(client *libmangal.Client, manga *mangadata.Manga, volume *mangadata.Vol
 		3,
 		"chapter", "chapters",
 		chapters,
-		func(chapter *mangadata.Chapter) list.DefaultItem {
-			tmpPath := filepath.Join(
-				path.TempDir(),
-				client.ComputeProviderFilename(client.Info()),
-				client.ComputeMangaFilename(*manga),
-				client.ComputeVolumeFilename(*volume),
-			)
+		func(chapter mangadata.Chapter) list.DefaultItem {
+			providerFilename := client.ComputeProviderFilename(client.Info())
+			mangaFilename := client.ComputeMangaFilename(manga)
+			volumeFilename := client.ComputeVolumeFilename(volume)
 
+			tmpPath := filepath.Join(path.TempDir(), providerFilename, mangaFilename, volumeFilename)
 			tmpDownPath := path.DownloadsDir()
 			if config.Download.Provider.CreateDir.Get() {
-				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeProviderFilename(client.Info()))
+				tmpDownPath = filepath.Join(tmpDownPath, providerFilename)
 			}
 			if config.Download.Manga.CreateDir.Get() {
-				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeMangaFilename(*manga))
+				tmpDownPath = filepath.Join(tmpDownPath, mangaFilename)
 			}
 			if config.Download.Volume.CreateDir.Get() {
-				tmpDownPath = filepath.Join(tmpDownPath, client.ComputeVolumeFilename(*volume))
+				tmpDownPath = filepath.Join(tmpDownPath, volumeFilename)
 			}
 
 			return &Item{
@@ -56,11 +54,12 @@ func New(client *libmangal.Client, manga *mangadata.Manga, volume *mangadata.Vol
 	))
 
 	return &State{
-		client:   client,
-		manga:    manga,
-		volume:   volume,
-		selected: selectedSet,
 		list:     listWrapper,
+		chapters: chapters,
+		volume:   volume,
+		manga:    manga,
+		client:   client,
+		selected: selectedSet,
 		keyMap: keyMap{
 			unselectAll:         util.Bind("unselect all", "backspace"),
 			selectAll:           util.Bind("select all", "a"),

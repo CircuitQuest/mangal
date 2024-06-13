@@ -31,11 +31,12 @@ var _ base.State = (*State)(nil)
 
 // State implements base.State.
 type State struct {
-	client            *libmangal.Client
-	manga             *mangadata.Manga
-	volume            *mangadata.Volume
-	selected          set.Set[*Item]
 	list              *listwrapper.State
+	chapters          []mangadata.Chapter
+	volume            mangadata.Volume
+	manga             mangadata.Manga
+	client            *libmangal.Client
+	selected          set.Set[*Item]
 	keyMap            keyMap
 	showChapterNumber *bool
 	showGroup         *bool
@@ -59,7 +60,7 @@ func (s *State) KeyMap() help.KeyMap {
 
 // Title implements base.State.
 func (s *State) Title() base.Title {
-	return base.Title{Text: fmt.Sprintf("%s / Vol. %s", *s.manga, (*s.volume).String())}
+	return base.Title{Text: fmt.Sprintf("%s / Vol. %s", s.manga, s.volume)}
 }
 
 // Subtitle implements base.State.
@@ -142,10 +143,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.openURL):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Opening", (*item.chapter).String())
+					return loading.New("Opening", item.chapter.String())
 				},
 				func() tea.Msg {
-					err := open.Run((*item.chapter).Info().URL)
+					err := open.Run(item.chapter.Info().URL)
 					if err != nil {
 						return err
 					}
@@ -157,10 +158,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			var chapters []mangadata.Chapter
 
 			if s.selected.Size() == 0 {
-				chapters = append(chapters, *item.chapter)
+				chapters = append(chapters, item.chapter)
 			} else {
 				for _, item := range s.selected.Keys() {
-					chapters = append(chapters, *item.chapter)
+					chapters = append(chapters, item.chapter)
 				}
 			}
 
@@ -202,13 +203,13 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 			if item.DownloadedFormats().Has(downloadOptions.Format) {
 				return tea.Sequence(
 					func() tea.Msg {
-						return loading.New("Opening for reading", (*item.chapter).String())
+						return loading.New("Opening for reading", item.chapter.String())
 					},
 					func() tea.Msg {
 						err := s.client.ReadChapter(
 							model.Context(),
 							item.Path(downloadOptions.Format),
-							*item.chapter,
+							item.chapter,
 							downloadOptions.ReadOptions,
 						)
 						if err != nil {
@@ -220,8 +221,8 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				)
 			}
 
-			return s.downloadChapterCmd(model.Context(), *item.chapter, downloadOptions)
-		// TODO: this should be set some levels before
+			return s.downloadChapterCmd(model.Context(), item.chapter, downloadOptions)
+		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
 		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
 				func() tea.Msg {
@@ -233,7 +234,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					// TODO: solidify the metadata gathering, missing/partial
 					// TODO: revert to just Title instead of AnilistSearch?
 					var mangaTitle string
-					mangaInfo := (*item.chapter).Volume().Manga().Info()
+					mangaInfo := item.chapter.Volume().Manga().Info()
 					if mangaInfo.AnilistSearch != "" {
 						mangaTitle = mangaInfo.AnilistSearch
 					} else {
@@ -269,7 +270,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 							return tea.Sequence(
 								func() tea.Msg {
 									log.Log("Setting Anilist manga %q (%d)", response.String(), response.ID)
-									(*s.manga).SetMetadata(response.Metadata())
+									s.manga.SetMetadata(response.Metadata())
 
 									return base.Back
 								},
