@@ -19,7 +19,7 @@ type keyMap struct {
 	openURL,
 	download,
 	anilist,
-	aonfirm,
+	confirm,
 	changeFormat key.Binding
 
 	list help.KeyMap

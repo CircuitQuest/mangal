@@ -153,7 +153,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					return base.Back
 				},
 			)
-		case key.Matches(msg, s.keyMap.download) || (s.selected.Size() > 0 && key.Matches(msg, s.keyMap.aonfirm)):
+		case key.Matches(msg, s.keyMap.download) || (s.selected.Size() > 0 && key.Matches(msg, s.keyMap.confirm)):
 			var chapters []mangadata.Chapter
 
 			if s.selected.Size() == 0 {
@@ -180,7 +180,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					},
 				)
 			}
-		case key.Matches(msg, s.keyMap.read) || (s.selected.Size() == 0 && key.Matches(msg, s.keyMap.aonfirm)):
+		case key.Matches(msg, s.keyMap.read) || (s.selected.Size() == 0 && key.Matches(msg, s.keyMap.confirm)):
 			// If download on read is wanted, then use the normal download path
 			var directory string
 			if config.Read.DownloadOnRead.Get() {

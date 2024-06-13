@@ -72,7 +72,7 @@ func New(client *libmangal.Client, manga *mangadata.Manga, volume *mangadata.Vol
 			openURL:             util.Bind("open url", "o"),
 			anilist:             util.Bind("anilist", "A"),
 			download:            util.Bind("download", "d"),
-			aonfirm:             util.Bind("confirm", "enter"),
+			confirm:             util.Bind("confirm", "enter"),
 			changeFormat:        util.Bind("change format", "f"),
 			list:                listWrapper.KeyMap(),
 		},
