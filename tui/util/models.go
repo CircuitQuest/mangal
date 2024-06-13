@@ -7,6 +7,9 @@ import (
 	"github.com/luevano/mangal/theme/color"
 )
 
+// TODO: move this to wrapper.list?
+//
+// NewList creates a new list.Model given the generic items.
 func NewList[T any](
 	delegateHeight int,
 	singular, plural string,

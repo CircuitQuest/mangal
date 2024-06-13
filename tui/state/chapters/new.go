@@ -3,12 +3,12 @@ package chapters
 import (
 	"path/filepath"
 
-	"github.com/charmbracelet/bubbles/list"
+	_list "github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
-	"github.com/luevano/mangal/tui/state/listwrapper"
+	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/luevano/mangal/tui/util"
 	"github.com/zyedidia/generic/set"
 )
@@ -19,11 +19,11 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	showDate := config.TUI.Chapter.ShowDate.Get()
 	selectedSet := set.NewMapset[*Item]()
 
-	listWrapper := listwrapper.New(util.NewList(
+	listWrapper := list.New(util.NewList(
 		3,
 		"chapter", "chapters",
 		chapters,
-		func(chapter mangadata.Chapter) list.DefaultItem {
+		func(chapter mangadata.Chapter) _list.DefaultItem {
 			providerFilename := client.ComputeProviderFilename(client.Info())
 			mangaFilename := client.ComputeMangaFilename(manga)
 			volumeFilename := client.ComputeVolumeFilename(volume)

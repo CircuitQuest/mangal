@@ -8,7 +8,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
+	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
@@ -20,8 +20,8 @@ import (
 	"github.com/luevano/mangal/tui/state/anilistmangas"
 	"github.com/luevano/mangal/tui/state/confirm"
 	"github.com/luevano/mangal/tui/state/formats"
-	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
+	"github.com/luevano/mangal/tui/state/wrapper/list"
 	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
@@ -31,7 +31,7 @@ var _ base.State = (*State)(nil)
 
 // State implements base.State.
 type State struct {
-	list              *listwrapper.State
+	list              *list.State
 	chapters          []mangadata.Chapter
 	volume            mangadata.Volume
 	manga             mangadata.Manga
@@ -102,7 +102,7 @@ func (s *State) Init(model base.Model) tea.Cmd {
 func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if s.list.FilterState() == list.Filtering {
+		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 

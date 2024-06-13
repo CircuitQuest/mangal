@@ -2,8 +2,9 @@ package util
 
 import "github.com/charmbracelet/bubbles/key"
 
+// Bind is a convenience function to create key bindings easily.
 func Bind(help string, primaryKey string, extraKeys ...string) key.Binding {
-	var keys = make([]string, 1+len(extraKeys))
+	keys := make([]string, 1+len(extraKeys))
 	keys[0] = primaryKey
 	for i, k := range extraKeys {
 		keys[i+1] = k

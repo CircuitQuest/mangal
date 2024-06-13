@@ -1,18 +1,18 @@
 package anilistmangas
 
 import (
-	"github.com/charmbracelet/bubbles/list"
+	_list "github.com/charmbracelet/bubbles/list"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
-	"github.com/luevano/mangal/tui/state/listwrapper"
+	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/luevano/mangal/tui/util"
 )
 
 func New(anilist *lmanilist.Anilist, chapters []lmanilist.Manga, onResponse OnResponseFunc) *State {
-	listWrapper := listwrapper.New(util.NewList(
+	listWrapper := list.New(util.NewList(
 		2,
 		"manga", "mangas",
 		chapters,
-		func(manga lmanilist.Manga) list.DefaultItem {
+		func(manga lmanilist.Manga) _list.DefaultItem {
 			return Item{Manga: &manga}
 		},
 	))

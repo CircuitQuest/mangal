@@ -3,17 +3,17 @@ package formats
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
+	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/listwrapper"
+	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
 var _ base.State = (*State)(nil)
 
 // State implements base.State.
 type State struct {
-	list   *listwrapper.State
+	list   *list.State
 	keyMap keyMap
 }
 
@@ -61,7 +61,7 @@ func (*State) Init(model base.Model) tea.Cmd {
 func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if s.list.FilterState() == list.Filtering {
+		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 

@@ -9,7 +9,7 @@ import (
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/errorstate"
-	"github.com/luevano/mangal/tui/state/viewport"
+	"github.com/luevano/mangal/tui/state/wrapper/viewport"
 	"github.com/pkg/errors"
 )
 

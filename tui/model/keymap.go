@@ -8,12 +8,15 @@ import (
 
 var _ help.KeyMap = (*NoKeyMap)(nil)
 
+// NoKeyMap implements help.keyMap.
 type NoKeyMap struct{}
 
+// ShortHelp implements help.keyMap.
 func (k NoKeyMap) ShortHelp() []key.Binding {
 	return nil
 }
 
+// FullHelp implements help.keyMap.
 func (k NoKeyMap) FullHelp() [][]key.Binding {
 	return nil
 }

@@ -1,19 +1,19 @@
 package volumes
 
 import (
-	"github.com/charmbracelet/bubbles/list"
+	_list "github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
-	"github.com/luevano/mangal/tui/state/listwrapper"
+	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/luevano/mangal/tui/util"
 )
 
 func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Volume) *State {
-	listWrapper := listwrapper.New(util.NewList(
+	listWrapper := list.New(util.NewList(
 		1,
 		"volume", "volumes",
 		volumes,
-		func(volume mangadata.Volume) list.DefaultItem {
+		func(volume mangadata.Volume) _list.DefaultItem {
 			return Item{volume}
 		},
 	))

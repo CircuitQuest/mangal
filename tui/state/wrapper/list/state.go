@@ -1,4 +1,4 @@
-package listwrapper
+package list
 
 import (
 	"fmt"

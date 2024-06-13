@@ -1,4 +1,4 @@
-package listwrapper
+package list
 
 import (
 	"github.com/charmbracelet/bubbles/help"

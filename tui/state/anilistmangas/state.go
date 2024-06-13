@@ -5,13 +5,13 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
+	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
-	"github.com/luevano/mangal/tui/state/textinput"
+	"github.com/luevano/mangal/tui/state/wrapper/list"
+	"github.com/luevano/mangal/tui/state/wrapper/textinput"
 )
 
 var _ base.State = (*State)(nil)
@@ -21,7 +21,7 @@ type OnResponseFunc func(response *lmanilist.Manga) tea.Cmd
 // State implements base.State.
 type State struct {
 	anilist *lmanilist.Anilist
-	list    *listwrapper.State
+	list    *list.State
 
 	onResponse OnResponseFunc
 
@@ -72,7 +72,7 @@ func (s *State) Init(model base.Model) tea.Cmd {
 func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if s.list.FilterState() == list.Filtering {
+		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 

@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
+	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
@@ -14,16 +14,16 @@ import (
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapters"
-	"github.com/luevano/mangal/tui/state/listwrapper"
 	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/volumes"
+	list "github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
 var _ base.State = (*State)(nil)
 
 // State implements base.State.
 type State struct {
-	list   *listwrapper.State
+	list   *list.State
 	mangas []mangadata.Manga
 	client *libmangal.Client
 	query  string
@@ -74,7 +74,7 @@ func (s *State) Init(model base.Model) tea.Cmd {
 func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if s.list.FilterState() == list.Filtering {
+		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 
