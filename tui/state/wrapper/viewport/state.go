@@ -1,6 +1,7 @@
 package viewport
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -65,7 +66,7 @@ func (s *State) Resize(_size base.Size) {
 }
 
 // Init implements base.State.
-func (s *State) Init(model base.Model) tea.Cmd {
+func (s *State) Init(ctx context.Context) tea.Cmd {
 	size := s.paddedSize()
 
 	s.viewport = viewport.New(size.Width, size.Height)
@@ -76,14 +77,14 @@ func (s *State) Init(model base.Model) tea.Cmd {
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
+func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	var cmd tea.Cmd
 	s.viewport, cmd = s.viewport.Update(msg)
 	return cmd
 }
 
 // View implements base.State.
-func (s *State) View(model base.Model) string {
+func (s *State) View() string {
 	viewport := fmt.Sprintf("%s\n%s\n%s", s.headerView(), s.viewport.View(), s.footerView())
 	return s.styles.ContentWrapper(s.padding.Height, s.padding.Width).Render(viewport)
 }

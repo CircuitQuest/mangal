@@ -1,6 +1,7 @@
 package chapters
 
 import (
+	"context"
 	"fmt"
 	"sort"
 	"strings"
@@ -94,12 +95,12 @@ func (s *State) Resize(size base.Size) {
 }
 
 // Init implements base.State.
-func (s *State) Init(model base.Model) tea.Cmd {
-	return s.list.Init(model)
+func (s *State) Init(ctx context.Context) tea.Cmd {
+	return s.list.Init(ctx)
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
+func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
@@ -207,7 +208,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					},
 					func() tea.Msg {
 						err := s.client.ReadChapter(
-							model.Context(),
+							ctx,
 							item.Path(downloadOptions.Format),
 							item.chapter,
 							downloadOptions.ReadOptions,
@@ -221,7 +222,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 				)
 			}
 
-			return s.downloadChapterCmd(model.Context(), item.chapter, downloadOptions)
+			return s.downloadChapterCmd(ctx, item.chapter, downloadOptions)
 		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
 		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
@@ -241,7 +242,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						mangaTitle = mangaInfo.Title
 					}
 
-					closest, ok, err := s.client.Anilist().FindClosestManga(model.Context(), mangaTitle)
+					closest, ok, err := s.client.Anilist().FindClosestManga(ctx, mangaTitle)
 					if err != nil {
 						return err
 					}
@@ -250,7 +251,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 						mangas = append(mangas, closest)
 					}
 
-					mangaSearchResults, err := s.client.Anilist().SearchMangas(model.Context(), mangaTitle)
+					mangaSearchResults, err := s.client.Anilist().SearchMangas(ctx, mangaTitle)
 					if err != nil {
 						return nil
 					}
@@ -283,23 +284,23 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.toggleChapterNumber):
 			*s.showChapterNumber = !(*s.showChapterNumber)
 
-			return s.list.Update(model, msg)
+			return s.list.Update(ctx, msg)
 		case key.Matches(msg, s.keyMap.toggleGroup):
 			*s.showGroup = !(*s.showGroup)
 
-			return s.list.Update(model, msg)
+			return s.list.Update(ctx, msg)
 		case key.Matches(msg, s.keyMap.toggleDate):
 			*s.showDate = !(*s.showDate)
 
-			return s.list.Update(model, msg)
+			return s.list.Update(ctx, msg)
 		}
 	}
 
 end:
-	return s.list.Update(model, msg)
+	return s.list.Update(ctx, msg)
 }
 
 // View implements base.State.
-func (s *State) View(model base.Model) string {
-	return s.list.View(model)
+func (s *State) View() string {
+	return s.list.View()
 }

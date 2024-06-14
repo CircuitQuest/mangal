@@ -1,4 +1,4 @@
-package model
+package base
 
 import (
 	"strings"
@@ -8,7 +8,7 @@ import (
 	"github.com/muesli/reflow/wordwrap"
 )
 
-// View implements base.Model.
+// View implements tea.Model.
 func (m *Model) View() string {
 	const newline = "\n"
 
@@ -32,7 +32,7 @@ func (m *Model) View() string {
 		// header += m.styles.TitleBar.Render(m.styles.Subtitle.Render(m.state.Subtitle()))
 	}
 
-	view := wordwrap.String(m.state.View(m), m.size.Width)
+	view := wordwrap.String(m.state.View(), m.size.Width)
 	keyMapHelp := m.styles.HelpBar.Render(m.help.View(m))
 
 	headerHeight := lipgloss.Height(header)

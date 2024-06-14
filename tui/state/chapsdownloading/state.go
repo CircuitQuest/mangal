@@ -1,6 +1,7 @@
 package chapsdownloading
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -73,7 +74,7 @@ func (s *State) Resize(size base.Size) {
 }
 
 // Init implements base.State.
-func (s *State) Init(model base.Model) tea.Cmd {
+func (s *State) Init(ctx context.Context) tea.Cmd {
 	return tea.Batch(
 		func() tea.Msg {
 			return nextChapterIdxMsg(0)
@@ -86,7 +87,7 @@ func (s *State) Init(model base.Model) tea.Cmd {
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
+func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case progress.FrameMsg:
 		progressModel, cmd := s.progress.Update(msg)
@@ -100,7 +101,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		return tea.Sequence(
 			func() tea.Msg {
 				chapter := s.chapters[msg]
-				downChap, err := s.options.DownloadChapter(model.Context(), chapter)
+				downChap, err := s.options.DownloadChapter(ctx, chapter)
 
 				if err != nil {
 					s.failed = append(s.failed, chapter)
@@ -126,7 +127,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 }
 
 // View implements base.State.
-func (s *State) View(model base.Model) string {
+func (s *State) View() string {
 	spinnerView := s.spinner.View()
 	return fmt.Sprintf(`%s Downloading %s - %d/%d
 

@@ -1,9 +1,10 @@
 package base
 
 import (
+	"context"
+
 	"github.com/charmbracelet/bubbles/help"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 )
 
 // State is kind of an indirect wrapper interface of Model (wrapper of tea.Model).
@@ -22,16 +23,7 @@ type State interface {
 	Resize(size Size)
 
 	// Model (wrapper of tea.Model) methods.
-	Init(model Model) tea.Cmd
-	Update(model Model, msg tea.Msg) tea.Cmd
-	View(model Model) string
-}
-
-type Title struct {
-	Text                   string
-	Background, Foreground lipgloss.Color
-}
-
-type Size struct {
-	Width, Height int
+	Init(ctx context.Context) tea.Cmd
+	Update(ctx context.Context, msg tea.Msg) tea.Cmd
+	View() string
 }

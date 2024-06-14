@@ -1,8 +1,11 @@
 package errorstate
 
-import "github.com/luevano/mangal/tui/util"
+import (
+	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/util"
+)
 
-func New(err error) *State {
+func New(err error) base.State {
 	return &State{
 		error: err,
 		keyMap: keyMap{

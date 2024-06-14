@@ -1,6 +1,7 @@
 package volumes
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -62,12 +63,12 @@ func (s *State) Resize(size base.Size) {
 }
 
 // Init implements base.State.
-func (s *State) Init(model base.Model) tea.Cmd {
-	return s.list.Init(model)
+func (s *State) Init(ctx context.Context) tea.Cmd {
+	return s.list.Init(ctx)
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
+func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
@@ -86,7 +87,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					return loading.New("Searching", fmt.Sprintf("Getting chapters for volume %s", item.volume))
 				},
 				func() tea.Msg {
-					chapterList, err := s.client.VolumeChapters(model.Context(), item.volume)
+					chapterList, err := s.client.VolumeChapters(ctx, item.volume)
 					if err != nil {
 						return err
 					}
@@ -97,10 +98,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		}
 	}
 end:
-	return s.list.Update(model, msg)
+	return s.list.Update(ctx, msg)
 }
 
 // View implements base.State.
-func (s *State) View(model base.Model) string {
-	return s.list.View(model)
+func (s *State) View() string {
+	return s.list.View()
 }

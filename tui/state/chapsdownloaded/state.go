@@ -1,6 +1,7 @@
 package chapsdownloaded
 
 import (
+	"context"
 	"fmt"
 	"strings"
 
@@ -56,12 +57,12 @@ func (s *State) Resize(size base.Size) {
 }
 
 // Init implements base.State.
-func (s *State) Init(model base.Model) tea.Cmd {
+func (s *State) Init(ctx context.Context) tea.Cmd {
 	return nil
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
+func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -86,7 +87,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 }
 
 // View implements base.State.
-func (s *State) View(model base.Model) string {
+func (s *State) View() string {
 	var (
 		succeed = len(s.options.Succeed)
 		failed  = len(s.options.Failed)

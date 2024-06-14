@@ -1,6 +1,7 @@
 package textinput
 
 import (
+	"context"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -58,12 +59,12 @@ func (s *State) Resize(size base.Size) {
 }
 
 // Init implements base.State.
-func (s *State) Init(model base.Model) tea.Cmd {
+func (s *State) Init(ctx context.Context) tea.Cmd {
 	return tea.Batch(s.textinput.Focus(), textinput.Blink)
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
+func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
@@ -77,6 +78,6 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 }
 
 // View implements base.State.
-func (s *State) View(model base.Model) string {
+func (s *State) View() string {
 	return s.textinput.View()
 }

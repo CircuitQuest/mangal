@@ -2,7 +2,7 @@ package loading
 
 import (
 	"github.com/charmbracelet/bubbles/spinner"
-	"github.com/luevano/mangal/tui/model"
+	"github.com/luevano/mangal/tui/base"
 )
 
 func New(message, subtitle string) *State {
@@ -10,6 +10,6 @@ func New(message, subtitle string) *State {
 		message:  message,
 		subtitle: subtitle,
 		spinner:  spinner.New(spinner.WithSpinner(spinner.Dot)),
-		keyMap:   model.NoKeyMap{},
+		keyMap:   base.NoKeyMap{},
 	}
 }

@@ -1,4 +1,4 @@
-package model
+package base
 
 import (
 	"github.com/charmbracelet/bubbles/help"

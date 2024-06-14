@@ -1,6 +1,7 @@
 package list
 
 import (
+	"context"
 	"fmt"
 	"slices"
 	"time"
@@ -72,12 +73,12 @@ func (s *State) Resize(size base.Size) {
 }
 
 // Init implements base.State.
-func (s *State) Init(model base.Model) tea.Cmd {
+func (s *State) Init(ctx context.Context) tea.Cmd {
 	return nil
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
+func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case NotificationMsg:
 		s.notification = string(msg)
@@ -103,7 +104,7 @@ end:
 }
 
 // View implements base.State. Wrapper of list.Model.
-func (s *State) View(model base.Model) string {
+func (s *State) View() string {
 	return s.list.View()
 }
 

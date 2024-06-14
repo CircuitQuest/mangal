@@ -1,6 +1,7 @@
 package providers
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -63,17 +64,17 @@ func (s *State) Resize(size base.Size) {
 }
 
 // Init implements base.State.
-func (s *State) Init(model base.Model) tea.Cmd {
+func (s *State) Init(ctx context.Context) tea.Cmd {
 	return tea.Sequence(
 		func() tea.Msg {
 			return client.CloseAll()
 		},
-		s.list.Init(model),
+		s.list.Init(ctx),
 	)
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
+func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
@@ -92,7 +93,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					return loading.New("Loading", "Loading providers")
 				},
 				func() tea.Msg {
-					client, err := client.NewClient(model.Context(), item)
+					client, err := client.NewClient(ctx, item)
 					if err != nil {
 						return err
 					}
@@ -111,7 +112,7 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 									return loading.New("Searching", fmt.Sprintf("Searching for %q", response))
 								},
 								func() tea.Msg {
-									mangaList, err := client.SearchMangas(model.Context(), response)
+									mangaList, err := client.SearchMangas(ctx, response)
 									if err != nil {
 										return err
 									}
@@ -130,10 +131,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 		}
 	}
 end:
-	return s.list.Update(model, msg)
+	return s.list.Update(ctx, msg)
 }
 
 // View implements base.State.
-func (s *State) View(model base.Model) string {
-	return s.list.View(model)
+func (s *State) View() string {
+	return s.list.View()
 }

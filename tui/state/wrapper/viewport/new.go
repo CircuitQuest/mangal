@@ -2,7 +2,7 @@ package viewport
 
 import "github.com/luevano/mangal/tui/base"
 
-func New(title, content string, size base.Size) *State {
+func New(title, content string, size base.Size) base.State {
 	return &State{
 		size:    size,
 		title:   title,

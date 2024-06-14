@@ -1,6 +1,8 @@
 package formats
 
 import (
+	"context"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	_list "github.com/charmbracelet/bubbles/list"
@@ -53,12 +55,12 @@ func (s *State) Resize(size base.Size) {
 }
 
 // Init implements base.State.
-func (*State) Init(model base.Model) tea.Cmd {
+func (*State) Init(ctx context.Context) tea.Cmd {
 	return nil
 }
 
 // Update implements base.State.
-func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
+func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
@@ -91,10 +93,10 @@ func (s *State) Update(model base.Model, msg tea.Msg) tea.Cmd {
 		}
 	}
 end:
-	return s.list.Update(model, msg)
+	return s.list.Update(ctx, msg)
 }
 
 // View implements base.State.
-func (s *State) View(model base.Model) string {
-	return s.list.View(model)
+func (s *State) View() string {
+	return s.list.View()
 }

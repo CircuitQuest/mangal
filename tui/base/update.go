@@ -1,4 +1,4 @@
-package model
+package base
 
 import (
 	"context"
@@ -7,17 +7,14 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/log"
-	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/errorstate"
-	"github.com/luevano/mangal/tui/state/wrapper/viewport"
 	"github.com/pkg/errors"
 )
 
-// Update implements base.Model.
+// Update implements tea.Model.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.resize(base.Size{
+		m.resize(Size{
 			Width:  msg.Width,
 			Height: msg.Height,
 		})
@@ -34,12 +31,12 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.resize(m.size)
 			return m, nil
 		case key.Matches(msg, m.keyMap.log):
-			return m, m.pushState(viewport.New("Logs", log.Aggregate.String(), m.StateSize()))
+			return m, m.pushState(m.logState("Logs", log.Aggregate.String(), m.StateSize()))
 		}
-	case base.BackMsg:
+	case BackMsg:
 		// this msg can override Backable() output
 		return m, m.back()
-	case base.State:
+	case State:
 		return m, m.pushState(msg)
 	case error:
 		if errors.Is(msg, context.Canceled) || strings.Contains(msg.Error(), context.Canceled.Error()) {
@@ -48,9 +45,9 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		log.L.Err(msg).Msg("")
 
-		return m, m.pushState(errorstate.New(msg))
+		return m, m.pushState(m.errState(msg))
 	}
 
-	cmd := m.state.Update(m, msg)
+	cmd := m.state.Update(m.ctx, msg)
 	return m, cmd
 }
