@@ -275,7 +275,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 									return base.Back
 								},
-								s.list.Notify(fmt.Sprintf("Set Anilist %s (%d)", response.String(), response.ID), 3*time.Second),
+								base.NotifyWithDuration(fmt.Sprintf("Set Anilist %s (%d)", response.String(), response.ID), 3*time.Second),
 							)
 						},
 					)

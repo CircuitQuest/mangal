@@ -3,6 +3,7 @@ package base
 import (
 	"context"
 	"os"
+	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/zyedidia/generic/stack"
@@ -28,11 +29,12 @@ func New(state State,
 			Width:  width,
 			Height: height,
 		},
-		styles:   defaultStyles(),
-		keyMap:   newKeyMap(),
-		help:     help.New(),
-		errState: errState,
-		logState: logState,
+		styles:                      defaultStyles(),
+		keyMap:                      newKeyMap(),
+		help:                        help.New(),
+		notificationDefaultDuration: time.Second,
+		errState:                    errState,
+		logState:                    logState,
 	}
 
 	defer model.resize(model.stateSize())

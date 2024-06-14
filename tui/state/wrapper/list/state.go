@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"slices"
-	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -18,9 +17,8 @@ var _ base.State = (*State)(nil)
 
 // State implements base.State. Wrapper of list.Model.
 type State struct {
-	list         list.Model
-	notification string
-	keyMap       keyMap
+	list   list.Model
+	keyMap keyMap
 }
 
 // Intermediate implements base.State.
@@ -60,10 +58,6 @@ func (s *State) Status() string {
 		return s.list.FilterInput.View()
 	}
 
-	if s.notification != "" {
-		return s.list.Paginator.View() + " " + s.notification
-	}
-
 	return s.list.Paginator.View()
 }
 
@@ -80,9 +74,6 @@ func (s *State) Init(ctx context.Context) tea.Cmd {
 // Update implements base.State.
 func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
-	case NotificationMsg:
-		s.notification = string(msg)
-		return nil
 	case tea.KeyMsg:
 		if s.FilterState() == list.Filtering {
 			goto end
@@ -93,7 +84,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			slices.Reverse(s.Items())
 			return tea.Sequence(
 				s.list.SetItems(s.Items()),
-				s.Notify("Reversed", time.Second),
+				base.Notify("Reversed"),
 			)
 		}
 	}
@@ -121,19 +112,4 @@ func (s *State) SelectedItem() list.Item {
 // Items is a wrapper of list.Model.
 func (s *State) Items() []list.Item {
 	return s.list.Items()
-}
-
-// TODO: refactor so that it is usable across all States, not only a list
-//
-// Notify will show a message in the Status (next to the Title).
-func (s *State) Notify(message string, duration time.Duration) tea.Cmd {
-	return tea.Sequence(
-		func() tea.Msg {
-			return NotificationMsg(message)
-		},
-		func() tea.Msg {
-			time.Sleep(duration)
-			return NotificationMsg("")
-		},
-	)
 }

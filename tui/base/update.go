@@ -3,6 +3,7 @@ package base
 import (
 	"context"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
@@ -31,7 +32,12 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.log):
 			return m, m.pushState(m.logState("Logs", log.Aggregate.String(), m.stateSize()))
 		}
-	// this msg can override Backable() output
+	case NotificationMsg:
+		return m, m.notify(msg.Message, m.notificationDefaultDuration)
+	case NotificationWithDurationMsg:
+		return m, m.notify(msg.Message, msg.Duration)
+	case NotificationTimeoutMsg:
+		return m, m.hideNotification()
 	case BackMsg:
 		return m, m.back()
 	case State:
@@ -53,5 +59,18 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *model) toggleHelp() tea.Cmd {
 	m.help.ShowAll = !m.help.ShowAll
 	m.resize(m.size)
+	return nil
+}
+
+// notify will show a message to the right of the title and status.
+func (m *model) notify(message string, duration time.Duration) tea.Cmd {
+	m.notification = message
+	return tea.Tick(duration, func(t time.Time) tea.Msg {
+		return NotificationTimeoutMsg{}
+	})
+}
+
+func (m *model) hideNotification() tea.Cmd {
+	m.notification = ""
 	return nil
 }

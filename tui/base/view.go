@@ -36,6 +36,12 @@ func (m *model) viewHeader() string {
 		header.WriteString(status)
 	}
 
+	if m.notification != "" {
+		width := m.size.Width - lipgloss.Width(header.String())
+		header.WriteString(" ")
+		header.WriteString(m.styles.notification.Width(width).Render(m.notification))
+	}
+
 	if subtitle := m.state.Subtitle(); subtitle != "" {
 		header.WriteString("\n\n")
 		header.WriteString(m.styles.subtitle.Render(subtitle))

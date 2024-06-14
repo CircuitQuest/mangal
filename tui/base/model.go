@@ -2,6 +2,7 @@ package base
 
 import (
 	"context"
+	"time"
 
 	"github.com/luevano/mangal/log"
 
@@ -29,6 +30,9 @@ type model struct {
 
 	keyMap *keyMap
 	help   help.Model
+
+	notification                string
+	notificationDefaultDuration time.Duration
 
 	// Custom states to show errors and logs
 	errState func(err error) State
