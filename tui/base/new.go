@@ -12,14 +12,14 @@ import (
 func New(state State,
 	errState func(err error) State,
 	logState func(title, content string, size Size) State,
-) *Model {
+) *model {
 	width, height, err := term.GetSize(int(os.Stdout.Fd()))
 	if err != nil {
 		width, height = 80, 40
 	}
 	ctx, ctxCancel := context.WithCancel(context.Background())
 
-	model := &Model{
+	model := &model{
 		state:     state,
 		history:   stack.New[State](),
 		ctx:       ctx,
@@ -28,7 +28,7 @@ func New(state State,
 			Width:  width,
 			Height: height,
 		},
-		styles:   DefaultStyles(),
+		styles:   defaultStyles(),
 		keyMap:   newKeyMap(),
 		help:     help.New(),
 		errState: errState,

@@ -4,48 +4,62 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
-	stringutil "github.com/luevano/mangal/util/string"
-	"github.com/muesli/reflow/wordwrap"
 )
 
 // View implements tea.Model.
-func (m *Model) View() string {
-	const newline = "\n"
+func (m *model) View() string {
+	header := m.viewHeader()
+	state := m.viewState()
+	footer := m.viewFooter()
+
+	return lipgloss.JoinVertical(lipgloss.Left, header, state, footer)
+}
+
+func (m *model) viewHeader() string {
+	var header strings.Builder
+	header.Grow(200)
 
 	title := m.state.Title()
-	titleStyle := m.styles.Title
+	titleStyle := m.styles.title
 
 	if title.Background != "" {
 		titleStyle = titleStyle.Background(title.Background)
 	}
-
 	if title.Foreground != "" {
 		titleStyle = titleStyle.Foreground(title.Foreground)
 	}
+	header.WriteString(titleStyle.MaxWidth(m.size.Width / 2).Render(title.Text))
 
-	titleText := stringutil.Trim(title.Text, m.size.Width/2)
-	header := m.styles.TitleBar.Render(titleStyle.Render(titleText) + " " + m.state.Status())
-
-	subtitle := m.state.Subtitle()
-	if subtitle != "" {
-		header = lipgloss.JoinVertical(lipgloss.Left, header, m.styles.TitleBar.Render(m.styles.Subtitle.Render(m.state.Subtitle())))
-		// header += m.styles.TitleBar.Render(m.styles.Subtitle.Render(m.state.Subtitle()))
+	if status := m.state.Status(); status != "" {
+		// TODO: apply a style
+		header.WriteString(" ")
+		header.WriteString(status)
 	}
 
-	view := wordwrap.String(m.state.View(), m.size.Width)
-	keyMapHelp := m.styles.HelpBar.Render(m.help.View(m.keyMap.with(m.state.KeyMap())))
-
-	headerHeight := lipgloss.Height(header)
-	viewHeight := lipgloss.Height(view)
-	helpHeight := lipgloss.Height(keyMapHelp)
-
-	diff := m.size.Height - headerHeight - viewHeight - helpHeight
-
-	var filler string
-	if diff > 0 {
-		filler = strings.Repeat(newline, diff)
+	if subtitle := m.state.Subtitle(); subtitle != "" {
+		header.WriteString("\n\n")
+		header.WriteString(m.styles.subtitle.Render(subtitle))
 	}
 
-	// return lipgloss.JoinVertical(lipgloss.Left, header, view, filler, keyMapHelp)
-	return header + newline + view + filler + newline + keyMapHelp
+	return m.styles.header.Render(header.String())
+}
+
+func (m *model) viewState() string {
+	size := m.stateSize()
+	style := lipgloss.
+		NewStyle().
+		MaxWidth(size.Width).
+		MaxHeight(size.Height)
+
+	return lipgloss.Place(
+		size.Width,
+		size.Height,
+		lipgloss.Left,
+		lipgloss.Top,
+		style.Render(m.state.View()),
+	)
+}
+
+func (m *model) viewFooter() string {
+	return m.styles.footer.Render(m.help.View(m.keyMap.with(m.state.KeyMap())))
 }

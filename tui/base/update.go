@@ -11,7 +11,7 @@ import (
 )
 
 // Update implements tea.Model.
-func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
 		m.resize(Size{
@@ -27,14 +27,12 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.back) && m.state.Backable():
 			return m, m.back()
 		case key.Matches(msg, m.keyMap.help):
-			m.help.ShowAll = !m.help.ShowAll
-			m.resize(m.size)
-			return m, nil
+			return m, m.toggleHelp()
 		case key.Matches(msg, m.keyMap.log):
 			return m, m.pushState(m.logState("Logs", log.Aggregate.String(), m.stateSize()))
 		}
+	// this msg can override Backable() output
 	case BackMsg:
-		// this msg can override Backable() output
 		return m, m.back()
 	case State:
 		return m, m.pushState(msg)
@@ -50,4 +48,10 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	cmd := m.state.Update(m.ctx, msg)
 	return m, cmd
+}
+
+func (m *model) toggleHelp() tea.Cmd {
+	m.help.ShowAll = !m.help.ShowAll
+	m.resize(m.size)
+	return nil
 }

@@ -11,12 +11,12 @@ import (
 	"github.com/zyedidia/generic/stack"
 )
 
-var _ tea.Model = (*Model)(nil)
+var _ tea.Model = (*model)(nil)
 
-// Model implements tea.Model
+// model implements tea.model
 //
-// Model is the parent of all States (windows), could be thought of as the main window.
-type Model struct {
+// model is the parent of all States (windows), could be thought of as the main window.
+type model struct {
 	state   State
 	history *stack.Stack[State]
 
@@ -25,7 +25,7 @@ type Model struct {
 
 	size Size
 
-	styles Styles
+	styles styles
 
 	keyMap *keyMap
 	help   help.Model
@@ -36,43 +36,34 @@ type Model struct {
 }
 
 // Init implements tea.Model.
-func (m *Model) Init() tea.Cmd {
+func (m *model) Init() tea.Cmd {
 	return m.state.Init(m.ctx)
 }
 
 // stateSize returns the usable size of the state viewport (everything but the header/footer).
-func (m *Model) stateSize() Size {
-	var height int
+func (m *model) stateSize() Size {
+	header := m.viewHeader()
+	footer := m.viewFooter()
 
-	if m.help.ShowAll {
-		height = m.size.Height - lipgloss.Height(m.help.View(m.keyMap.with(m.state.KeyMap()))) - 2
-	} else {
-		height = m.size.Height - 3
-	}
+	size := m.size
+	size.Height -= lipgloss.Height(header) + lipgloss.Height(footer)
 
-	if m.state.Subtitle() != "" {
-		height -= 2
-	}
-
-	return Size{
-		Width:  m.size.Width,
-		Height: height,
-	}
+	return size
 }
 
-func (m *Model) cancel() {
+func (m *model) cancel() {
 	m.ctxCancel()
 	m.ctx, m.ctxCancel = context.WithCancel(context.Background())
 }
 
-func (m *Model) resize(size Size) {
+func (m *model) resize(size Size) {
 	m.size = size
 	m.help.Width = size.Width
 
 	m.state.Resize(m.stateSize())
 }
 
-func (m *Model) back() tea.Cmd {
+func (m *model) back() tea.Cmd {
 	// do not pop the last state
 	if m.history.Size() == 0 {
 		return nil
@@ -89,7 +80,7 @@ func (m *Model) back() tea.Cmd {
 	return m.state.Init(m.ctx)
 }
 
-func (m *Model) pushState(state State) tea.Cmd {
+func (m *model) pushState(state State) tea.Cmd {
 	log.L.Info().Str("state", state.Title().Text).Msg("new state")
 	if !m.state.Intermediate() {
 		m.history.Push(m.state)

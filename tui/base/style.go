@@ -6,21 +6,20 @@ import (
 	"github.com/luevano/mangal/theme/style"
 )
 
-type Styles struct {
-	Title,
-	TitleBar,
-	Subtitle,
-	HelpBar,
-	Selection lipgloss.Style
+type styles struct {
+	title,
+	subtitle,
+	header,
+	footer lipgloss.Style
 }
 
-func DefaultStyles() Styles {
+func defaultStyles() styles {
 	// Flipped Accent
 	tempAccent := style.Bold.Accent.Background(color.Background)
-	return Styles{
-		Title:    style.FlipGrounds(tempAccent).Padding(0, 1),
-		TitleBar: style.Normal.Base.Padding(0, 0, 1, 2),
-		Subtitle: style.Normal.Secondary,
-		HelpBar:  style.Normal.Base.Padding(0, 1),
+	return styles{
+		title:    style.FlipGrounds(tempAccent).Padding(0, 1),
+		subtitle: style.Normal.Secondary,
+		header:   style.Normal.Base.Padding(0, 0, 1, 2),
+		footer:   style.Normal.Base.Padding(0, 1),
 	}
 }
