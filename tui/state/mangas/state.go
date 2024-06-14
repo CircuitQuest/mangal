@@ -101,7 +101,6 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 					} else {
 						item.manga.SetMetadata(anilistManga.Metadata())
 						log.Log("Found and set Anilist for %q: %q (%d)", item.manga, anilistManga.String(), anilistManga.ID)
-						log.Log("Set metadata to %q: %p", item.manga, item.manga)
 					}
 
 					return nil

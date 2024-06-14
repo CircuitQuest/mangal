@@ -116,10 +116,6 @@ func (s *State) Update(model base.Model, msg tea.Msg) (cmd tea.Cmd) {
 										return err
 									}
 
-									for _, m := range mangaList {
-										log.Log("%q: %p", m, m)
-									}
-
 									return mangas.New(client, response, mangaList)
 								},
 							)
