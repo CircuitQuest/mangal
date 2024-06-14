@@ -6,16 +6,12 @@ import (
 	"github.com/luevano/mangal/log"
 
 	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/zyedidia/generic/stack"
 )
 
-var (
-	_ tea.Model   = (*Model)(nil)
-	_ help.KeyMap = (*Model)(nil)
-)
+var _ tea.Model = (*Model)(nil)
 
 // Model implements tea.Model
 //
@@ -44,23 +40,12 @@ func (m *Model) Init() tea.Cmd {
 	return m.state.Init(m.ctx)
 }
 
-// ShortHelp implements help.KeyMap.
-func (m *Model) ShortHelp() []key.Binding {
-	keys := []key.Binding{m.keyMap.back, m.keyMap.help}
-	return append(keys, m.state.KeyMap().ShortHelp()...)
-}
-
-// FullHelp implements help.KeyMap.
-func (m *Model) FullHelp() [][]key.Binding {
-	keys := [][]key.Binding{{m.keyMap.back, m.keyMap.help, m.keyMap.quit, m.keyMap.log}}
-	return append(keys, m.state.KeyMap().FullHelp()...)
-}
-
-func (m *Model) StateSize() Size {
+// stateSize returns the usable size of the state viewport (everything but the header/footer).
+func (m *Model) stateSize() Size {
 	var height int
 
 	if m.help.ShowAll {
-		height = m.size.Height - lipgloss.Height(m.help.View(m)) - 2
+		height = m.size.Height - lipgloss.Height(m.help.View(m.keyMap.with(m.state.KeyMap()))) - 2
 	} else {
 		height = m.size.Height - 3
 	}
@@ -84,7 +69,7 @@ func (m *Model) resize(size Size) {
 	m.size = size
 	m.help.Width = size.Width
 
-	m.state.Resize(m.StateSize())
+	m.state.Resize(m.stateSize())
 }
 
 func (m *Model) back() tea.Cmd {
@@ -99,7 +84,7 @@ func (m *Model) back() tea.Cmd {
 	m.state = m.history.Pop()
 
 	// update size for old models
-	m.state.Resize(m.StateSize())
+	m.state.Resize(m.stateSize())
 
 	return m.state.Init(m.ctx)
 }
@@ -111,7 +96,7 @@ func (m *Model) pushState(state State) tea.Cmd {
 	}
 
 	m.state = state
-	m.state.Resize(m.StateSize())
+	m.state.Resize(m.stateSize())
 
 	return m.state.Init(m.ctx)
 }

@@ -1,16 +1,10 @@
 package list
 
-import (
-	"github.com/charmbracelet/bubbles/list"
-	"github.com/luevano/mangal/tui/util"
-)
+import "github.com/charmbracelet/bubbles/list"
 
 func New(list list.Model) *State {
 	return &State{
-		list: list,
-		keyMap: keyMap{
-			reverse: util.Bind("reverse", "R"),
-			list:    &list.KeyMap,
-		},
+		list:   list,
+		keyMap: newKeyMap(list.KeyMap),
 	}
 }

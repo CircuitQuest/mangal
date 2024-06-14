@@ -20,10 +20,6 @@ func New(loaders []libmangal.ProviderLoader) *State {
 	return &State{
 		providerLoaders: loaders,
 		list:            listWrapper,
-		keyMap: keyMap{
-			info:    util.Bind("info", "i"),
-			confirm: util.Bind("confirm", "enter"),
-			list:    listWrapper.KeyMap(),
-		},
+		keyMap:          newKeyMap(listWrapper.KeyMap()),
 	}
 }

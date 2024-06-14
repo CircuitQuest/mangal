@@ -9,6 +9,10 @@ import (
 
 var _ help.KeyMap = (*keyMap)(nil)
 
+func newKeyMap() keyMap {
+	return keyMap{}
+}
+
 // keyMap implements help.keyMap.
 type keyMap struct{}
 

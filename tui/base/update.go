@@ -31,7 +31,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.resize(m.size)
 			return m, nil
 		case key.Matches(msg, m.keyMap.log):
-			return m, m.pushState(m.logState("Logs", log.Aggregate.String(), m.StateSize()))
+			return m, m.pushState(m.logState("Logs", log.Aggregate.String(), m.stateSize()))
 		}
 	case BackMsg:
 		// this msg can override Backable() output

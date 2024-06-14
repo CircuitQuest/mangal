@@ -23,7 +23,7 @@ type State struct {
 	viewport viewport.Model
 	padding  base.Size
 	keyMap   keyMap
-	styles   Styles
+	styles   styles
 }
 
 // Intermediate implements base.State.

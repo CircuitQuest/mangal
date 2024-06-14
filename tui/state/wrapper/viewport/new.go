@@ -8,7 +8,7 @@ func New(title, content string, size base.Size) base.State {
 		title:   title,
 		content: content,
 		padding: base.Size{Width: 2, Height: 0},
-		keyMap:  keyMap{},
-		styles:  DefaultStyles(),
+		keyMap:  newKeyMap(),
+		styles:  defaultStyles(),
 	}
 }

@@ -3,9 +3,28 @@ package chapters
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/luevano/mangal/tui/util"
 )
 
 var _ help.KeyMap = (*keyMap)(nil)
+
+func newKeyMap(listKeyMap help.KeyMap) keyMap {
+	return keyMap{
+		unselectAll:         util.Bind("unselect all", "backspace"),
+		selectAll:           util.Bind("select all", "a"),
+		toggleChapterNumber: util.Bind("toggle ch num", "c"),
+		toggleGroup:         util.Bind("toggle group", "ctrl+g"),
+		toggleDate:          util.Bind("toggle date", "ctrl+d"),
+		toggle:              util.Bind("toggle", " "),
+		read:                util.Bind("read", "r"),
+		openURL:             util.Bind("open url", "o"),
+		anilist:             util.Bind("anilist", "A"),
+		download:            util.Bind("download", "d"),
+		confirm:             util.Bind("confirm", "enter"),
+		changeFormat:        util.Bind("change format", "f"),
+		list:                listKeyMap,
+	}
+}
 
 // keyMap implements help.keyMap.
 type keyMap struct {

@@ -6,8 +6,8 @@ import (
 	"github.com/luevano/mangal/theme/style"
 )
 
-// Styles for the viewport.
-type Styles struct {
+// styles for the viewport.
+type styles struct {
 	Title,
 	Info,
 	Line,
@@ -16,8 +16,8 @@ type Styles struct {
 	ContentWrapper func(int, int) lipgloss.Style
 }
 
-// DefaultStyles get a sensible default viewport style.
-func DefaultStyles() Styles {
+// defaultStyles get a sensible default viewport style.
+func defaultStyles() styles {
 	borderRight := lipgloss.RoundedBorder()
 	borderRight.Right = "├"
 	borderRight.BottomLeft = "├"
@@ -26,7 +26,7 @@ func DefaultStyles() Styles {
 	borderLeft.TopRight = "┤"
 
 	boxStyle := lipgloss.NewStyle().BorderForeground(color.Viewport).Padding(0, 1)
-	return Styles{
+	return styles{
 		Title:    boxStyle.BorderStyle(borderRight),
 		Info:     boxStyle.BorderStyle(borderLeft),
 		Line:     style.Normal.Viewport,

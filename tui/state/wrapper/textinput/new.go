@@ -5,7 +5,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/luevano/mangal/theme/icon"
-	"github.com/luevano/mangal/tui/util"
 )
 
 func New(options Options) *State {
@@ -26,8 +25,6 @@ func New(options Options) *State {
 	return &State{
 		options:   options,
 		textinput: input,
-		keyMap: keyMap{
-			confirm: util.Bind("confirm", "enter"),
-		},
+		keyMap:    newKeyMap(),
 	}
 }

@@ -3,9 +3,19 @@ package chapsdownloaded
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/luevano/mangal/tui/util"
 )
 
 var _ help.KeyMap = (*keyMap)(nil)
+
+func newKeyMap(state *State) keyMap {
+	return keyMap{
+		open:  util.Bind("open directory", "o"),
+		quit:  util.Bind("quit", "q"),
+		retry: util.Bind("retry", "r"),
+		state: state,
+	}
+}
 
 // keyMap implements help.keyMap.
 type keyMap struct {

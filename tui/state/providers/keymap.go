@@ -3,9 +3,18 @@ package providers
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/luevano/mangal/tui/util"
 )
 
 var _ help.KeyMap = (*keyMap)(nil)
+
+func newKeyMap(listKeyMap help.KeyMap) keyMap {
+	return keyMap{
+		info:    util.Bind("info", "i"),
+		confirm: util.Bind("confirm", "enter"),
+		list:    listKeyMap,
+	}
+}
 
 // keyMap implements help.keyMap.
 type keyMap struct {

@@ -3,9 +3,17 @@ package anilistmangas
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/luevano/mangal/tui/util"
 )
 
 var _ help.KeyMap = (*keyMap)(nil)
+
+func newKeyMap() keyMap {
+	return keyMap{
+		confirm: util.Bind("confirm", "enter"),
+		search:  util.Bind("search", "s"),
+	}
+}
 
 // keyMap implements help.keyMap.
 type keyMap struct {

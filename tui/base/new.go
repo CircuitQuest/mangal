@@ -17,24 +17,25 @@ func New(state State,
 	if err != nil {
 		width, height = 80, 40
 	}
+	ctx, ctxCancel := context.WithCancel(context.Background())
 
 	model := &Model{
-		state:   state,
-		history: stack.New[State](),
+		state:     state,
+		history:   stack.New[State](),
+		ctx:       ctx,
+		ctxCancel: ctxCancel,
 		size: Size{
 			Width:  width,
 			Height: height,
 		},
+		styles:   DefaultStyles(),
 		keyMap:   newKeyMap(),
 		help:     help.New(),
-		styles:   DefaultStyles(),
 		errState: errState,
 		logState: logState,
 	}
 
-	defer model.resize(model.StateSize())
-
-	model.ctx, model.ctxCancel = context.WithCancel(context.Background())
+	defer model.resize(model.stateSize())
 
 	return model
 }

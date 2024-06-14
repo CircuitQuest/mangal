@@ -33,7 +33,7 @@ func (m *Model) View() string {
 	}
 
 	view := wordwrap.String(m.state.View(), m.size.Width)
-	keyMapHelp := m.styles.HelpBar.Render(m.help.View(m))
+	keyMapHelp := m.styles.HelpBar.Render(m.help.View(m.keyMap.with(m.state.KeyMap())))
 
 	headerHeight := lipgloss.Height(header)
 	viewHeight := lipgloss.Height(view)

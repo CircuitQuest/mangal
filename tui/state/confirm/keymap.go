@@ -3,9 +3,17 @@ package confirm
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/luevano/mangal/tui/util"
 )
 
 var _ help.KeyMap = (*keyMap)(nil)
+
+func newKeyMap() keyMap {
+	return keyMap{
+		yes: util.Bind("yes", "y", "enter"),
+		no:  util.Bind("no", "n"),
+	}
+}
 
 // keyMap implements help.keyMap.
 type keyMap struct {

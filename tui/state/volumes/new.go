@@ -23,8 +23,6 @@ func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Vo
 		volumes: volumes,
 		manga:   manga,
 		client:  client,
-		keyMap: keyMap{
-			confirm: util.Bind("confirm", "enter"),
-		},
+		keyMap:  newKeyMap(),
 	}
 }

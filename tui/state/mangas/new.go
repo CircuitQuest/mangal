@@ -23,9 +23,6 @@ func New(client *libmangal.Client, query string, mangas []mangadata.Manga) *Stat
 		mangas: mangas,
 		client: client,
 		query:  query,
-		keyMap: keyMap{
-			confirm: util.Bind("confirm", "enter"),
-			list:    listWrapper.KeyMap(),
-		},
+		keyMap: newKeyMap(listWrapper.KeyMap()),
 	}
 }
