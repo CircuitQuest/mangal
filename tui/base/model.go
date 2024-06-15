@@ -35,8 +35,8 @@ type model struct {
 	notificationDefaultDuration time.Duration
 
 	// Custom states to show errors and logs
-	errState func(err error, size Size) State
-	logState func(title, content string, size Size) State
+	errState func(err error) State
+	logState func(title, content string) State
 }
 
 // Init implements tea.Model.
@@ -63,6 +63,7 @@ func (m *model) cancel() {
 	m.ctx, m.ctxCancel = context.WithCancel(context.Background())
 }
 
+// resize should only be called when the size of the whole program changes
 func (m *model) resize(size Size) {
 	m.size = size
 	m.help.Width = size.Width
@@ -84,6 +85,11 @@ func (m *model) back() tea.Cmd {
 	// update size for old models
 	m.state.Resize(m.stateSize())
 
+	// TODO: does back needs to re-initialize? states should only
+	// be initialized on pushState (the first time they're spawned)?
+	//
+	// This requires to refactor/fix the individual states in case that
+	// they're expecting Init to be run multiple times for some reason (like the case with providers)
 	return m.state.Init(m.ctx)
 }
 

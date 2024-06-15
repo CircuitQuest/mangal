@@ -30,7 +30,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.help):
 			return m, m.toggleHelp()
 		case key.Matches(msg, m.keyMap.log):
-			return m, m.pushState(m.logState("Logs", log.Aggregate.String(), m.stateSize()))
+			return m, m.pushState(m.logState("Logs", log.Aggregate.String()))
 		}
 	case NotificationMsg:
 		return m, m.notify(msg.Message, m.notificationDefaultDuration)
@@ -49,7 +49,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		log.L.Err(msg).Msg("")
 
-		return m, m.pushState(m.errState(msg, m.stateSize()))
+		return m, m.pushState(m.errState(msg))
 	}
 
 	cmd := m.state.Update(m.ctx, msg)

@@ -18,6 +18,7 @@ var _ base.State = (*State)(nil)
 // State implements base.State. Wrapper of viewport.Model.
 type State struct {
 	viewport viewport.Model
+	size     base.Size
 	title    string
 	content  string
 	keyMap   keyMap
@@ -55,12 +56,14 @@ func (s *State) Status() string {
 
 // Resize implements base.State.
 func (s *State) Resize(size base.Size) {
+	s.size = size
 	s.viewport.Width = size.Width - 2 // -2 takes into account the border
 	s.viewport.Height = size.Height - 2
 }
 
 // Init implements base.State.
 func (s *State) Init(ctx context.Context) tea.Cmd {
+	s.viewport = viewport.New(s.size.Width-2, s.size.Height-2) // -2 takes into account the border
 	s.viewport.SetContent(s.content)
 	style := style.Normal.Base.
 		BorderStyle(lipgloss.RoundedBorder()).

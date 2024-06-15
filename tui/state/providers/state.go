@@ -93,18 +93,18 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					return loading.New("Loading", fmt.Sprintf("Loading provider %q", item))
 				},
 				func() tea.Msg {
-					client, err := client.NewClient(ctx, item)
+					mangalClient, err := client.NewClient(ctx, item)
 					if err != nil {
 						return err
 					}
 
-					client.Logger().SetOnLog(func(format string, a ...any) {
+					mangalClient.Logger().SetOnLog(func(format string, a ...any) {
 						log.Log(format, a...)
 					})
 
 					return textinput.New(textinput.Options{
 						Title:       base.Title{Text: "Search Manga"},
-						Subtitle:    fmt.Sprintf("Search using %q provider", client),
+						Subtitle:    fmt.Sprintf("Search using %q provider", mangalClient),
 						Placeholder: "Manga title...",
 						OnResponse: func(response string) tea.Cmd {
 							return tea.Sequence(
@@ -112,12 +112,12 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 									return loading.New("Searching", fmt.Sprintf("Searching for %q", response))
 								},
 								func() tea.Msg {
-									mangaList, err := client.SearchMangas(ctx, response)
+									mangaList, err := mangalClient.SearchMangas(ctx, response)
 									if err != nil {
 										return err
 									}
 
-									return mangas.New(client, response, mangaList)
+									return mangas.New(mangalClient, response, mangaList)
 								},
 							)
 						},

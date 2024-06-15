@@ -20,6 +20,7 @@ type State interface {
 	Subtitle() string
 	Status() string
 
+	// Resize the State usable viewport. Gets called at least once before Init.
 	Resize(size Size)
 
 	// Model (wrapper of tea.Model) methods.
