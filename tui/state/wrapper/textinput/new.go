@@ -20,7 +20,7 @@ func New(options Options) *State {
 		input.Placeholder = options.Placeholder
 	}
 
-	input.Prompt = fmt.Sprint(" ", icon.Search, " ")
+	input.Prompt = fmt.Sprint(icon.Search, " ")
 
 	return &State{
 		options:   options,

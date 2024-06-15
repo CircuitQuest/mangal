@@ -48,9 +48,12 @@ func (m *model) Init() tea.Cmd {
 func (m *model) stateSize() Size {
 	header := m.viewHeader()
 	footer := m.viewFooter()
+	// state paddings
+	top, right, bottom, left := m.styles.state.GetPadding()
 
 	size := m.size
-	size.Height -= lipgloss.Height(header) + lipgloss.Height(footer)
+	size.Height -= lipgloss.Height(header) + lipgloss.Height(footer) + top + bottom
+	size.Width -= left + right
 
 	return size
 }

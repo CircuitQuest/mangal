@@ -37,13 +37,13 @@ require (
 	github.com/samber/lo v1.39.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/afero v1.11.0
-	github.com/spf13/cobra v1.8.0
+	github.com/spf13/cobra v1.8.1
 	github.com/spf13/viper v1.19.0
 	github.com/wk8/go-ordered-map/v2 v2.1.8
 	github.com/yuin/gopher-lua v1.1.1
 	github.com/zyedidia/generic v1.2.1
 	go.etcd.io/bbolt v1.3.10
-	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	golang.org/x/term v0.21.0
 )
 
@@ -152,7 +152,7 @@ require (
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/ysmood/fetchup v0.2.4 // indirect
 	github.com/ysmood/goob v0.4.0 // indirect
-	github.com/ysmood/got v0.39.5 // indirect
+	github.com/ysmood/got v0.40.0 // indirect
 	github.com/ysmood/gson v0.7.3 // indirect
 	github.com/ysmood/leakless v0.8.0 // indirect
 	github.com/yuin/gluamapper v0.0.0-20150323120927-d836955830e7 // indirect

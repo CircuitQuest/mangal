@@ -31,19 +31,16 @@ func (m *model) viewHeader() string {
 	header.WriteString(titleStyle.MaxWidth(m.size.Width / 2).Render(title.Text))
 
 	if status := m.state.Status(); status != "" {
-		// TODO: apply a style
-		header.WriteString(" ")
-		header.WriteString(status)
+		header.WriteString(m.styles.status.Render(status))
 	}
 
 	if m.notification != "" {
 		width := m.size.Width - lipgloss.Width(header.String())
-		header.WriteString(" ")
 		header.WriteString(m.styles.notification.Width(width).Render(m.notification))
 	}
 
 	if subtitle := m.state.Subtitle(); subtitle != "" {
-		header.WriteString("\n\n")
+		header.WriteString("\n")
 		header.WriteString(m.styles.subtitle.Render(subtitle))
 	}
 
@@ -52,17 +49,12 @@ func (m *model) viewHeader() string {
 
 func (m *model) viewState() string {
 	size := m.stateSize()
-	style := lipgloss.
-		NewStyle().
-		MaxWidth(size.Width).
-		MaxHeight(size.Height)
-
 	return lipgloss.Place(
 		size.Width,
 		size.Height,
 		lipgloss.Left,
 		lipgloss.Top,
-		style.Render(m.state.View()),
+		m.styles.state.Render(m.state.View()),
 	)
 }
 
