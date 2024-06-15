@@ -87,7 +87,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Finding Anilist for %q", item.manga))
+					return loading.New("Searching", fmt.Sprintf("Searching Anilist manga for %q", item.manga))
 				},
 				func() tea.Msg {
 					// TODO: handle more cases for missing/partial metadata
@@ -106,7 +106,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					return nil
 				},
 				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Getting volumes for %q", item.manga))
+					return loading.New("Searching", fmt.Sprintf("Searching volumes for %q", item.manga))
 				},
 				func() tea.Msg {
 					volumeList, err := s.client.MangaVolumes(ctx, item.manga)

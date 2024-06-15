@@ -10,7 +10,6 @@ import (
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/muesli/reflow/wordwrap"
 )
 
 var _ base.State = (*State)(nil)
@@ -81,7 +80,5 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 // View implements base.State.
 func (s *State) View() string {
-	wrapped := wordwrap.String(s.error.Error(), int(float64(s.size.Width)/1.2))
-
-	return style.Normal.Error.Render(wrapped)
+	return style.Normal.Error.Width(s.size.Width).Height(s.size.Height).Render(s.error.Error())
 }

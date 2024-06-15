@@ -144,7 +144,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.openURL):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Opening", item.chapter.String())
+					return loading.New("Opening", fmt.Sprintf("Opening URL %s for chapter %q", item.chapter.Info().URL, item.chapter))
 				},
 				func() tea.Msg {
 					err := open.Run(item.chapter.Info().URL)
@@ -204,7 +204,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			if item.DownloadedFormats().Has(downloadOptions.Format) {
 				return tea.Sequence(
 					func() tea.Msg {
-						return loading.New("Opening for reading", item.chapter.String())
+						return loading.New("Opening", fmt.Sprintf("Opening %q for reading", item.chapter))
 					},
 					func() tea.Msg {
 						err := s.client.ReadChapter(
@@ -227,7 +227,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Searching", "Getting Anilist Mangas")
+					return loading.New("Searching", fmt.Sprintf("Searching Anilist mangas for %q", s.manga))
 				},
 				func() tea.Msg {
 					var mangas []lmanilist.Manga

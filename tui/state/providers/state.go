@@ -90,7 +90,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Loading", "Loading providers")
+					return loading.New("Loading", fmt.Sprintf("Loading provider %q", item))
 				},
 				func() tea.Msg {
 					client, err := client.NewClient(ctx, item)

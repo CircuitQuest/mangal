@@ -2,11 +2,11 @@ package loading
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
@@ -16,10 +16,9 @@ var _ base.State = (*State)(nil)
 
 // State implements base.State.
 type State struct {
-	message  string
-	subtitle string
-	spinner  spinner.Model
-	keyMap   help.KeyMap
+	title   string
+	message string
+	spinner spinner.Model
 }
 
 // Intermediate implements base.State.
@@ -34,24 +33,22 @@ func (s *State) Backable() bool {
 
 // KeyMap implements base.State.
 func (s *State) KeyMap() help.KeyMap {
-	return s.keyMap
+	return base.NoKeyMap{}
 }
 
 // Title implements base.State.
 func (s *State) Title() base.Title {
-	// return base.Title{Text: s.message, Background: color.Loading}
-	return base.Title{Text: "Loading", Background: color.Loading}
+	return base.Title{Text: s.title, Background: color.Loading}
 }
 
 // Subtitle implements base.State.
 func (s *State) Subtitle() string {
-	return s.subtitle
+	return ""
 }
 
 // Status implements base.State.
 func (s *State) Status() string {
 	return s.spinner.View()
-	// return ""
 }
 
 // Resize implements base.State.
@@ -71,10 +68,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 // View implements base.State.
 func (s *State) View() string {
-	return fmt.Sprint(
-		style.Bold.Accent.Render(s.spinner.View()),
-		style.Normal.Secondary.Render(s.message),
-	)
+	return lipgloss.JoinHorizontal(lipgloss.Left, style.Bold.Accent.Render(s.spinner.View()), style.Normal.Base.Render(s.message))
 }
 
 // SetMessage updates the message for the loading view.

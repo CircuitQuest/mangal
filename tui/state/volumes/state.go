@@ -84,7 +84,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
 				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Getting chapters for volume %s", item.volume))
+					return loading.New("Searching", fmt.Sprintf("Searching chapters for volume %s", item.volume))
 				},
 				func() tea.Msg {
 					chapterList, err := s.client.VolumeChapters(ctx, item.volume)

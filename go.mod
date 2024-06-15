@@ -25,7 +25,6 @@ require (
 	github.com/luevano/libmangal v0.16.3
 	github.com/luevano/luaprovider v0.11.3
 	github.com/luevano/mangoprovider v0.13.1
-	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/philippgille/gokv v0.7.0
@@ -77,6 +76,7 @@ require (
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
+	github.com/muesli/reflow v0.3.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/sagikazarmark/locafero v0.6.0 // indirect

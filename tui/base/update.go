@@ -49,7 +49,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		log.L.Err(msg).Msg("")
 
-		return m, m.pushState(m.errState(msg))
+		return m, m.pushState(m.errState(msg, m.stateSize()))
 	}
 
 	cmd := m.state.Update(m.ctx, msg)

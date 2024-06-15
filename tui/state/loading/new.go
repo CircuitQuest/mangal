@@ -1,15 +1,11 @@
 package loading
 
-import (
-	"github.com/charmbracelet/bubbles/spinner"
-	"github.com/luevano/mangal/tui/base"
-)
+import "github.com/charmbracelet/bubbles/spinner"
 
-func New(message, subtitle string) *State {
+func New(title, message string) *State {
 	return &State{
-		message:  message,
-		subtitle: subtitle,
-		spinner:  spinner.New(spinner.WithSpinner(spinner.Dot)),
-		keyMap:   base.NoKeyMap{},
+		title:   title,
+		message: message,
+		spinner: spinner.New(spinner.WithSpinner(spinner.Dot)),
 	}
 }

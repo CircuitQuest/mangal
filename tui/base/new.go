@@ -11,7 +11,7 @@ import (
 )
 
 func New(state State,
-	errState func(err error) State,
+	errState func(err error, size Size) State,
 	logState func(title, content string, size Size) State,
 ) *model {
 	width, height, err := term.GetSize(int(os.Stdout.Fd()))

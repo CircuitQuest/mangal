@@ -95,7 +95,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					OnResponse: func(response string) tea.Cmd {
 						return tea.Sequence(
 							func() tea.Msg {
-								return loading.New("Searching", fmt.Sprintf("Searching for %q on Anilist", response))
+								return loading.New("Searching", fmt.Sprintf("Searching %q on Anilist", response))
 							},
 							func() tea.Msg {
 								mangas, err := s.anilist.SearchMangas(ctx, response)
