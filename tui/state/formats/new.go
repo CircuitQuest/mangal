@@ -8,6 +8,7 @@ import (
 )
 
 func New() *State {
+	keyMap := newKeyMap()
 	listWrapper := list.New(util.NewList(
 		2,
 		"manga", "mangas",
@@ -15,10 +16,10 @@ func New() *State {
 		func(format libmangal.Format) _list.DefaultItem {
 			return Item{format: format}
 		},
-	))
+	), keyMap)
 
 	return &State{
 		list:   listWrapper,
-		keyMap: newKeyMap(listWrapper.KeyMap()),
+		keyMap: keyMap,
 	}
 }

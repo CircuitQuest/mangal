@@ -6,6 +6,5 @@ func New(title, content string) base.State {
 	return &State{
 		title:   title,
 		content: content,
-		keyMap:  newKeyMap(),
 	}
 }

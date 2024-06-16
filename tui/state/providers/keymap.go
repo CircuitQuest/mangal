@@ -8,11 +8,10 @@ import (
 
 var _ help.KeyMap = (*keyMap)(nil)
 
-func newKeyMap(listKeyMap help.KeyMap) keyMap {
+func newKeyMap() keyMap {
 	return keyMap{
 		info:    util.Bind("info", "i"),
 		confirm: util.Bind("confirm", "enter"),
-		list:    listKeyMap,
 	}
 }
 
@@ -20,17 +19,14 @@ func newKeyMap(listKeyMap help.KeyMap) keyMap {
 type keyMap struct {
 	info,
 	confirm key.Binding
-
-	list help.KeyMap
 }
 
 // ShortHelp implements help.KeyMap.
 func (p keyMap) ShortHelp() []key.Binding {
-	return append(
-		p.list.ShortHelp(),
+	return []key.Binding{
 		p.confirm,
 		p.info,
-	)
+	}
 }
 
 // FullHelp implements help.KeyMap.

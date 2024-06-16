@@ -56,7 +56,7 @@ func (s *State) Backable() bool {
 
 // KeyMap implements base.State.
 func (s *State) KeyMap() help.KeyMap {
-	return s.keyMap
+	return s.list.KeyMap()
 }
 
 // Title implements base.State.
@@ -155,7 +155,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					return base.Back
 				},
 			)
-		case key.Matches(msg, s.keyMap.download) || (s.selected.Size() > 0 && key.Matches(msg, s.keyMap.confirm)):
+		case key.Matches(msg, s.keyMap.download):
 			var chapters []mangadata.Chapter
 
 			if s.selected.Size() == 0 {
@@ -182,7 +182,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					},
 				)
 			}
-		case key.Matches(msg, s.keyMap.read) || (s.selected.Size() == 0 && key.Matches(msg, s.keyMap.confirm)):
+		case key.Matches(msg, s.keyMap.read):
 			// If download on read is wanted, then use the normal download path
 			var directory string
 			if config.Read.DownloadOnRead.Get() {

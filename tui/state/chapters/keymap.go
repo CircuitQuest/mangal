@@ -8,58 +8,52 @@ import (
 
 var _ help.KeyMap = (*keyMap)(nil)
 
-func newKeyMap(listKeyMap help.KeyMap) keyMap {
+func newKeyMap() keyMap {
 	return keyMap{
-		unselectAll:         util.Bind("unselect all", "backspace"),
-		selectAll:           util.Bind("select all", "a"),
-		toggleChapterNumber: util.Bind("toggle ch num", "c"),
-		toggleGroup:         util.Bind("toggle group", "ctrl+g"),
-		toggleDate:          util.Bind("toggle date", "ctrl+d"),
 		toggle:              util.Bind("toggle", " "),
 		read:                util.Bind("read", "r"),
-		openURL:             util.Bind("open url", "o"),
-		anilist:             util.Bind("anilist", "A"),
 		download:            util.Bind("download", "d"),
-		confirm:             util.Bind("confirm", "enter"),
+		anilist:             util.Bind("search anilist", "A"),
 		changeFormat:        util.Bind("change format", "f"),
-		list:                listKeyMap,
+		openURL:             util.Bind("open url", "o"),
+		selectAll:           util.Bind("select all", "a"),
+		unselectAll:         util.Bind("unselect all", "backspace"),
+		toggleChapterNumber: util.Bind("toggle number", "c"),
+		toggleGroup:         util.Bind("toggle group", "ctrl+g"),
+		toggleDate:          util.Bind("toggle date", "ctrl+d"),
 	}
 }
 
 // keyMap implements help.keyMap.
 type keyMap struct {
-	unselectAll,
-	selectAll,
-	toggleChapterNumber,
-	toggleGroup,
-	toggleDate,
 	toggle,
 	read,
-	openURL,
 	download,
 	anilist,
-	confirm,
-	changeFormat key.Binding
-
-	list help.KeyMap
+	changeFormat,
+	openURL,
+	selectAll,
+	unselectAll,
+	toggleChapterNumber,
+	toggleGroup,
+	toggleDate key.Binding
 }
 
 // ShortHelp implements help.keyMap.
 func (k keyMap) ShortHelp() []key.Binding {
-	return append(
-		k.list.ShortHelp(),
+	return []key.Binding{
 		k.toggle,
 		k.read,
 		k.download,
-	)
+	}
 }
 
 // FullHelp implements help.keyMap.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		k.ShortHelp(),
-		{k.selectAll, k.unselectAll, k.toggleChapterNumber, k.toggleGroup, k.toggleDate},
-		{k.anilist},
-		{k.changeFormat, k.openURL},
+		{k.anilist, k.changeFormat, k.openURL},
+		{k.selectAll, k.unselectAll},
+		{k.toggleChapterNumber, k.toggleGroup, k.toggleDate},
 	}
 }

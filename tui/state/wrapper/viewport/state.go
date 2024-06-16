@@ -69,6 +69,7 @@ func (s *State) Init(ctx context.Context) tea.Cmd {
 		BorderStyle(lipgloss.RoundedBorder()).
 		BorderForeground(color.Viewport)
 	s.viewport.Style = style
+	s.keyMap = newKeyMap(s.viewport.KeyMap)
 	return nil
 }
 

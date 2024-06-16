@@ -41,6 +41,10 @@ type model struct {
 
 // Init implements tea.Model.
 func (m *model) Init() tea.Cmd {
+	m.help.Styles.ShortKey = m.styles.helpKey
+	m.help.Styles.ShortSeparator = m.styles.helpSep
+	m.help.Styles.FullKey = m.styles.helpKey
+	m.help.Styles.FullSeparator = m.styles.helpSep
 	return m.state.Init(m.ctx)
 }
 

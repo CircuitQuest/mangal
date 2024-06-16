@@ -8,6 +8,7 @@ import (
 )
 
 func New(anilist *lmanilist.Anilist, chapters []lmanilist.Manga, onResponse OnResponseFunc) *State {
+	keyMap := newKeyMap()
 	listWrapper := list.New(util.NewList(
 		2,
 		"manga", "mangas",
@@ -15,12 +16,12 @@ func New(anilist *lmanilist.Anilist, chapters []lmanilist.Manga, onResponse OnRe
 		func(manga lmanilist.Manga) _list.DefaultItem {
 			return Item{Manga: &manga}
 		},
-	))
+	), keyMap)
 
 	return &State{
 		anilist:    anilist,
 		list:       listWrapper,
 		onResponse: onResponse,
-		keyMap:     newKeyMap(),
+		keyMap:     keyMap,
 	}
 }

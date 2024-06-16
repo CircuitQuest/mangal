@@ -8,6 +8,7 @@ import (
 )
 
 func New(loaders []libmangal.ProviderLoader) *State {
+	keyMap := newKeyMap()
 	listWrapper := list.New(util.NewList(
 		3,
 		"provider", "providers",
@@ -15,11 +16,11 @@ func New(loaders []libmangal.ProviderLoader) *State {
 		func(loader libmangal.ProviderLoader) _list.DefaultItem {
 			return Item{loader}
 		},
-	))
+	), keyMap)
 
 	return &State{
 		providerLoaders: loaders,
 		list:            listWrapper,
-		keyMap:          newKeyMap(listWrapper.KeyMap()),
+		keyMap:          keyMap,
 	}
 }

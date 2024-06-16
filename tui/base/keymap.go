@@ -64,12 +64,12 @@ type combinedKeyMap struct {
 
 // ShortHelp implements help.KeyMap.
 func (c combinedKeyMap) ShortHelp() []key.Binding {
-	return append(c.k.ShortHelp(), c.other.ShortHelp()...)
+	return append(c.other.ShortHelp(), c.k.ShortHelp()...)
 }
 
 // FullHelp implements help.KeyMap.
 func (c combinedKeyMap) FullHelp() [][]key.Binding {
-	return append(c.k.FullHelp(), c.other.FullHelp()...)
+	return append(c.other.FullHelp(), c.k.FullHelp()...)
 }
 
 // NoKeyMap implements help.keyMap.

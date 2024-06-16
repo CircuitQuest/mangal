@@ -52,8 +52,8 @@ func NewList[T any](
 	l.SetShowStatusBar(false)
 	l.SetShowTitle(false)
 	l.SetShowPagination(false)
+	l.DisableQuitKeybindings()
 	l.InfiniteScrolling = true
-	l.KeyMap.CancelWhileFiltering = Bind("cancel", "esc")
 
 	l.Paginator.Type = paginator.Arabic
 

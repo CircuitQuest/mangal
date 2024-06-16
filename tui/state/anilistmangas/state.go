@@ -41,7 +41,7 @@ func (s *State) Backable() bool {
 
 // KeyMap implements base.State.
 func (s *State) KeyMap() help.KeyMap {
-	return s.keyMap
+	return s.list.KeyMap()
 }
 
 // Title implements base.State.

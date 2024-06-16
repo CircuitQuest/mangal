@@ -19,6 +19,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	showDate := config.TUI.Chapter.ShowDate.Get()
 	selectedSet := set.NewMapset[*Item]()
 
+	keyMap := newKeyMap()
 	listWrapper := list.New(util.NewList(
 		3,
 		"chapter", "chapters",
@@ -51,7 +52,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 				tmpDownPath:       &tmpDownPath,
 			}
 		},
-	))
+	), keyMap)
 
 	return &State{
 		list:              listWrapper,
@@ -60,7 +61,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		manga:             manga,
 		client:            client,
 		selected:          selectedSet,
-		keyMap:            newKeyMap(listWrapper.KeyMap()),
+		keyMap:            keyMap,
 		showChapterNumber: &showChapterNumber,
 		showGroup:         &showGroup,
 		showDate:          &showDate,

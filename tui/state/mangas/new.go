@@ -9,6 +9,7 @@ import (
 )
 
 func New(client *libmangal.Client, query string, mangas []mangadata.Manga) *State {
+	keyMap := newKeyMap()
 	listWrapper := list.New(util.NewList(
 		2,
 		"manga", "mangas",
@@ -16,13 +17,13 @@ func New(client *libmangal.Client, query string, mangas []mangadata.Manga) *Stat
 		func(manga mangadata.Manga) _list.DefaultItem {
 			return Item{manga}
 		},
-	))
+	), keyMap)
 
 	return &State{
 		list:   listWrapper,
 		mangas: mangas,
 		client: client,
 		query:  query,
-		keyMap: newKeyMap(listWrapper.KeyMap()),
+		keyMap: keyMap,
 	}
 }

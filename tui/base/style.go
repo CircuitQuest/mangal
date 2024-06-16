@@ -13,7 +13,9 @@ type styles struct {
 	subtitle,
 	header,
 	state,
-	footer lipgloss.Style
+	footer,
+	helpKey,
+	helpSep lipgloss.Style
 }
 
 func defaultStyles() styles {
@@ -27,5 +29,7 @@ func defaultStyles() styles {
 		header:       style.Normal.Base.Padding(0, 0, 1, 2),
 		state:        style.Normal.Base.Padding(0, 1),
 		footer:       style.Normal.Base.Padding(0, 1),
+		helpKey:      style.Bold.Warning,
+		helpSep:      style.Normal.Base,
 	}
 }
