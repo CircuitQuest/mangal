@@ -59,12 +59,14 @@ func (s *State) Status() string {
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) {
-	s.list.Resize(size)
+func (s *State) Resize(size base.Size) tea.Cmd {
+	return s.list.Resize(size)
 }
 
 // Init implements base.State.
 func (s *State) Init(ctx context.Context) tea.Cmd {
+	// TODO: decide if Init should close all clients, instead use
+	// State.Destroy() (if implemented) method and perform that there?
 	return tea.Sequence(
 		func() tea.Msg {
 			return client.CloseAll()

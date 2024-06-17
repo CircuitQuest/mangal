@@ -58,8 +58,8 @@ func (s *State) Status() string {
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) {
-	s.list.Resize(size)
+func (s *State) Resize(size base.Size) tea.Cmd {
+	return s.list.Resize(size)
 }
 
 // Init implements base.State.

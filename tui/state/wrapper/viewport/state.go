@@ -55,10 +55,11 @@ func (s *State) Status() string {
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) {
+func (s *State) Resize(size base.Size) tea.Cmd {
 	s.size = size
 	s.viewport.Width = size.Width - 2 // -2 takes into account the border
 	s.viewport.Height = size.Height - 2
+	return nil
 }
 
 // Init implements base.State.

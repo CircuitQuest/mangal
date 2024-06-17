@@ -15,12 +15,7 @@ import (
 func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.WindowSizeMsg:
-		m.resize(Size{
-			Width:  msg.Width,
-			Height: msg.Height,
-		})
-
-		return m, nil
+		return m, m.resize(Size{Width: msg.Width, Height: msg.Height})
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keyMap.quit):
@@ -56,10 +51,53 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m, cmd
 }
 
+// resize the program
+func (m *model) resize(size Size) tea.Cmd {
+	m.size = size
+	m.help.Width = size.Width
+
+	return m.resizeState()
+}
+
+// resizeState only resizes the State with its updated size
+func (m *model) resizeState() tea.Cmd {
+	return m.state.Resize(m.stateSize())
+}
+
+// back to the previous State
+func (m *model) back() tea.Cmd {
+	// do not pop the last state
+	if m.history.Size() == 0 {
+		return nil
+	}
+
+	log.L.Info().Str("state", m.history.Peek().Title().Text).Msg("going to the previous state")
+
+	// TODO: perform m.state.Destroy() once implemented?
+	m.cancel()
+	m.state = m.history.Pop()
+
+	return m.resizeState()
+}
+
+// pushState initializes a new state and pushes previous one into history
+func (m *model) pushState(state State) tea.Cmd {
+	log.L.Info().Str("state", state.Title().Text).Msg("new state")
+	if !m.state.Intermediate() {
+		m.history.Push(m.state)
+	}
+	m.state = state
+
+	return tea.Sequence(
+		m.resizeState(),
+		m.state.Init(m.ctx),
+	)
+}
+
+// toggleHelp show/hide help menu (keybindings)
 func (m *model) toggleHelp() tea.Cmd {
 	m.help.ShowAll = !m.help.ShowAll
-	m.resize(m.size)
-	return nil
+	return m.resizeState()
 }
 
 // notify will show a message to the right of the title and status.
@@ -70,6 +108,7 @@ func (m *model) notify(message string, duration time.Duration) tea.Cmd {
 	})
 }
 
+// hideNotification removes the notification
 func (m *model) hideNotification() tea.Cmd {
 	m.notification = ""
 	return nil

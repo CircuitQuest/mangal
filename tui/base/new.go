@@ -14,14 +14,22 @@ func New(state State,
 ) *model {
 	ctx, ctxCancel := context.WithCancel(context.Background())
 
+	_styles := defaultStyles()
+	_help := help.New()
+
+	_help.Styles.ShortKey = _styles.helpKey
+	_help.Styles.ShortSeparator = _styles.helpSep
+	_help.Styles.FullKey = _styles.helpKey
+	_help.Styles.FullSeparator = _styles.helpSep
+
 	model := &model{
 		state:                       state,
 		history:                     stack.New[State](),
 		ctx:                         ctx,
 		ctxCancel:                   ctxCancel,
-		styles:                      defaultStyles(),
+		styles:                      _styles,
 		keyMap:                      newKeyMap(),
-		help:                        help.New(),
+		help:                        _help,
 		notificationDefaultDuration: time.Second,
 		errState:                    errState,
 		logState:                    logState,

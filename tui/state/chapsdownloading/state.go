@@ -68,9 +68,10 @@ func (s *State) Status() string {
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) {
+func (s *State) Resize(size base.Size) tea.Cmd {
 	s.size = size
 	s.progress.Width = size.Width
+	return nil
 }
 
 // Init implements base.State.

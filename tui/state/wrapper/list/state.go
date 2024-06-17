@@ -62,8 +62,9 @@ func (s *State) Status() string {
 }
 
 // Resize implements base.State. Wrapper of list.Model.
-func (s *State) Resize(size base.Size) {
+func (s *State) Resize(size base.Size) tea.Cmd {
 	s.list.SetSize(size.Width, size.Height)
+	return nil
 }
 
 // Init implements base.State.
