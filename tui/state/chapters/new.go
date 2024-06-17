@@ -60,7 +60,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		volume:            volume,
 		manga:             manga,
 		client:            client,
-		selected:          selectedSet,
+		selected:          &selectedSet,
 		keyMap:            keyMap,
 		showChapterNumber: &showChapterNumber,
 		showGroup:         &showGroup,

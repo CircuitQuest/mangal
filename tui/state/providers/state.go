@@ -16,16 +16,17 @@ import (
 	"github.com/luevano/mangal/tui/state/mangas"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/luevano/mangal/tui/state/wrapper/textinput"
-	"github.com/pkg/errors"
+	"github.com/zyedidia/generic/set"
 )
 
 var _ base.State = (*State)(nil)
 
 // State implements base.State.
 type State struct {
-	list            *list.State
-	providerLoaders []libmangal.ProviderLoader
-	keyMap          keyMap
+	list      *list.State
+	loaded    *set.Set[*Item]
+	extraInfo *bool
+	keyMap    keyMap
 }
 
 // Intermediate implements base.State.
@@ -83,7 +84,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			goto end
 		}
 
-		item, ok := s.list.SelectedItem().(Item)
+		item, ok := s.list.SelectedItem().(*Item)
 		if !ok {
 			return nil
 		}
@@ -95,14 +96,23 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					return loading.New("Loading", fmt.Sprintf("Loading provider %q", item))
 				},
 				func() tea.Msg {
-					mangalClient, err := client.NewClient(ctx, item)
-					if err != nil {
-						return err
-					}
+					var mangalClient *libmangal.Client
+					if c := client.Get(item.ProviderLoader); c != nil {
+						log.Log("Using existing mangal client for provider %q", item)
+						mangalClient = c
+					} else {
+						log.Log("New mangal client for provider %q", item)
+						c, err := client.NewClient(ctx, item.ProviderLoader)
+						if err != nil {
+							return err
+						}
+						mangalClient = c
+						item.MarkLoaded()
 
-					mangalClient.Logger().SetOnLog(func(format string, a ...any) {
-						log.Log(format, a...)
-					})
+						mangalClient.Logger().SetOnLog(func(format string, a ...any) {
+							log.Log(format, a...)
+						})
+					}
 
 					return textinput.New(textinput.Options{
 						Title:       base.Title{Text: "Search Manga"},
@@ -127,9 +137,19 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 				},
 			)
 		case key.Matches(msg, s.keyMap.info):
-			return func() tea.Msg {
-				return errors.New("unimplemented")
+			*s.extraInfo = !(*s.extraInfo)
+		case key.Matches(msg, s.keyMap.closeAll):
+			if err := client.CloseAll(); err != nil {
+				return func() tea.Msg {
+					return err
+				}
 			}
+
+			for _, item := range s.loaded.Keys() {
+				item.MarkClosed()
+			}
+
+			return base.Notify("Closed all clients")
 		}
 	}
 end:

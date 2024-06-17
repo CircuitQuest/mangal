@@ -18,9 +18,38 @@ import (
 )
 
 var (
+	// TODO: change data structure to be able to close
+	// individual clients and remove them from the structure,
+	// why was this a queue??
 	clients = queue.New[*libmangal.Client]()
 	m       sync.Mutex
 )
+
+func Get(loader libmangal.ProviderLoader) *libmangal.Client {
+	m.Lock()
+	defer m.Unlock()
+
+	var client *libmangal.Client
+	clients.Each(func(t *libmangal.Client) {
+		if t.Info().ID == loader.Info().ID {
+			client = t
+		}
+	})
+	return client
+}
+
+func Exists(loader libmangal.ProviderLoader) bool {
+	m.Lock()
+	defer m.Unlock()
+
+	exists := false
+	clients.Each(func(client *libmangal.Client) {
+		if client.Info().ID == loader.Info().ID {
+			exists = true
+		}
+	})
+	return exists
+}
 
 func CloseAll() error {
 	m.Lock()
@@ -39,6 +68,12 @@ func CloseAll() error {
 }
 
 func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal.Client, error) {
+	if Exists(loader) {
+		return nil, fmt.Errorf("client for loader %q already exists", loader)
+	}
+	m.Lock()
+	defer m.Unlock()
+
 	HTTPClient := &http.Client{
 		Timeout: time.Minute,
 	}

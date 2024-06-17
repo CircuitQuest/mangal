@@ -10,28 +10,30 @@ var _ help.KeyMap = (*keyMap)(nil)
 
 func newKeyMap() keyMap {
 	return keyMap{
-		info:    util.Bind("info", "i"),
-		confirm: util.Bind("confirm", "enter"),
+		confirm:  util.Bind("confirm", "enter"),
+		info:     util.Bind("info", "i"),
+		closeAll: util.Bind("close all", "backspace"),
 	}
 }
 
 // keyMap implements help.keyMap.
 type keyMap struct {
+	confirm,
 	info,
-	confirm key.Binding
+	closeAll key.Binding
 }
 
 // ShortHelp implements help.KeyMap.
-func (p keyMap) ShortHelp() []key.Binding {
+func (k keyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
-		p.confirm,
-		p.info,
+		k.confirm,
+		k.info,
 	}
 }
 
 // FullHelp implements help.KeyMap.
-func (p keyMap) FullHelp() [][]key.Binding {
+func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		p.ShortHelp(),
+		append(k.ShortHelp(), k.closeAll),
 	}
 }

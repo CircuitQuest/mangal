@@ -37,7 +37,7 @@ type State struct {
 	volume            mangadata.Volume
 	manga             mangadata.Manga
 	client            *libmangal.Client
-	selected          set.Set[*Item]
+	selected          *set.Set[*Item]
 	keyMap            keyMap
 	showChapterNumber *bool
 	showGroup         *bool
@@ -283,16 +283,10 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			)
 		case key.Matches(msg, s.keyMap.toggleChapterNumber):
 			*s.showChapterNumber = !(*s.showChapterNumber)
-
-			return s.list.Update(ctx, msg)
 		case key.Matches(msg, s.keyMap.toggleGroup):
 			*s.showGroup = !(*s.showGroup)
-
-			return s.list.Update(ctx, msg)
 		case key.Matches(msg, s.keyMap.toggleDate):
 			*s.showDate = !(*s.showDate)
-
-			return s.list.Update(ctx, msg)
 		}
 	}
 
