@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/zyedidia/generic/stack"
@@ -24,10 +25,12 @@ type model struct {
 
 	size Size
 
-	styles styles
+	styles  styles
+	keyMap  *keyMap
+	help    help.Model
+	spinner spinner.Model
 
-	keyMap *keyMap
-	help   help.Model
+	loadingMessage string
 
 	notification                string
 	notificationDefaultDuration time.Duration

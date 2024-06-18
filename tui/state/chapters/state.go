@@ -21,7 +21,6 @@ import (
 	"github.com/luevano/mangal/tui/state/anilistmangas"
 	"github.com/luevano/mangal/tui/state/confirm"
 	"github.com/luevano/mangal/tui/state/formats"
-	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/skratchdot/open-golang/open"
@@ -143,17 +142,16 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			}
 		case key.Matches(msg, s.keyMap.openURL):
 			return tea.Sequence(
-				func() tea.Msg {
-					return loading.New("Opening", fmt.Sprintf("Opening URL %s for chapter %q", item.chapter.Info().URL, item.chapter))
-				},
+				base.Loading(fmt.Sprintf("Opening URL %s for chapter %q", item.chapter.Info().URL, item.chapter)),
 				func() tea.Msg {
 					err := open.Run(item.chapter.Info().URL)
 					if err != nil {
 						return err
 					}
 
-					return base.Back
+					return nil
 				},
+				base.Loaded,
 			)
 		case key.Matches(msg, s.keyMap.download):
 			var chapters []mangadata.Chapter
@@ -203,9 +201,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 			if item.DownloadedFormats().Has(downloadOptions.Format) {
 				return tea.Sequence(
-					func() tea.Msg {
-						return loading.New("Opening", fmt.Sprintf("Opening %q for reading", item.chapter))
-					},
+					base.Loading(fmt.Sprintf("Opening %q for reading", item.chapter)),
 					func() tea.Msg {
 						err := s.client.ReadChapter(
 							ctx,
@@ -217,8 +213,9 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 							return err
 						}
 
-						return base.Back
+						return nil
 					},
+					base.Loaded,
 				)
 			}
 
@@ -226,9 +223,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
 		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
-				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Searching Anilist mangas for %q", s.manga))
-				},
+				base.Loading(fmt.Sprintf("Searching Anilist mangas for %q", s.manga)),
 				func() tea.Msg {
 					var mangas []lmanilist.Manga
 
@@ -273,13 +268,14 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 									log.Log("Setting Anilist manga %q (%d)", response.String(), response.ID)
 									s.manga.SetMetadata(response.Metadata())
 
-									return base.Back
+									return nil
 								},
 								base.NotifyWithDuration(fmt.Sprintf("Set Anilist %s (%d)", response.String(), response.ID), 3*time.Second),
 							)
 						},
 					)
 				},
+				base.Loaded,
 			)
 		case key.Matches(msg, s.keyMap.toggleChapterNumber):
 			*s.showChapterNumber = !(*s.showChapterNumber)

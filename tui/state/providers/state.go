@@ -12,7 +12,6 @@ import (
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/mangas"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/luevano/mangal/tui/state/wrapper/textinput"
@@ -91,12 +90,11 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
+			var mangalClient *libmangal.Client
+
 			return tea.Sequence(
+				base.Loading(fmt.Sprintf("Loading provider %q", item)),
 				func() tea.Msg {
-					return loading.New("Loading", fmt.Sprintf("Loading provider %q", item))
-				},
-				func() tea.Msg {
-					var mangalClient *libmangal.Client
 					if c := client.Get(item.ProviderLoader); c != nil {
 						log.Log("Using existing mangal client for provider %q", item)
 						mangalClient = c
@@ -113,16 +111,17 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 							log.Log(format, a...)
 						})
 					}
-
+					return nil
+				},
+				base.Loaded,
+				func() tea.Msg {
 					return textinput.New(textinput.Options{
 						Title:       base.Title{Text: "Search Manga"},
 						Subtitle:    fmt.Sprintf("Search using %q provider", mangalClient),
 						Placeholder: "Manga title...",
 						OnResponse: func(response string) tea.Cmd {
 							return tea.Sequence(
-								func() tea.Msg {
-									return loading.New("Searching", fmt.Sprintf("Searching for %q", response))
-								},
+								base.Loading(fmt.Sprintf("Searching for %q", response)),
 								func() tea.Msg {
 									mangaList, err := mangalClient.SearchMangas(ctx, response)
 									if err != nil {
@@ -131,6 +130,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 									return mangas.New(mangalClient, response, mangaList)
 								},
+								base.Loaded,
 							)
 						},
 					})

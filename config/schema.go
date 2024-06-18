@@ -79,6 +79,7 @@ type configDownloadMetadata struct {
 }
 
 type configTUI struct {
+	SkipHome           *entry[bool, bool]
 	ExpandSingleVolume *entry[bool, bool]
 	Chapter            configTUIChapter
 }

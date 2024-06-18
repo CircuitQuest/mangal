@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/zyedidia/generic/stack"
 )
 
@@ -22,6 +23,8 @@ func New(state State,
 	_help.Styles.FullKey = _styles.helpKey
 	_help.Styles.FullSeparator = _styles.helpSep
 
+	_spinner := spinner.New(spinner.WithSpinner(spinner.Dot))
+
 	model := &model{
 		state:                       state,
 		history:                     stack.New[State](),
@@ -29,6 +32,7 @@ func New(state State,
 		ctxCancel:                   ctxCancel,
 		styles:                      _styles,
 		keyMap:                      newKeyMap(),
+		spinner:                     _spinner,
 		help:                        _help,
 		notificationDefaultDuration: time.Second,
 		errState:                    errState,

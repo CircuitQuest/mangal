@@ -2,7 +2,11 @@ package base
 
 import "time"
 
-type BackMsg struct{}
+type BackMsg struct {
+	Steps int
+}
+
+type BackToHomeMsg struct{}
 
 type NotificationMsg struct {
 	Message string
@@ -14,3 +18,7 @@ type NotificationWithDurationMsg struct {
 }
 
 type NotificationTimeoutMsg struct{}
+
+type LoadingMsg struct {
+	Message string
+}

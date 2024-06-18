@@ -6,6 +6,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+const newline = "\n"
+
 // View implements tea.Model.
 func (m *model) View() string {
 	header := m.viewHeader()
@@ -40,7 +42,7 @@ func (m *model) viewHeader() string {
 	}
 
 	if subtitle := m.state.Subtitle(); subtitle != "" {
-		header.WriteString("\n")
+		header.WriteString(newline)
 		header.WriteString(m.styles.subtitle.Render(subtitle))
 	}
 
@@ -59,5 +61,15 @@ func (m *model) viewState() string {
 }
 
 func (m *model) viewFooter() string {
-	return m.styles.footer.Render(m.help.View(m.keyMap.with(m.state.KeyMap())))
+	var footer strings.Builder
+	footer.Grow(200)
+
+	if m.loadingMessage != "" {
+		footer.WriteString(m.styles.spinner.Render(m.spinner.View()))
+		footer.WriteString(m.styles.loading.Render(m.loadingMessage))
+		footer.WriteString(newline)
+	}
+	footer.WriteString(m.help.View(m.keyMap.with(m.state.KeyMap())))
+
+	return m.styles.footer.Render(footer.String())
 }

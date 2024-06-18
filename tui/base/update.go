@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/log"
 	"github.com/pkg/errors"
@@ -21,22 +22,35 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.quit):
 			return m, tea.Quit
 		case key.Matches(msg, m.keyMap.back) && m.state.Backable():
-			return m, m.back()
+			return m, Back
+		case key.Matches(msg, m.keyMap.home):
+			return m, BackToHome
 		case key.Matches(msg, m.keyMap.help):
 			return m, m.toggleHelp()
 		case key.Matches(msg, m.keyMap.log):
 			return m, m.pushState(m.logState("Logs", log.Aggregate.String()))
 		}
+	case BackMsg:
+		return m, m.back(msg.Steps)
+	case BackToHomeMsg:
+		return m, m.back(m.history.Size())
+	case State:
+		return m, m.pushState(msg)
+	case spinner.TickMsg:
+		// nil if the spinner is not the correct spinner (the spinner.Tick method handles this)
+		// or if trying to spin it too fast, in which case don't hold the spinner.TickMsg hostage
+		// and let the state handle it if it needs it (else the state spinner will stay static)
+		if cmd := m.updateSpinner(msg); cmd != nil {
+			return m, cmd
+		}
+	case LoadingMsg:
+		return m, m.loading(msg.Message)
 	case NotificationMsg:
 		return m, m.notify(msg.Message, m.notificationDefaultDuration)
 	case NotificationWithDurationMsg:
 		return m, m.notify(msg.Message, msg.Duration)
 	case NotificationTimeoutMsg:
 		return m, m.hideNotification()
-	case BackMsg:
-		return m, m.back()
-	case State:
-		return m, m.pushState(msg)
 	case error:
 		if errors.Is(msg, context.Canceled) || strings.Contains(msg.Error(), context.Canceled.Error()) {
 			return m, nil
@@ -47,8 +61,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.pushState(m.errState(msg))
 	}
 
-	cmd := m.state.Update(m.ctx, msg)
-	return m, cmd
+	return m, m.state.Update(m.ctx, msg)
 }
 
 // resize the program
@@ -65,17 +78,19 @@ func (m *model) resizeState() tea.Cmd {
 }
 
 // back to the previous State
-func (m *model) back() tea.Cmd {
+func (m *model) back(steps int) tea.Cmd {
 	// do not pop the last state
-	if m.history.Size() == 0 {
+	if m.history.Size() == 0 || steps <= 0 {
 		return nil
 	}
 
-	log.L.Info().Str("state", m.history.Peek().Title().Text).Msg("going to the previous state")
+	log.L.Info().Str("state", m.history.Peek().Title().Text).Int("steps", steps).Msg("going back to previous state")
 
-	// TODO: perform m.state.Destroy() once implemented?
 	m.cancel()
-	m.state = m.history.Pop()
+	for i := 0; i < steps && m.history.Size() > 0; i++ {
+		// TODO: perform m.state.Destroy() once implemented?
+		m.state = m.history.Pop()
+	}
 
 	return m.resizeState()
 }
@@ -98,6 +113,36 @@ func (m *model) pushState(state State) tea.Cmd {
 func (m *model) toggleHelp() tea.Cmd {
 	m.help.ShowAll = !m.help.ShowAll
 	return m.resizeState()
+}
+
+// updateSpinner updates the spinner to the next frame
+func (m *model) updateSpinner(msg spinner.TickMsg) tea.Cmd {
+	if m.loadingMessage == "" {
+		return nil
+	}
+
+	var cmd tea.Cmd
+	m.spinner, cmd = m.spinner.Update(msg)
+	return cmd
+}
+
+// loading sets the loading message and sends a spinner.Tick msg,
+// the state needs to be resized due to the updated footer size
+func (m *model) loading(message string) tea.Cmd {
+	// this check saves one m.resizeState call
+	// when calling loading on the same message,
+	// which could happen if Loaded cmd is called consecutively
+	if m.loadingMessage == message {
+		return nil
+	}
+	m.loadingMessage = message
+	if message == "" {
+		return m.resizeState()
+	}
+	return tea.Sequence(
+		m.spinner.Tick,
+		m.resizeState(),
+	)
 }
 
 // notify will show a message to the right of the title and status.

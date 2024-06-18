@@ -12,7 +12,6 @@ import (
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapsdownloaded"
 	"github.com/luevano/mangal/tui/state/chapsdownloading"
-	"github.com/luevano/mangal/tui/state/loading"
 )
 
 func (s *State) downloadChaptersCmd(chapters []mangadata.Chapter, options libmangal.DownloadOptions) tea.Cmd {
@@ -51,24 +50,17 @@ func (s *State) downloadChapterCmd(ctx context.Context, chapter mangadata.Chapte
 	volume := chapter.Volume()
 	manga := volume.Manga()
 
-	loadingState := loading.New("Downloading", fmt.Sprintf("%s / Vol. %s / %s", manga, volume, chapter))
 	return tea.Sequence(
+		base.Loading(fmt.Sprintf("Downloading %s / Vol. %s / %s", manga, volume, chapter)),
 		func() tea.Msg {
-			return loadingState
-		},
-		func() tea.Msg {
-			s.client.Logger().SetOnLog(func(format string, a ...any) {
-				loadingState.SetMessage(fmt.Sprintf(format, a...))
-				log.Log(format, a...)
-			})
-
 			// TODO: make use of the returned data for data aggregation?
 			_, err := s.client.DownloadChapter(ctx, chapter, options)
 			if err != nil {
 				return err
 			}
 
-			return base.Back
+			return nil
 		},
+		base.Loaded,
 	)
 }

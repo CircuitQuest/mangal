@@ -320,6 +320,11 @@ func initConfig() config {
 			},
 		},
 		TUI: configTUI{
+			SkipHome: reg(entry[bool, bool]{
+				Key:         "tui.skip_home",
+				Default:     true,
+				Description: "Skip home view when starting mangal and go straight to the providers view.",
+			}),
 			ExpandSingleVolume: reg(entry[bool, bool]{
 				Key:         "tui.expand_single_volume",
 				Default:     true,

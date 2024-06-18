@@ -14,7 +14,6 @@ import (
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapters"
-	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/volumes"
 	list "github.com/luevano/mangal/tui/state/wrapper/list"
 )
@@ -86,9 +85,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
-				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Searching Anilist manga for %q", item.manga))
-				},
+				base.Loading(fmt.Sprintf("Searching Anilist manga for %q", item.manga)),
 				func() tea.Msg {
 					// TODO: handle more cases for missing/partial metadata
 					// Find anilist manga closest to the selected manga and assign it
@@ -105,9 +102,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 					return nil
 				},
-				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Searching volumes for %q", item.manga))
-				},
+				base.Loading(fmt.Sprintf("Searching volumes for %q", item.manga)),
 				func() tea.Msg {
 					volumeList, err := s.client.MangaVolumes(ctx, item.manga)
 					if err != nil {
@@ -127,6 +122,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 					return chapters.New(s.client, item.manga, volume, chapterList)
 				},
+				base.Loaded,
 			)
 		}
 	}

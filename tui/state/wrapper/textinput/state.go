@@ -70,7 +70,11 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, s.keyMap.confirm) && strings.TrimSpace(s.textinput.Value()) != "":
-			return s.options.OnResponse(strings.TrimSpace(s.textinput.Value()))
+			s.textinput.Blur()
+			return tea.Sequence(
+				s.options.OnResponse(strings.TrimSpace(s.textinput.Value())),
+				s.Init(ctx), // re-enable the prompt after the response, so that it's usable when backing up
+			)
 		}
 	}
 

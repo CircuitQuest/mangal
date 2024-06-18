@@ -14,8 +14,9 @@ var (
 
 func newKeyMap() *keyMap {
 	return &keyMap{
-		back: util.Bind("back", "esc"),
 		quit: util.Bind("quit", "ctrl+c"),
+		back: util.Bind("back", "esc"),
+		home: util.Bind("home", "H"),
 		help: util.Bind("help", "?"),
 		log:  util.Bind("log", "ctrl+l"),
 	}
@@ -23,8 +24,9 @@ func newKeyMap() *keyMap {
 
 // keyMap implements help.KeyMap.
 type keyMap struct {
-	back,
 	quit,
+	back,
+	home,
 	help,
 	log key.Binding
 }
@@ -42,6 +44,7 @@ func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
 		k.ShortHelp(),
 		{
+			k.home,
 			k.quit,
 			k.log,
 		},

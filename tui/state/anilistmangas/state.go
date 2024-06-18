@@ -10,7 +10,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/luevano/mangal/tui/state/wrapper/textinput"
 )
@@ -94,9 +93,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					Intermediate: true,
 					OnResponse: func(response string) tea.Cmd {
 						return tea.Sequence(
-							func() tea.Msg {
-								return loading.New("Searching", fmt.Sprintf("Searching %q on Anilist", response))
-							},
+							base.Loading(fmt.Sprintf("Searching %q on Anilist", response)),
 							func() tea.Msg {
 								mangas, err := s.anilist.SearchMangas(ctx, response)
 								if err != nil {
@@ -105,6 +102,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 								return New(s.anilist, mangas, s.onResponse)
 							},
+							base.Loaded,
 						)
 					},
 				})

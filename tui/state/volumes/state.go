@@ -12,7 +12,6 @@ import (
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapters"
-	"github.com/luevano/mangal/tui/state/loading"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
@@ -83,9 +82,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
-				func() tea.Msg {
-					return loading.New("Searching", fmt.Sprintf("Searching chapters for volume %s", item.volume))
-				},
+				base.Loading(fmt.Sprintf("Searching chapters for volume %s", item.volume)),
 				func() tea.Msg {
 					chapterList, err := s.client.VolumeChapters(ctx, item.volume)
 					if err != nil {
@@ -94,6 +91,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 					return chapters.New(s.client, s.manga, item.volume, chapterList)
 				},
+				base.Loaded,
 			)
 		}
 	}
