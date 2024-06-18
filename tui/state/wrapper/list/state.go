@@ -17,8 +17,9 @@ var _ base.State = (*State)(nil)
 
 // State implements base.State. Wrapper of list.Model.
 type State struct {
-	list   list.Model
-	keyMap keyMap
+	list     list.Model
+	delegate *list.DefaultDelegate
+	keyMap   keyMap
 }
 
 // Intermediate implements base.State.
@@ -113,4 +114,20 @@ func (s *State) SelectedItem() list.Item {
 // Items is a wrapper of list.Model.
 func (s *State) Items() []list.Item {
 	return s.list.Items()
+}
+
+// SetDelegateHeight sets the height of the delegate, which translates to the items' height.
+//
+// Clamps to a minimum of 1, in which case the description is hidden.
+func (s *State) SetDelegateHeight(height int) {
+	if height < 2 {
+		height = 1
+	}
+	if height == 1 {
+		s.delegate.ShowDescription = false
+	} else {
+		s.delegate.ShowDescription = true
+	}
+	s.delegate.SetHeight(height)
+	s.list.SetDelegate(s.delegate)
 }

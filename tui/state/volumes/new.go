@@ -5,19 +5,18 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
-	"github.com/luevano/mangal/tui/util"
 )
 
 func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Volume) *State {
 	keyMap := newKeyMap()
-	listWrapper := list.New(util.NewList(
+	listWrapper := list.New(
 		1,
 		"volume", "volumes",
 		volumes,
 		func(volume mangadata.Volume) _list.DefaultItem {
 			return Item{volume}
 		},
-	), keyMap)
+		keyMap)
 
 	return &State{
 		list:    listWrapper,

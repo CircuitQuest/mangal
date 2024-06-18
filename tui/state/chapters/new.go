@@ -9,7 +9,6 @@ import (
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
-	"github.com/luevano/mangal/tui/util"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -20,7 +19,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	selectedSet := set.NewMapset[*Item]()
 
 	keyMap := newKeyMap()
-	listWrapper := list.New(util.NewList(
+	listWrapper := list.New(
 		3,
 		"chapter", "chapters",
 		chapters,
@@ -52,7 +51,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 				tmpDownPath:       &tmpDownPath,
 			}
 		},
-	), keyMap)
+		keyMap)
 
 	return &State{
 		list:              listWrapper,

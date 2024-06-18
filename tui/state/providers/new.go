@@ -4,7 +4,6 @@ import (
 	_list "github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
-	"github.com/luevano/mangal/tui/util"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -12,8 +11,8 @@ func New(loaders []libmangal.ProviderLoader) *State {
 	keyMap := newKeyMap()
 	extraInfo := false
 	loaded := set.NewMapset[*Item]()
-	listWrapper := list.New(util.NewList(
-		3,
+	listWrapper := list.New(
+		2,
 		"provider", "providers",
 		loaders,
 		func(loader libmangal.ProviderLoader) _list.DefaultItem {
@@ -23,7 +22,7 @@ func New(loaders []libmangal.ProviderLoader) *State {
 				extraInfo:      &extraInfo,
 			}
 		},
-	), keyMap)
+		keyMap)
 
 	return &State{
 		list:      listWrapper,

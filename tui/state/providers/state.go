@@ -138,6 +138,12 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			)
 		case key.Matches(msg, s.keyMap.info):
 			*s.extraInfo = !(*s.extraInfo)
+
+			if *s.extraInfo {
+				s.list.SetDelegateHeight(3)
+			} else {
+				s.list.SetDelegateHeight(2)
+			}
 		case key.Matches(msg, s.keyMap.closeAll):
 			if err := client.CloseAll(); err != nil {
 				return func() tea.Msg {
