@@ -27,16 +27,16 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
-var _ base.State = (*State)(nil)
+var _ base.State = (*state)(nil)
 
-// State implements base.State.
-type State struct {
+// state implements base.state.
+type state struct {
 	list              *list.State
 	chapters          []mangadata.Chapter
 	volume            mangadata.Volume
 	manga             mangadata.Manga
 	client            *libmangal.Client
-	selected          *set.Set[*Item]
+	selected          *set.Set[*item]
 	keyMap            keyMap
 	showChapterNumber *bool
 	showGroup         *bool
@@ -44,27 +44,27 @@ type State struct {
 }
 
 // Intermediate implements base.State.
-func (s *State) Intermediate() bool {
+func (s *state) Intermediate() bool {
 	return false
 }
 
 // Backable implements base.State.
-func (s *State) Backable() bool {
+func (s *state) Backable() bool {
 	return s.list.Backable()
 }
 
 // KeyMap implements base.State.
-func (s *State) KeyMap() help.KeyMap {
+func (s *state) KeyMap() help.KeyMap {
 	return s.list.KeyMap()
 }
 
 // Title implements base.State.
-func (s *State) Title() base.Title {
+func (s *state) Title() base.Title {
 	return base.Title{Text: fmt.Sprintf("%s / Vol. %s", s.manga, s.volume)}
 }
 
 // Subtitle implements base.State.
-func (s *State) Subtitle() string {
+func (s *state) Subtitle() string {
 	var subtitle strings.Builder
 
 	subtitle.WriteString(s.list.Subtitle())
@@ -84,54 +84,53 @@ func (s *State) Subtitle() string {
 }
 
 // Status implements base.State.
-func (s *State) Status() string {
+func (s *state) Status() string {
 	return s.list.Status()
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) tea.Cmd {
+func (s *state) Resize(size base.Size) tea.Cmd {
 	return s.list.Resize(size)
 }
 
 // Init implements base.State.
-func (s *State) Init(ctx context.Context) tea.Cmd {
+func (s *state) Init(ctx context.Context) tea.Cmd {
 	return s.list.Init(ctx)
 }
 
 // Update implements base.State.
-func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
+func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 
-		item, ok := s.list.SelectedItem().(*Item)
+		i, ok := s.list.SelectedItem().(*item)
 		if !ok {
 			return nil
 		}
 
 		switch {
 		case key.Matches(msg, s.keyMap.toggle):
-			item.Toggle()
+			i.toggle()
 
 			return nil
 		case key.Matches(msg, s.keyMap.unselectAll):
 			for _, item := range s.selected.Keys() {
-				item.Toggle()
+				item.toggle()
 			}
 
 			return nil
 		case key.Matches(msg, s.keyMap.selectAll):
 			for _, listItem := range s.list.Items() {
-				// TODO: possibly issue here? item is re-declared, need to keep an eye
-				item, ok := listItem.(*Item)
+				it, ok := listItem.(*item)
 				if !ok {
 					continue
 				}
 
-				if !item.IsSelected() {
-					item.Toggle()
+				if !it.isSelected() {
+					it.toggle()
 				}
 			}
 
@@ -142,9 +141,9 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			}
 		case key.Matches(msg, s.keyMap.openURL):
 			return tea.Sequence(
-				base.Loading(fmt.Sprintf("Opening URL %s for chapter %q", item.chapter.Info().URL, item.chapter)),
+				base.Loading(fmt.Sprintf("Opening URL %s for chapter %q", i.chapter.Info().URL, i.chapter)),
 				func() tea.Msg {
-					err := open.Run(item.chapter.Info().URL)
+					err := open.Run(i.chapter.Info().URL)
 					if err != nil {
 						return err
 					}
@@ -157,7 +156,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			var chapters []mangadata.Chapter
 
 			if s.selected.Size() == 0 {
-				chapters = append(chapters, item.chapter)
+				chapters = append(chapters, i.chapter)
 			} else {
 				for _, item := range s.selected.Keys() {
 					chapters = append(chapters, item.chapter)
@@ -199,14 +198,14 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			downloadOptions.CreateMangaDir = true
 			downloadOptions.CreateVolumeDir = true
 
-			if item.DownloadedFormats().Has(downloadOptions.Format) {
+			if i.downloadedFormats().Has(downloadOptions.Format) {
 				return tea.Sequence(
-					base.Loading(fmt.Sprintf("Opening %q for reading", item.chapter)),
+					base.Loading(fmt.Sprintf("Opening %q for reading", i.chapter)),
 					func() tea.Msg {
 						err := s.client.ReadChapter(
 							ctx,
-							item.Path(downloadOptions.Format),
-							item.chapter,
+							i.path(downloadOptions.Format),
+							i.chapter,
 							downloadOptions.ReadOptions,
 						)
 						if err != nil {
@@ -219,7 +218,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 				)
 			}
 
-			return s.downloadChapterCmd(ctx, item.chapter, downloadOptions)
+			return s.downloadChapterCmd(ctx, i.chapter, downloadOptions)
 		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
 		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
@@ -230,7 +229,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					// TODO: solidify the metadata gathering, missing/partial
 					// TODO: revert to just Title instead of AnilistSearch?
 					var mangaTitle string
-					mangaInfo := item.chapter.Volume().Manga().Info()
+					mangaInfo := i.chapter.Volume().Manga().Info()
 					if mangaInfo.AnilistSearch != "" {
 						mangaTitle = mangaInfo.AnilistSearch
 					} else {
@@ -291,6 +290,6 @@ end:
 }
 
 // View implements base.State.
-func (s *State) View() string {
+func (s *state) View() string {
 	return s.list.View()
 }

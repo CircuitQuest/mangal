@@ -8,21 +8,21 @@ import (
 )
 
 var (
-	_ list.Item        = (*Item)(nil)
-	_ list.DefaultItem = (*Item)(nil)
+	_ list.Item        = (*item)(nil)
+	_ list.DefaultItem = (*item)(nil)
 )
 
-// Item implements list.Item.
-type Item struct {
-	Manga *lmanilist.Manga
+// item implements list.item.
+type item struct {
+	manga *lmanilist.Manga
 }
 
 // FilterValue implements list.Item.
-func (i *Item) FilterValue() string {
+func (i *item) FilterValue() string {
 	for _, title := range []string{
-		i.Manga.Title.English,
-		i.Manga.Title.Romaji,
-		i.Manga.Title.Native,
+		i.manga.Title.English,
+		i.manga.Title.Romaji,
+		i.manga.Title.Native,
 	} {
 		if title != "" {
 			return title
@@ -33,11 +33,11 @@ func (i *Item) FilterValue() string {
 }
 
 // Item implements list.Item.
-func (i *Item) Title() string {
+func (i *item) Title() string {
 	return i.FilterValue()
 }
 
 // Description implements list.Item.
-func (i *Item) Description() string {
-	return fmt.Sprint("https://anilist.co/manga/", i.Manga.ID)
+func (i *item) Description() string {
+	return fmt.Sprint("https://anilist.co/manga/", i.manga.ID)
 }

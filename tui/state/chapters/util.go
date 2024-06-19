@@ -14,7 +14,7 @@ import (
 	"github.com/luevano/mangal/tui/state/chapsdownloading"
 )
 
-func (s *State) downloadChaptersCmd(chapters []mangadata.Chapter, options libmangal.DownloadOptions) tea.Cmd {
+func (s *state) downloadChaptersCmd(chapters []mangadata.Chapter, options libmangal.DownloadOptions) tea.Cmd {
 	return func() tea.Msg {
 		state := chapsdownloading.New(
 			chapters,
@@ -46,7 +46,7 @@ func (s *State) downloadChaptersCmd(chapters []mangadata.Chapter, options libman
 	}
 }
 
-func (s *State) downloadChapterCmd(ctx context.Context, chapter mangadata.Chapter, options libmangal.DownloadOptions) tea.Cmd {
+func (s *state) downloadChapterCmd(ctx context.Context, chapter mangadata.Chapter, options libmangal.DownloadOptions) tea.Cmd {
 	volume := chapter.Volume()
 	manga := volume.Manga()
 

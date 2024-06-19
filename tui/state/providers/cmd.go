@@ -5,7 +5,7 @@ import (
 	"github.com/luevano/libmangal"
 )
 
-func loadProviderCmd(item *Item) tea.Cmd {
+func loadProviderCmd(item *item) tea.Cmd {
 	return func() tea.Msg {
 		return loadProviderMsg{
 			item: item,

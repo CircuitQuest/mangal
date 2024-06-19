@@ -1,9 +1,9 @@
 package mangas
 
 type searchMetadataMsg struct {
-	item *Item
+	item *item
 }
 
 type searchVolumesMsg struct {
-	item *Item
+	item *item
 }

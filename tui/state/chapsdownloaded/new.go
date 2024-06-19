@@ -1,7 +1,7 @@
 package chapsdownloaded
 
-func New(options Options) *State {
-	state := &State{
+func New(options Options) *state {
+	state := &state{
 		options: options,
 	}
 	state.keyMap = newKeyMap(state)

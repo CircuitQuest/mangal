@@ -6,18 +6,18 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-func New(anilist *lmanilist.Anilist, chapters []lmanilist.Manga, onResponse OnResponseFunc) *State {
+func New(anilist *lmanilist.Anilist, chapters []lmanilist.Manga, onResponse onResponseFunc) *state {
 	keyMap := newKeyMap()
 	listWrapper := list.New(
 		2,
 		"manga", "mangas",
 		chapters,
 		func(manga lmanilist.Manga) _list.DefaultItem {
-			return &Item{Manga: &manga}
+			return &item{manga: &manga}
 		},
 		keyMap)
 
-	return &State{
+	return &state{
 		anilist:    anilist,
 		list:       listWrapper,
 		onResponse: onResponse,

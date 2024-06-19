@@ -11,63 +11,63 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-var _ base.State = (*State)(nil)
+var _ base.State = (*state)(nil)
 
-// State implements base.State.
-type State struct {
+// state implements base.state.
+type state struct {
 	list   *list.State
 	keyMap keyMap
 }
 
 // Intermediate implements base.State.
-func (*State) Intermediate() bool {
+func (*state) Intermediate() bool {
 	return true
 }
 
 // Backable implements base.State.
-func (*State) Backable() bool {
+func (*state) Backable() bool {
 	return true
 }
 
 // KeyMap implements base.State.
-func (s *State) KeyMap() help.KeyMap {
+func (s *state) KeyMap() help.KeyMap {
 	return s.list.KeyMap()
 }
 
 // Title implements base.State.
-func (*State) Title() base.Title {
+func (*state) Title() base.Title {
 	return base.Title{Text: "Formats"}
 }
 
 // Subtitle implements base.State.
-func (s *State) Subtitle() string {
+func (s *state) Subtitle() string {
 	return s.list.Subtitle()
 }
 
 // Status implements base.State.
-func (s *State) Status() string {
+func (s *state) Status() string {
 	return s.list.Status()
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) tea.Cmd {
+func (s *state) Resize(size base.Size) tea.Cmd {
 	return s.list.Resize(size)
 }
 
 // Init implements base.State.
-func (*State) Init(ctx context.Context) tea.Cmd {
+func (*state) Init(ctx context.Context) tea.Cmd {
 	return nil
 }
 
 // Update implements base.State.
-func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
+func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 
-		item, ok := s.list.SelectedItem().(*Item)
+		i, ok := s.list.SelectedItem().(*item)
 		if !ok {
 			return nil
 		}
@@ -75,19 +75,19 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		switch {
 		case key.Matches(msg, s.keyMap.setDownload):
 			return func() tea.Msg {
-				return item.SelectForDownloading()
+				return i.selectForDownloading()
 			}
 		case key.Matches(msg, s.keyMap.setRead):
 			return func() tea.Msg {
-				return item.SelectForReading()
+				return i.selectForReading()
 			}
 		case key.Matches(msg, s.keyMap.setAll):
 			return tea.Batch(
 				func() tea.Msg {
-					return item.SelectForReading()
+					return i.selectForReading()
 				},
 				func() tea.Msg {
-					return item.SelectForDownloading()
+					return i.selectForDownloading()
 				},
 			)
 		}
@@ -97,6 +97,6 @@ end:
 }
 
 // View implements base.State.
-func (s *State) View() string {
+func (s *state) View() string {
 	return s.list.View()
 }

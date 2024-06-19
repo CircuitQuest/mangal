@@ -16,15 +16,15 @@ import (
 )
 
 var (
-	_ list.Item        = (*Item)(nil)
-	_ list.DefaultItem = (*Item)(nil)
+	_ list.Item        = (*item)(nil)
+	_ list.DefaultItem = (*item)(nil)
 )
 
-// Item implements list.Item.
-type Item struct {
+// item implements list.item.
+type item struct {
 	chapter           mangadata.Chapter
 	client            *libmangal.Client
-	selectedItems     *set.Set[*Item]
+	selectedItems     *set.Set[*item]
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
@@ -33,12 +33,12 @@ type Item struct {
 }
 
 // FilterValue implements list.Item.
-func (i *Item) FilterValue() string {
+func (i *item) FilterValue() string {
 	return i.chapter.String()
 }
 
 // Title implements list.DefaultItem.
-func (i *Item) Title() string {
+func (i *item) Title() string {
 	var title strings.Builder
 
 	if *i.showChapterNumber {
@@ -50,17 +50,17 @@ func (i *Item) Title() string {
 
 	title.WriteString(i.FilterValue())
 
-	if i.IsSelected() {
+	if i.isSelected() {
 		title.WriteString(" ")
 		title.WriteString(icon.Mark.String())
 	}
 
-	if i.IsRecent() {
+	if i.isRecent() {
 		title.WriteString(" ")
 		title.WriteString(icon.Recent.String())
 	}
 
-	if formats := i.DownloadedFormats(); formats.Size() > 0 {
+	if formats := i.downloadedFormats(); formats.Size() > 0 {
 		title.WriteString(" ")
 		title.WriteString(icon.Download.String())
 
@@ -79,7 +79,7 @@ func (i *Item) Title() string {
 }
 
 // Description implements list.DefaultItem.
-func (i *Item) Description() string {
+func (i *item) Description() string {
 	var extraInfo strings.Builder
 
 	chapterInfo := i.chapter.Info()
@@ -104,21 +104,20 @@ func (i *Item) Description() string {
 	return chapterInfo.URL
 }
 
-func (i *Item) IsSelected() bool {
+func (i *item) isSelected() bool {
 	return i.selectedItems.Has(i)
 }
 
-func (i *Item) Toggle() {
-	if i.IsSelected() {
+func (i *item) toggle() {
+	if i.isSelected() {
 		i.selectedItems.Remove(i)
 	} else {
 		i.selectedItems.Put(i)
 	}
 }
 
-// Updated to avoid computing filenames each frame/update
-// TODO: Update tmpPath only when the format changes.
-func (i *Item) Path(format libmangal.Format) string {
+// TODO: update tmpPath only when the format changes
+func (i *item) path(format libmangal.Format) string {
 	// path := config.Download.Path.Get()
 
 	// chapter := i.chapter
@@ -140,9 +139,8 @@ func (i *Item) Path(format libmangal.Format) string {
 	return filepath.Join(*i.tmpDownPath, i.client.ComputeChapterFilename(i.chapter, format))
 }
 
-// Updated to avoid computing filenames each frame/update
-// TODO: Update tmpPath only when the format changes.
-func (i *Item) IsRecent() bool {
+// TODO: update tmpPath only when the format changes
+func (i *item) isRecent() bool {
 	// format := config.Read.Format.Get()
 	// chapter := i.chapter
 	// volume := chapter.Volume()
@@ -165,11 +163,11 @@ func (i *Item) IsRecent() bool {
 	return exists
 }
 
-func (i *Item) DownloadedFormats() set.Set[libmangal.Format] {
+func (i *item) downloadedFormats() set.Set[libmangal.Format] {
 	formats := set.NewMapset[libmangal.Format]()
 
 	for _, format := range libmangal.FormatValues() {
-		path := i.Path(format)
+		path := i.path(format)
 
 		exists, err := afs.Afero.Exists(path)
 		if err != nil {

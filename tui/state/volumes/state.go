@@ -15,10 +15,10 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-var _ base.State = (*State)(nil)
+var _ base.State = (*state)(nil)
 
-// State implements base.State.
-type State struct {
+// state implements base.state.
+type state struct {
 	list    *list.State
 	volumes []mangadata.Volume
 	manga   mangadata.Manga
@@ -27,54 +27,54 @@ type State struct {
 }
 
 // Intermediate implements base.State.
-func (s *State) Intermediate() bool {
+func (s *state) Intermediate() bool {
 	return false
 }
 
 // Backable implements base.State.
-func (s *State) Backable() bool {
+func (s *state) Backable() bool {
 	return s.list.FilterState() == _list.Unfiltered
 }
 
 // KeyMap implements base.State.
-func (s *State) KeyMap() help.KeyMap {
+func (s *state) KeyMap() help.KeyMap {
 	return s.list.KeyMap()
 }
 
 // Title implements base.State.
-func (s *State) Title() base.Title {
+func (s *state) Title() base.Title {
 	return base.Title{Text: s.manga.String()}
 }
 
 // Subtitle implements base.State.
-func (s *State) Subtitle() string {
+func (s *state) Subtitle() string {
 	return s.list.Subtitle()
 }
 
 // Status implements base.State.
-func (s *State) Status() string {
+func (s *state) Status() string {
 	return s.list.Status()
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) tea.Cmd {
+func (s *state) Resize(size base.Size) tea.Cmd {
 	return s.list.Resize(size)
 }
 
 // Init implements base.State.
-func (s *State) Init(ctx context.Context) tea.Cmd {
+func (s *state) Init(ctx context.Context) tea.Cmd {
 	return s.list.Init(ctx)
 }
 
 // Update implements base.State.
-func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
+func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 
-		item, ok := s.list.SelectedItem().(*Item)
+		i, ok := s.list.SelectedItem().(*item)
 		if !ok {
 			return nil
 		}
@@ -82,14 +82,14 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
 			return tea.Sequence(
-				base.Loading(fmt.Sprintf("Searching chapters for volume %s", item.volume)),
+				base.Loading(fmt.Sprintf("Searching chapters for volume %s", i.volume)),
 				func() tea.Msg {
-					chapterList, err := s.client.VolumeChapters(ctx, item.volume)
+					chapterList, err := s.client.VolumeChapters(ctx, i.volume)
 					if err != nil {
 						return err
 					}
 
-					return chapters.New(s.client, s.manga, item.volume, chapterList)
+					return chapters.New(s.client, s.manga, i.volume, chapterList)
 				},
 				base.Loaded,
 			)
@@ -100,6 +100,6 @@ end:
 }
 
 // View implements base.State.
-func (s *State) View() string {
+func (s *state) View() string {
 	return s.list.View()
 }

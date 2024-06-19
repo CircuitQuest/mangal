@@ -7,24 +7,24 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
-func New(loaders []libmangal.ProviderLoader) *State {
+func New(loaders []libmangal.ProviderLoader) *state {
 	keyMap := newKeyMap()
 	extraInfo := false
-	loaded := set.NewMapset[*Item]()
+	loaded := set.NewMapset[*item]()
 	listWrapper := list.New(
 		2,
 		"provider", "providers",
 		loaders,
 		func(loader libmangal.ProviderLoader) _list.DefaultItem {
-			return &Item{
-				ProviderLoader: loader,
-				loadedItems:    &loaded,
-				extraInfo:      &extraInfo,
+			return &item{
+				loader:      loader,
+				loadedItems: &loaded,
+				extraInfo:   &extraInfo,
 			}
 		},
 		keyMap)
 
-	return &State{
+	return &state{
 		list:      listWrapper,
 		loaded:    &loaded,
 		extraInfo: &extraInfo,

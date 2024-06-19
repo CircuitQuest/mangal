@@ -7,18 +7,18 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Volume) *State {
+func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Volume) *state {
 	keyMap := newKeyMap()
 	listWrapper := list.New(
 		1,
 		"volume", "volumes",
 		volumes,
 		func(volume mangadata.Volume) _list.DefaultItem {
-			return &Item{volume}
+			return &item{volume}
 		},
 		keyMap)
 
-	return &State{
+	return &state{
 		list:    listWrapper,
 		volumes: volumes,
 		manga:   manga,

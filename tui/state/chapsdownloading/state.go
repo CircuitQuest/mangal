@@ -17,10 +17,10 @@ import (
 	stringutil "github.com/luevano/mangal/util/string"
 )
 
-var _ base.State = (*State)(nil)
+var _ base.State = (*state)(nil)
 
-// State implements base.State.
-type State struct {
+// state implements base.state.
+type state struct {
 	options  Options
 	chapters []mangadata.Chapter
 	message  string
@@ -38,44 +38,44 @@ type State struct {
 }
 
 // Intermediate implements base.State.
-func (s *State) Intermediate() bool {
+func (s *state) Intermediate() bool {
 	return true
 }
 
 // Backable implements base.State.
-func (s *State) Backable() bool {
+func (s *state) Backable() bool {
 	return true
 }
 
 // KeyMap implements base.State.
-func (s *State) KeyMap() help.KeyMap {
+func (s *state) KeyMap() help.KeyMap {
 	return s.keyMap
 }
 
 // Title implements base.State.
-func (s *State) Title() base.Title {
+func (s *state) Title() base.Title {
 	return base.Title{Text: "Downloading"}
 }
 
 // Subtitle implements base.State.
-func (s *State) Subtitle() string {
+func (s *state) Subtitle() string {
 	return ""
 }
 
 // Status implements base.State.
-func (s *State) Status() string {
+func (s *state) Status() string {
 	return ""
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) tea.Cmd {
+func (s *state) Resize(size base.Size) tea.Cmd {
 	s.size = size
 	s.progress.Width = size.Width
 	return nil
 }
 
 // Init implements base.State.
-func (s *State) Init(ctx context.Context) tea.Cmd {
+func (s *state) Init(ctx context.Context) tea.Cmd {
 	return tea.Batch(
 		func() tea.Msg {
 			return nextChapterIdxMsg(0)
@@ -88,7 +88,7 @@ func (s *State) Init(ctx context.Context) tea.Cmd {
 }
 
 // Update implements base.State.
-func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
+func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case progress.FrameMsg:
 		progressModel, cmd := s.progress.Update(msg)
@@ -128,7 +128,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 }
 
 // View implements base.State.
-func (s *State) View() string {
+func (s *state) View() string {
 	spinnerView := s.spinner.View()
 	return fmt.Sprintf(`%s Downloading %s - %d/%d
 
@@ -145,6 +145,6 @@ func (s *State) View() string {
 }
 
 // SetMessage updates the message for the loading view.
-func (s *State) SetMessage(message string) {
+func (s *state) SetMessage(message string) {
 	s.message = message
 }

@@ -12,11 +12,11 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
-func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volume, chapters []mangadata.Chapter) *State {
+func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volume, chapters []mangadata.Chapter) *state {
 	showChapterNumber := config.TUI.Chapter.ShowNumber.Get()
 	showGroup := config.TUI.Chapter.ShowGroup.Get()
 	showDate := config.TUI.Chapter.ShowDate.Get()
-	selectedSet := set.NewMapset[*Item]()
+	selectedSet := set.NewMapset[*item]()
 
 	keyMap := newKeyMap()
 	listWrapper := list.New(
@@ -40,7 +40,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 				tmpDownPath = filepath.Join(tmpDownPath, volumeFilename)
 			}
 
-			return &Item{
+			return &item{
 				chapter:           chapter,
 				selectedItems:     &selectedSet,
 				client:            client,
@@ -53,7 +53,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		},
 		keyMap)
 
-	return &State{
+	return &state{
 		list:              listWrapper,
 		chapters:          chapters,
 		volume:            volume,

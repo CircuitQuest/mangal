@@ -6,26 +6,26 @@ import (
 )
 
 var (
-	_ list.Item        = (*Item)(nil)
-	_ list.DefaultItem = (*Item)(nil)
+	_ list.Item        = (*item)(nil)
+	_ list.DefaultItem = (*item)(nil)
 )
 
-// Item implements list.Item.
-type Item struct {
+// item implements list.item.
+type item struct {
 	manga mangadata.Manga
 }
 
 // FilterValue implements list.Item.
-func (i *Item) FilterValue() string {
+func (i *item) FilterValue() string {
 	return i.manga.String()
 }
 
 // Title implements list.DefaultItem.
-func (i *Item) Title() string {
+func (i *item) Title() string {
 	return i.FilterValue()
 }
 
 // Description implements list.DefaultItem.
-func (i *Item) Description() string {
+func (i *item) Description() string {
 	return i.manga.Info().URL
 }

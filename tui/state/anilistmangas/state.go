@@ -14,62 +14,62 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/textinput"
 )
 
-var _ base.State = (*State)(nil)
+var _ base.State = (*state)(nil)
 
-type OnResponseFunc func(response *lmanilist.Manga) tea.Cmd
+type onResponseFunc func(response *lmanilist.Manga) tea.Cmd
 
-// State implements base.State.
-type State struct {
+// state implements base.state.
+type state struct {
 	anilist *lmanilist.Anilist
 	list    *list.State
 
-	onResponse OnResponseFunc
+	onResponse onResponseFunc
 
 	keyMap keyMap
 }
 
 // Intermediate implements base.State.
-func (s *State) Intermediate() bool {
+func (s *state) Intermediate() bool {
 	return true
 }
 
 // Backable implements base.State.
-func (s *State) Backable() bool {
+func (s *state) Backable() bool {
 	return s.list.Backable()
 }
 
 // KeyMap implements base.State.
-func (s *State) KeyMap() help.KeyMap {
+func (s *state) KeyMap() help.KeyMap {
 	return s.list.KeyMap()
 }
 
 // Title implements base.State.
-func (s *State) Title() base.Title {
+func (s *state) Title() base.Title {
 	return base.Title{Text: "Anilist Mangas"}
 }
 
 // Subtitle implements base.State.
-func (s *State) Subtitle() string {
+func (s *state) Subtitle() string {
 	return s.list.Subtitle()
 }
 
 // Status implements base.State.
-func (s *State) Status() string {
+func (s *state) Status() string {
 	return s.list.Status()
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) tea.Cmd {
+func (s *state) Resize(size base.Size) tea.Cmd {
 	return s.list.Resize(size)
 }
 
 // Init implements base.State.
-func (s *State) Init(ctx context.Context) tea.Cmd {
+func (s *state) Init(ctx context.Context) tea.Cmd {
 	return s.list.Init(ctx)
 }
 
 // Updateimplements base.State.
-func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
+func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
@@ -78,12 +78,12 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			item, ok := s.list.SelectedItem().(*Item)
+			i, ok := s.list.SelectedItem().(*item)
 			if !ok {
 				return nil
 			}
 
-			return s.onResponse(item.Manga)
+			return s.onResponse(i.manga)
 		case key.Matches(msg, s.keyMap.search):
 			return func() tea.Msg {
 				return textinput.New(textinput.Options{
@@ -115,6 +115,6 @@ end:
 }
 
 // View implements base.State.
-func (s *State) View() string {
+func (s *state) View() string {
 	return s.list.View()
 }

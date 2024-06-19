@@ -3,7 +3,7 @@ package providers
 import "github.com/luevano/libmangal"
 
 type loadProviderMsg struct {
-	item *Item
+	item *item
 }
 
 type searchMangasMsg struct {

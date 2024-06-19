@@ -8,8 +8,8 @@ import (
 	"github.com/luevano/mangal/tui/base"
 )
 
-func New(chapters []mangadata.Chapter, options Options) *State {
-	return &State{
+func New(chapters []mangadata.Chapter, options Options) *state {
+	return &state{
 		options:  options,
 		chapters: chapters,
 		message:  "Preparing...",

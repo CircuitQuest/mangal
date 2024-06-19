@@ -8,7 +8,7 @@ import (
 
 var _ help.KeyMap = (*keyMap)(nil)
 
-func newKeyMap(state *State) keyMap {
+func newKeyMap(state *state) keyMap {
 	return keyMap{
 		open:  util.Bind("open directory", "o"),
 		quit:  util.Bind("quit", "q"),
@@ -23,7 +23,7 @@ type keyMap struct {
 	open,
 	retry key.Binding
 
-	state *State
+	state *state
 }
 
 // ShortHelp implements help.keyMap.

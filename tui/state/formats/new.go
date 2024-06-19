@@ -6,18 +6,18 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-func New() *State {
+func New() *state {
 	keyMap := newKeyMap()
 	listWrapper := list.New(
 		2,
 		"manga", "mangas",
 		libmangal.FormatValues(),
 		func(format libmangal.Format) _list.DefaultItem {
-			return &Item{format: format}
+			return &item{format: format}
 		},
 		keyMap)
 
-	return &State{
+	return &state{
 		list:   listWrapper,
 		keyMap: keyMap,
 	}

@@ -14,29 +14,29 @@ import (
 )
 
 var (
-	_ list.Item        = (*Item)(nil)
-	_ list.DefaultItem = (*Item)(nil)
+	_ list.Item        = (*item)(nil)
+	_ list.DefaultItem = (*item)(nil)
 )
 
-// Item implements list.Item.
-type Item struct {
-	libmangal.ProviderLoader
-	loadedItems *set.Set[*Item]
+// item implements list.item.
+type item struct {
+	loader      libmangal.ProviderLoader
+	loadedItems *set.Set[*item]
 	loadTime    time.Time
 	extraInfo   *bool
 }
 
 // FilterValue implements list.Item.
-func (i *Item) FilterValue() string {
-	return i.String()
+func (i *item) FilterValue() string {
+	return i.loader.String()
 }
 
 // Title implements list.DefaultItem.
-func (i *Item) Title() string {
+func (i *item) Title() string {
 	var title strings.Builder
 	title.WriteString(i.FilterValue())
 
-	if i.IsLoaded() {
+	if i.isLoaded() {
 		title.WriteString(" ")
 		title.WriteString(style.Bold.Success.Render(icon.Check.String()))
 		if *i.extraInfo {
@@ -49,33 +49,29 @@ func (i *Item) Title() string {
 }
 
 // Description implements list.DefaultItem.
-func (i *Item) Description() string {
-	info := i.Info()
+func (i *item) Description() string {
+	info := i.loader.Info()
 	if *i.extraInfo {
-		return leftExtraInfo(info)
+		moreInfo := fmt.Sprintf("%s v%s", info.ID, info.Version)
+		return lipgloss.JoinVertical(lipgloss.Left, moreInfo, info.Website)
 	}
 
 	return info.Website
 }
 
-func (i *Item) IsLoaded() bool {
+func (i *item) isLoaded() bool {
 	return i.loadedItems.Has(i)
 }
 
-func (i *Item) MarkLoaded() {
-	if !i.IsLoaded() {
+func (i *item) markLoaded() {
+	if !i.isLoaded() {
 		i.loadTime = time.Now()
 		i.loadedItems.Put(i)
 	}
 }
 
-func (i *Item) MarkClosed() {
-	if i.IsLoaded() {
+func (i *item) markClosed() {
+	if i.isLoaded() {
 		i.loadedItems.Remove(i)
 	}
-}
-
-func leftExtraInfo(info libmangal.ProviderInfo) string {
-	moreInfo := fmt.Sprintf("%s v%s", info.ID, info.Version)
-	return lipgloss.JoinVertical(lipgloss.Left, moreInfo, info.Website)
 }

@@ -18,53 +18,53 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
-var _ base.State = (*State)(nil)
+var _ base.State = (*state)(nil)
 
-// State implements base.State.
-type State struct {
+// state implements base.state.
+type state struct {
 	list      *list.State
-	loaded    *set.Set[*Item]
+	loaded    *set.Set[*item]
 	extraInfo *bool
 	keyMap    keyMap
 }
 
 // Intermediate implements base.State.
-func (s *State) Intermediate() bool {
+func (s *state) Intermediate() bool {
 	return s.list.Intermediate()
 }
 
 // Backable implements base.State.
-func (s *State) Backable() bool {
+func (s *state) Backable() bool {
 	return s.list.Backable()
 }
 
 // KeyMap implements base.State.
-func (s *State) KeyMap() help.KeyMap {
+func (s *state) KeyMap() help.KeyMap {
 	return s.list.KeyMap()
 }
 
 // Title implements base.State.
-func (s *State) Title() base.Title {
+func (s *state) Title() base.Title {
 	return base.Title{Text: "Providers"}
 }
 
 // Subtitle implements base.State.
-func (s *State) Subtitle() string {
+func (s *state) Subtitle() string {
 	return s.list.Subtitle()
 }
 
 // Status implements base.State.
-func (s *State) Status() string {
+func (s *state) Status() string {
 	return s.list.Status()
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) tea.Cmd {
+func (s *state) Resize(size base.Size) tea.Cmd {
 	return s.list.Resize(size)
 }
 
 // Init implements base.State.
-func (s *State) Init(ctx context.Context) tea.Cmd {
+func (s *state) Init(ctx context.Context) tea.Cmd {
 	// TODO: decide if Init should close all clients, instead use
 	// State.Destroy() (if implemented) method and perform that there?
 	return tea.Sequence(
@@ -76,21 +76,21 @@ func (s *State) Init(ctx context.Context) tea.Cmd {
 }
 
 // Update implements base.State.
-func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
+func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 
-		item, ok := s.list.SelectedItem().(*Item)
+		i, ok := s.list.SelectedItem().(*item)
 		if !ok {
 			return nil
 		}
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			return loadProviderCmd(item)
+			return loadProviderCmd(i)
 		case key.Matches(msg, s.keyMap.info):
 			*s.extraInfo = !(*s.extraInfo)
 
@@ -107,7 +107,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			}
 
 			for _, item := range s.loaded.Keys() {
-				item.MarkClosed()
+				item.markClosed()
 			}
 
 			return base.Notify("Closed all clients")
@@ -116,20 +116,20 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		item := msg.item
 
 		return tea.Sequence(
-			base.Loading(fmt.Sprintf("Loading provider %q", item)),
+			base.Loading(fmt.Sprintf("Loading provider %q", item.loader)),
 			func() tea.Msg {
 				var mangalClient *libmangal.Client
-				if c := client.Get(item.ProviderLoader); c != nil {
-					log.Log("Using existing mangal client for provider %q", item)
+				if c := client.Get(item.loader); c != nil {
+					log.Log("Using existing mangal client for provider %q", item.loader)
 					mangalClient = c
 				} else {
-					log.Log("New mangal client for provider %q", item)
-					c, err := client.NewClient(ctx, item.ProviderLoader)
+					log.Log("New mangal client for provider %q", item.loader)
+					c, err := client.NewClient(ctx, item.loader)
 					if err != nil {
 						return err
 					}
 					mangalClient = c
-					item.MarkLoaded()
+					item.markLoaded()
 
 					mangalClient.Logger().SetOnLog(func(format string, a ...any) {
 						log.Log(format, a...)
@@ -169,6 +169,6 @@ end:
 }
 
 // View implements base.State.
-func (s *State) View() string {
+func (s *state) View() string {
 	return s.list.View()
 }

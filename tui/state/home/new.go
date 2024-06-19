@@ -1,7 +1,7 @@
 package home
 
-func New() *State {
-	return &State{
+func New() *state {
+	return &state{
 		keyMap: newKeyMap(),
 	}
 }

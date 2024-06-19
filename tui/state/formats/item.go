@@ -10,32 +10,32 @@ import (
 )
 
 var (
-	_ list.Item        = (*Item)(nil)
-	_ list.DefaultItem = (*Item)(nil)
+	_ list.Item        = (*item)(nil)
+	_ list.DefaultItem = (*item)(nil)
 )
 
-// Item implements list.Item.
-type Item struct {
+// item implements list.item.
+type item struct {
 	format libmangal.Format
 }
 
 // FilterValue implements list.Item.
-func (i *Item) FilterValue() string {
+func (i *item) FilterValue() string {
 	return i.format.String()
 }
 
 // Title implements list.DefaultItem.
-func (i *Item) Title() string {
+func (i *item) Title() string {
 	var sb strings.Builder
 
 	sb.WriteString(i.FilterValue())
 
-	if i.IsSelectedForDownloading() {
+	if i.isSelectedForDownloading() {
 		sb.WriteString(" ")
 		sb.WriteString(style.Bold.Accent.Render("Download"))
 	}
 
-	if i.IsSelectedForReading() {
+	if i.isSelectedForReading() {
 		sb.WriteString(" ")
 		sb.WriteString(style.Bold.Accent.Render("Read"))
 	}
@@ -44,7 +44,7 @@ func (i *Item) Title() string {
 }
 
 // Description implements list.DefaultItem.
-func (i *Item) Description() string {
+func (i *item) Description() string {
 	ext := i.format.Extension()
 
 	if ext == "" {
@@ -54,20 +54,20 @@ func (i *Item) Description() string {
 	return ext
 }
 
-func (i *Item) IsSelectedForDownloading() bool {
+func (i *item) isSelectedForDownloading() bool {
 	format := config.Download.Format.Get()
 
 	return i.format == format
 }
 
-func (i *Item) IsSelectedForReading() bool {
+func (i *item) isSelectedForReading() bool {
 	format := config.Read.Format.Get()
 
 	return i.format == format
 }
 
 // TODO: don't set? or just don't write config.
-func (i *Item) SelectForDownloading() error {
+func (i *item) selectForDownloading() error {
 	if err := config.Download.Format.Set(i.format); err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (i *Item) SelectForDownloading() error {
 }
 
 // TODO: don't set? or just don't write config.
-func (i *Item) SelectForReading() error {
+func (i *item) selectForReading() error {
 	if err := config.Read.Format.Set(i.format); err != nil {
 		return err
 	}

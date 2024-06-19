@@ -2,7 +2,7 @@ package mangas
 
 import tea "github.com/charmbracelet/bubbletea"
 
-func searchMetadataCmd(item *Item) tea.Cmd {
+func searchMetadataCmd(item *item) tea.Cmd {
 	return func() tea.Msg {
 		return searchMetadataMsg{
 			item: item,
@@ -10,7 +10,7 @@ func searchMetadataCmd(item *Item) tea.Cmd {
 	}
 }
 
-func searchVolumesCmd(item *Item) tea.Cmd {
+func searchVolumesCmd(item *item) tea.Cmd {
 	return func() tea.Msg {
 		return searchVolumesMsg{
 			item: item,

@@ -18,10 +18,10 @@ import (
 	list "github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-var _ base.State = (*State)(nil)
+var _ base.State = (*state)(nil)
 
-// State implements base.State.
-type State struct {
+// state implements base.state.
+type state struct {
 	list   *list.State
 	mangas []mangadata.Manga
 	client *libmangal.Client
@@ -30,98 +30,98 @@ type State struct {
 }
 
 // Intermediate implements base.State.
-func (s *State) Intermediate() bool {
+func (s *state) Intermediate() bool {
 	return false
 }
 
 // Backable implements base.State.
-func (s *State) Backable() bool {
+func (s *state) Backable() bool {
 	return s.list.Backable()
 }
 
 // KeyMap implements base.State.
-func (s *State) KeyMap() help.KeyMap {
+func (s *state) KeyMap() help.KeyMap {
 	return s.list.KeyMap()
 }
 
 // Title implements base.State.
-func (s *State) Title() base.Title {
+func (s *state) Title() base.Title {
 	return base.Title{Text: fmt.Sprintf("Search %q", s.query)}
 }
 
 // Subtitle implements base.State.
-func (s *State) Subtitle() string {
+func (s *state) Subtitle() string {
 	return s.list.Subtitle()
 }
 
 // Status implements base.State.
-func (s *State) Status() string {
+func (s *state) Status() string {
 	return s.list.Status()
 }
 
 // Resize implements base.State.
-func (s *State) Resize(size base.Size) tea.Cmd {
+func (s *state) Resize(size base.Size) tea.Cmd {
 	return s.list.Resize(size)
 }
 
 // Init implements base.State.
-func (s *State) Init(ctx context.Context) tea.Cmd {
+func (s *state) Init(ctx context.Context) tea.Cmd {
 	return s.list.Init(ctx)
 }
 
 // Update implements base.State.
-func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
+func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 
-		item, ok := s.list.SelectedItem().(*Item)
+		i, ok := s.list.SelectedItem().(*item)
 		if !ok {
 			return nil
 		}
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			return searchMetadataCmd(item)
+			return searchMetadataCmd(i)
 		}
 	case searchMetadataMsg:
-		item := msg.item
+		i := msg.item
 
 		return tea.Sequence(
-			base.Loading(fmt.Sprintf("Searching Anilist manga for %q", item.manga)),
+			base.Loading(fmt.Sprintf("Searching Anilist manga for %q", i.manga)),
 			func() tea.Msg {
 				// TODO: handle more cases for missing/partial metadata
 				// Find anilist manga closest to the selected manga and assign it
-				anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), item.manga)
+				anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), i.manga)
 				if err != nil {
 					return err
 				}
 				if !found {
-					log.Log("Couldn't find Anilist for %q", item.manga)
+					log.Log("Couldn't find Anilist for %q", i.manga)
 				} else {
-					item.manga.SetMetadata(anilistManga.Metadata())
-					log.Log("Found and set Anilist for %q: %q (%d)", item.manga, anilistManga.String(), anilistManga.ID)
+					i.manga.SetMetadata(anilistManga.Metadata())
+					log.Log("Found and set Anilist for %q: %q (%d)", i.manga, anilistManga.String(), anilistManga.ID)
 				}
 
-				return searchVolumesMsg{item}
+				return searchVolumesMsg{i}
 			},
 			base.Loaded,
 		)
 	case searchVolumesMsg:
-		item := msg.item
+		i := msg.item
 
 		return tea.Sequence(
-			base.Loading(fmt.Sprintf("Searching volumes for %q", item.manga)),
+			base.Loading(fmt.Sprintf("Searching volumes for %q", i.manga)),
 			func() tea.Msg {
-				volumeList, err := s.client.MangaVolumes(ctx, item.manga)
+				volumeList, err := s.client.MangaVolumes(ctx, i.manga)
 				if err != nil {
 					return err
 				}
 
 				if len(volumeList) != 1 || !config.TUI.ExpandSingleVolume.Get() {
-					return volumes.New(s.client, item.manga, volumeList)
+					return volumes.New(s.client, i.manga, volumeList)
 				}
 
 				// It's guaranteed to at least contain 1 volume
@@ -131,7 +131,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 					return err
 				}
 
-				return chapters.New(s.client, item.manga, volume, chapterList)
+				return chapters.New(s.client, i.manga, volume, chapterList)
 			},
 			base.Loaded,
 		)
@@ -141,6 +141,6 @@ end:
 }
 
 // View implements base.State.
-func (s *State) View() string {
+func (s *state) View() string {
 	return s.list.View()
 }
