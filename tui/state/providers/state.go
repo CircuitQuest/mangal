@@ -90,52 +90,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			var mangalClient *libmangal.Client
-
-			return tea.Sequence(
-				base.Loading(fmt.Sprintf("Loading provider %q", item)),
-				func() tea.Msg {
-					if c := client.Get(item.ProviderLoader); c != nil {
-						log.Log("Using existing mangal client for provider %q", item)
-						mangalClient = c
-					} else {
-						log.Log("New mangal client for provider %q", item)
-						c, err := client.NewClient(ctx, item.ProviderLoader)
-						if err != nil {
-							return err
-						}
-						mangalClient = c
-						item.MarkLoaded()
-
-						mangalClient.Logger().SetOnLog(func(format string, a ...any) {
-							log.Log(format, a...)
-						})
-					}
-					return nil
-				},
-				base.Loaded,
-				func() tea.Msg {
-					return textinput.New(textinput.Options{
-						Title:       base.Title{Text: "Search Manga"},
-						Subtitle:    fmt.Sprintf("Search using %q provider", mangalClient),
-						Placeholder: "Manga title...",
-						OnResponse: func(response string) tea.Cmd {
-							return tea.Sequence(
-								base.Loading(fmt.Sprintf("Searching for %q", response)),
-								func() tea.Msg {
-									mangaList, err := mangalClient.SearchMangas(ctx, response)
-									if err != nil {
-										return err
-									}
-
-									return mangas.New(mangalClient, response, mangaList)
-								},
-								base.Loaded,
-							)
-						},
-					})
-				},
-			)
+			return loadProviderCmd(item)
 		case key.Matches(msg, s.keyMap.info):
 			*s.extraInfo = !(*s.extraInfo)
 
@@ -156,6 +111,57 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			}
 
 			return base.Notify("Closed all clients")
+		}
+	case loadProviderMsg:
+		item := msg.item
+
+		return tea.Sequence(
+			base.Loading(fmt.Sprintf("Loading provider %q", item)),
+			func() tea.Msg {
+				var mangalClient *libmangal.Client
+				if c := client.Get(item.ProviderLoader); c != nil {
+					log.Log("Using existing mangal client for provider %q", item)
+					mangalClient = c
+				} else {
+					log.Log("New mangal client for provider %q", item)
+					c, err := client.NewClient(ctx, item.ProviderLoader)
+					if err != nil {
+						return err
+					}
+					mangalClient = c
+					item.MarkLoaded()
+
+					mangalClient.Logger().SetOnLog(func(format string, a ...any) {
+						log.Log(format, a...)
+					})
+				}
+				return searchMangasMsg{mangalClient}
+			},
+			base.Loaded,
+		)
+	case searchMangasMsg:
+		mangalClient := msg.client
+
+		return func() tea.Msg {
+			return textinput.New(textinput.Options{
+				Title:       base.Title{Text: "Search Manga"},
+				Subtitle:    fmt.Sprintf("Search using %q provider", mangalClient),
+				Placeholder: "Manga title...",
+				OnResponse: func(query string) tea.Cmd {
+					return tea.Sequence(
+						base.Loading(fmt.Sprintf("Searching for %q", query)),
+						func() tea.Msg {
+							mangaList, err := mangalClient.SearchMangas(ctx, query)
+							if err != nil {
+								return err
+							}
+
+							return mangas.New(mangalClient, query, mangaList)
+						},
+						base.Loaded,
+					)
+				},
+			})
 		}
 	}
 end:

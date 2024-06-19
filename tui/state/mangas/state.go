@@ -84,47 +84,57 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			return tea.Sequence(
-				base.Loading(fmt.Sprintf("Searching Anilist manga for %q", item.manga)),
-				func() tea.Msg {
-					// TODO: handle more cases for missing/partial metadata
-					// Find anilist manga closest to the selected manga and assign it
-					anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), item.manga)
-					if err != nil {
-						return err
-					}
-					if !found {
-						log.Log("Couldn't find Anilist for %q", item.manga)
-					} else {
-						item.manga.SetMetadata(anilistManga.Metadata())
-						log.Log("Found and set Anilist for %q: %q (%d)", item.manga, anilistManga.String(), anilistManga.ID)
-					}
-
-					return nil
-				},
-				base.Loading(fmt.Sprintf("Searching volumes for %q", item.manga)),
-				func() tea.Msg {
-					volumeList, err := s.client.MangaVolumes(ctx, item.manga)
-					if err != nil {
-						return err
-					}
-
-					if len(volumeList) != 1 || !config.TUI.ExpandSingleVolume.Get() {
-						return volumes.New(s.client, item.manga, volumeList)
-					}
-
-					// It's guaranteed to at least contain 1 volume
-					volume := volumeList[0]
-					chapterList, err := s.client.VolumeChapters(ctx, volume)
-					if err != nil {
-						return err
-					}
-
-					return chapters.New(s.client, item.manga, volume, chapterList)
-				},
-				base.Loaded,
-			)
+			return searchMetadataCmd(item)
 		}
+	case searchMetadataMsg:
+		item := msg.item
+
+		return tea.Sequence(
+			base.Loading(fmt.Sprintf("Searching Anilist manga for %q", item.manga)),
+			func() tea.Msg {
+				// TODO: handle more cases for missing/partial metadata
+				// Find anilist manga closest to the selected manga and assign it
+				anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), item.manga)
+				if err != nil {
+					return err
+				}
+				if !found {
+					log.Log("Couldn't find Anilist for %q", item.manga)
+				} else {
+					item.manga.SetMetadata(anilistManga.Metadata())
+					log.Log("Found and set Anilist for %q: %q (%d)", item.manga, anilistManga.String(), anilistManga.ID)
+				}
+
+				return searchVolumesMsg{item}
+			},
+			base.Loaded,
+		)
+	case searchVolumesMsg:
+		item := msg.item
+
+		return tea.Sequence(
+			base.Loading(fmt.Sprintf("Searching volumes for %q", item.manga)),
+			func() tea.Msg {
+				volumeList, err := s.client.MangaVolumes(ctx, item.manga)
+				if err != nil {
+					return err
+				}
+
+				if len(volumeList) != 1 || !config.TUI.ExpandSingleVolume.Get() {
+					return volumes.New(s.client, item.manga, volumeList)
+				}
+
+				// It's guaranteed to at least contain 1 volume
+				volume := volumeList[0]
+				chapterList, err := s.client.VolumeChapters(ctx, volume)
+				if err != nil {
+					return err
+				}
+
+				return chapters.New(s.client, item.manga, volume, chapterList)
+			},
+			base.Loaded,
+		)
 	}
 end:
 	return s.list.Update(ctx, msg)
