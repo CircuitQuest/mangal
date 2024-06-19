@@ -187,7 +187,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			// If download on read is wanted, then use the normal download path
 			var directory string
 			if config.Read.DownloadOnRead.Get() {
-				directory = path.DownloadsDir()
+				directory = config.Download.Path.Get()
 			} else {
 				directory = path.TempDir()
 			}
@@ -197,7 +197,6 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			downloadOptions.Format = config.Read.Format.Get()
 			downloadOptions.Directory = directory
 			downloadOptions.SkipIfExists = true
-			downloadOptions.ReadAfter = true
 			downloadOptions.CreateProviderDir = true
 			downloadOptions.CreateMangaDir = true
 			downloadOptions.CreateVolumeDir = true
@@ -210,7 +209,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 							ctx,
 							i.path(downloadOptions.Format),
 							i.chapter,
-							downloadOptions.ReadOptions,
+							config.ReadOptions(),
 						)
 						if err != nil {
 							return err
@@ -222,6 +221,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 				)
 			}
 
+			// TODO: now that libmangal doesn't have an option to "read after downloading",
+			// handle that case by running read chapter again (like above) after the download
 			return s.downloadChapterCmd(ctx, i.chapter, downloadOptions)
 		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
 		case key.Matches(msg, s.keyMap.anilist):

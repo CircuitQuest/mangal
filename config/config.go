@@ -125,7 +125,7 @@ func initConfig() config {
 			DownloadOnRead: reg(entry[bool, bool]{
 				Key:         "read.download_on_read",
 				Default:     false,
-				Description: "Download chapter to the default directory when opening for reading.",
+				Description: "Download chapter to the configured directory when opening for reading.",
 			}),
 		},
 		Download: configDownload{

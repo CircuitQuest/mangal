@@ -22,14 +22,16 @@ func DownloadOptions() libmangal.DownloadOptions {
 	o.WriteSeriesJSON = Download.Metadata.SeriesJSON.Get()
 	o.SkipSeriesJSONIfOngoing = Download.Metadata.SkipSeriesJSONIfOngoing.Get()
 	o.WriteComicInfoXML = Download.Metadata.ComicInfoXML.Get()
-	o.ReadAfter = false
-	o.ReadOptions = libmangal.ReadOptions{
-		SaveHistory: Read.History.Local.Get(),
-		SaveAnilist: Read.History.Anilist.Get(),
-	}
 	o.ComicInfoXMLOptions = metadata.DefaultComicInfoOptions()
 	o.ImageTransformer = func(bytes []byte) ([]byte, error) {
 		return bytes, nil
 	}
+	return o
+}
+
+func ReadOptions() libmangal.ReadOptions {
+	o := libmangal.DefaultReadOptions()
+	o.SaveHistory = Read.History.Local.Get()
+	o.SaveAnilist = Read.History.Anilist.Get()
 	return o
 }
