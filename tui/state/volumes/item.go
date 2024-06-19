@@ -18,16 +18,16 @@ type Item struct {
 }
 
 // FilterValue implements list.Item.
-func (i Item) FilterValue() string {
+func (i *Item) FilterValue() string {
 	return fmt.Sprintf("Volume %s", i.volume)
 }
 
 // Title implements list.DefaultItem.
-func (i Item) Title() string {
+func (i *Item) Title() string {
 	return i.FilterValue()
 }
 
 // Description implements list.DefaultItem.
-func (i Item) Description() string {
+func (i *Item) Description() string {
 	return ""
 }

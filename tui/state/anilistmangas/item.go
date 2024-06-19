@@ -18,7 +18,7 @@ type Item struct {
 }
 
 // FilterValue implements list.Item.
-func (i Item) FilterValue() string {
+func (i *Item) FilterValue() string {
 	for _, title := range []string{
 		i.Manga.Title.English,
 		i.Manga.Title.Romaji,
@@ -33,11 +33,11 @@ func (i Item) FilterValue() string {
 }
 
 // Item implements list.Item.
-func (i Item) Title() string {
+func (i *Item) Title() string {
 	return i.FilterValue()
 }
 
 // Description implements list.Item.
-func (i Item) Description() string {
+func (i *Item) Description() string {
 	return fmt.Sprint("https://anilist.co/manga/", i.Manga.ID)
 }

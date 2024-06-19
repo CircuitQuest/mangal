@@ -13,7 +13,7 @@ func New(anilist *lmanilist.Anilist, chapters []lmanilist.Manga, onResponse OnRe
 		"manga", "mangas",
 		chapters,
 		func(manga lmanilist.Manga) _list.DefaultItem {
-			return Item{Manga: &manga}
+			return &Item{Manga: &manga}
 		},
 		keyMap)
 

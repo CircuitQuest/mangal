@@ -13,7 +13,7 @@ func New() *State {
 		"manga", "mangas",
 		libmangal.FormatValues(),
 		func(format libmangal.Format) _list.DefaultItem {
-			return Item{format: format}
+			return &Item{format: format}
 		},
 		keyMap)
 

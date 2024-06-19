@@ -78,7 +78,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			item, ok := s.list.SelectedItem().(Item)
+			item, ok := s.list.SelectedItem().(*Item)
 			if !ok {
 				return nil
 			}

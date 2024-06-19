@@ -14,7 +14,7 @@ func New(client *libmangal.Client, query string, mangas []mangadata.Manga) *Stat
 		"manga", "mangas",
 		mangas,
 		func(manga mangadata.Manga) _list.DefaultItem {
-			return Item{manga}
+			return &Item{manga}
 		},
 		keyMap)
 

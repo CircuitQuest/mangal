@@ -16,16 +16,16 @@ type Item struct {
 }
 
 // FilterValue implements list.Item.
-func (i Item) FilterValue() string {
+func (i *Item) FilterValue() string {
 	return i.manga.String()
 }
 
 // Title implements list.DefaultItem.
-func (i Item) Title() string {
+func (i *Item) Title() string {
 	return i.FilterValue()
 }
 
 // Description implements list.DefaultItem.
-func (i Item) Description() string {
+func (i *Item) Description() string {
 	return i.manga.Info().URL
 }

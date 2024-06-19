@@ -67,7 +67,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			goto end
 		}
 
-		item, ok := s.list.SelectedItem().(Item)
+		item, ok := s.list.SelectedItem().(*Item)
 		if !ok {
 			return nil
 		}

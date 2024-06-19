@@ -70,14 +70,14 @@ func (s *State) Init(ctx context.Context) tea.Cmd {
 }
 
 // Update implements base.State.
-func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
+func (s *State) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
 			goto end
 		}
 
-		item, ok := s.list.SelectedItem().(Item)
+		item, ok := s.list.SelectedItem().(*Item)
 		if !ok {
 			return nil
 		}

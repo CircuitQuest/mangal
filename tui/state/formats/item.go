@@ -20,12 +20,12 @@ type Item struct {
 }
 
 // FilterValue implements list.Item.
-func (i Item) FilterValue() string {
+func (i *Item) FilterValue() string {
 	return i.format.String()
 }
 
 // Title implements list.DefaultItem.
-func (i Item) Title() string {
+func (i *Item) Title() string {
 	var sb strings.Builder
 
 	sb.WriteString(i.FilterValue())
@@ -44,7 +44,7 @@ func (i Item) Title() string {
 }
 
 // Description implements list.DefaultItem.
-func (i Item) Description() string {
+func (i *Item) Description() string {
 	ext := i.format.Extension()
 
 	if ext == "" {
@@ -54,20 +54,20 @@ func (i Item) Description() string {
 	return ext
 }
 
-func (i Item) IsSelectedForDownloading() bool {
+func (i *Item) IsSelectedForDownloading() bool {
 	format := config.Download.Format.Get()
 
 	return i.format == format
 }
 
-func (i Item) IsSelectedForReading() bool {
+func (i *Item) IsSelectedForReading() bool {
 	format := config.Read.Format.Get()
 
 	return i.format == format
 }
 
 // TODO: don't set? or just don't write config.
-func (i Item) SelectForDownloading() error {
+func (i *Item) SelectForDownloading() error {
 	if err := config.Download.Format.Set(i.format); err != nil {
 		return err
 	}
@@ -76,7 +76,7 @@ func (i Item) SelectForDownloading() error {
 }
 
 // TODO: don't set? or just don't write config.
-func (i Item) SelectForReading() error {
+func (i *Item) SelectForReading() error {
 	if err := config.Read.Format.Set(i.format); err != nil {
 		return err
 	}
