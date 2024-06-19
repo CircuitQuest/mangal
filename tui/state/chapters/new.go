@@ -12,7 +12,9 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
+// volume can be nil, which represents a list of chapters for a manga with only one chapter
 func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volume, chapters []mangadata.Chapter) *state {
+	showVolumeNumber := config.TUI.Chapter.ShowVolumeNumber.Get()
 	showChapterNumber := config.TUI.Chapter.ShowNumber.Get()
 	showGroup := config.TUI.Chapter.ShowGroup.Get()
 	showDate := config.TUI.Chapter.ShowDate.Get()
@@ -26,7 +28,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		func(chapter mangadata.Chapter) _list.DefaultItem {
 			providerFilename := client.ComputeProviderFilename(client.Info())
 			mangaFilename := client.ComputeMangaFilename(manga)
-			volumeFilename := client.ComputeVolumeFilename(volume)
+			volumeFilename := client.ComputeVolumeFilename(chapter.Volume())
 
 			tmpPath := filepath.Join(path.TempDir(), providerFilename, mangaFilename, volumeFilename)
 			tmpDownPath := path.DownloadsDir()
@@ -44,6 +46,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 				chapter:           chapter,
 				selectedItems:     &selectedSet,
 				client:            client,
+				showVolumeNumber:  &showVolumeNumber,
 				showChapterNumber: &showChapterNumber,
 				showGroup:         &showGroup,
 				showDate:          &showDate,
@@ -61,6 +64,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		client:            client,
 		selected:          &selectedSet,
 		keyMap:            keyMap,
+		showVolumeNumber:  &showVolumeNumber,
 		showChapterNumber: &showChapterNumber,
 		showGroup:         &showGroup,
 		showDate:          &showDate,

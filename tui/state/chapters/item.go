@@ -25,6 +25,7 @@ type item struct {
 	chapter           mangadata.Chapter
 	client            *libmangal.Client
 	selectedItems     *set.Set[*item]
+	showVolumeNumber  *bool
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
@@ -40,6 +41,13 @@ func (i *item) FilterValue() string {
 // Title implements list.DefaultItem.
 func (i *item) Title() string {
 	var title strings.Builder
+
+	if *i.showVolumeNumber {
+		volumeNumber := fmt.Sprintf(config.TUI.Chapter.VolumeNumberFormat.Get(), i.chapter.Volume())
+		volumeNumberFmt := style.Bold.Base.Render(volumeNumber)
+		title.WriteString(volumeNumberFmt)
+		title.WriteString(" ")
+	}
 
 	if *i.showChapterNumber {
 		chapterNumber := fmt.Sprintf(config.TUI.Chapter.NumberFormat.Get(), i.chapter.Info().Number)

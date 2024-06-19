@@ -6,6 +6,8 @@ import (
 	"github.com/luevano/mangal/theme/style"
 )
 
+const StatusSeparator = " • "
+
 type styles struct {
 	title,
 	status,

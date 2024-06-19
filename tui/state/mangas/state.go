@@ -3,6 +3,7 @@ package mangas
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -119,19 +120,56 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				if err != nil {
 					return err
 				}
+				vols := len(volumeList)
 
-				if len(volumeList) != 1 || !config.TUI.ExpandSingleVolume.Get() {
-					return volumes.New(s.client, i.manga, volumeList)
+				if config.TUI.ExpandAllVolumes.Get() {
+					return searchAllChaptersMsg{i.manga, volumeList}
 				}
 
-				// It's guaranteed to at least contain 1 volume
-				volume := volumeList[0]
+				if vols == 1 && config.TUI.ExpandSingleVolume.Get() {
+					return searchChaptersMsg{i.manga, volumeList[0]}
+				}
+
+				return volumes.New(s.client, i.manga, volumeList)
+			},
+			base.Loaded,
+		)
+	case searchAllChaptersMsg:
+		manga := msg.manga
+		volumes := msg.volumes
+
+		// TODO: make different loading messages for each volume?
+		return tea.Sequence(
+			base.NotifyWithDuration(fmt.Sprintf("Skipped selecting volumes (cfg: %s)", config.TUI.ExpandAllVolumes.Key), 3*time.Second),
+			base.Loading("Searching chapters for all volumes"),
+			func() tea.Msg {
+				var chapterList []mangadata.Chapter
+				for _, v := range volumes {
+					c, err := s.client.VolumeChapters(ctx, v)
+					if err != nil {
+						return err
+					}
+					chapterList = append(chapterList, c...)
+				}
+
+				return chapters.New(s.client, manga, nil, chapterList)
+			},
+			base.Loaded,
+		)
+	case searchChaptersMsg:
+		manga := msg.manga
+		volume := msg.volume
+
+		return tea.Sequence(
+			base.NotifyWithDuration(fmt.Sprintf("Skipped single volume (cfg: %s)", config.TUI.ExpandSingleVolume.Key), 3*time.Second),
+			base.Loading("Searching chapters"),
+			func() tea.Msg {
 				chapterList, err := s.client.VolumeChapters(ctx, volume)
 				if err != nil {
 					return err
 				}
 
-				return chapters.New(s.client, i.manga, volume, chapterList)
+				return chapters.New(s.client, manga, nil, chapterList)
 			},
 			base.Loaded,
 		)

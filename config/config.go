@@ -325,12 +325,28 @@ func initConfig() config {
 				Default:     true,
 				Description: "Skip home view when starting mangal and go straight to the providers view.",
 			}),
+			ExpandAllVolumes: reg(entry[bool, bool]{
+				Key:         "tui.expand_all_volumes",
+				Default:     false,
+				Description: "Skip selecting volumes. Supersedes `tui.expand_single_volume`.",
+			}),
 			ExpandSingleVolume: reg(entry[bool, bool]{
 				Key:         "tui.expand_single_volume",
 				Default:     true,
 				Description: "Skip selecting volume if there's only one.",
 			}),
 			Chapter: configTUIChapter{
+				// TODO: add validation to the format
+				VolumeNumberFormat: reg(entry[string, string]{
+					Key:         "tui.chapter.volume_number_format",
+					Default:     "[V.%s]",
+					Description: "Format that the chapter's volume number (string) should take, for example '[V.%s]'.",
+				}),
+				ShowVolumeNumber: reg(entry[bool, bool]{
+					Key:         "tui.chapter.show_volume_number",
+					Default:     true,
+					Description: "If the chapter's volume number should be shown prepended to the chapter title.",
+				}),
 				// TODO: add validation to the format
 				NumberFormat: reg(entry[string, string]{
 					Key:         "tui.chapter.number_format",

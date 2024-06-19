@@ -33,11 +33,12 @@ var _ base.State = (*state)(nil)
 type state struct {
 	list              *list.State
 	chapters          []mangadata.Chapter
-	volume            mangadata.Volume
+	volume            mangadata.Volume // can be nil
 	manga             mangadata.Manga
 	client            *libmangal.Client
 	selected          *set.Set[*item]
 	keyMap            keyMap
+	showVolumeNumber  *bool
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
@@ -60,7 +61,7 @@ func (s *state) KeyMap() help.KeyMap {
 
 // Title implements base.State.
 func (s *state) Title() base.Title {
-	return base.Title{Text: fmt.Sprintf("%s / Vol. %s", s.manga, s.volume)}
+	return base.Title{Text: s.manga.String()}
 }
 
 // Subtitle implements base.State.
@@ -85,6 +86,9 @@ func (s *state) Subtitle() string {
 
 // Status implements base.State.
 func (s *state) Status() string {
+	if s.volume != nil {
+		return fmt.Sprintf("Vol. %s%s%s", s.volume, base.StatusSeparator, s.list.Status())
+	}
 	return s.list.Status()
 }
 
@@ -276,6 +280,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 				},
 				base.Loaded,
 			)
+		case key.Matches(msg, s.keyMap.toggleVolumeNumber):
+			*s.showVolumeNumber = !(*s.showVolumeNumber)
 		case key.Matches(msg, s.keyMap.toggleChapterNumber):
 			*s.showChapterNumber = !(*s.showChapterNumber)
 		case key.Matches(msg, s.keyMap.toggleGroup):

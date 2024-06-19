@@ -80,15 +80,18 @@ type configDownloadMetadata struct {
 
 type configTUI struct {
 	SkipHome           *entry[bool, bool]
+	ExpandAllVolumes   *entry[bool, bool]
 	ExpandSingleVolume *entry[bool, bool]
 	Chapter            configTUIChapter
 }
 
 type configTUIChapter struct {
-	NumberFormat *entry[string, string]
-	ShowNumber   *entry[bool, bool]
-	ShowDate     *entry[bool, bool]
-	ShowGroup    *entry[bool, bool]
+	VolumeNumberFormat *entry[string, string]
+	ShowVolumeNumber   *entry[bool, bool]
+	NumberFormat       *entry[string, string]
+	ShowNumber         *entry[bool, bool]
+	ShowDate           *entry[bool, bool]
+	ShowGroup          *entry[bool, bool]
 }
 
 type configProviders struct {

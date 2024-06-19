@@ -18,6 +18,7 @@ func newKeyMap() keyMap {
 		openURL:             util.Bind("open url", "o"),
 		selectAll:           util.Bind("select all", "a"),
 		unselectAll:         util.Bind("unselect all", "backspace"),
+		toggleVolumeNumber:  util.Bind("toggle vol num", "v"),
 		toggleChapterNumber: util.Bind("toggle number", "c"),
 		toggleGroup:         util.Bind("toggle group", "ctrl+g"),
 		toggleDate:          util.Bind("toggle date", "ctrl+d"),
@@ -34,6 +35,7 @@ type keyMap struct {
 	openURL,
 	selectAll,
 	unselectAll,
+	toggleVolumeNumber,
 	toggleChapterNumber,
 	toggleGroup,
 	toggleDate key.Binding
@@ -54,6 +56,6 @@ func (k keyMap) FullHelp() [][]key.Binding {
 		k.ShortHelp(),
 		{k.anilist, k.changeFormat, k.openURL},
 		{k.selectAll, k.unselectAll},
-		{k.toggleChapterNumber, k.toggleGroup, k.toggleDate},
+		{k.toggleVolumeNumber, k.toggleChapterNumber, k.toggleGroup, k.toggleDate},
 	}
 }
