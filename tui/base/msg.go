@@ -22,3 +22,6 @@ type NotificationTimeoutMsg struct{}
 type LoadingMsg struct {
 	Message string
 }
+
+// RestoredMsg is sent when going back to the state.
+type RestoredMsg struct{}

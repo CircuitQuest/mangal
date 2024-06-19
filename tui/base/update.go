@@ -92,7 +92,10 @@ func (m *model) back(steps int) tea.Cmd {
 		m.state = m.history.Pop()
 	}
 
-	return m.resizeState()
+	return tea.Sequence(
+		m.resizeState(),
+		m.state.Update(m.ctx, RestoredMsg{}),
+	)
 }
 
 // pushState initializes a new state and pushes previous one into history
