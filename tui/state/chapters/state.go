@@ -31,13 +31,21 @@ var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
-	list              *list.State
-	chapters          []mangadata.Chapter
-	volume            mangadata.Volume // can be nil
-	manga             mangadata.Manga
-	client            *libmangal.Client
-	selected          *set.Set[*item]
-	keyMap            keyMap
+	list *list.State
+
+	chapters []mangadata.Chapter
+	volume   mangadata.Volume // can be nil
+	manga    mangadata.Manga
+	client   *libmangal.Client
+
+	selected set.Set[*item]
+	keyMap   keyMap
+
+	// to avoid extra read/download cmds from
+	// firing up when an action is already happening,
+	// only blocks keymaps handled by Update for read/download
+	actionRunning string
+
 	showVolumeNumber  *bool
 	showChapterNumber *bool
 	showGroup         *bool
@@ -118,11 +126,17 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		switch {
 		case key.Matches(msg, s.keyMap.toggle):
 			i.toggle()
+			if i.selected {
+				s.selected.Put(i)
+			} else {
+				s.selected.Remove(i)
+			}
 
 			return nil
 		case key.Matches(msg, s.keyMap.unselectAll):
 			for _, item := range s.selected.Keys() {
 				item.toggle()
+				s.selected.Remove(item)
 			}
 
 			return nil
@@ -133,14 +147,16 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					continue
 				}
 
-				if !it.isSelected() {
+				if !it.selected {
 					it.toggle()
+					s.selected.Put(it)
 				}
 			}
 
 			return nil
 		case key.Matches(msg, s.keyMap.changeFormat):
 			return func() tea.Msg {
+				// all this does is actually change the config for the formats
 				return formats.New()
 			}
 		case key.Matches(msg, s.keyMap.openURL):
@@ -157,73 +173,51 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 				base.Loaded,
 			)
 		case key.Matches(msg, s.keyMap.download):
-			var chapters []mangadata.Chapter
+			if s.actionRunning != "" {
+				return blockedActionCmd("download")
+			}
 
+			// when no toggled chapters then just download the one hovered
 			if s.selected.Size() == 0 {
-				chapters = append(chapters, i.chapter)
-			} else {
-				for _, item := range s.selected.Keys() {
-					chapters = append(chapters, item.chapter)
-				}
+				return downloadChapterCmd(i, config.DownloadOptions(), false)
 			}
 
-			sort.SliceStable(chapters, func(i, j int) bool {
-				return chapters[i].Info().Number < chapters[j].Info().Number
-			})
-
-			return func() tea.Msg {
-				return confirm.New(
-					fmt.Sprint("Download ", stringutil.Quantify(len(chapters), "chapter", "chapters")),
-					func(response bool) tea.Cmd {
-						if !response {
-							return base.Back
-						}
-
-						return s.downloadChaptersCmd(chapters, config.DownloadOptions())
-					},
-				)
-			}
+			return downloadChaptersCmd(s.selected, config.DownloadOptions())
 		case key.Matches(msg, s.keyMap.read):
-			// If download on read is wanted, then use the normal download path
-			var directory string
-			if config.Read.DownloadOnRead.Get() {
-				directory = config.Download.Path.Get()
-			} else {
-				directory = path.TempDir()
+			if s.actionRunning != "" {
+				return blockedActionCmd("read")
 			}
 
-			// Modify a bit the configured download options for this
+			// when no toggled chapters then just download the one selected
+			if s.selected.Size() > 1 {
+				return base.Notify("Can't open for reading more than 1 chapter")
+			}
+
+			// use the toggled item, else the hovered one
+			it := i
+			if s.selected.Size() == 1 {
+				it = s.selected.Keys()[0]
+			}
+
+			readFormat := config.Read.Format.Get()
+			if it.readAvailablePath != "" {
+				log.Log("Read format already downloaded")
+				return readChapterCmd(it.readAvailablePath, it, config.ReadOptions())
+			}
+
 			downloadOptions := config.DownloadOptions()
-			downloadOptions.Format = config.Read.Format.Get()
-			downloadOptions.Directory = directory
-			downloadOptions.SkipIfExists = true
-			downloadOptions.CreateProviderDir = true
-			downloadOptions.CreateMangaDir = true
-			downloadOptions.CreateVolumeDir = true
-
-			if i.downloadedFormats().Has(downloadOptions.Format) {
-				return tea.Sequence(
-					base.Loading(fmt.Sprintf("Opening %q for reading", i.chapter)),
-					func() tea.Msg {
-						err := s.client.ReadChapter(
-							ctx,
-							i.path(downloadOptions.Format),
-							i.chapter,
-							config.ReadOptions(),
-						)
-						if err != nil {
-							return err
-						}
-
-						return nil
-					},
-					base.Loaded,
-				)
+			// TODO: add warning when read format != download format?
+			downloadOptions.Format = readFormat
+			// If shouldn't download on read, save to tmp dir with all dirs created
+			if !config.Read.DownloadOnRead.Get() {
+				downloadOptions.Directory = path.TempDir()
+				downloadOptions.CreateProviderDir = true
+				downloadOptions.CreateMangaDir = true
+				downloadOptions.CreateVolumeDir = true
 			}
 
-			// TODO: now that libmangal doesn't have an option to "read after downloading",
-			// handle that case by running read chapter again (like above) after the download
-			return s.downloadChapterCmd(ctx, i.chapter, downloadOptions)
+			log.Log("Read format not yet downloaded, downloading")
+			return downloadChapterCmd(it, downloadOptions, true)
 		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
 		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
@@ -287,16 +281,86 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			*s.showChapterNumber = !(*s.showChapterNumber)
 		case key.Matches(msg, s.keyMap.toggleGroup):
 			*s.showGroup = !(*s.showGroup)
+			s.updateListDelegate()
 		case key.Matches(msg, s.keyMap.toggleDate):
 			*s.showDate = !(*s.showDate)
+			s.updateListDelegate()
+		}
+	case actionRunningMsg:
+		s.actionRunning = msg.action
+		goto end
+	case blockedActionMsg:
+		return tea.Sequence(
+			base.Notify(fmt.Sprintf("Can't perform %q right now, %q is running", msg.wanted, s.actionRunning)),
+			s.updateList(ctx, nil),
+		)
+	case updateItemMsg:
+		i := msg.item
+		if i != nil {
+			s.updateItemCmd(i)
+		}
+		goto end
+	case updateItemsMsg:
+		s.updateItemsCmd(msg.items)
+		goto end
+	case readChapterMsg:
+		return s.readChapterCmd(ctx, msg.path, msg.item, msg.options)
+	case downloadChapterMsg:
+		return s.downloadChapterCmd(ctx, msg.item, msg.options, msg.readAfter)
+	case downloadChaptersMsg:
+		items := msg.items
+
+		// sorted chapters
+		var chapters []mangadata.Chapter
+		for _, item := range items.Keys() {
+			chapters = append(chapters, item.chapter)
+		}
+		sort.SliceStable(chapters, func(i, j int) bool {
+			return chapters[i].Info().Number < chapters[j].Info().Number
+		})
+
+		return func() tea.Msg {
+			return confirm.New(
+				fmt.Sprint("Download ", stringutil.Quantify(len(chapters), "chapter", "chapters")),
+				func(response bool) tea.Cmd {
+					if !response {
+						return base.Back
+					}
+
+					return s.downloadChaptersCmd(items, chapters, config.DownloadOptions())
+				},
+			)
 		}
 	}
-
 end:
+	return s.updateList(ctx, msg)
+}
+
+// updateList to be able to update the list outside of the Update method
+func (s *state) updateList(ctx context.Context, msg tea.Msg) tea.Cmd {
 	return s.list.Update(ctx, msg)
+}
+
+func (s *state) updateItemCmd(item *item) {
+	item.updateDownloadedFormats()
+	item.updateReadAvailablePath()
+}
+
+func (s *state) updateItemsCmd(items set.Set[*item]) {
+	for _, item := range items.Keys() {
+		s.updateItemCmd(item)
+	}
 }
 
 // View implements base.State.
 func (s *state) View() string {
 	return s.list.View()
+}
+
+func (s *state) updateListDelegate() {
+	if *s.showDate || *s.showGroup {
+		s.list.SetDelegateHeight(3)
+	} else {
+		s.list.SetDelegateHeight(2)
+	}
 }

@@ -1,13 +1,13 @@
 package chapters
 
 import (
-	"path/filepath"
+	"fmt"
 
 	_list "github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/path"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/zyedidia/generic/set"
 )
@@ -18,7 +18,6 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	showChapterNumber := config.TUI.Chapter.ShowNumber.Get()
 	showGroup := config.TUI.Chapter.ShowGroup.Get()
 	showDate := config.TUI.Chapter.ShowDate.Get()
-	selectedSet := set.NewMapset[*item]()
 
 	keyMap := newKeyMap()
 	listWrapper := list.New(
@@ -26,33 +25,27 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		"chapter", "chapters",
 		chapters,
 		func(chapter mangadata.Chapter) _list.DefaultItem {
-			providerFilename := client.ComputeProviderFilename(client.Info())
-			mangaFilename := client.ComputeMangaFilename(manga)
-			volumeFilename := client.ComputeVolumeFilename(chapter.Volume())
+			volNum := fmt.Sprintf(config.TUI.Chapter.VolumeNumberFormat.Get(), chapter.Volume())
+			renderedVolNum := style.Bold.Base.Render(volNum)
 
-			tmpPath := filepath.Join(path.TempDir(), providerFilename, mangaFilename, volumeFilename)
-			tmpDownPath := path.DownloadsDir()
-			if config.Download.Provider.CreateDir.Get() {
-				tmpDownPath = filepath.Join(tmpDownPath, providerFilename)
-			}
-			if config.Download.Manga.CreateDir.Get() {
-				tmpDownPath = filepath.Join(tmpDownPath, mangaFilename)
-			}
-			if config.Download.Volume.CreateDir.Get() {
-				tmpDownPath = filepath.Join(tmpDownPath, volumeFilename)
-			}
+			chapNum := fmt.Sprintf(config.TUI.Chapter.NumberFormat.Get(), chapter.Info().Number)
+			renderedChapNum := style.Bold.Base.Render(chapNum)
 
-			return &item{
-				chapter:           chapter,
-				selectedItems:     &selectedSet,
-				client:            client,
-				showVolumeNumber:  &showVolumeNumber,
-				showChapterNumber: &showChapterNumber,
-				showGroup:         &showGroup,
-				showDate:          &showDate,
-				tmpPath:           &tmpPath,
-				tmpDownPath:       &tmpDownPath,
+			item := &item{
+				chapter:               chapter,
+				client:                client,
+				renderedVolumeNumber:  renderedVolNum,
+				renderedChapterNumber: renderedChapNum,
+				showVolumeNumber:      &showVolumeNumber,
+				showChapterNumber:     &showChapterNumber,
+				showGroup:             &showGroup,
+				showDate:              &showDate,
 			}
+			item.updatePaths()
+			item.updateDownloadedFormats()
+			item.updateReadAvailablePath()
+
+			return item
 		},
 		keyMap)
 
@@ -62,7 +55,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		volume:            volume,
 		manga:             manga,
 		client:            client,
-		selected:          &selectedSet,
+		selected:          set.NewMapset[*item](),
 		keyMap:            keyMap,
 		showVolumeNumber:  &showVolumeNumber,
 		showChapterNumber: &showChapterNumber,

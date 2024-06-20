@@ -81,4 +81,20 @@ var (
 			TypeNerd:  "\uF017",
 		},
 	}
+
+	Read = icon{
+		color: color.Secondary,
+		symbols: symbols{
+			TypeASCII: "r",
+			TypeNerd:  "\U000F0447",
+		},
+	}
+
+	Available = icon{
+		color: color.Secondary,
+		symbols: symbols{
+			TypeASCII: "a",
+			TypeNerd:  "\uEB28",
+		},
+	}
 )
