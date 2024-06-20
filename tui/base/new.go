@@ -17,13 +17,12 @@ func New(state State,
 
 	_styles := defaultStyles()
 	_help := help.New()
+	_help.Styles = _styles.help
+	_help.Ellipsis = Ellipsis
+	_help.ShortSeparator = HelpKeySeparator
+	_help.FullSeparator = HelpKeySeparator
 
-	_help.Styles.ShortKey = _styles.helpKey
-	_help.Styles.ShortSeparator = _styles.helpSep
-	_help.Styles.FullKey = _styles.helpKey
-	_help.Styles.FullSeparator = _styles.helpSep
-
-	_spinner := spinner.New(spinner.WithSpinner(spinner.Dot))
+	_spinner := spinner.New(spinner.WithSpinner(SpinnerType))
 
 	model := &model{
 		state:                       state,

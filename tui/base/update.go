@@ -129,8 +129,7 @@ func (m *model) updateSpinner(msg spinner.TickMsg) tea.Cmd {
 	return cmd
 }
 
-// loading sets the loading message and sends a spinner.Tick msg,
-// the state needs to be resized due to the updated footer size
+// loading sets the loading message and sends a spinner.Tick msg
 func (m *model) loading(message string) tea.Cmd {
 	// this check saves one m.resizeState call
 	// when calling loading on the same message,
@@ -142,10 +141,7 @@ func (m *model) loading(message string) tea.Cmd {
 	if message == "" {
 		return m.resizeState()
 	}
-	return tea.Sequence(
-		m.spinner.Tick,
-		m.resizeState(),
-	)
+	return m.spinner.Tick
 }
 
 // notify will show a message to the right of the title and status.

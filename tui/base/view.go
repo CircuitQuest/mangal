@@ -38,11 +38,17 @@ func (m *model) viewHeader() string {
 
 	if m.notification != "" {
 		width := m.size.Width - lipgloss.Width(header.String())
-		header.WriteString(m.styles.notification.Width(width).Render(m.notification))
+		header.WriteString(m.styles.notification.MaxWidth(width).Render(m.notification))
 	}
 
+	header.WriteString(newline)
+	if m.loadingMessage != "" {
+		header.WriteString(m.styles.loading.spinner.Render(m.spinner.View()))
+	}
+	header.WriteString(m.styles.loading.message.Render(m.loadingMessage))
+
+	header.WriteString(newline)
 	if subtitle := m.state.Subtitle(); subtitle != "" {
-		header.WriteString(newline)
 		header.WriteString(m.styles.subtitle.Render(subtitle))
 	}
 
@@ -61,15 +67,5 @@ func (m *model) viewState() string {
 }
 
 func (m *model) viewFooter() string {
-	var footer strings.Builder
-	footer.Grow(200)
-
-	if m.loadingMessage != "" {
-		footer.WriteString(m.styles.spinner.Render(m.spinner.View()))
-		footer.WriteString(m.styles.loading.Render(m.loadingMessage))
-		footer.WriteString(newline)
-	}
-	footer.WriteString(m.help.View(m.keyMap.with(m.state.KeyMap())))
-
-	return m.styles.footer.Render(footer.String())
+	return m.styles.footer.Render(m.help.View(m.keyMap.with(m.state.KeyMap())))
 }
