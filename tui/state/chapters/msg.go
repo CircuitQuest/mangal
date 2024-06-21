@@ -5,22 +5,6 @@ import (
 	"github.com/zyedidia/generic/set"
 )
 
-type actionRunningMsg struct {
-	action string
-}
-
-type blockedActionMsg struct {
-	wanted string
-}
-
-type updateItemMsg struct {
-	item *item
-}
-
-type updateItemsMsg struct {
-	items set.Set[*item]
-}
-
 type readChapterMsg struct {
 	path    string
 	item    *item

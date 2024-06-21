@@ -111,7 +111,7 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 }
 
 // Update implements base.State.
-func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
+func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if s.list.FilterState() == _list.Filtering {
@@ -174,18 +174,18 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			)
 		case key.Matches(msg, s.keyMap.download):
 			if s.actionRunning != "" {
-				return blockedActionCmd("download")
+				return s.blockedActionByCmd("download")
 			}
 
 			// when no toggled chapters then just download the one hovered
 			if s.selected.Size() == 0 {
-				return downloadChapterCmd(i, config.DownloadOptions(), false)
+				return s.downloadChapterCmd(ctx, i, config.DownloadOptions(), false)
 			}
 
 			return downloadChaptersCmd(s.selected, config.DownloadOptions())
 		case key.Matches(msg, s.keyMap.read):
 			if s.actionRunning != "" {
-				return blockedActionCmd("read")
+				return s.blockedActionByCmd("read")
 			}
 
 			// when no toggled chapters then just download the one selected
@@ -202,7 +202,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			readFormat := config.Read.Format.Get()
 			if it.readAvailablePath != "" {
 				log.Log("Read format already downloaded")
-				return readChapterCmd(it.readAvailablePath, it, config.ReadOptions())
+				return s.readChapterCmd(ctx, it.readAvailablePath, it, config.ReadOptions())
 			}
 
 			downloadOptions := config.DownloadOptions()
@@ -217,7 +217,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			}
 
 			log.Log("Read format not yet downloaded, downloading")
-			return downloadChapterCmd(it, downloadOptions, true)
+			return s.downloadChapterCmd(ctx, it, downloadOptions, true)
 		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
 		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
@@ -286,23 +286,6 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			*s.showDate = !(*s.showDate)
 			s.updateListDelegate()
 		}
-	case actionRunningMsg:
-		s.actionRunning = msg.action
-		goto end
-	case blockedActionMsg:
-		return tea.Sequence(
-			base.Notify(fmt.Sprintf("Can't perform %q right now, %q is running", msg.wanted, s.actionRunning)),
-			s.updateList(ctx, nil),
-		)
-	case updateItemMsg:
-		i := msg.item
-		if i != nil {
-			s.updateItemCmd(i)
-		}
-		goto end
-	case updateItemsMsg:
-		s.updateItemsCmd(msg.items)
-		goto end
 	case readChapterMsg:
 		return s.readChapterCmd(ctx, msg.path, msg.item, msg.options)
 	case downloadChapterMsg:
@@ -339,17 +322,6 @@ end:
 // updateList to be able to update the list outside of the Update method
 func (s *state) updateList(ctx context.Context, msg tea.Msg) tea.Cmd {
 	return s.list.Update(ctx, msg)
-}
-
-func (s *state) updateItemCmd(item *item) {
-	item.updateDownloadedFormats()
-	item.updateReadAvailablePath()
-}
-
-func (s *state) updateItemsCmd(items set.Set[*item]) {
-	for _, item := range items.Keys() {
-		s.updateItemCmd(item)
-	}
 }
 
 // View implements base.State.
