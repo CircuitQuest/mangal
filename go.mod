@@ -11,7 +11,7 @@ retract (
 require (
 	github.com/adrg/xdg v0.4.0
 	github.com/charmbracelet/bubbles v0.18.0
-	github.com/charmbracelet/bubbletea v0.26.4
+	github.com/charmbracelet/bubbletea v0.26.5
 	github.com/charmbracelet/lipgloss v0.11.0
 	github.com/fatih/camelcase v1.0.0
 	github.com/getkin/kin-openapi v0.125.0
