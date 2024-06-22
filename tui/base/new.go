@@ -6,6 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/luevano/mangal/theme/style"
 	"github.com/zyedidia/generic/stack"
 )
 
@@ -22,7 +23,10 @@ func New(state State,
 	_help.ShortSeparator = HelpKeySeparator
 	_help.FullSeparator = HelpKeySeparator
 
-	_spinner := spinner.New(spinner.WithSpinner(SpinnerType))
+	_spinner := spinner.New(
+		spinner.WithSpinner(DotSpinner),
+		spinner.WithStyle(style.Bold.Accent),
+	)
 
 	model := &model{
 		state:                       state,

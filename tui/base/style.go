@@ -1,6 +1,8 @@
 package base
 
 import (
+	"time"
+
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/lipgloss"
@@ -14,19 +16,22 @@ const (
 	HelpKeySeparator = StatusSeparator
 )
 
-var SpinnerType = spinner.Dot
+var DotSpinner = spinner.Spinner{
+	Frames: []string{"⣾", "⣽", "⣻", "⢿", "⡿", "⣟", "⣯", "⣷"},
+	FPS:    time.Second / 10,
+}
 
 type styles struct {
 	title,
 	status,
 	notification,
+	loading,
 	subtitle,
 	header,
 	state,
 	footer lipgloss.Style
 
-	loading loadingStyle
-	help    help.Styles
+	help help.Styles
 }
 
 type loadingStyle struct {
@@ -46,14 +51,11 @@ func defaultStyles() styles {
 		title:        style.FlipGrounds(tempAccent).Padding(0, 1).Margin(0, 0, 0, 1),
 		status:       style.Normal.Base.Padding(0, 0, 0, 1),
 		notification: style.Normal.Warning.Padding(0, 0, 0, 1),
-		subtitle:     style.Normal.Secondary.Padding(0, 0, 0, 1),
+		loading:      style.Normal.Secondary.Padding(0, 0, 0, 1),
+		subtitle:     style.Normal.Secondary.Padding(0, 0, 0, 2),
 		header:       style.Normal.Base.Padding(0, 0, 1, 1),
 		state:        style.Normal.Base.Padding(0, 1),
 		footer:       style.Normal.Base.Padding(0, 1),
-		loading: loadingStyle{
-			spinner: style.Bold.Accent,
-			message: style.Normal.Secondary.Padding(0, 0, 0, 1),
-		},
 		help: help.Styles{
 			Ellipsis:       style.Normal.Base,
 			ShortKey:       helpKey,

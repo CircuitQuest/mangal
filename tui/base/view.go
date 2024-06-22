@@ -43,9 +43,9 @@ func (m *model) viewHeader() string {
 
 	header.WriteString(newline)
 	if m.loadingMessage != "" {
-		header.WriteString(m.styles.loading.spinner.Render(m.spinner.View()))
+		header.WriteString(m.spinner.View())
 	}
-	header.WriteString(m.styles.loading.message.Render(m.loadingMessage))
+	header.WriteString(m.styles.loading.Render(m.loadingMessage))
 
 	header.WriteString(newline)
 	if subtitle := m.state.Subtitle(); subtitle != "" {
