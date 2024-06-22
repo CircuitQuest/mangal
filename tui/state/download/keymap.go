@@ -1,4 +1,4 @@
-package chapsdownloaded
+package download
 
 import (
 	"github.com/charmbracelet/bubbles/help"
@@ -8,36 +8,25 @@ import (
 
 var _ help.KeyMap = (*keyMap)(nil)
 
-func newKeyMap(state *state) keyMap {
+func newKeyMap() keyMap {
 	return keyMap{
 		open:  util.Bind("open directory", "o"),
-		quit:  util.Bind("quit", "q"),
 		retry: util.Bind("retry", "r"),
-		state: state,
 	}
 }
 
 // keyMap implements help.keyMap.
 type keyMap struct {
-	quit,
 	open,
 	retry key.Binding
-
-	state *state
 }
 
 // ShortHelp implements help.keyMap.
 func (k keyMap) ShortHelp() []key.Binding {
-	bindings := []key.Binding{
-		k.quit,
+	return []key.Binding{
 		k.open,
+		k.retry,
 	}
-
-	if len(k.state.options.Failed) > 0 {
-		bindings = append(bindings, k.retry)
-	}
-
-	return bindings
 }
 
 // FullHelp implements help.keyMap.

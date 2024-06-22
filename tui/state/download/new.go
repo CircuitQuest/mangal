@@ -1,23 +1,25 @@
-package chapsdownloading
+package download
 
 import (
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
 )
 
-func New(chapters []mangadata.Chapter, options Options) *state {
+func New(client *libmangal.Client, chapters []mangadata.Chapter, options libmangal.DownloadOptions) *state {
 	return &state{
-		options:  options,
+		client:   client,
 		chapters: chapters,
+		options:  options,
 		message:  "Preparing...",
 		progress: progress.New(),
 		spinner: spinner.New(
-			spinner.WithSpinner(spinner.Dot),
-			spinner.WithStyle(style.Bold.Accent),
+			spinner.WithSpinner(base.DotSpinner),
+			spinner.WithStyle(style.Normal.Accent),
 		),
-		keyMap: base.NoKeyMap{},
+		keyMap: newKeyMap(),
 	}
 }

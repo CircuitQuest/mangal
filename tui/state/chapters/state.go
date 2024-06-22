@@ -3,7 +3,6 @@ package chapters
 import (
 	"context"
 	"fmt"
-	"sort"
 	"strings"
 	"time"
 
@@ -179,10 +178,23 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 			// when no toggled chapters then just download the one hovered
 			if s.selected.Size() == 0 {
+				// TODO: add confirmation?
 				return s.downloadChapterCmd(ctx, i, config.DownloadOptions(), false)
 			}
 
-			return downloadChaptersCmd(s.selected, config.DownloadOptions())
+			// TODO: refactor confirmation state?
+			return func() tea.Msg {
+				return confirm.New(
+					fmt.Sprint("Download ", stringutil.Quantify(s.selected.Size(), "chapter", "chapters")),
+					func(response bool) tea.Cmd {
+						if !response {
+							return base.Back
+						}
+
+						return s.downloadChaptersCmd(s.selected, config.DownloadOptions())
+					},
+				)
+			}
 		case key.Matches(msg, s.keyMap.read):
 			if s.actionRunning != "" {
 				return s.blockedActionByCmd("read")
@@ -216,6 +228,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				downloadOptions.CreateVolumeDir = true
 			}
 
+			// TODO: add confirmation?
 			log.Log("Read format not yet downloaded, downloading")
 			return s.downloadChapterCmd(ctx, it, downloadOptions, true)
 		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
@@ -290,37 +303,11 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		return s.readChapterCmd(ctx, msg.path, msg.item, msg.options)
 	case downloadChapterMsg:
 		return s.downloadChapterCmd(ctx, msg.item, msg.options, msg.readAfter)
-	case downloadChaptersMsg:
-		items := msg.items
-
-		// sorted chapters
-		var chapters []mangadata.Chapter
-		for _, item := range items.Keys() {
-			chapters = append(chapters, item.chapter)
-		}
-		sort.SliceStable(chapters, func(i, j int) bool {
-			return chapters[i].Info().Number < chapters[j].Info().Number
-		})
-
-		return func() tea.Msg {
-			return confirm.New(
-				fmt.Sprint("Download ", stringutil.Quantify(len(chapters), "chapter", "chapters")),
-				func(response bool) tea.Cmd {
-					if !response {
-						return base.Back
-					}
-
-					return s.downloadChaptersCmd(items, chapters, config.DownloadOptions())
-				},
-			)
-		}
+	case base.RestoredMsg:
+		// update the items sent for download when coming back
+		s.updateItems(s.selected)
 	}
 end:
-	return s.updateList(ctx, msg)
-}
-
-// updateList to be able to update the list outside of the Update method
-func (s *state) updateList(ctx context.Context, msg tea.Msg) tea.Cmd {
 	return s.list.Update(ctx, msg)
 }
 

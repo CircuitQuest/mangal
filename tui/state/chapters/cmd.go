@@ -3,16 +3,14 @@ package chapters
 import (
 	"context"
 	"fmt"
+	"sort"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
-	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/chapsdownloaded"
-	"github.com/luevano/mangal/tui/state/chapsdownloading"
+	"github.com/luevano/mangal/tui/state/download"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -69,46 +67,22 @@ func (s *state) downloadChapterCmd(ctx context.Context, item *item, options libm
 	)
 }
 
-// TODO: temporary placeholder that just wraps the msg, the msg will trigger the actual cmd (below)
-func downloadChaptersCmd(items set.Set[*item], options libmangal.DownloadOptions) tea.Cmd {
-	return func() tea.Msg {
-		return downloadChaptersMsg{
-			items:   items,
-			options: options,
-		}
-	}
-}
-
 // TODO: implement base.Loading/Loaded and actionRunningCmd/actionRanCmd
-func (s *state) downloadChaptersCmd(items set.Set[*item], chapters []mangadata.Chapter, options libmangal.DownloadOptions) tea.Cmd {
+func (s *state) downloadChaptersCmd(items set.Set[*item], options libmangal.DownloadOptions) tea.Cmd {
 	return func() tea.Msg {
-		state := chapsdownloading.New(
-			chapters,
-			chapsdownloading.Options{
-				DownloadChapter: func(ctx context.Context, chapter mangadata.Chapter) (*metadata.DownloadedChapter, error) {
-					return s.client.DownloadChapter(ctx, chapter, options)
-				},
-				OnDownloadFinished: func(downChaps []*metadata.DownloadedChapter, succeed, failed []mangadata.Chapter) tea.Cmd {
-					s.updateItems(items)
-
-					return func() tea.Msg {
-						return chapsdownloaded.New(chapsdownloaded.Options{
-							Succeed:          succeed,
-							Failed:           failed,
-							SucceedDownloads: downChaps,
-							DownloadChapters: func(chapters []mangadata.Chapter) tea.Cmd {
-								return s.downloadChaptersCmd(items, chapters, options)
-							},
-						})
-					}
-				},
-			},
-		)
-
-		s.client.Logger().SetOnLog(func(format string, a ...any) {
-			state.SetMessage(fmt.Sprintf(format, a...))
-			log.Log(format, a...)
+		var chapters []mangadata.Chapter
+		for _, item := range items.Keys() {
+			chapters = append(chapters, item.chapter)
+		}
+		sort.SliceStable(chapters, func(i, j int) bool {
+			return chapters[i].Info().Number < chapters[j].Info().Number
 		})
+
+		state := download.New(
+			s.client,
+			chapters,
+			options,
+		)
 
 		return state
 	}
