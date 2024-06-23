@@ -91,7 +91,17 @@ func reg[Raw, Value any](e entry[Raw, Value]) *entry[Raw, Value] {
 			return value, nil
 		},
 		Validate: func(a any) error {
-			return e.Validate(a.(Value))
+			value, ok := a.(Value)
+			if !ok {
+				// if the incoming value is not a Value,
+				// then mostlikely it is a Raw
+				v, err := e.Unmarshal(a.(Raw))
+				if err != nil {
+					return fmt.Errorf("error validating field %q: wrong type of value: expected %T, got %T", e.Key, *new(Value), a)
+				}
+				value = v
+			}
+			return e.Validate(value)
 		},
 	}
 	// Default must be set after the field has been "registered"
