@@ -67,8 +67,6 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, s.keyMap.quit):
-			return tea.Quit
 		case key.Matches(msg, s.keyMap.copyError):
 			return func() tea.Msg {
 				return clipboard.WriteAll(s.error.Error())
