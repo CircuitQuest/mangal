@@ -11,6 +11,14 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
+type forWhat string
+
+const (
+	forRead     forWhat = "read"
+	forDownload forWhat = "download"
+	forBoth     forWhat = "both"
+)
+
 var _ base.State = (*state)(nil)
 
 // state implements base.state.
@@ -73,24 +81,17 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		}
 
 		switch {
-		case key.Matches(msg, s.keyMap.setDownload):
-			return func() tea.Msg {
-				return i.selectForDownloading()
-			}
 		case key.Matches(msg, s.keyMap.setRead):
-			return func() tea.Msg {
-				return i.selectForReading()
-			}
-		case key.Matches(msg, s.keyMap.setAll):
-			return tea.Batch(
-				func() tea.Msg {
-					return i.selectForReading()
-				},
-				func() tea.Msg {
-					return i.selectForDownloading()
-				},
-			)
+			return setFormatForCmd(forRead, i.format)
+		case key.Matches(msg, s.keyMap.setDownload):
+			return setFormatForCmd(forDownload, i.format)
+		case key.Matches(msg, s.keyMap.setBoth):
+			return setFormatForCmd(forBoth, i.format)
 		}
+	case formatsUpdatedMsg:
+		// TODO: don't write? and only keep the option
+		// for the duration of the program?
+		return writeConfigCmd
 	}
 end:
 	return s.list.Update(ctx, msg)

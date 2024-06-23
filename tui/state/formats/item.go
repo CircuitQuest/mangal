@@ -7,6 +7,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/theme/style"
+	"github.com/luevano/mangal/tui/base"
 )
 
 var (
@@ -27,17 +28,19 @@ func (i *item) FilterValue() string {
 // Title implements list.DefaultItem.
 func (i *item) Title() string {
 	var sb strings.Builder
+	sb.Grow(20)
+	sep := style.Bold.Warning.Render(base.Separator)
 
 	sb.WriteString(i.FilterValue())
 
 	if i.isSelectedForDownloading() {
-		sb.WriteString(" ")
-		sb.WriteString(style.Bold.Accent.Render("Download"))
+		sb.WriteString(sep)
+		sb.WriteString(style.Bold.Warning.Render("download"))
 	}
 
 	if i.isSelectedForReading() {
-		sb.WriteString(" ")
-		sb.WriteString(style.Bold.Accent.Render("Read"))
+		sb.WriteString(sep)
+		sb.WriteString(style.Bold.Warning.Render("read"))
 	}
 
 	return sb.String()
@@ -64,22 +67,4 @@ func (i *item) isSelectedForReading() bool {
 	format := config.Read.Format.Get()
 
 	return i.format == format
-}
-
-// TODO: don't set? or just don't write config.
-func (i *item) selectForDownloading() error {
-	if err := config.Download.Format.Set(i.format); err != nil {
-		return err
-	}
-
-	return config.Write()
-}
-
-// TODO: don't set? or just don't write config.
-func (i *item) selectForReading() error {
-	if err := config.Read.Format.Set(i.format); err != nil {
-		return err
-	}
-
-	return config.Write()
 }
