@@ -28,6 +28,7 @@ type item struct {
 	tempDownloadedFormats set.Set[libmangal.Format]
 	downloadedFormats     set.Set[libmangal.Format]
 
+	renderedSep               string
 	renderedVolumeNumber      string
 	renderedChapterNumber     string
 	renderedDownloadedFormats string
@@ -39,33 +40,22 @@ type item struct {
 	// if the read format is not available anywhere it is empty
 	readAvailablePath string
 
+	// full computed paths minus the filename
+	fullTempPath     string
+	fullDownloadPath string
+
 	showVolumeNumber  *bool
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
 
-	// full computed paths minus the filename
-	fullTempPath     string
-	fullDownloadPath string
+	styles styles
 }
 
 // FilterValue implements list.Item.
 func (i *item) FilterValue() string {
-	return i.chapter.String()
-}
-
-// TODO: implement styles?
-//
-// Title implements list.DefaultItem.
-func (i *item) Title() string {
 	var title strings.Builder
-	title.Grow(200)
-
-	if i.selected {
-		title.WriteString(icon.Mark.String())
-		title.WriteString(" ")
-	}
-
+	title.Grow(50)
 	if *i.showVolumeNumber {
 		title.WriteString(i.renderedVolumeNumber)
 		title.WriteString(" ")
@@ -76,16 +66,29 @@ func (i *item) Title() string {
 		title.WriteString(" ")
 	}
 
-	// actual chapter title
+	title.WriteString(i.chapter.Info().Title)
+	return title.String()
+}
+
+// Title implements list.DefaultItem.
+func (i *item) Title() string {
+	var title strings.Builder
+	title.Grow(200)
+
 	title.WriteString(i.FilterValue())
 
+	if i.selected {
+		title.WriteString(i.renderedSep)
+		title.WriteString(icon.Mark.String())
+	}
+
 	if i.readAvailablePath != "" {
-		title.WriteString(" ")
+		title.WriteString(i.renderedSep)
 		title.WriteString(icon.Available.String())
 	}
 
 	if i.renderedDownloadedFormats != "" {
-		title.WriteString(" ")
+		title.WriteString(i.renderedSep)
 		title.WriteString(i.renderedDownloadedFormats)
 	}
 
@@ -194,7 +197,7 @@ func (i *item) renderDownloadedFormats() {
 			}
 
 			formats.WriteString(" ")
-			formats.WriteString(style.Bold.Warning.Render(format.String()))
+			formats.WriteString(i.styles.format.Render(format.String()))
 		}
 		i.renderedDownloadedFormats = formats.String()
 	}

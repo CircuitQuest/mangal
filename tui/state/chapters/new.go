@@ -7,7 +7,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/theme/style"
+	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/zyedidia/generic/set"
 )
@@ -19,27 +19,28 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	showGroup := config.TUI.Chapter.ShowGroup.Get()
 	showDate := config.TUI.Chapter.ShowDate.Get()
 
-	keyMap := newKeyMap()
+	_styles := defaultStyles()
+	_keyMap := newKeyMap()
+	renderedSep := _styles.sep.Render(base.Separator)
 	listWrapper := list.New(
 		3,
 		"chapter", "chapters",
 		chapters,
 		func(chapter mangadata.Chapter) _list.DefaultItem {
 			volNum := fmt.Sprintf(config.TUI.Chapter.VolumeNumberFormat.Get(), chapter.Volume())
-			renderedVolNum := style.Bold.Base.Render(volNum)
-
 			chapNum := fmt.Sprintf(config.TUI.Chapter.NumberFormat.Get(), chapter.Info().Number)
-			renderedChapNum := style.Bold.Base.Render(chapNum)
 
 			item := &item{
 				chapter:               chapter,
 				client:                client,
-				renderedVolumeNumber:  renderedVolNum,
-				renderedChapterNumber: renderedChapNum,
+				renderedSep:           renderedSep,
+				renderedVolumeNumber:  volNum,
+				renderedChapterNumber: chapNum,
 				showVolumeNumber:      &showVolumeNumber,
 				showChapterNumber:     &showChapterNumber,
 				showGroup:             &showGroup,
 				showDate:              &showDate,
+				styles:                _styles,
 			}
 			item.updatePaths()
 			item.updateDownloadedFormats()
@@ -47,7 +48,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 
 			return item
 		},
-		keyMap)
+		_keyMap)
 
 	return &state{
 		list:              listWrapper,
@@ -56,10 +57,12 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		manga:             manga,
 		client:            client,
 		selected:          set.NewMapset[*item](),
-		keyMap:            keyMap,
+		renderedSep:       renderedSep,
 		showVolumeNumber:  &showVolumeNumber,
 		showChapterNumber: &showChapterNumber,
 		showGroup:         &showGroup,
 		showDate:          &showDate,
+		styles:            _styles,
+		keyMap:            _keyMap,
 	}
 }

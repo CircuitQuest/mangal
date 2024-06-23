@@ -12,8 +12,8 @@ import (
 
 const (
 	Ellipsis         = "…"
-	StatusSeparator  = " • "
-	HelpKeySeparator = StatusSeparator
+	Separator        = " • "
+	HelpKeySeparator = Separator
 )
 
 var DotSpinner = spinner.Spinner{

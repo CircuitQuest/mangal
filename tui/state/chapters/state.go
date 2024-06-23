@@ -38,7 +38,9 @@ type state struct {
 	client   *libmangal.Client
 
 	selected set.Set[*item]
-	keyMap   keyMap
+
+	renderedSep             string
+	renderedSubtitleFormats string
 
 	// to avoid extra read/download cmds from
 	// firing up when an action is already happening,
@@ -49,6 +51,9 @@ type state struct {
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
+
+	styles styles
+	keyMap keyMap
 }
 
 // Intermediate implements base.State.
@@ -74,19 +79,15 @@ func (s *state) Title() base.Title {
 // Subtitle implements base.State.
 func (s *state) Subtitle() string {
 	var subtitle strings.Builder
+	subtitle.Grow(100)
 
 	subtitle.WriteString(s.list.Subtitle())
-
 	if s.selected.Size() > 0 {
-		subtitle.WriteString(" ")
-		subtitle.WriteString(fmt.Sprint(s.selected.Size()))
-		subtitle.WriteString(" selected")
+		selected := s.renderedSep +
+			s.styles.subtitle.Render(fmt.Sprintf("%d selected", s.selected.Size()))
+		subtitle.WriteString(selected)
 	}
-
-	subtitle.WriteString(". Download ")
-	subtitle.WriteString(config.Download.Format.Get().String())
-	subtitle.WriteString(" & Read ")
-	subtitle.WriteString(config.Read.Format.Get().String())
+	subtitle.WriteString(s.renderedSubtitleFormats)
 
 	return subtitle.String()
 }
@@ -94,7 +95,7 @@ func (s *state) Subtitle() string {
 // Status implements base.State.
 func (s *state) Status() string {
 	if s.volume != nil {
-		return fmt.Sprintf("Vol. %s%s%s", s.volume, base.StatusSeparator, s.list.Status())
+		return fmt.Sprintf("Vol. %s%s%s", s.volume, s.renderedSep, s.list.Status())
 	}
 	return s.list.Status()
 }
@@ -106,6 +107,8 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
+	s.updateRenderedSubtitleFormats()
+
 	return s.list.Init(ctx)
 }
 
@@ -306,6 +309,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	case base.RestoredMsg:
 		// update the items sent for download when coming back
 		s.updateItems(s.selected)
+		// can't distinguish from which state this is being restored
+		s.updateRenderedSubtitleFormats()
 	}
 end:
 	return s.list.Update(ctx, msg)
@@ -314,12 +319,4 @@ end:
 // View implements base.State.
 func (s *state) View() string {
 	return s.list.View()
-}
-
-func (s *state) updateListDelegate() {
-	if *s.showDate || *s.showGroup {
-		s.list.SetDelegateHeight(3)
-	} else {
-		s.list.SetDelegateHeight(2)
-	}
 }
