@@ -11,11 +11,29 @@ import (
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/download"
+	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
 )
 
 func (s *state) blockedActionByCmd(wanted string) tea.Cmd {
 	return base.Notify(fmt.Sprintf("Can't perform %q right now, %q is running", wanted, s.actionRunning))
+}
+
+func (s *state) openURLCmd(item *item) tea.Cmd {
+	chapter := item.chapter
+
+	return tea.Sequence(
+		base.Loading(fmt.Sprintf("Opening URL %s for chapter %q", chapter.Info().URL, chapter)),
+		func() tea.Msg {
+			err := open.Run(chapter.Info().URL)
+			if err != nil {
+				return err
+			}
+
+			return nil
+		},
+		base.Loaded,
+	)
 }
 
 func (s *state) readChapterCmd(ctx context.Context, path string, item *item, options libmangal.ReadOptions) tea.Cmd {

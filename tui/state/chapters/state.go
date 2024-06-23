@@ -22,7 +22,6 @@ import (
 	"github.com/luevano/mangal/tui/state/formats"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	stringutil "github.com/luevano/mangal/util/string"
-	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -162,18 +161,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				return formats.New()
 			}
 		case key.Matches(msg, s.keyMap.openURL):
-			return tea.Sequence(
-				base.Loading(fmt.Sprintf("Opening URL %s for chapter %q", i.chapter.Info().URL, i.chapter)),
-				func() tea.Msg {
-					err := open.Run(i.chapter.Info().URL)
-					if err != nil {
-						return err
-					}
-
-					return nil
-				},
-				base.Loaded,
-			)
+			return s.openURLCmd(i)
 		case key.Matches(msg, s.keyMap.download):
 			if s.actionRunning != "" {
 				return s.blockedActionByCmd("download")
@@ -214,7 +202,6 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				it = s.selected.Keys()[0]
 			}
 
-			readFormat := config.Read.Format.Get()
 			if it.readAvailablePath != "" {
 				log.Log("Read format already downloaded")
 				return s.readChapterCmd(ctx, it.readAvailablePath, it, config.ReadOptions())
@@ -222,7 +209,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 			downloadOptions := config.DownloadOptions()
 			// TODO: add warning when read format != download format?
-			downloadOptions.Format = readFormat
+			downloadOptions.Format = config.Read.Format.Get()
 			// If shouldn't download on read, save to tmp dir with all dirs created
 			if !config.Read.DownloadOnRead.Get() {
 				downloadOptions.Directory = path.TempDir()
@@ -306,6 +293,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		return s.readChapterCmd(ctx, msg.path, msg.item, msg.options)
 	case downloadChapterMsg:
 		return s.downloadChapterCmd(ctx, msg.item, msg.options, msg.readAfter)
+	case downloadChaptersMsg:
+		return s.downloadChaptersCmd(msg.items, msg.options)
 	case base.RestoredMsg:
 		// update the items sent for download when coming back
 		s.updateItems(s.selected)
