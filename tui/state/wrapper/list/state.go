@@ -106,6 +106,11 @@ func (s *State) FilterState() list.FilterState {
 	return s.list.FilterState()
 }
 
+// ResetFilter is a wrapper of list.Model.
+func (s *State) ResetFilter() {
+	s.list.ResetFilter()
+}
+
 // SelectedItem is a wrapper of list.Model.
 func (s *State) SelectedItem() list.Item {
 	return s.list.SelectedItem()
@@ -114,6 +119,26 @@ func (s *State) SelectedItem() list.Item {
 // Items is a wrapper of list.Model.
 func (s *State) Items() []list.Item {
 	return s.list.Items()
+}
+
+// SetItems is a wrapper of list.Model.
+func (s *State) SetItems(items []list.Item) tea.Cmd {
+	return s.list.SetItems(items)
+}
+
+// SetItem is a wrapper of list.Model.
+func (s *State) SetItem(index int, item list.Item) tea.Cmd {
+	return s.list.SetItem(index, item)
+}
+
+// InsertItem is a wrapper of list.Model.
+func (s *State) InsertItem(index int, item list.Item) tea.Cmd {
+	return s.list.InsertItem(index, item)
+}
+
+// RemoveItem is a wrapper of list.Model.
+func (s *State) RemoveItem(index int) {
+	s.list.RemoveItem(index)
 }
 
 // SetDelegateHeight sets the height of the delegate, which translates to the items' height.
