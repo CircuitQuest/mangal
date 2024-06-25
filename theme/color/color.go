@@ -2,6 +2,11 @@ package color
 
 import "github.com/charmbracelet/lipgloss"
 
+type anilist struct {
+	Background,
+	Foreground lipgloss.Color
+}
+
 var (
 	Accent     = lipgloss.Color("#EB5E28")
 	Secondary  = lipgloss.AdaptiveColor{Light: "#A49FA5", Dark: "#777777"}
@@ -11,4 +16,8 @@ var (
 	Error      = lipgloss.Color("#E05252")
 	Loading    = lipgloss.Color("#A49FA5")
 	Viewport   = lipgloss.Color("#008080")
+	Anilist    = anilist{
+		Background: lipgloss.Color("#02A9FF"),
+		Foreground: lipgloss.Color("#FEFEFE"),
+	}
 )

@@ -5,23 +5,35 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/help"
-	"github.com/charmbracelet/bubbles/key"
 	_list "github.com/charmbracelet/bubbles/list"
+	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
-	"github.com/luevano/mangal/tui/state/wrapper/textinput"
 )
 
-var _ base.State = (*state)(nil)
+type searchState string
 
-type onResponseFunc func(response *lmanilist.Manga) tea.Cmd
+const (
+	unsearched searchState = "unsearched"
+	searching  searchState = "searching"
+	searched   searchState = "searched"
+)
+
+type onResponseFunc func(manga lmanilist.Manga) tea.Cmd
+
+var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
 	anilist *lmanilist.Anilist
 	list    *list.State
+
+	searchInput textinput.Model
+	searchState searchState
 
 	onResponse onResponseFunc
 
@@ -30,12 +42,12 @@ type state struct {
 
 // Intermediate implements base.State.
 func (s *state) Intermediate() bool {
-	return true
+	return false
 }
 
 // Backable implements base.State.
 func (s *state) Backable() bool {
-	return s.list.Backable()
+	return s.list.Backable() && s.searchState != searching
 }
 
 // KeyMap implements base.State.
@@ -45,7 +57,11 @@ func (s *state) KeyMap() help.KeyMap {
 
 // Title implements base.State.
 func (s *state) Title() base.Title {
-	return base.Title{Text: "Anilist Mangas"}
+	return base.Title{
+		Text:       "Anilist Mangas",
+		Background: color.Anilist.Background,
+		Foreground: color.Anilist.Foreground,
+	}
 }
 
 // Subtitle implements base.State.
@@ -60,7 +76,14 @@ func (s *state) Status() string {
 
 // Resize implements base.State.
 func (s *state) Resize(size base.Size) tea.Cmd {
-	return s.list.Resize(size)
+	s.searchInput.Width = size.Width
+	sSize := base.Size{}
+	sSize.Width, sSize.Height = lipgloss.Size(s.searchView())
+
+	final := size
+	final.Height -= sSize.Height
+
+	return s.list.Resize(final)
 }
 
 // Init implements base.State.
@@ -71,50 +94,48 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 // Updateimplements base.State.
 func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		if s.list.FilterState() == _list.Filtering {
-			goto end
-		}
+	case searchMangasMsg:
+		query := msg.query
 
-		switch {
-		case key.Matches(msg, s.keyMap.confirm):
-			i, ok := s.list.SelectedItem().(*item)
-			if !ok {
+		return tea.Sequence(
+			base.Loading(fmt.Sprintf("Searching %q on Anilist", query)),
+			func() tea.Msg {
+				mangas, err := s.anilist.SearchMangas(ctx, query)
+				if err != nil {
+					return err
+				}
+
+				listItems := make([]_list.Item, len(mangas))
+
+				for i, m := range mangas {
+					listItems[i] = &item{manga: m}
+				}
+
+				s.list.SetItems(listItems)
+
 				return nil
-			}
-
-			return s.onResponse(i.manga)
-		case key.Matches(msg, s.keyMap.search):
-			return func() tea.Msg {
-				return textinput.New(textinput.Options{
-					Title:        base.Title{Text: "Search Anilist"},
-					Subtitle:     "Search Anilist manga",
-					Placeholder:  "Anilist manga title...",
-					Intermediate: true,
-					OnResponse: func(response string) tea.Cmd {
-						return tea.Sequence(
-							base.Loading(fmt.Sprintf("Searching %q on Anilist", response)),
-							func() tea.Msg {
-								mangas, err := s.anilist.SearchMangas(ctx, response)
-								if err != nil {
-									return err
-								}
-
-								return New(s.anilist, mangas, s.onResponse)
-							},
-							base.Loaded,
-						)
-					},
-				})
-			}
-		}
+			},
+			base.Loaded,
+		)
+	case base.RestoredMsg:
+		// when coming back from logs for example
+		return tea.Batch(
+			s.searchInput.Focus(),
+			textinput.Blink,
+		)
 	}
 
-end:
-	return s.list.Update(ctx, msg)
+	if s.searchState == searching {
+		return s.handleSearchingCmd(ctx, msg)
+	}
+	return s.handleBrowsingCmd(ctx, msg)
 }
 
 // View implements base.State.
 func (s *state) View() string {
-	return s.list.View()
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		s.searchView(),
+		s.list.View(),
+	)
 }

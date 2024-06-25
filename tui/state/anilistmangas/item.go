@@ -14,21 +14,15 @@ var (
 
 // item implements list.item.
 type item struct {
-	manga *lmanilist.Manga
+	manga lmanilist.Manga
 }
 
 // FilterValue implements list.Item.
 func (i *item) FilterValue() string {
-	for _, title := range []string{
-		i.manga.Title.English,
-		i.manga.Title.Romaji,
-		i.manga.Title.Native,
-	} {
-		if title != "" {
-			return title
-		}
+	title := i.manga.String()
+	if title != "" {
+		return title
 	}
-
 	return "Untitled"
 }
 

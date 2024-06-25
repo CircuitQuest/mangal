@@ -263,15 +263,15 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 					return anilistmangas.New(
 						s.client.Anilist(),
 						mangas,
-						func(response *lmanilist.Manga) tea.Cmd {
+						func(manga lmanilist.Manga) tea.Cmd {
 							return tea.Sequence(
 								func() tea.Msg {
-									log.Log("Setting Anilist manga %q (%d)", response.String(), response.ID)
-									s.manga.SetMetadata(response.Metadata())
+									log.Log("Setting Anilist manga %q (%d)", manga.String(), manga.ID)
+									s.manga.SetMetadata(manga.Metadata())
 
 									return nil
 								},
-								base.NotifyWithDuration(fmt.Sprintf("Set Anilist %s (%d)", response.String(), response.ID), 3*time.Second),
+								base.NotifyWithDuration(fmt.Sprintf("Set Anilist %s (%d)", manga.String(), manga.ID), 3*time.Second),
 							)
 						},
 					)
