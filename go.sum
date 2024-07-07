@@ -228,8 +228,8 @@ github.com/luevano/mangodex v0.3.7 h1:V5c9uBFv5xrDaJkBiA+McNDjgszqWVbcHNWIq6R5rY
 github.com/luevano/mangodex v0.3.7/go.mod h1:FdjJzUAr0Xo+gUMakiEMA2ogJKHPIXit+cVvJbroG6Y=
 github.com/luevano/mangoplus v0.4.4 h1:ST2d+/AcGSYzBDNtssSn+0Sqtmk+2Jw/POvve9mtXmE=
 github.com/luevano/mangoplus v0.4.4/go.mod h1:uNC7/xkz/lN8xBiwBzIJ6YHOIqLHak+7XrHWJgGkosE=
-github.com/luevano/mangoprovider v0.13.3 h1:a5xxJbXC88LjQDtv1C2KA+RNxhU0s9A0wucZ0+F1op4=
-github.com/luevano/mangoprovider v0.13.3/go.mod h1:x4jC0cL0DkIifs1s4v6V7rZXW0kK9h9Z5lExEEhA9n0=
+github.com/luevano/mangoprovider v0.13.4 h1:Xbt67zJ0X+WuT+kxs/QYoK6Jh+ZcPwJmMDhG50EuJL4=
+github.com/luevano/mangoprovider v0.13.4/go.mod h1:x4jC0cL0DkIifs1s4v6V7rZXW0kK9h9Z5lExEEhA9n0=
 github.com/magiconair/properties v1.8.7 h1:IeQXZAiQcpL9mgcAe1Nu6cX9LLw6ExEHKjN0VQdvPDY=
 github.com/magiconair/properties v1.8.7/go.mod h1:Dhd985XPs7jluiymwWYZ0G4Z61jb3vdS329zhj2hYo0=
 github.com/mailru/easyjson v0.7.7 h1:UGYAvKxe3sBsEDzO8ZeWOSlIQfWFlxbzLZe7hwFURr0=
