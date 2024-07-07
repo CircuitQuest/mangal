@@ -19,7 +19,7 @@ For now, just notes for myself while I work on this.
 
 The following needs to be installed before starting development:
 
-- `go>=1.21`
+- `go>=1.22`
   - [`oapi-codegen`](https://github.com/deepmap/oapi-codegen): `go install github.com/deepmap/oapi-codegen/v2/cmd/oapi-codegen@latest`
   - [`enumer`](https://github.com/dmarkham/enumer): `go install github.com/dmarkham/enumer@latest`
 - [`just`](https://github.com/casey/just)
@@ -95,9 +95,13 @@ mangal config set download.path $HOME/downloads_test
 
 ### Providers
 
-These are Lua scripts that handle the site scrape logic (search mangas, list mangas/chapters/images, etc). As shown in [mangalorg/saturno](/mangalorg/saturno), each provider is a directory with the `main.lua` (scraper) and `mangal.toml` (metadata) files inside.
+These are either the native Go implementations already included (from [mangoprovider](/luevano/mangoprovider)) or Lua scripts that handle the site scrape logic (search mangas, list mangas/chapters/images, etc).
 
-Providers need to be placed in `$XDG_CONFIG_HOME/mangal/providers`.
+#### Lua providers
+
+Some Lua providers are available at [saturno](/luevano/saturno). Do note that these are outdated and should only be used as starting points to create new missing providers until implemented in `mangoprovider`.
+
+Each Lua provider is a directory with the `main.lua` (scraper) and `mangal.toml` (metadata) files inside. By default, they need to be placed in `$XDG_CONFIG_HOME/mangal/providers`.
 
 A new provider can be created by running:
 
