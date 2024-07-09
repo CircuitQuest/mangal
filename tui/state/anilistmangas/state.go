@@ -15,12 +15,13 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-type searchState string
+type searchState int
 
 const (
-	unsearched searchState = "unsearched"
-	searching  searchState = "searching"
-	searched   searchState = "searched"
+	unsearched searchState = iota
+	searching
+	searched
+	searchCanceled
 )
 
 type onResponseFunc func(manga lmanilist.Manga) tea.Cmd
@@ -29,9 +30,10 @@ var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
-	anilist *lmanilist.Anilist
 	list    *list.State
+	anilist *lmanilist.Anilist
 
+	query       string
 	searchInput textinput.Model
 	searchState searchState
 
@@ -105,14 +107,13 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 					return err
 				}
 
-				listItems := make([]_list.Item, len(mangas))
+				items := make([]_list.Item, len(mangas))
 
 				for i, m := range mangas {
-					listItems[i] = &item{manga: m}
+					items[i] = &item{manga: m}
 				}
 
-				s.list.SetItems(listItems)
-
+				s.list.SetItems(items)
 				return nil
 			},
 			base.Loaded,

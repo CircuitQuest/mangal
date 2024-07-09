@@ -13,7 +13,7 @@ func (s *state) updateKeybindings() {
 		s.keyMap.confirm.SetEnabled(false)
 		s.keyMap.search.SetEnabled(false)
 		s.keyMap.cancelSearch.SetEnabled(true)
-		s.keyMap.confirmSearch.SetEnabled(s.searchInput.View() != "")
+		s.keyMap.confirmSearch.SetEnabled(s.searchInput.Value() != "")
 	default:
 		s.keyMap.confirm.SetEnabled(true)
 		s.keyMap.search.SetEnabled(true)

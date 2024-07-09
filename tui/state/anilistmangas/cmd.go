@@ -54,10 +54,13 @@ func (s *state) handleSearchingCmd(_ context.Context, msg tea.Msg) tea.Cmd {
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, s.keyMap.cancelSearch):
-			s.searchState = unsearched
+			s.searchState = searchCanceled
 			s.searchInput.Blur()
 			s.searchInput.Reset()
 			s.updateKeybindings()
+
+			// keep the last searched query
+			s.searchInput.SetValue(s.query)
 
 			return nil
 		case key.Matches(msg, s.keyMap.confirmSearch):
@@ -65,16 +68,16 @@ func (s *state) handleSearchingCmd(_ context.Context, msg tea.Msg) tea.Cmd {
 			s.searchState = searched
 			s.updateKeybindings()
 
-			return searchMangasCmd(s.searchInput.Value())
+			s.query = s.searchInput.Value()
+			return searchMangasCmd(s.query)
 		}
 	}
 	input, inputUpdateCmd := s.searchInput.Update(msg)
-	s.searchInput = input
-
 	searchChanged := s.searchInput.Value() != input.Value()
 	if searchChanged {
 		s.keyMap.confirmSearch.SetEnabled(s.searchInput.Value() != "")
 	}
+	s.searchInput = input
 
 	return inputUpdateCmd
 }
