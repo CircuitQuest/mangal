@@ -9,7 +9,7 @@ retract (
 )
 
 require (
-	github.com/adrg/xdg v0.4.0
+	github.com/adrg/xdg v0.5.0
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.26.6
 	github.com/charmbracelet/lipgloss v0.11.0
@@ -22,9 +22,9 @@ require (
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
-	github.com/luevano/libmangal v0.16.4
-	github.com/luevano/luaprovider v0.11.4
-	github.com/luevano/mangoprovider v0.13.4
+	github.com/luevano/libmangal v0.16.5
+	github.com/luevano/luaprovider v0.11.5
+	github.com/luevano/mangoprovider v0.13.5
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/philippgille/gokv v0.7.0
@@ -42,7 +42,7 @@ require (
 	github.com/yuin/gopher-lua v1.1.1
 	github.com/zyedidia/generic v1.2.1
 	go.etcd.io/bbolt v1.3.10
-	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
+	golang.org/x/exp v0.0.0-20240707233637-46b078467d37
 )
 
 require (

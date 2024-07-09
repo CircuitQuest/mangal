@@ -4,16 +4,31 @@ import (
 	"context"
 	"fmt"
 	"sort"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/download"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
 )
+
+func (s *state) updateMetadataCmd(anilistManga anilist.Manga) tea.Cmd {
+	return tea.Sequence(
+		func() tea.Msg {
+			log.Log("Setting Anilist %q (%d)", anilistManga.String(), anilistManga.ID)
+			s.manga.SetMetadata(anilistManga.Metadata())
+
+			return nil
+		},
+		base.NotifyWithDuration(fmt.Sprintf("Set Anilist %s (%d)", anilistManga.String(), anilistManga.ID), 3*time.Second),
+	)
+}
 
 func (s *state) blockedActionByCmd(wanted string) tea.Cmd {
 	return base.Notify(fmt.Sprintf("Can't perform %q right now, %q is running", wanted, s.actionRunning))

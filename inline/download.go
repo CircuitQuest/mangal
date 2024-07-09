@@ -11,7 +11,6 @@ import (
 	"github.com/luevano/libmangal/metadata"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client"
-	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
 )
@@ -57,7 +56,7 @@ func RunDownload(ctx context.Context, args Args) error {
 	// error out as it is expected to find some metadata (given the id).
 	// Otherwise, if prefer provider metadata is true and the metadata is valid, libmangal will search for metadata.
 	if !useMangaMetadata && args.AnilistID != 0 {
-		anilistManga, found, err = anilist.Anilist.SearchByID(ctx, args.AnilistID)
+		anilistManga, found, err = client.Anilist().SearchByID(ctx, args.AnilistID)
 		if err != nil {
 			return err
 		}

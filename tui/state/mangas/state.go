@@ -85,6 +85,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
+			// TODO: only do a search metadata if the option is set?
 			return searchMetadataCmd(i)
 		}
 	case searchMetadataMsg:

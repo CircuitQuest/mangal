@@ -12,7 +12,6 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
-	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/log"
 	"github.com/samber/lo"
 )
@@ -103,15 +102,15 @@ func getSelectedMangaResults(args Args, mangas []mangadata.Manga) ([]MangaResult
 
 // TODO: refactor to handle metadata in general, not just anilist;
 // use the provider metadata if preferred and search metadata in general otherwise
-func assignAnilist(ctx context.Context, args Args, mangaResults *[]MangaResult) {
+func assignAnilist(ctx context.Context, client *libmangal.Client, args Args, mangaResults *[]MangaResult) {
 	for i, mangaResult := range *mangaResults {
 		var aniManga lmanilist.Manga
 		var found bool
 		var aniErr error
 		if args.AnilistID != 0 {
-			aniManga, found, aniErr = anilist.Anilist.SearchByID(ctx, args.AnilistID)
+			aniManga, found, aniErr = client.Anilist().SearchByID(ctx, args.AnilistID)
 		} else {
-			aniManga, found, aniErr = anilist.Anilist.SearchByManga(ctx, mangaResult.Manga)
+			aniManga, found, aniErr = client.Anilist().SearchByManga(ctx, mangaResult.Manga)
 		}
 		if aniErr == nil && found {
 			(*mangaResults)[i].Anilist = &aniManga

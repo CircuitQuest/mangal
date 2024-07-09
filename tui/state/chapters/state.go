@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -221,7 +220,6 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			// TODO: add confirmation?
 			log.Log("Read format not yet downloaded, downloading")
 			return s.downloadChapterCmd(ctx, it, downloadOptions, true)
-		// TODO: refactor/fix this so that the metadata is propagated (probably needs a change on libmangal itself)
 		case key.Matches(msg, s.keyMap.anilist):
 			return tea.Sequence(
 				base.Loading(fmt.Sprintf("Searching Anilist mangas for %q", s.manga)),
@@ -230,11 +228,9 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 					// TODO: solidify the metadata gathering, missing/partial
 					// TODO: revert to just Title instead of AnilistSearch?
-					var mangaTitle string
 					mangaInfo := i.chapter.Volume().Manga().Info()
-					if mangaInfo.AnilistSearch != "" {
-						mangaTitle = mangaInfo.AnilistSearch
-					} else {
+					mangaTitle := mangaInfo.AnilistSearch
+					if mangaTitle == "" {
 						mangaTitle = mangaInfo.Title
 					}
 
@@ -264,15 +260,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 						s.client.Anilist(),
 						mangas,
 						func(manga lmanilist.Manga) tea.Cmd {
-							return tea.Sequence(
-								func() tea.Msg {
-									log.Log("Setting Anilist manga %q (%d)", manga.String(), manga.ID)
-									s.manga.SetMetadata(manga.Metadata())
-
-									return nil
-								},
-								base.NotifyWithDuration(fmt.Sprintf("Set Anilist %s (%d)", manga.String(), manga.ID), 3*time.Second),
-							)
+							return s.updateMetadataCmd(manga)
 						},
 					)
 				},
@@ -296,9 +284,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	case downloadChaptersMsg:
 		return s.downloadChaptersCmd(msg.items, msg.options)
 	case base.RestoredMsg:
-		// update the items sent for download when coming back
-		s.updateItems(s.selected)
-		// can't distinguish from which state this is being restored
+		// usually the downloaded chapters change or the metadata when restoring the chapter list
+		s.updateAllItems()
 		s.updateRenderedSubtitleFormats()
 	}
 end:

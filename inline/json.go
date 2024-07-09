@@ -31,7 +31,7 @@ func RunJSON(ctx context.Context, args Args) error {
 	if !args.AnilistDisable {
 		// It is only assigned to the result to preview which anilist manga would be set,
 		// it needs to be passed to the download too to actually bind the title and id
-		assignAnilist(ctx, args, &mangaResults)
+		assignAnilist(ctx, client, args, &mangaResults)
 	}
 
 	if args.ChapterPopulate {

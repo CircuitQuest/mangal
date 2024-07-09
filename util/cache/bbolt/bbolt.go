@@ -4,12 +4,15 @@ import (
 	"time"
 
 	"github.com/luevano/mangal/config"
+	"github.com/philippgille/gokv"
 	"github.com/philippgille/gokv/encoding"
 	"github.com/philippgille/gokv/util"
 	bolt "go.etcd.io/bbolt"
 )
 
 const ttlBucketName = "ttl"
+
+var _ gokv.Store = (*Store)(nil)
 
 // Store is a gokv.Store implementation for bbolt (formerly known as Bolt / Bolt DB).
 type Store struct {

@@ -2,7 +2,6 @@ package chapters
 
 import (
 	"github.com/luevano/mangal/config"
-	"github.com/zyedidia/generic/set"
 )
 
 func (s *state) actionRunningNow(action string) {
@@ -10,13 +9,15 @@ func (s *state) actionRunningNow(action string) {
 }
 
 func (s *state) updateItem(item *item) {
+	item.updatePaths()
 	item.updateDownloadedFormats()
 	item.updateReadAvailablePath()
 }
 
-func (s *state) updateItems(items set.Set[*item]) {
-	for _, item := range items.Keys() {
-		s.updateItem(item)
+func (s *state) updateAllItems() {
+	for _, i := range s.list.Items() {
+		i := i.(*item)
+		s.updateItem(i)
 	}
 }
 

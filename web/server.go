@@ -14,7 +14,6 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/client"
-	"github.com/luevano/mangal/client/anilist"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/provider/manager"
 	"github.com/luevano/mangal/web/api"
@@ -107,7 +106,7 @@ func (s *Server) GetMangaPage(ctx context.Context, request api.GetMangaPageReque
 		Volumes: v,
 	}
 
-	anilistManga, found, _ := anilist.Anilist.FindClosestManga(ctx, info.Title)
+	anilistManga, found, _ := c.Anilist().FindClosestManga(ctx, info.Title)
 	if found {
 		response.AnilistManga = &api.AnilistManga{
 			BannerImage: &anilistManga.BannerImage,
