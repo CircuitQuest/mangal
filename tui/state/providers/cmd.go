@@ -1,22 +1,11 @@
 package providers
 
-import (
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/libmangal"
-)
+import tea "github.com/charmbracelet/bubbletea"
 
 func loadProviderCmd(item *item) tea.Cmd {
 	return func() tea.Msg {
 		return loadProviderMsg{
 			item: item,
-		}
-	}
-}
-
-func searchMangasCmd(client *libmangal.Client) tea.Cmd {
-	return func() tea.Msg {
-		return searchMangasMsg{
-			client: client,
 		}
 	}
 }

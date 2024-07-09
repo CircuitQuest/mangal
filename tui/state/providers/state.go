@@ -14,7 +14,6 @@ import (
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/mangas"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
-	"github.com/luevano/mangal/tui/state/wrapper/textinput"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -135,34 +134,10 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 						log.Log(format, a...)
 					})
 				}
-				return searchMangasMsg{mangalClient}
+				return mangas.New(mangalClient)
 			},
 			base.Loaded,
 		)
-	case searchMangasMsg:
-		mangalClient := msg.client
-
-		return func() tea.Msg {
-			return textinput.New(textinput.Options{
-				Title:       base.Title{Text: "Search Manga"},
-				Subtitle:    fmt.Sprintf("Search using %q provider", mangalClient),
-				Placeholder: "Manga title...",
-				OnResponse: func(query string) tea.Cmd {
-					return tea.Sequence(
-						base.Loading(fmt.Sprintf("Searching for %q", query)),
-						func() tea.Msg {
-							mangaList, err := mangalClient.SearchMangas(ctx, query)
-							if err != nil {
-								return err
-							}
-
-							return mangas.New(mangalClient, query, mangaList)
-						},
-						base.Loaded,
-					)
-				},
-			})
-		}
 	}
 end:
 	return s.list.Update(ctx, msg)
