@@ -221,51 +221,20 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			log.Log("Read format not yet downloaded, downloading")
 			return s.downloadChapterCmd(ctx, it, downloadOptions, true)
 		case key.Matches(msg, s.keyMap.anilist):
-			return tea.Sequence(
-				base.Loading(fmt.Sprintf("Searching Anilist mangas for %q", s.manga)),
-				func() tea.Msg {
-					var mangas []lmanilist.Manga
-
-					// TODO: solidify the metadata gathering, missing/partial
-					// TODO: revert to just Title instead of AnilistSearch?
-					mangaInfo := i.chapter.Volume().Manga().Info()
-					mangaTitle := mangaInfo.AnilistSearch
-					if mangaTitle == "" {
-						mangaTitle = mangaInfo.Title
-					}
-
-					closest, ok, err := s.client.Anilist().FindClosestManga(ctx, mangaTitle)
-					if err != nil {
-						return err
-					}
-
-					if ok {
-						mangas = append(mangas, closest)
-					}
-
-					mangaSearchResults, err := s.client.Anilist().SearchMangas(ctx, mangaTitle)
-					if err != nil {
-						return nil
-					}
-
-					for _, manga := range mangaSearchResults {
-						if manga.ID == closest.ID {
-							continue
-						}
-
-						mangas = append(mangas, manga)
-					}
-
-					return anilistmangas.New(
-						s.client.Anilist(),
-						mangas,
-						func(manga lmanilist.Manga) tea.Cmd {
-							return s.updateMetadataCmd(manga)
-						},
-					)
-				},
-				base.Loaded,
-			)
+			return func() tea.Msg {
+				mangaInfo := i.chapter.Volume().Manga().Info()
+				query := mangaInfo.AnilistSearch
+				if query == "" {
+					query = mangaInfo.Title
+				}
+				return anilistmangas.New(
+					s.client.Anilist(),
+					query,
+					func(manga lmanilist.Manga) tea.Cmd {
+						return s.updateMetadataCmd(manga)
+					},
+				)
+			}
 		case key.Matches(msg, s.keyMap.toggleVolumeNumber):
 			*s.showVolumeNumber = !(*s.showVolumeNumber)
 		case key.Matches(msg, s.keyMap.toggleChapterNumber):

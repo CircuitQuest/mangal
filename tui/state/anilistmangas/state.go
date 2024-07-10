@@ -78,7 +78,41 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
-	return s.list.Init(ctx)
+	return tea.Sequence(
+		base.Loading(fmt.Sprintf("Searching Anilist mangas for %q", s.search.Query())),
+		func() tea.Msg {
+			var mangas []lmanilist.Manga
+
+			closest, found, err := s.anilist.FindClosestManga(ctx, s.search.Query())
+			if err != nil {
+				return err
+			}
+			if found {
+				mangas = append(mangas, closest)
+			}
+
+			mangaSearchResults, err := s.anilist.SearchMangas(ctx, s.search.Query())
+			if err != nil {
+				return nil
+			}
+			for _, manga := range mangaSearchResults {
+				if manga.ID == closest.ID {
+					continue
+				}
+				mangas = append(mangas, manga)
+			}
+
+			items := make([]_list.Item, len(mangas))
+			for i, m := range mangas {
+				items[i] = &item{manga: m}
+			}
+			s.list.SetItems(items)
+
+			return nil
+		},
+		base.Loaded,
+		s.list.Init(ctx),
+	)
 }
 
 // Updateimplements base.State.

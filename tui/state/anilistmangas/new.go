@@ -7,12 +7,12 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-func New(anilist *lmanilist.Anilist, mangas []lmanilist.Manga, onResponse onResponseFunc) *state {
+func New(anilist *lmanilist.Anilist, initialQuery string, onResponse onResponseFunc) *state {
 	_keyMap := newKeyMap()
 	listWrapper := list.New(
 		2,
 		"anilist manga", "anilist mangas",
-		mangas,
+		nil,
 		func(manga lmanilist.Manga) _list.DefaultItem {
 			return &item{manga: manga}
 		},
@@ -20,7 +20,7 @@ func New(anilist *lmanilist.Anilist, mangas []lmanilist.Manga, onResponse onResp
 
 	s := &state{
 		anilist:    anilist,
-		search:     search.New("Search anilist manga...", ""),
+		search:     search.New("Search anilist manga...", initialQuery),
 		list:       listWrapper,
 		onResponse: onResponse,
 		keyMap:     _keyMap,
