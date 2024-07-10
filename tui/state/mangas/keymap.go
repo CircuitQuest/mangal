@@ -10,19 +10,15 @@ var _ help.KeyMap = (*keyMap)(nil)
 
 func newKeyMap() keyMap {
 	return keyMap{
-		confirm:       util.Bind("confirm", "enter"),
-		search:        util.Bind("search", "s"),
-		cancelSearch:  util.Bind("cancel search", "esc"),
-		confirmSearch: util.Bind("confirm search", "enter"),
+		confirm: util.Bind("confirm", "enter"),
+		search:  util.Bind("search", "s"),
 	}
 }
 
 // keyMap implements help.keyMap.
 type keyMap struct {
 	confirm,
-	search,
-	cancelSearch,
-	confirmSearch key.Binding
+	search key.Binding
 }
 
 // ShortHelp implements help.keyMap.

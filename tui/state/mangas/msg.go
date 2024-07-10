@@ -2,10 +2,6 @@ package mangas
 
 import "github.com/luevano/libmangal/mangadata"
 
-type searchMangasMsg struct {
-	query string
-}
-
 type searchMetadataMsg struct {
 	item *item
 }

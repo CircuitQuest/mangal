@@ -6,22 +6,13 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	_list "github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/search"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
-)
-
-type searchState int
-
-const (
-	unsearched searchState = iota
-	searching
-	searched
-	searchCanceled
 )
 
 type onResponseFunc func(manga lmanilist.Manga) tea.Cmd
@@ -31,11 +22,8 @@ var _ base.State = (*state)(nil)
 // state implements base.state.
 type state struct {
 	list    *list.State
+	search  *search.Model
 	anilist *lmanilist.Anilist
-
-	query       string
-	searchInput textinput.Model
-	searchState searchState
 
 	onResponse onResponseFunc
 
@@ -49,7 +37,7 @@ func (s *state) Intermediate() bool {
 
 // Backable implements base.State.
 func (s *state) Backable() bool {
-	return s.list.Backable() && s.searchState != searching
+	return s.list.Backable() && s.search.State() != search.Searching
 }
 
 // KeyMap implements base.State.
@@ -78,9 +66,9 @@ func (s *state) Status() string {
 
 // Resize implements base.State.
 func (s *state) Resize(size base.Size) tea.Cmd {
-	s.searchInput.Width = size.Width
+	s.search.Resize(size)
 	sSize := base.Size{}
-	sSize.Width, sSize.Height = lipgloss.Size(s.searchView())
+	sSize.Width, sSize.Height = lipgloss.Size(s.search.View())
 
 	final := size
 	final.Height -= sSize.Height
@@ -94,10 +82,10 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 }
 
 // Updateimplements base.State.
-func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
+func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
-	case searchMangasMsg:
-		query := msg.query
+	case search.SearchMsg:
+		query := string(msg)
 
 		return tea.Sequence(
 			base.Loading(fmt.Sprintf("Searching %q on Anilist", query)),
@@ -118,16 +106,12 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			},
 			base.Loaded,
 		)
-	case base.RestoredMsg:
-		// when coming back from logs for example
-		return tea.Batch(
-			s.searchInput.Focus(),
-			textinput.Blink,
-		)
 	}
 
-	if s.searchState == searching {
-		return s.handleSearchingCmd(ctx, msg)
+	if s.search.State() == search.Searching {
+		input, updateCmd := s.search.Update(msg)
+		s.search = input.(*search.Model)
+		return updateCmd
 	}
 	return s.handleBrowsingCmd(ctx, msg)
 }
@@ -136,7 +120,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 func (s *state) View() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		s.searchView(),
+		s.search.View(),
 		s.list.View(),
 	)
 }

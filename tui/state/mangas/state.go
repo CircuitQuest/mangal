@@ -7,7 +7,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	_list "github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
@@ -15,18 +14,10 @@ import (
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/search"
 	"github.com/luevano/mangal/tui/state/chapters"
 	"github.com/luevano/mangal/tui/state/volumes"
 	list "github.com/luevano/mangal/tui/state/wrapper/list"
-)
-
-type searchState int
-
-const (
-	unsearched searchState = iota
-	searching
-	searched
-	searchCanceled
 )
 
 var _ base.State = (*state)(nil)
@@ -34,11 +25,10 @@ var _ base.State = (*state)(nil)
 // state implements base.state.
 type state struct {
 	list   *list.State
+	search *search.Model
 	client *libmangal.Client
 
-	query       string
-	searchInput textinput.Model
-	searchState searchState
+	searched bool
 
 	keyMap keyMap
 }
@@ -50,7 +40,7 @@ func (s *state) Intermediate() bool {
 
 // Backable implements base.State.
 func (s *state) Backable() bool {
-	return s.list.Backable() && s.searchState != searching
+	return s.list.Backable() && s.search.State() != search.Searching
 }
 
 // KeyMap implements base.State.
@@ -65,7 +55,7 @@ func (s *state) Title() base.Title {
 
 // Subtitle implements base.State.
 func (s *state) Subtitle() string {
-	if s.searchState == unsearched {
+	if !s.searched {
 		return "Search on " + s.client.Info().Name
 	}
 	return s.list.Subtitle()
@@ -78,9 +68,9 @@ func (s *state) Status() string {
 
 // Resize implements base.State.
 func (s *state) Resize(size base.Size) tea.Cmd {
-	s.searchInput.Width = size.Width
+	s.search.Resize(size)
 	sSize := base.Size{}
-	sSize.Width, sSize.Height = lipgloss.Size(s.searchView())
+	sSize.Width, sSize.Height = lipgloss.Size(s.search.View())
 
 	final := size
 	final.Height -= sSize.Height
@@ -90,11 +80,8 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
-	s.searchInput.CursorEnd()
-
 	return tea.Sequence(
-		s.searchInput.Focus(),
-		textinput.Blink,
+		s.search.Focus(),
 		s.list.Init(ctx),
 	)
 }
@@ -102,8 +89,8 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 // Update implements base.State.
 func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
-	case searchMangasMsg:
-		query := msg.query
+	case search.SearchMsg:
+		query := string(msg)
 
 		return tea.Sequence(
 			base.Loading(fmt.Sprintf("Searching for %q", query)),
@@ -119,10 +106,15 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				}
 
 				s.list.SetItems(items)
+				s.searched = true
 				return nil
 			},
 			base.Loaded,
 		)
+	case search.SearchCancelMsg:
+		if s.search.Query() == "" {
+			return base.Back
+		}
 	case searchMetadataMsg:
 		i := msg.item
 
@@ -211,21 +203,22 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		)
 	}
 
-	if s.searchState == searching || s.searchState == unsearched {
-		return s.handleSearchingCmd(ctx, msg)
+	if s.search.State() == search.Searching || s.search.State() == search.Unsearched {
+		input, updateCmd := s.search.Update(msg)
+		s.search = input.(*search.Model)
+		return updateCmd
 	}
 	return s.handleBrowsingCmd(ctx, msg)
 }
 
 // View implements base.State.
 func (s *state) View() string {
-	if s.searchState == unsearched {
-		return s.searchView()
+	if !s.searched {
+		return s.search.View()
 	}
-
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		s.searchView(),
+		s.search.View(),
 		s.list.View(),
 	)
 }
