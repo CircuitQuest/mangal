@@ -23,8 +23,8 @@ require (
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.16.5
-	github.com/luevano/luaprovider v0.11.5
-	github.com/luevano/mangoprovider v0.13.5
+	github.com/luevano/luaprovider v0.11.6
+	github.com/luevano/mangoprovider v0.13.6
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/philippgille/gokv v0.7.0
