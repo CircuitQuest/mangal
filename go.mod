@@ -12,7 +12,7 @@ require (
 	github.com/adrg/xdg v0.5.0
 	github.com/charmbracelet/bubbles v0.18.0
 	github.com/charmbracelet/bubbletea v0.26.6
-	github.com/charmbracelet/lipgloss v0.11.0
+	github.com/charmbracelet/lipgloss v0.11.1
 	github.com/fatih/camelcase v1.0.0
 	github.com/getkin/kin-openapi v0.126.0
 	github.com/go-git/go-git/v5 v5.12.0
@@ -24,7 +24,7 @@ require (
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.16.5
 	github.com/luevano/luaprovider v0.11.6
-	github.com/luevano/mangoprovider v0.13.6
+	github.com/luevano/mangoprovider v0.13.7
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/philippgille/gokv v0.7.0
@@ -51,7 +51,7 @@ require (
 	github.com/antchfx/xmlquery v1.4.1 // indirect
 	github.com/antchfx/xpath v1.3.1 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
-	github.com/charmbracelet/x/ansi v0.1.2 // indirect
+	github.com/charmbracelet/x/ansi v0.1.3 // indirect
 	github.com/charmbracelet/x/input v0.1.2 // indirect
 	github.com/charmbracelet/x/term v0.1.1 // indirect
 	github.com/charmbracelet/x/windows v0.1.2 // indirect
@@ -70,7 +70,7 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
-	github.com/luevano/mangodex v0.3.7 // indirect
+	github.com/luevano/mangodex v0.3.8 // indirect
 	github.com/luevano/mangoplus v0.4.4 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
@@ -154,7 +154,7 @@ require (
 	github.com/ysmood/goob v0.4.0 // indirect
 	github.com/ysmood/got v0.40.0 // indirect
 	github.com/ysmood/gson v0.7.3 // indirect
-	github.com/ysmood/leakless v0.8.0 // indirect
+	github.com/ysmood/leakless v0.9.0 // indirect
 	github.com/yuin/gluamapper v0.0.0-20150323120927-d836955830e7 // indirect
 	golang.org/x/crypto v0.25.0 // indirect
 	golang.org/x/image v0.18.0 // indirect
