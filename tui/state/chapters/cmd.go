@@ -4,36 +4,20 @@ import (
 	"context"
 	"fmt"
 	"sort"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
-	"github.com/luevano/libmangal/metadata/anilist"
-	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/anilistmangas"
 	"github.com/luevano/mangal/tui/state/confirm"
 	"github.com/luevano/mangal/tui/state/download"
 	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
 )
-
-func (s *state) updateMetadataCmd(anilistManga anilist.Manga) tea.Cmd {
-	return tea.Sequence(
-		func() tea.Msg {
-			log.Log("Setting Anilist %q (%d)", anilistManga.String(), anilistManga.ID)
-			s.manga.SetMetadata(anilistManga.Metadata())
-
-			return nil
-		},
-		base.NotifyWithDuration(fmt.Sprintf("Set Anilist %s (%d)", anilistManga.String(), anilistManga.ID), 3*time.Second),
-	)
-}
 
 func (s *state) blockedActionByCmd(wanted string) tea.Cmd {
 	return base.Notify(fmt.Sprintf("Can't perform %q right now, %q is running", wanted, s.actionRunning))
@@ -182,19 +166,5 @@ func (s *state) readChapterCmd(ctx context.Context, path string, item *item, opt
 			return nil
 		},
 		base.Loaded,
-	)
-}
-
-func (s *state) anilistCmd() tea.Msg {
-	mangaTitle := s.manga.Info().AnilistSearch
-	if mangaTitle == "" {
-		mangaTitle = s.manga.Info().Title
-	}
-	return anilistmangas.New(
-		s.client.Anilist(),
-		mangaTitle,
-		func(manga lmanilist.Manga) tea.Cmd {
-			return s.updateMetadataCmd(manga)
-		},
 	)
 }

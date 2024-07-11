@@ -1,4 +1,4 @@
-package anilistmangas
+package anilist
 
 import (
 	"context"
@@ -8,6 +8,7 @@ import (
 	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/libmangal/mangadata"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
@@ -15,19 +16,16 @@ import (
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
-type onResponseFunc func(manga lmanilist.Manga) tea.Cmd
-
 var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
 	list    *list.State
 	search  *search.Model
+	manga   mangadata.Manga
 	anilist *lmanilist.Anilist
 
 	searched bool
-
-	onResponse onResponseFunc
 
 	keyMap keyMap
 }
@@ -100,7 +98,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			if !ok {
 				return nil
 			}
-			return s.onResponse(i.manga)
+			return s.setMetadataCmd(i.manga)
 		case key.Matches(msg, s.keyMap.search):
 			s.list.ResetFilter()
 			return s.search.Focus()

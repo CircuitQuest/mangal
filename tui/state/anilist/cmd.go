@@ -1,20 +1,32 @@
-package anilistmangas
+package anilist
 
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	lmanilist "github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 )
+
+func (s *state) setMetadataCmd(manga anilist.Manga) tea.Cmd {
+	return func() tea.Msg {
+		s.manga.SetMetadata(manga.Metadata())
+
+		msg := fmt.Sprintf("Set Anilist %q (%d)", manga, manga.ID)
+		log.Log(msg+" to manga %q", s.manga)
+		return base.NotifyWithDuration(msg, 3*time.Second)()
+	}
+}
 
 func (s *state) searchCmd(ctx context.Context, query string) tea.Cmd {
 	return tea.Sequence(
 		base.Loading(fmt.Sprintf("Searching %q on Anilist", query)),
 		func() tea.Msg {
-			var mangas []lmanilist.Manga
+			var mangas []anilist.Manga
 
 			// to keep the closest on top
 			closest, found, err := s.anilist.FindClosestManga(ctx, query)

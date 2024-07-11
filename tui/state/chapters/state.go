@@ -12,6 +12,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/state/anilist"
 	"github.com/luevano/mangal/tui/state/formats"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/zyedidia/generic/set"
@@ -154,7 +155,9 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, s.keyMap.read):
 			return s.readCmd(ctx, i)
 		case key.Matches(msg, s.keyMap.anilist):
-			return s.anilistCmd
+			return func() tea.Msg {
+				return anilist.New(s.client.Anilist(), s.manga)
+			}
 		case key.Matches(msg, s.keyMap.toggleVolumeNumber):
 			*s.showVolumeNumber = !(*s.showVolumeNumber)
 		case key.Matches(msg, s.keyMap.toggleChapterNumber):

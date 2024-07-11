@@ -13,7 +13,7 @@ func newKeyMap() keyMap {
 		toggle:              util.Bind("toggle", " "),
 		read:                util.Bind("read", "r"),
 		download:            util.Bind("download", "d"),
-		anilist:             util.Bind("search anilist", "A"),
+		anilist:             util.Bind("anilist", "A"),
 		changeFormat:        util.Bind("change format", "f"),
 		openURL:             util.Bind("open url", "o"),
 		selectAll:           util.Bind("select all", "a"),

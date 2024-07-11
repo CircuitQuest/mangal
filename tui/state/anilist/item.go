@@ -1,4 +1,4 @@
-package anilistmangas
+package anilist
 
 import (
 	"fmt"

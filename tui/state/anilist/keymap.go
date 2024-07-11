@@ -1,4 +1,4 @@
-package anilistmangas
+package anilist
 
 import (
 	"github.com/charmbracelet/bubbles/help"
