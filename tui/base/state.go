@@ -36,8 +36,8 @@ type State interface {
 
 	// Resize the State's usable viewport.
 	//
-	// Gets called at least once before Init, as well as each time the State
-	// is popped out of the history.
+	// Gets called at least once after Init, as well as each time the State
+	// is popped out of the history before Update.
 	Resize(size Size) tea.Cmd
 
 	//

@@ -41,15 +41,23 @@ func (m *model) viewHeader() string {
 		header.WriteString(m.styles.notification.MaxWidth(width).Render(m.notification))
 	}
 
-	header.WriteString(newline)
-	if m.loadingMessage != "" {
-		header.WriteString(m.spinner.View())
+	if m.showLoadingMessage {
+		header.WriteString(newline)
+		if m.loadingMessage != "" {
+			header.WriteString(m.spinner.View())
+		}
+		header.WriteString(m.styles.loading.Render(m.loadingMessage))
 	}
-	header.WriteString(m.styles.loading.Render(m.loadingMessage))
 
-	header.WriteString(newline)
-	if subtitle := m.state.Subtitle(); subtitle != "" {
-		header.WriteString(m.styles.subtitle.Render(subtitle))
+	if m.showSubtitle {
+		header.WriteString(newline)
+		if subtitle := m.state.Subtitle(); subtitle != "" {
+			header.WriteString(m.styles.subtitle.Render(subtitle))
+		}
+	}
+
+	if !m.showLoadingMessage || !m.showSubtitle {
+		return m.styles.header.PaddingBottom(0).Render(header.String())
 	}
 
 	return m.styles.header.Render(header.String())

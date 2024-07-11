@@ -35,6 +35,9 @@ type model struct {
 	notification                string
 	notificationDefaultDuration time.Duration
 
+	showLoadingMessage bool
+	showSubtitle       bool
+
 	// Custom states to show errors and logs
 	errState func(err error) State
 	logState func(title, content string) State

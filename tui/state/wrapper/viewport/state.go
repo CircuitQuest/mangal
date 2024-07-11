@@ -7,9 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/color"
-	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
 )
 
@@ -18,9 +16,7 @@ var _ base.State = (*State)(nil)
 // State implements base.State. Wrapper of viewport.Model.
 type State struct {
 	viewport viewport.Model
-	size     base.Size
 	title    string
-	content  string
 	keyMap   keyMap
 }
 
@@ -56,21 +52,14 @@ func (s *State) Status() string {
 
 // Resize implements base.State.
 func (s *State) Resize(size base.Size) tea.Cmd {
-	s.size = size
-	s.viewport.Width = size.Width - 2 // -2 takes into account the border
+	// -2 takes into account the border
+	s.viewport.Width = size.Width - 2
 	s.viewport.Height = size.Height - 2
 	return nil
 }
 
 // Init implements base.State.
 func (s *State) Init(ctx context.Context) tea.Cmd {
-	s.viewport = viewport.New(s.size.Width-2, s.size.Height-2) // -2 takes into account the border
-	s.viewport.SetContent(s.content)
-	style := style.Normal.Base.
-		BorderStyle(lipgloss.RoundedBorder()).
-		BorderForeground(color.Viewport)
-	s.viewport.Style = style
-	s.keyMap = newKeyMap(s.viewport.KeyMap)
 	return nil
 }
 

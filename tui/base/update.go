@@ -28,6 +28,9 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.help):
 			return m, m.toggleHelp()
 		case key.Matches(msg, m.keyMap.log):
+			// fixes empty space above viewport
+			m.showLoadingMessage = false
+			m.showSubtitle = false
 			return m, m.pushState(m.logState("Logs", log.Aggregate.String()))
 		}
 	case BackMsg:
@@ -79,6 +82,9 @@ func (m *model) resizeState() tea.Cmd {
 
 // back to the previous State
 func (m *model) back(steps int) tea.Cmd {
+	// currently only necessary after coming from viewport(logs) state
+	m.showLoadingMessage = true
+	m.showSubtitle = true
 	// do not pop the last state
 	if m.history.Size() == 0 || steps <= 0 {
 		return nil
@@ -107,8 +113,8 @@ func (m *model) pushState(state State) tea.Cmd {
 	m.state = state
 
 	return tea.Sequence(
-		m.resizeState(),
 		m.state.Init(m.ctx),
+		m.resizeState(),
 	)
 }
 
