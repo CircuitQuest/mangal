@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/tui/model/search"
 )
 
@@ -59,8 +60,10 @@ func (s *state) handleBrowsingCmd(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			// TODO: only do a search metadata if the option is set?
-			return searchMetadataCmd(i)
+			if config.Download.Metadata.Search.Get() {
+				return searchMetadataCmd(i)
+			}
+			return searchVolumesCmd(i)
 		case key.Matches(msg, s.keyMap.search):
 			s.list.ResetFilter()
 			return s.search.Focus()

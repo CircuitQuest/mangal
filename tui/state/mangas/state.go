@@ -99,13 +99,13 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				if err != nil {
 					return nil
 				}
-				items := make([]_list.Item, len(mangas))
 
+				items := make([]_list.Item, len(mangas))
 				for i, m := range mangas {
 					items[i] = &item{manga: m}
 				}
-
 				s.list.SetItems(items)
+
 				s.searched = true
 				return nil
 			},
