@@ -2,9 +2,9 @@ package anilistmangas
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -24,6 +24,8 @@ type state struct {
 	list    *list.State
 	search  *search.Model
 	anilist *lmanilist.Anilist
+
+	searched bool
 
 	onResponse onResponseFunc
 
@@ -56,6 +58,9 @@ func (s *state) Title() base.Title {
 
 // Subtitle implements base.State.
 func (s *state) Subtitle() string {
+	if !s.searched {
+		return "Search on Anilist"
+	}
 	return s.list.Subtitle()
 }
 
@@ -67,50 +72,16 @@ func (s *state) Status() string {
 // Resize implements base.State.
 func (s *state) Resize(size base.Size) tea.Cmd {
 	s.search.Resize(size)
-	sSize := base.Size{}
-	sSize.Width, sSize.Height = lipgloss.Size(s.search.View())
+	_, searchHeight := lipgloss.Size(s.search.View())
+	size.Height -= searchHeight
 
-	final := size
-	final.Height -= sSize.Height
-
-	return s.list.Resize(final)
+	return s.list.Resize(size)
 }
 
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	return tea.Sequence(
-		base.Loading(fmt.Sprintf("Searching Anilist mangas for %q", s.search.Query())),
-		func() tea.Msg {
-			var mangas []lmanilist.Manga
-
-			closest, found, err := s.anilist.FindClosestManga(ctx, s.search.Query())
-			if err != nil {
-				return err
-			}
-			if found {
-				mangas = append(mangas, closest)
-			}
-
-			mangaSearchResults, err := s.anilist.SearchMangas(ctx, s.search.Query())
-			if err != nil {
-				return nil
-			}
-			for _, manga := range mangaSearchResults {
-				if manga.ID == closest.ID {
-					continue
-				}
-				mangas = append(mangas, manga)
-			}
-
-			items := make([]_list.Item, len(mangas))
-			for i, m := range mangas {
-				items[i] = &item{manga: m}
-			}
-			s.list.SetItems(items)
-
-			return nil
-		},
-		base.Loaded,
+		s.searchCmd(ctx, s.search.Query()),
 		s.list.Init(ctx),
 	)
 }
@@ -118,40 +89,39 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 // Updateimplements base.State.
 func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
-	case search.SearchMsg:
-		query := string(msg)
+	case tea.KeyMsg:
+		if s.list.FilterState() == _list.Filtering || s.search.State() == search.Searching {
+			goto end
+		}
 
-		return tea.Sequence(
-			base.Loading(fmt.Sprintf("Searching %q on Anilist", query)),
-			func() tea.Msg {
-				mangas, err := s.anilist.SearchMangas(ctx, query)
-				if err != nil {
-					return err
-				}
-
-				items := make([]_list.Item, len(mangas))
-
-				for i, m := range mangas {
-					items[i] = &item{manga: m}
-				}
-
-				s.list.SetItems(items)
+		switch {
+		case key.Matches(msg, s.keyMap.confirm):
+			i, ok := s.list.SelectedItem().(*item)
+			if !ok {
 				return nil
-			},
-			base.Loaded,
-		)
+			}
+			return s.onResponse(i.manga)
+		case key.Matches(msg, s.keyMap.search):
+			s.list.ResetFilter()
+			return s.search.Focus()
+		}
+	case search.SearchMsg:
+		return s.searchCmd(ctx, string(msg))
 	}
-
+end:
 	if s.search.State() == search.Searching {
 		input, updateCmd := s.search.Update(msg)
 		s.search = input.(*search.Model)
 		return updateCmd
 	}
-	return s.handleBrowsingCmd(ctx, msg)
+	return s.list.Update(ctx, msg)
 }
 
 // View implements base.State.
 func (s *state) View() string {
+	if !s.searched {
+		return s.search.View()
+	}
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		s.search.View(),

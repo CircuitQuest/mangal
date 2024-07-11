@@ -11,16 +11,9 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
-	lmanilist "github.com/luevano/libmangal/metadata/anilist"
-	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/log"
-	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/anilistmangas"
-	"github.com/luevano/mangal/tui/state/confirm"
 	"github.com/luevano/mangal/tui/state/formats"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
-	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -106,7 +99,6 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	s.updateRenderedSubtitleFormats()
-
 	return s.list.Init(ctx)
 }
 
@@ -131,14 +123,12 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			} else {
 				s.selected.Remove(i)
 			}
-
 			return nil
 		case key.Matches(msg, s.keyMap.unselectAll):
 			for _, item := range s.selected.Keys() {
 				item.toggle()
 				s.selected.Remove(item)
 			}
-
 			return nil
 		case key.Matches(msg, s.keyMap.selectAll):
 			for _, listItem := range s.list.Items() {
@@ -152,89 +142,19 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 					s.selected.Put(it)
 				}
 			}
-
 			return nil
 		case key.Matches(msg, s.keyMap.changeFormat):
 			return func() tea.Msg {
-				// all this does is actually change the config for the formats
 				return formats.New()
 			}
 		case key.Matches(msg, s.keyMap.openURL):
-			return s.openURLCmd(i)
+			return s.openURLCmd(i.chapter)
 		case key.Matches(msg, s.keyMap.download):
-			if s.actionRunning != "" {
-				return s.blockedActionByCmd("download")
-			}
-
-			// when no toggled chapters then just download the one hovered
-			if s.selected.Size() == 0 {
-				// TODO: add confirmation?
-				return s.downloadChapterCmd(ctx, i, config.DownloadOptions(), false)
-			}
-
-			// TODO: refactor confirmation state?
-			return func() tea.Msg {
-				return confirm.New(
-					fmt.Sprint("Download ", stringutil.Quantify(s.selected.Size(), "chapter", "chapters")),
-					func(response bool) tea.Cmd {
-						if !response {
-							return base.Back
-						}
-
-						return s.downloadChaptersCmd(s.selected, config.DownloadOptions())
-					},
-				)
-			}
+			return s.downloadCmd(ctx, i)
 		case key.Matches(msg, s.keyMap.read):
-			if s.actionRunning != "" {
-				return s.blockedActionByCmd("read")
-			}
-
-			// when no toggled chapters then just download the one selected
-			if s.selected.Size() > 1 {
-				return base.Notify("Can't open for reading more than 1 chapter")
-			}
-
-			// use the toggled item, else the hovered one
-			it := i
-			if s.selected.Size() == 1 {
-				it = s.selected.Keys()[0]
-			}
-
-			if it.readAvailablePath != "" {
-				log.Log("Read format already downloaded")
-				return s.readChapterCmd(ctx, it.readAvailablePath, it, config.ReadOptions())
-			}
-
-			downloadOptions := config.DownloadOptions()
-			// TODO: add warning when read format != download format?
-			downloadOptions.Format = config.Read.Format.Get()
-			// If shouldn't download on read, save to tmp dir with all dirs created
-			if !config.Read.DownloadOnRead.Get() {
-				downloadOptions.Directory = path.TempDir()
-				downloadOptions.CreateProviderDir = true
-				downloadOptions.CreateMangaDir = true
-				downloadOptions.CreateVolumeDir = true
-			}
-
-			// TODO: add confirmation?
-			log.Log("Read format not yet downloaded, downloading")
-			return s.downloadChapterCmd(ctx, it, downloadOptions, true)
+			return s.readCmd(ctx, i)
 		case key.Matches(msg, s.keyMap.anilist):
-			return func() tea.Msg {
-				mangaInfo := i.chapter.Volume().Manga().Info()
-				query := mangaInfo.AnilistSearch
-				if query == "" {
-					query = mangaInfo.Title
-				}
-				return anilistmangas.New(
-					s.client.Anilist(),
-					query,
-					func(manga lmanilist.Manga) tea.Cmd {
-						return s.updateMetadataCmd(manga)
-					},
-				)
-			}
+			return s.anilistCmd
 		case key.Matches(msg, s.keyMap.toggleVolumeNumber):
 			*s.showVolumeNumber = !(*s.showVolumeNumber)
 		case key.Matches(msg, s.keyMap.toggleChapterNumber):
@@ -246,12 +166,6 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			*s.showDate = !(*s.showDate)
 			s.updateListDelegate()
 		}
-	case readChapterMsg:
-		return s.readChapterCmd(ctx, msg.path, msg.item, msg.options)
-	case downloadChapterMsg:
-		return s.downloadChapterCmd(ctx, msg.item, msg.options, msg.readAfter)
-	case downloadChaptersMsg:
-		return s.downloadChaptersCmd(msg.items, msg.options)
 	case base.RestoredMsg:
 		// usually the downloaded chapters change or the metadata when restoring the chapter list
 		s.updateAllItems()

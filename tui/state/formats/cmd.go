@@ -4,13 +4,10 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/log"
 )
 
-func setFormatForCmd(what forWhat, format libmangal.Format) tea.Cmd {
-	log.Log("setFormatFor %s %s", format, what)
+func (s *state) setFormatForCmd(what forWhat, format libmangal.Format) tea.Cmd {
 	return func() tea.Msg {
-		log.Log("actually setting format %s for %s", format, what)
 		var err error
 		switch what {
 		case forRead:
@@ -27,12 +24,6 @@ func setFormatForCmd(what forWhat, format libmangal.Format) tea.Cmd {
 		if err != nil {
 			return err
 		}
-		log.Log("formatsUpdatedMsg")
-		return formatsUpdatedMsg{}
+		return config.Write()
 	}
-}
-
-func writeConfigCmd() tea.Msg {
-	log.Log("writeConfig")
-	return config.Write()
 }

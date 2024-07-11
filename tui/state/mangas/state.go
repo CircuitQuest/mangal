@@ -2,22 +2,17 @@ package mangas
 
 import (
 	"context"
-	"fmt"
-	"time"
 
 	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
-	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/search"
-	"github.com/luevano/mangal/tui/state/chapters"
-	"github.com/luevano/mangal/tui/state/volumes"
-	list "github.com/luevano/mangal/tui/state/wrapper/list"
+	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
 var _ base.State = (*state)(nil)
@@ -69,13 +64,10 @@ func (s *state) Status() string {
 // Resize implements base.State.
 func (s *state) Resize(size base.Size) tea.Cmd {
 	s.search.Resize(size)
-	sSize := base.Size{}
-	sSize.Width, sSize.Height = lipgloss.Size(s.search.View())
+	_, searchHeight := lipgloss.Size(s.search.View())
+	size.Height -= searchHeight
 
-	final := size
-	final.Height -= sSize.Height
-
-	return s.list.Resize(final)
+	return s.list.Resize(size)
 }
 
 // Init implements base.State.
@@ -89,126 +81,40 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 // Update implements base.State.
 func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		if s.list.FilterState() == _list.Filtering || s.search.State() == search.Searching {
+			goto end
+		}
+
+		i, ok := s.list.SelectedItem().(*item)
+		if !ok {
+			return nil
+		}
+
+		switch {
+		case key.Matches(msg, s.keyMap.confirm):
+			if config.Download.Metadata.Search.Get() {
+				return s.searchMetadataCmd(ctx, i)
+			}
+			return s.searchVolumesCmd(ctx, i)
+		case key.Matches(msg, s.keyMap.search):
+			s.list.ResetFilter()
+			return s.search.Focus()
+		}
 	case search.SearchMsg:
-		query := string(msg)
-
-		return tea.Sequence(
-			base.Loading(fmt.Sprintf("Searching for %q", query)),
-			func() tea.Msg {
-				mangas, err := s.client.SearchMangas(ctx, query)
-				if err != nil {
-					return nil
-				}
-
-				items := make([]_list.Item, len(mangas))
-				for i, m := range mangas {
-					items[i] = &item{manga: m}
-				}
-				s.list.SetItems(items)
-
-				s.searched = true
-				return nil
-			},
-			base.Loaded,
-		)
+		return s.searchMangasCmd(ctx, string(msg))
 	case search.SearchCancelMsg:
 		if s.search.Query() == "" {
 			return base.Back
 		}
-	case searchMetadataMsg:
-		i := msg.item
-
-		return tea.Sequence(
-			base.Loading(fmt.Sprintf("Searching Anilist manga for %q", i.manga)),
-			func() tea.Msg {
-				// TODO: handle more cases for missing/partial metadata
-				// Find anilist manga closest to the selected manga and assign it
-				anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), i.manga)
-				if err != nil {
-					return err
-				}
-				if !found {
-					log.Log("Couldn't find Anilist for %q", i.manga)
-				} else {
-					i.manga.SetMetadata(anilistManga.Metadata())
-					log.Log("Found and set Anilist for %q: %q (%d)", i.manga, anilistManga.String(), anilistManga.ID)
-				}
-
-				return searchVolumesMsg{i}
-			},
-			base.Loaded,
-		)
-	case searchVolumesMsg:
-		i := msg.item
-
-		return tea.Sequence(
-			base.Loading(fmt.Sprintf("Searching volumes for %q", i.manga)),
-			func() tea.Msg {
-				volumeList, err := s.client.MangaVolumes(ctx, i.manga)
-				if err != nil {
-					return err
-				}
-				vols := len(volumeList)
-
-				if config.TUI.ExpandAllVolumes.Get() {
-					return searchAllChaptersMsg{i.manga, volumeList}
-				}
-
-				if vols == 1 && config.TUI.ExpandSingleVolume.Get() {
-					return searchChaptersMsg{i.manga, volumeList[0]}
-				}
-
-				return volumes.New(s.client, i.manga, volumeList)
-			},
-			base.Loaded,
-		)
-	case searchAllChaptersMsg:
-		manga := msg.manga
-		volumes := msg.volumes
-
-		// TODO: make different loading messages for each volume?
-		return tea.Sequence(
-			base.NotifyWithDuration(fmt.Sprintf("Skipped selecting volumes (cfg: %s)", config.TUI.ExpandAllVolumes.Key), 3*time.Second),
-			base.Loading("Searching chapters for all volumes"),
-			func() tea.Msg {
-				var chapterList []mangadata.Chapter
-				for _, v := range volumes {
-					c, err := s.client.VolumeChapters(ctx, v)
-					if err != nil {
-						return err
-					}
-					chapterList = append(chapterList, c...)
-				}
-
-				return chapters.New(s.client, manga, nil, chapterList)
-			},
-			base.Loaded,
-		)
-	case searchChaptersMsg:
-		manga := msg.manga
-		volume := msg.volume
-
-		return tea.Sequence(
-			base.NotifyWithDuration(fmt.Sprintf("Skipped single volume (cfg: %s)", config.TUI.ExpandSingleVolume.Key), 3*time.Second),
-			base.Loading("Searching chapters"),
-			func() tea.Msg {
-				chapterList, err := s.client.VolumeChapters(ctx, volume)
-				if err != nil {
-					return err
-				}
-
-				return chapters.New(s.client, manga, nil, chapterList)
-			},
-			base.Loaded,
-		)
 	}
-
-	if s.search.State() == search.Searching || s.search.State() == search.Unsearched {
+end:
+	if s.search.State() == search.Searching {
 		input, updateCmd := s.search.Update(msg)
 		s.search = input.(*search.Model)
 		return updateCmd
 	}
-	return s.handleBrowsingCmd(ctx, msg)
+	return s.list.Update(ctx, msg)
 }
 
 // View implements base.State.

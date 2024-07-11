@@ -2,33 +2,51 @@ package anilistmangas
 
 import (
 	"context"
+	"fmt"
 
-	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/mangal/tui/model/search"
+	lmanilist "github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/mangal/tui/base"
 )
 
-// handleBrowsingCmd is the usual list behavior
-func (s *state) handleBrowsingCmd(ctx context.Context, msg tea.Msg) tea.Cmd {
-	switch msg := msg.(type) {
-	case tea.KeyMsg:
-		if s.list.FilterState() == list.Filtering || s.search.State() == search.Searching {
-			goto end
-		}
+func (s *state) searchCmd(ctx context.Context, query string) tea.Cmd {
+	return tea.Sequence(
+		base.Loading(fmt.Sprintf("Searching %q on Anilist", query)),
+		func() tea.Msg {
+			var mangas []lmanilist.Manga
 
-		switch {
-		case key.Matches(msg, s.keyMap.confirm):
-			i, ok := s.list.SelectedItem().(*item)
-			if !ok {
+			// to keep the closest on top
+			closest, found, err := s.anilist.FindClosestManga(ctx, query)
+			if err != nil {
+				return err
+			}
+			if found {
+				mangas = append(mangas, closest)
+			}
+
+			// the rest of the results
+			mangaSearchResults, err := s.anilist.SearchMangas(ctx, query)
+			if err != nil {
 				return nil
 			}
-			return s.onResponse(i.manga)
-		case key.Matches(msg, s.keyMap.search):
-			s.list.ResetFilter()
-			return s.search.Focus()
-		}
-	}
-end:
-	return s.list.Update(ctx, msg)
+			for _, manga := range mangaSearchResults {
+				// except the closest
+				if manga.ID == closest.ID {
+					continue
+				}
+				mangas = append(mangas, manga)
+			}
+
+			items := make([]list.Item, len(mangas))
+			for i, m := range mangas {
+				items[i] = &item{manga: m}
+			}
+			s.list.SetItems(items)
+
+			s.searched = true
+			return nil
+		},
+		base.Loaded,
+	)
 }

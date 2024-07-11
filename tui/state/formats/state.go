@@ -82,16 +82,12 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 		switch {
 		case key.Matches(msg, s.keyMap.setRead):
-			return setFormatForCmd(forRead, i.format)
+			return s.setFormatForCmd(forRead, i.format)
 		case key.Matches(msg, s.keyMap.setDownload):
-			return setFormatForCmd(forDownload, i.format)
+			return s.setFormatForCmd(forDownload, i.format)
 		case key.Matches(msg, s.keyMap.setBoth):
-			return setFormatForCmd(forBoth, i.format)
+			return s.setFormatForCmd(forBoth, i.format)
 		}
-	case formatsUpdatedMsg:
-		// TODO: don't write? and only keep the option
-		// for the duration of the program?
-		return writeConfigCmd
 	}
 end:
 	return s.list.Update(ctx, msg)

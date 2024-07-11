@@ -2,7 +2,6 @@ package volumes
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -11,7 +10,6 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/chapters"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
@@ -81,18 +79,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			return tea.Sequence(
-				base.Loading(fmt.Sprintf("Searching chapters for volume %s", i.volume)),
-				func() tea.Msg {
-					chapterList, err := s.client.VolumeChapters(ctx, i.volume)
-					if err != nil {
-						return err
-					}
-
-					return chapters.New(s.client, s.manga, i.volume, chapterList)
-				},
-				base.Loaded,
-			)
+			return s.searchVolumeChapters(ctx, i)
 		}
 	}
 end:
