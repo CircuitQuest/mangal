@@ -10,6 +10,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/state/anilist"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
@@ -80,6 +81,10 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
 			return s.searchVolumeChapters(ctx, i)
+		case key.Matches(msg, s.keyMap.anilist):
+			return func() tea.Msg {
+				return anilist.New(s.client.Anilist(), s.manga)
+			}
 		}
 	}
 end:
