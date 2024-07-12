@@ -10,6 +10,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
@@ -18,11 +19,14 @@ var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
-	list    *list.State
+	list *list.State
+	meta *metadata.Model
+
 	volumes []mangadata.Volume
 	manga   mangadata.Manga
 	client  *libmangal.Client
-	keyMap  keyMap
+
+	keyMap keyMap
 }
 
 // Intermediate implements base.State.
@@ -52,7 +56,7 @@ func (s *state) Subtitle() string {
 
 // Status implements base.State.
 func (s *state) Status() string {
-	return s.list.Status()
+	return s.meta.View() + " " + s.list.Status()
 }
 
 // Resize implements base.State.
@@ -85,7 +89,12 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			return func() tea.Msg {
 				return anilist.New(s.client.Anilist(), s.manga)
 			}
+		case key.Matches(msg, s.keyMap.info):
+			s.meta.ShowFull = !s.meta.ShowFull
 		}
+	case base.RestoredMsg:
+		// in case the metadata was updated in the anilist state
+		s.meta.SetMetadata(s.manga.Metadata())
 	}
 end:
 	return s.list.Update(ctx, msg)

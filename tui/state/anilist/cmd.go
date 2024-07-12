@@ -3,7 +3,6 @@ package anilist
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -18,7 +17,7 @@ func (s *state) setMetadataCmd(manga anilist.Manga) tea.Cmd {
 
 		msg := fmt.Sprintf("Set Anilist %q", manga.String())
 		log.Log(msg+" to manga %q", s.manga)
-		return base.NotifyWithDuration(msg, 3*time.Second)()
+		return base.Notify(msg)()
 	}
 }
 

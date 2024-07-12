@@ -12,6 +12,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
 	"github.com/luevano/mangal/tui/state/formats"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
@@ -23,6 +24,7 @@ var _ base.State = (*state)(nil)
 // state implements base.state.
 type state struct {
 	list *list.State
+	meta *metadata.Model
 
 	chapters []mangadata.Chapter
 	volume   mangadata.Volume // can be nil
@@ -86,10 +88,19 @@ func (s *state) Subtitle() string {
 
 // Status implements base.State.
 func (s *state) Status() string {
+	var status strings.Builder
+	status.Grow(40)
+
+	status.WriteString(s.meta.View())
+
 	if s.volume != nil {
-		return fmt.Sprintf("Vol. %s%s%s", s.volume, s.renderedSep, s.list.Status())
+		status.WriteString(" Vol. ")
+		status.WriteString(s.volume.String())
+		status.WriteString(s.renderedSep)
+		status.WriteString(s.list.Status())
+		return status.String()
 	}
-	return s.list.Status()
+	return status.String()
 }
 
 // Resize implements base.State.
@@ -125,6 +136,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				s.selected.Remove(i)
 			}
 			return nil
+		case key.Matches(msg, s.keyMap.info):
+			s.meta.ShowFull = !s.meta.ShowFull
 		case key.Matches(msg, s.keyMap.unselectAll):
 			for _, item := range s.selected.Keys() {
 				item.toggle()
@@ -170,6 +183,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			s.updateListDelegate()
 		}
 	case base.RestoredMsg:
+		// in case the metadata was updated in the anilist state
+		s.meta.SetMetadata(s.manga.Metadata())
 		// usually the downloaded chapters change or the metadata when restoring the chapter list
 		s.updateAllItems()
 		s.updateRenderedSubtitleFormats()

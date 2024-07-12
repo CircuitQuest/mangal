@@ -49,8 +49,8 @@ func (s *state) KeyMap() help.KeyMap {
 func (s *state) Title() base.Title {
 	return base.Title{
 		Text:       "Anilist Mangas",
-		Background: color.Anilist.Background,
-		Foreground: color.Anilist.Foreground,
+		Background: color.Anilist,
+		Foreground: color.Bright,
 	}
 }
 

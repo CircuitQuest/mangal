@@ -13,6 +13,7 @@ func newKeyMap() keyMap {
 		toggle:              util.Bind("toggle", " "),
 		read:                util.Bind("read", "r"),
 		download:            util.Bind("download", "d"),
+		info:                util.Bind("info", "i"),
 		anilist:             util.Bind("anilist", "A"),
 		changeFormat:        util.Bind("change format", "f"),
 		openURL:             util.Bind("open url", "o"),
@@ -30,6 +31,7 @@ type keyMap struct {
 	toggle,
 	read,
 	download,
+	info,
 	anilist,
 	changeFormat,
 	openURL,
@@ -47,6 +49,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 		k.toggle,
 		k.read,
 		k.download,
+		k.info,
 	}
 }
 
