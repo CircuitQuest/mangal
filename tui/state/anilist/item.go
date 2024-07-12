@@ -33,5 +33,5 @@ func (i *item) Title() string {
 
 // Description implements list.Item.
 func (i *item) Description() string {
-	return fmt.Sprint("https://anilist.co/manga/", i.manga.ID)
+	return fmt.Sprint("https://anilist.co/manga/", i.manga.ID().Value())
 }

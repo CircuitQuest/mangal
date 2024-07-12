@@ -1,7 +1,6 @@
 package loader
 
 import (
-	"encoding/gob"
 	"fmt"
 	"time"
 
@@ -13,12 +12,6 @@ import (
 )
 
 func MangoLoaders() ([]libmangal.ProviderLoader, error) {
-	// httpStoreProvider uses gob, it needs to register custom types
-	gob.Register(&mango.Manga{})
-	gob.Register(&mango.Volume{})
-	gob.Register(&mango.Chapter{})
-	gob.Register(&mango.Page{})
-
 	// Generates overall default options then overriding as necessary
 	o := mango.DefaultOptions()
 

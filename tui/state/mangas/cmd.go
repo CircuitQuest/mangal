@@ -37,12 +37,11 @@ func (s *state) searchMangasCmd(ctx context.Context, query string) tea.Cmd {
 	)
 }
 
+// TODO: generalize to search metadata, not just anilist
 func (s *state) searchMetadataCmd(ctx context.Context, item *item) tea.Cmd {
 	return tea.Sequence(
 		base.Loading(fmt.Sprintf("Searching Anilist manga for %q", item.manga)),
 		func() tea.Msg {
-			// TODO: handle more cases for missing/partial metadata
-			// Find anilist manga closest to the selected manga and assign it
 			anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), item.manga)
 			if err != nil {
 				return err
@@ -50,7 +49,7 @@ func (s *state) searchMetadataCmd(ctx context.Context, item *item) tea.Cmd {
 			if !found {
 				log.Log("Couldn't find Anilist for %q", item.manga)
 			} else {
-				item.manga.SetMetadata(anilistManga.Metadata())
+				item.manga.SetMetadata(&anilistManga)
 				log.Log("Found and set Anilist for %q: %q (%d)", item.manga, anilistManga.String(), anilistManga.ID)
 			}
 

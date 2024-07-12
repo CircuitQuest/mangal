@@ -43,10 +43,15 @@ func (s *state) downloadCmd(ctx context.Context, item *item) tea.Cmd {
 		return s.blockedActionByCmd("download")
 	}
 
+	options := config.DownloadOptions()
+	// Guaranteed to had been searched during mangas state,
+	// this avoids re-searching during download and unsetting the
+	// set metadata
+	options.SearchMetadata = false
 	// when no toggled chapters then just download the one hovered
 	if s.selected.Size() == 0 {
 		// TODO: add confirmation?
-		return s.downloadChapterCmd(ctx, item, config.DownloadOptions(), false)
+		return s.downloadChapterCmd(ctx, item, options, false)
 	}
 
 	// TODO: refactor confirmation state?
@@ -58,7 +63,7 @@ func (s *state) downloadCmd(ctx context.Context, item *item) tea.Cmd {
 					return base.Back
 				}
 
-				return s.downloadChaptersCmd(s.selected, config.DownloadOptions())
+				return s.downloadChaptersCmd(s.selected, options)
 			},
 		)
 	}
@@ -133,20 +138,24 @@ func (s *state) readCmd(ctx context.Context, item *item) tea.Cmd {
 		return s.readChapterCmd(ctx, i.readAvailablePath, i, config.ReadOptions())
 	}
 
-	downloadOptions := config.DownloadOptions()
+	options := config.DownloadOptions()
+	// Guaranteed to had been searched during mangas state,
+	// this avoids re-searching during download and unsetting the
+	// set metadata
+	options.SearchMetadata = false
 	// TODO: add warning when read format != download format?
-	downloadOptions.Format = config.Read.Format.Get()
+	options.Format = config.Read.Format.Get()
 	// If shouldn't download on read, save to tmp dir with all dirs created
 	if !config.Read.DownloadOnRead.Get() {
-		downloadOptions.Directory = path.TempDir()
-		downloadOptions.CreateProviderDir = true
-		downloadOptions.CreateMangaDir = true
-		downloadOptions.CreateVolumeDir = true
+		options.Directory = path.TempDir()
+		options.CreateProviderDir = true
+		options.CreateMangaDir = true
+		options.CreateVolumeDir = true
 	}
 
 	// TODO: add confirmation?
 	log.Log("Read format not yet downloaded, downloading")
-	return s.downloadChapterCmd(ctx, i, downloadOptions, true)
+	return s.downloadChapterCmd(ctx, i, options, true)
 }
 
 func (s *state) readChapterCmd(ctx context.Context, path string, item *item, options libmangal.ReadOptions) tea.Cmd {

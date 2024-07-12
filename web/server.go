@@ -116,7 +116,7 @@ func (s *Server) GetMangaPage(ctx context.Context, request api.GetMangaPageReque
 				Large:      anilistManga.CoverImage.Large,
 				Medium:     anilistManga.CoverImage.Medium,
 			},
-			Description: &anilistManga.Description,
+			Description: &anilistManga.Summary,
 		}
 	}
 

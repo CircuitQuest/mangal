@@ -40,9 +40,9 @@ func RunDownload(ctx context.Context, args Args) error {
 	manga := mangaResults[0].Manga
 	useMangaMetadata := false
 	if args.PreferProviderMetadata {
-		if err = manga.Metadata().Validate(); err != nil {
+		if err = metadata.Validate(manga.Metadata()); err != nil {
 			// TODO: this logger is only really used for TUI, better handle logs
-			log.Log("provider metadata is preferred but it's not valid: %s\n", err.Error())
+			log.Log("provider metadata is preferred but it's not valid: %s", err.Error())
 		} else {
 			useMangaMetadata = true
 		}
@@ -50,8 +50,6 @@ func RunDownload(ctx context.Context, args Args) error {
 	var anilistManga lmanilist.Manga
 	var found bool
 
-	// TODO: handle merges/full replacements/fills
-	//
 	// If AnilistID is provided via argument, then search for it and replace the manga metadata,
 	// error out as it is expected to find some metadata (given the id).
 	// Otherwise, if prefer provider metadata is true and the metadata is valid, libmangal will search for metadata.
@@ -63,7 +61,7 @@ func RunDownload(ctx context.Context, args Args) error {
 		if !found {
 			return fmt.Errorf("couldn't find anilist manga with id %q (from argument)", args.AnilistID)
 		}
-		manga.SetMetadata(anilistManga.Metadata())
+		manga.SetMetadata(&anilistManga)
 	}
 
 	chapters, err := getChapters(ctx, client, args, manga)
@@ -74,6 +72,7 @@ func RunDownload(ctx context.Context, args Args) error {
 	// Take the download options from the config and apply necessary changes
 	downloadOptions := config.DownloadOptions()
 	if useMangaMetadata || args.AnilistID != 0 {
+		// Re-searching would replace the set metadata here
 		downloadOptions.SearchMetadata = false
 	}
 

@@ -14,9 +14,9 @@ import (
 
 func (s *state) setMetadataCmd(manga anilist.Manga) tea.Cmd {
 	return func() tea.Msg {
-		s.manga.SetMetadata(manga.Metadata())
+		s.manga.SetMetadata(&manga)
 
-		msg := fmt.Sprintf("Set Anilist %q (%d)", manga, manga.ID)
+		msg := fmt.Sprintf("Set Anilist %q", manga.String())
 		log.Log(msg+" to manga %q", s.manga)
 		return base.NotifyWithDuration(msg, 3*time.Second)()
 	}
@@ -44,7 +44,7 @@ func (s *state) searchCmd(ctx context.Context, query string) tea.Cmd {
 			}
 			for _, manga := range mangaSearchResults {
 				// except the closest
-				if manga.ID == closest.ID {
+				if manga.ID() == closest.ID() {
 					continue
 				}
 				mangas = append(mangas, manga)

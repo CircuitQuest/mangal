@@ -14,7 +14,7 @@ import (
 
 type mangaTemplateData struct {
 	Manga    mangadata.MangaInfo
-	Metadata *metadata.Metadata
+	Metadata metadata.Metadata
 }
 
 type volumeTemplateData struct {
@@ -47,11 +47,9 @@ func Manga(_ string, manga mangadata.Manga) string {
 
 	plt := config.Download.Manga.NameTemplateFallback.Get()
 	// Prioritize the NameTemplate (includes AnilistManga data)
-	mangaMetadata := manga.Metadata()
-	if mangaMetadata != nil {
+	meta := manga.Metadata()
+	if metadata.Validate(meta) == nil {
 		plt = config.Download.Manga.NameTemplate.Get()
-	} else {
-		mangaMetadata = &metadata.Metadata{}
 	}
 
 	err := template.Must(template.New("manga").
@@ -59,7 +57,7 @@ func Manga(_ string, manga mangadata.Manga) string {
 		Parse(plt)).
 		Execute(&sb, mangaTemplateData{
 			Manga:    manga.Info(),
-			Metadata: mangaMetadata,
+			Metadata: meta,
 		})
 	if err != nil {
 		util.Errorf("error during execution of the manga name template: %s\n", err)
