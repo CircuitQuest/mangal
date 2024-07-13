@@ -6,14 +6,17 @@ import (
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/program"
-	"github.com/luevano/mangal/tui/state/errorstate"
 	"github.com/luevano/mangal/tui/state/home"
 	"github.com/luevano/mangal/tui/state/wrapper/viewport"
 )
 
 func Run() error {
 	errState := func(err error) base.State {
-		return errorstate.New(err)
+		title := base.Title{
+			Text:       "Error",
+			Background: color.Error,
+		}
+		return viewport.New(title, err.Error(), color.Error)
 	}
 	logState := func() base.State {
 		title := base.Title{

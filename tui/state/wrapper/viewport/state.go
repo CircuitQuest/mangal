@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/atotto/clipboard"
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/tui/base"
 )
 
@@ -18,7 +18,7 @@ var _ base.State = (*State)(nil)
 type State struct {
 	viewport viewport.Model
 	title    base.Title
-	color    lipgloss.Color
+	content  string
 
 	borderHorizontalSize,
 	borderVerticalSize int
@@ -80,6 +80,10 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
+		case key.Matches(msg, s.keyMap.copy):
+			return func() tea.Msg {
+				return clipboard.WriteAll(s.content)
+			}
 		case key.Matches(msg, s.keyMap.goTop):
 			s.viewport.GotoTop()
 		case key.Matches(msg, s.keyMap.goBottom):
@@ -87,6 +91,7 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		}
 	case SetContentMsg:
 		s.viewport.SetContent(string(msg))
+		s.updateKeybinds()
 	}
 	s.viewport, cmd = s.viewport.Update(msg)
 	return cmd
@@ -95,4 +100,12 @@ func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 // View implements base.State.
 func (s *State) View() string {
 	return s.viewport.View()
+}
+
+// updateKeybinds enables/disables keybinds based on the content.
+func (s *State) updateKeybinds() {
+	enable := s.content != ""
+	s.keyMap.copy.SetEnabled(enable)
+	s.keyMap.goTop.SetEnabled(enable)
+	s.keyMap.goBottom.SetEnabled(enable)
 }

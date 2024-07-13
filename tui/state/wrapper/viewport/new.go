@@ -16,11 +16,14 @@ func New(title base.Title, content string, borderColor lipgloss.Color) *State {
 		BorderStyle(b).
 		BorderForeground(borderColor)
 
-	return &State{
+	s := &State{
 		viewport:             viewport,
 		title:                title,
-		keyMap:               newKeyMap(viewport.KeyMap),
+		content:              content,
+		keyMap:               newKeyMap(&viewport.KeyMap),
 		borderHorizontalSize: b.GetLeftSize() + b.GetRightSize(),
 		borderVerticalSize:   b.GetTopSize() + b.GetBottomSize(),
 	}
+	s.updateKeybinds()
+	return s
 }
