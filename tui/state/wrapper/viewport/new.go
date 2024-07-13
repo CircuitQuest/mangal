@@ -7,16 +7,20 @@ import (
 	"github.com/luevano/mangal/tui/base"
 )
 
-func New(title base.Title, content string, borderColor lipgloss.Color) base.State {
+func New(title base.Title, content string, borderColor lipgloss.Color) *State {
 	viewport := viewport.New(0, 0)
 	viewport.SetContent(content)
+
+	b := lipgloss.RoundedBorder()
 	viewport.Style = style.Normal.Base.
-		BorderStyle(lipgloss.RoundedBorder()).
+		BorderStyle(b).
 		BorderForeground(borderColor)
 
 	return &State{
-		viewport: viewport,
-		title:    title,
-		keyMap:   newKeyMap(viewport.KeyMap),
+		viewport:             viewport,
+		title:                title,
+		keyMap:               newKeyMap(viewport.KeyMap),
+		borderHorizontalSize: b.GetLeftSize() + b.GetRightSize(),
+		borderVerticalSize:   b.GetTopSize() + b.GetBottomSize(),
 	}
 }

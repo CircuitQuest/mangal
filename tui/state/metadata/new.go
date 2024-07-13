@@ -9,19 +9,22 @@ import (
 )
 
 func New(meta metadata.Metadata) *State {
-	s := util.MetaIDStyle(meta.ID())
+	metaStyle := util.MetaIDStyle(meta.ID())
 	p := meta.ID().Code
 	if p != "" {
 		p = "[" + p + "] "
 	}
 	title := base.Title{
-		Text:       p + s.Prefix + " Metadata",
-		Background: s.Color,
+		Text:       p + metaStyle.Prefix + " Metadata",
+		Background: metaStyle.Color,
 		Foreground: color.Bright,
 	}
-	return &State{
-		viewport: viewport.New(title, "", s.Color),
-		meta:     meta,
-		styles:   defaultStyles(s),
+
+	s := &State{
+		meta:   meta,
+		styles: defaultStyles(metaStyle),
 	}
+	viewport := viewport.New(title, s.renderMetadata(), metaStyle.Color)
+	s.viewport = viewport
+	return s
 }

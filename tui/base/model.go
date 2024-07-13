@@ -39,8 +39,8 @@ type model struct {
 	showSubtitle       bool
 
 	// Custom states to show errors and logs
-	errState func(err error) State
-	logState func(title Title, content string, borderColor lipgloss.Color) State
+	errState func(error) State
+	logState func() State
 }
 
 // Init implements tea.Model.

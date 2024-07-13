@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/help"
+	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -18,7 +19,11 @@ type State struct {
 	viewport viewport.Model
 	title    base.Title
 	color    lipgloss.Color
-	keyMap   keyMap
+
+	borderHorizontalSize,
+	borderVerticalSize int
+
+	keyMap keyMap
 }
 
 // Intermediate implements base.State.
@@ -53,9 +58,8 @@ func (s *State) Status() string {
 
 // Resize implements base.State.
 func (s *State) Resize(size base.Size) tea.Cmd {
-	// -2 takes into account the border
-	s.viewport.Width = size.Width - 2
-	s.viewport.Height = size.Height - 2
+	s.viewport.Width = size.Width - s.borderHorizontalSize
+	s.viewport.Height = size.Height - s.borderVerticalSize
 	return nil
 }
 
@@ -74,6 +78,13 @@ func (s *State) Init(ctx context.Context) tea.Cmd {
 // Update implements base.State.
 func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 	switch msg := msg.(type) {
+	case tea.KeyMsg:
+		switch {
+		case key.Matches(msg, s.keyMap.goTop):
+			s.viewport.GotoTop()
+		case key.Matches(msg, s.keyMap.goBottom):
+			s.viewport.GotoBottom()
+		}
 	case SetContentMsg:
 		s.viewport.SetContent(string(msg))
 	}

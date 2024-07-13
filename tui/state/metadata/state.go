@@ -14,7 +14,7 @@ var _ base.State = (*State)(nil)
 
 // State implements base.State.
 type State struct {
-	viewport base.State
+	viewport *viewport.State
 	meta     metadata.Metadata
 
 	styles styles
@@ -57,12 +57,7 @@ func (s *State) Resize(size base.Size) tea.Cmd {
 
 // Init implements base.state.
 func (s *State) Init(ctx context.Context) tea.Cmd {
-	return tea.Sequence(
-		s.viewport.Init(ctx),
-		func() tea.Msg {
-			return viewport.SetContentMsg(s.renderMetadata())
-		},
-	)
+	return s.viewport.Init(ctx)
 }
 
 // Update implements base.state.

@@ -9,7 +9,6 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/log"
-	"github.com/luevano/mangal/theme/color"
 	"github.com/pkg/errors"
 )
 
@@ -29,7 +28,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.help):
 			return m, m.toggleHelp()
 		case key.Matches(msg, m.keyMap.log):
-			return m, m.pushState(m.logState(Title{Text: "Logs", Background: color.Viewport}, log.Aggregate.String(), color.Viewport))
+			return m, m.pushState(m.logState())
 		}
 	case BackMsg:
 		return m, m.back(msg.Steps)
