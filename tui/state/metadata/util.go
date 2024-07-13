@@ -60,21 +60,19 @@ func (s *State) render(f field) string {
 	case metadata.Status:
 		str = string(value)
 	case metadata.Date:
-		// TODO: better handle possible missing parts of the date,
-		// should this be done in libmangal?
-		if value != (metadata.Date{}) {
-			str = value.String()
-		} else {
-			str = ""
-		}
+		str = value.String()
 	case metadata.ID:
-		str = value.IDRaw
+		if value.Code != "" {
+			name := f.name + "(" + value.Code + ")"
+			return s.renderField(name, str, f.width)
+		}
+		str = value.Raw
 	case []metadata.ID:
 		// convert IDS to rendered strings
 		strs := make([]string, len(value))
 		for i, id := range value {
-			style := s.meta.IDStyle(id.IDSource)
-			strs[i] = lipgloss.NewStyle().Foreground(style.Color).Render(style.Prefix+": ") + value[i].IDRaw
+			style := s.meta.IDStyle(id.Source)
+			strs[i] = lipgloss.NewStyle().Foreground(style.Color).Render(style.Prefix+": ") + value[i].Raw
 		}
 		return s.renderList(f.name, strs, lipgloss.NewStyle().Width(f.width))
 	default:

@@ -83,6 +83,6 @@ func allFields(meta metadata.Metadata) fields {
 		notes:           field{"Notes", meta.Notes(), descriptionSize},
 		url:             field{"URL", meta.URL(), urlSize},
 		id:              field{"ID", meta.ID(), idSize},
-		extraIDs:        field{"Extra IDs", meta.ExtraIDs(), extraIDsSize},
+		extraIDs:        field{"External IDs", meta.ExtraIDs(), extraIDsSize},
 	}
 }

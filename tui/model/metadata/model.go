@@ -47,13 +47,18 @@ func (m *Model) IDStyle(id metadata.IDSource) style {
 	case metadata.IDSourceAnimePlanet:
 		return m.styles.animePlanet
 	default:
+		if m.meta.ID().Code != "" {
+			s := m.styles.provider
+			s.Prefix = s.Prefix + "(" + m.meta.ID().Code + ")"
+			return s
+		}
 		return m.styles.provider
 	}
 }
 
 // updateStyle sets the style based on the current metadata.
 func (m *Model) updateStyle() {
-	m.currentStyle = m.IDStyle(m.meta.ID().IDSource)
+	m.currentStyle = m.IDStyle(m.meta.ID().Source)
 }
 
 // Init implements tea.Model.
@@ -74,7 +79,7 @@ func (m *Model) View() string {
 	}
 
 	sep := ": "
-	if id := m.meta.ID().IDRaw; id != "" {
+	if id := m.meta.ID().Raw; id != "" {
 		sep = " (" + id + "): "
 	}
 	return m.styles.base.Background(m.currentStyle.Color).Render(m.currentStyle.Prefix + sep + m.meta.Title() + year)
