@@ -38,7 +38,7 @@ func (s *state) KeyMap() help.KeyMap {
 
 // Title implements base.State.
 func (s *state) Title() base.Title {
-	return base.Title{Text: "Mangal"}
+	return base.Title{Text: "Home"}
 }
 
 // Subtitle implements base.State.

@@ -72,7 +72,11 @@ func (s *State) render(f field) string {
 		strs := make([]string, len(value))
 		for i, id := range value {
 			style := s.meta.IDStyle(id.Source)
-			strs[i] = lipgloss.NewStyle().Foreground(style.Color).Render(style.Prefix+": ") + value[i].Raw
+			prefix := style.Prefix
+			if id.Code != "" {
+				prefix = "[" + id.Code + "] " + prefix
+			}
+			strs[i] = lipgloss.NewStyle().Foreground(style.Color).Render(prefix+": ") + value[i].Raw
 		}
 		return s.renderList(f.name, strs, lipgloss.NewStyle().Width(f.width))
 	default:

@@ -48,7 +48,7 @@ func (s *state) KeyMap() help.KeyMap {
 // Title implements base.State.
 func (s *state) Title() base.Title {
 	return base.Title{
-		Text:       "Anilist Mangas",
+		Text:       "Anilist Search",
 		Background: color.Anilist,
 		Foreground: color.Bright,
 	}
@@ -57,7 +57,7 @@ func (s *state) Title() base.Title {
 // Subtitle implements base.State.
 func (s *state) Subtitle() string {
 	if !s.searched {
-		return "Search on Anilist"
+		return ""
 	}
 	return s.list.Subtitle()
 }

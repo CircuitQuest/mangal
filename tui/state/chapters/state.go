@@ -71,6 +71,9 @@ func (s *state) KeyMap() help.KeyMap {
 
 // Title implements base.State.
 func (s *state) Title() base.Title {
+	if s.volume != nil {
+		return base.Title{Text: "Volume " + s.volume.String()}
+	}
 	return base.Title{Text: s.manga.String()}
 }
 
@@ -92,19 +95,7 @@ func (s *state) Subtitle() string {
 
 // Status implements base.State.
 func (s *state) Status() string {
-	var status strings.Builder
-	status.Grow(40)
-
-	status.WriteString(s.meta.View())
-
-	if s.volume != nil {
-		status.WriteString(" Vol. ")
-		status.WriteString(s.volume.String())
-		status.WriteString(s.renderedSep)
-		status.WriteString(s.list.Status())
-		return status.String()
-	}
-	return status.String()
+	return s.meta.View() + " " + s.list.Status()
 }
 
 // Resize implements base.State.

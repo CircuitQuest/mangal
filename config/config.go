@@ -325,6 +325,11 @@ func initConfig() config {
 				Default:     true,
 				Description: "Skip home view when starting mangal and go straight to the providers view.",
 			}),
+			ShowBreadcrumbs: reg(entry[bool, bool]{
+				Key:         "tui.show_breadcrumbs",
+				Default:     true,
+				Description: `Show the view history breadcrumb at the top left of the screen. For example "Providers > MangaDex > 'Manga name'".`,
+			}),
 			ExpandAllVolumes: reg(entry[bool, bool]{
 				Key:         "tui.expand_all_volumes",
 				Default:     false,

@@ -2,7 +2,6 @@ package list
 
 import (
 	"context"
-	"fmt"
 	"slices"
 
 	"github.com/charmbracelet/bubbles/help"
@@ -45,21 +44,21 @@ func (s *State) Title() base.Title {
 // Subtitle implements base.State.
 func (s *State) Subtitle() string {
 	singular, plural := s.list.StatusBarItemName()
-	subtitle := stringutil.Quantify(len(s.list.VisibleItems()), singular, plural)
-	if s.FilterState() == list.FilterApplied {
-		return fmt.Sprintf("%s %q", subtitle, s.list.FilterValue())
-	}
-
-	return subtitle
+	return stringutil.Quantify(len(s.list.VisibleItems()), singular, plural)
 }
 
 // Status implements base.State.
 func (s *State) Status() string {
-	if s.FilterState() == list.Filtering {
-		return s.list.FilterInput.View()
+	var p string
+	if len(s.Items()) != 0 {
+		p = s.list.Paginator.View()
 	}
 
-	return s.list.Paginator.View()
+	if s.FilterState() == list.Filtering || s.list.FilterValue() != "" {
+		return s.list.Paginator.View() + " " + s.list.FilterInput.View()
+	}
+
+	return p
 }
 
 // Resize implements base.State. Wrapper of list.Model.

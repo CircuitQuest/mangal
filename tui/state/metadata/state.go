@@ -40,7 +40,7 @@ func (s *State) KeyMap() help.KeyMap {
 // Title implements base.state.
 func (s *State) Title() base.Title {
 	return base.Title{
-		Text:       "Metadata",
+		Text:       s.meta.Style().Prefix + " Metadata",
 		Background: s.meta.Style().Color,
 		Foreground: color.Bright,
 	}

@@ -17,9 +17,25 @@ func (m *model) View() string {
 	return lipgloss.JoinVertical(lipgloss.Left, header, state, footer)
 }
 
+func (m *model) viewBreadcrumb() string {
+	var bc strings.Builder
+	bc.Grow(100)
+	sep := m.styles.breadcrumb.sepStyle.Render(m.styles.breadcrumb.sep)
+	for _, s := range m.history.states {
+		bc.WriteString(m.styles.breadcrumb.state.Render(s.Title().Text))
+		bc.WriteString(sep)
+	}
+	return bc.String()
+}
+
 func (m *model) viewHeader() string {
 	var header strings.Builder
 	header.Grow(200)
+
+	if m.showBreadcrumbs {
+		header.WriteString(m.viewBreadcrumb())
+		header.WriteString("\n")
+	}
 
 	title := m.state.Title()
 	titleStyle := m.styles.title
@@ -46,7 +62,7 @@ func (m *model) viewHeader() string {
 		if m.loadingMessage != "" {
 			header.WriteString(m.spinner.View())
 		}
-		header.WriteString(m.styles.loading.Render(m.loadingMessage))
+		header.WriteString(m.styles.loading.message.Render(m.loadingMessage))
 	}
 
 	if m.showSubtitle {

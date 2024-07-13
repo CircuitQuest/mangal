@@ -80,6 +80,7 @@ type configDownloadMetadata struct {
 
 type configTUI struct {
 	SkipHome           *entry[bool, bool]
+	ShowBreadcrumbs    *entry[bool, bool]
 	ExpandAllVolumes   *entry[bool, bool]
 	ExpandSingleVolume *entry[bool, bool]
 	Chapter            configTUIChapter

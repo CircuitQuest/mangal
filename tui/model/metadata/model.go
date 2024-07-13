@@ -47,12 +47,9 @@ func (m *Model) IDStyle(id metadata.IDSource) style {
 	case metadata.IDSourceAnimePlanet:
 		return m.styles.animePlanet
 	default:
-		if m.meta.ID().Code != "" {
-			s := m.styles.provider
-			s.Prefix = s.Prefix + "(" + m.meta.ID().Code + ")"
-			return s
-		}
-		return m.styles.provider
+		s := m.styles.provider
+		s.Code = m.meta.ID().Code
+		return s
 	}
 }
 

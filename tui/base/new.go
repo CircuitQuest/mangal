@@ -7,8 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/theme/style"
-	"github.com/zyedidia/generic/stack"
+	"github.com/luevano/mangal/config"
 )
 
 func New(state State,
@@ -25,13 +24,13 @@ func New(state State,
 	_help.FullSeparator = HelpKeySeparator
 
 	_spinner := spinner.New(
-		spinner.WithSpinner(DotSpinner),
-		spinner.WithStyle(style.Bold.Accent),
+		spinner.WithSpinner(_styles.loading.spinner),
+		spinner.WithStyle(_styles.loading.spinnerStyle),
 	)
 
 	model := &model{
 		state:                       state,
-		history:                     stack.New[State](),
+		history:                     &history{},
 		ctx:                         ctx,
 		ctxCancel:                   ctxCancel,
 		styles:                      _styles,
@@ -39,6 +38,7 @@ func New(state State,
 		help:                        _help,
 		spinner:                     _spinner,
 		notificationDefaultDuration: time.Second,
+		showBreadcrumbs:             config.TUI.ShowBreadcrumbs.Get(),
 		showLoadingMessage:          true,
 		showSubtitle:                true,
 		errState:                    errState,
