@@ -53,7 +53,7 @@ func (s *State) Subtitle() string {
 
 // Status implements base.state.
 func (s *State) Status() string {
-	return s.meta.View() + " " + s.viewport.Status()
+	return s.viewport.Status()
 }
 
 // Resize implements base.state.

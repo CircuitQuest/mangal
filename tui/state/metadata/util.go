@@ -63,11 +63,11 @@ func (s *State) render(f field) string {
 	case metadata.Date:
 		str = value.String()
 	case metadata.ID:
+		str = value.Raw
 		if value.Code != "" {
 			name := f.name + "(" + value.Code + ")"
 			return s.renderField(name, str, f.width)
 		}
-		str = value.Raw
 	case []metadata.ID:
 		// convert IDS to rendered strings
 		strs := make([]string, len(value))
