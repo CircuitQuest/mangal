@@ -10,15 +10,16 @@ func Bind(help string, primaryKey string, extraKeys ...string) key.Binding {
 		keys[i+1] = k
 	}
 
-	var primaryKeyHelp string
-	if primaryKey == " " {
-		primaryKeyHelp = "space"
-	} else {
-		primaryKeyHelp = primaryKey
-	}
+	return BindNamedKey(primaryKey, help, keys...)
+}
 
+// BindNamedKey creates a keybind with specified help and list of keys.
+func BindNamedKey(keyHelp, help string, keys ...string) key.Binding {
+	if keyHelp == " " {
+		keyHelp = "space"
+	}
 	return key.NewBinding(
 		key.WithKeys(keys...),
-		key.WithHelp(primaryKeyHelp, help),
+		key.WithHelp(keyHelp, help),
 	)
 }
