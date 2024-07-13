@@ -8,22 +8,16 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/charmbracelet/lipgloss/list"
 	"github.com/luevano/libmangal/metadata"
-	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/theme/icon"
 	_style "github.com/luevano/mangal/theme/style"
+	"github.com/luevano/mangal/tui/util"
 )
 
 // TODO: handle wrapping for smaller terminals
 func (s *State) renderMetadata() string {
-	m := s.meta.Metadata()
-	f := allFields(m)
+	f := allFields(s.meta)
 
-	s.enumeratorStyle = lipgloss.NewStyle().
-		Foreground(s.meta.Style().Color).
-		MarginRight(1).
-		Padding(0, 0, 0, 2)
-
-	// prone to errros
+	// manually managing is prone to errros
 	l := make([]string, 12)
 	l[0] = jH(s.render(f.id), s.render(f.title))
 	l[1] = jH(s.render(f.status), s.render(f.chapters), s.render(f.startDate), s.render(f.endDate))
@@ -47,7 +41,7 @@ func (s *State) render(f field) string {
 	case string:
 		str = value
 	case []string:
-		return s.renderList(f.name, value, lipgloss.NewStyle().Width(f.width).Foreground(color.Secondary))
+		return s.renderList(f.name, value, _style.Normal.Secondary.Width(f.width))
 	case int:
 		if value != 0 {
 			str = strconv.Itoa(value)
@@ -64,15 +58,11 @@ func (s *State) render(f field) string {
 		str = value.String()
 	case metadata.ID:
 		str = value.Raw
-		if value.Code != "" {
-			name := f.name + "(" + value.Code + ")"
-			return s.renderField(name, str, f.width)
-		}
 	case []metadata.ID:
 		// convert IDS to rendered strings
 		strs := make([]string, len(value))
 		for i, id := range value {
-			style := s.meta.IDStyle(id.Source)
+			style := util.MetaIDStyle(id)
 			prefix := style.Prefix
 			if id.Code != "" {
 				prefix = "[" + id.Code + "] " + prefix
@@ -87,9 +77,7 @@ func (s *State) render(f field) string {
 }
 
 func (s *State) renderFieldName(name string) string {
-	return lipgloss.NewStyle().
-		Foreground(s.meta.Style().Color).
-		Render(icon.Item.Raw() + name + ":")
+	return s.styles.fieldName.Render(icon.Item.Raw() + name + ":")
 }
 
 func (s *State) renderField(name string, str string, width int) string {
@@ -100,7 +88,7 @@ func (s *State) renderField(name string, str string, width int) string {
 	if str == "" {
 		str = _style.Normal.Secondary.Render(strings.Repeat(".", width))
 	}
-	return jH(s.renderFieldName(name), lipgloss.NewStyle().Width(width).MaxWidth(width).UnsetMaxWidth().Render(str))
+	return jH(s.renderFieldName(name), lipgloss.NewStyle().Width(width).MaxWidth(width).Render(str))
 }
 
 func (s *State) renderList(name string, items []string, itemStyle lipgloss.Style) string {
@@ -108,10 +96,8 @@ func (s *State) renderList(name string, items []string, itemStyle lipgloss.Style
 		return s.renderField(name, "", 3)
 	}
 	l := list.New(items).
-		Enumerator(func(_ list.Items, _ int) string {
-			return icon.SubItem.Raw()
-		}).
-		EnumeratorStyle(s.enumeratorStyle).
+		Enumerator(s.styles.enum).
+		EnumeratorStyle(s.styles.enumerator).
 		ItemStyle(itemStyle)
 	// jV would insert a space inbetween
 	return lipgloss.JoinVertical(lipgloss.Left, s.renderFieldName(name), l.String())

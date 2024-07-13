@@ -29,7 +29,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.help):
 			return m, m.toggleHelp()
 		case key.Matches(msg, m.keyMap.log):
-			return m, m.pushState(m.logState("Logs", log.Aggregate.String(), color.Viewport))
+			return m, m.pushState(m.logState(Title{Text: "Logs", Background: color.Viewport}, log.Aggregate.String(), color.Viewport))
 		}
 	case BackMsg:
 		return m, m.back(msg.Steps)

@@ -5,10 +5,8 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/viewport"
 )
 
@@ -17,9 +15,9 @@ var _ base.State = (*State)(nil)
 // State implements base.State.
 type State struct {
 	viewport base.State
-	meta     *metadata.Model
+	meta     metadata.Metadata
 
-	enumeratorStyle lipgloss.Style
+	styles styles
 }
 
 // Intermediate implements base.state.
@@ -39,11 +37,7 @@ func (s *State) KeyMap() help.KeyMap {
 
 // Title implements base.state.
 func (s *State) Title() base.Title {
-	return base.Title{
-		Text:       s.meta.Style().Prefix + " Metadata",
-		Background: s.meta.Style().Color,
-		Foreground: color.Bright,
-	}
+	return s.viewport.Title()
 }
 
 // Subtitle implements base.state.

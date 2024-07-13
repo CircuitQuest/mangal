@@ -12,7 +12,6 @@ import (
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/model/search"
 	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
@@ -104,7 +103,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			return s.search.Focus()
 		case key.Matches(msg, s.keyMap.metadata):
 			return func() tea.Msg {
-				return metadataViewer.New(metadata.New(&i.manga))
+				return metadataViewer.New(&i.manga)
 			}
 		}
 	case search.SearchMsg:

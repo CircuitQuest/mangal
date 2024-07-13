@@ -12,7 +12,7 @@ import (
 
 func New(state State,
 	errState func(err error) State,
-	logState func(title, content string, color lipgloss.Color) State,
+	logState func(title Title, content string, borderColor lipgloss.Color) State,
 ) *model {
 	ctx, ctxCancel := context.WithCancel(context.Background())
 

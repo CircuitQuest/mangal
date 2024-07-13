@@ -65,7 +65,7 @@ func (i *item) updateMetadata() {
 // renderMetadata pre-renders the metadata for later use.
 func (i *item) renderMetadata() {
 	i.meta.ShowFull = false
-	i.renderedMeta = i.meta.View()
+	i.renderedMeta = " " + i.meta.View()
 	i.meta.ShowFull = true
-	i.renderedFullMeta = i.meta.View()
+	i.renderedFullMeta = " " + i.meta.View()
 }

@@ -109,7 +109,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			}
 		case key.Matches(msg, s.keyMap.metadata):
 			return func() tea.Msg {
-				return metadataViewer.New(i.meta)
+				return metadataViewer.New(i.manga.Metadata())
 			}
 		// TODO: only toggle for hovered/selected item? (both info and full info)
 		case key.Matches(msg, s.keyMap.info):

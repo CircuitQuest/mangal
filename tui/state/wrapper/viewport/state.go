@@ -16,7 +16,7 @@ var _ base.State = (*State)(nil)
 // State implements base.State. Wrapper of viewport.Model.
 type State struct {
 	viewport viewport.Model
-	title    string
+	title    base.Title
 	color    lipgloss.Color
 	keyMap   keyMap
 }
@@ -38,7 +38,7 @@ func (s *State) KeyMap() help.KeyMap {
 
 // Title implements base.State.
 func (s *State) Title() base.Title {
-	return base.Title{Text: s.title, Background: s.color}
+	return s.title
 }
 
 // Subtitle implements base.State.

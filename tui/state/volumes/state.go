@@ -92,7 +92,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			}
 		case key.Matches(msg, s.keyMap.metadata):
 			return func() tea.Msg {
-				return metadataViewer.New(s.meta)
+				return metadataViewer.New(s.manga.Metadata())
 			}
 		case key.Matches(msg, s.keyMap.info):
 			s.meta.ShowFull = !s.meta.ShowFull

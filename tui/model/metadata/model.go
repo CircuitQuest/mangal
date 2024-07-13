@@ -4,18 +4,20 @@ import (
 	"strconv"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal/metadata"
+	"github.com/luevano/mangal/tui/util"
 )
 
 var _ tea.Model = (*Model)(nil)
 
 // Model implements tea.Model.
 type Model struct {
-	meta   metadata.Metadata
-	styles styles
+	meta  metadata.Metadata
+	style lipgloss.Style
 
-	currentStyle style
-	ShowFull     bool
+	metaStyle util.MetaStyle
+	ShowFull  bool
 }
 
 // SetMetadata replaces the current metadata and updates the style.
@@ -24,38 +26,9 @@ func (m *Model) SetMetadata(meta metadata.Metadata) {
 	m.updateStyle()
 }
 
-// Metadata returns the current metadata.
-func (m *Model) Metadata() metadata.Metadata {
-	return m.meta
-}
-
-// Style returns the style based on the current metadata.
-func (m *Model) Style() style {
-	return m.currentStyle
-}
-
-func (m *Model) IDStyle(id metadata.IDSource) style {
-	switch id {
-	case metadata.IDSourceAnilist:
-		return m.styles.anilist
-	case metadata.IDSourceMyAnimeList:
-		return m.styles.myAnimeList
-	case metadata.IDSourceKitsu:
-		return m.styles.kitsu
-	case metadata.IDSourceMangaUpdates:
-		return m.styles.mangaUpdates
-	case metadata.IDSourceAnimePlanet:
-		return m.styles.animePlanet
-	default:
-		s := m.styles.provider
-		s.Code = m.meta.ID().Code
-		return s
-	}
-}
-
 // updateStyle sets the style based on the current metadata.
 func (m *Model) updateStyle() {
-	m.currentStyle = m.IDStyle(m.meta.ID().Source)
+	m.metaStyle = util.MetaIDStyle(m.meta.ID())
 }
 
 // Init implements tea.Model.
@@ -70,14 +43,23 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // View implements tea.Model.
 func (m *Model) View() string {
-	year := " (" + strconv.Itoa(m.meta.StartDate().Year) + ")"
-	if !m.ShowFull {
-		return m.styles.base.Background(m.currentStyle.Color).Render(m.meta.Title() + year)
+	var y string
+	if m.meta.StartDate().Year != 0 {
+		y = " (" + strconv.Itoa(m.meta.StartDate().Year) + ")"
 	}
 
-	sep := ": "
-	if id := m.meta.ID().Raw; id != "" {
-		sep = " (" + id + "): "
+	if !m.ShowFull {
+		return m.style.Background(m.metaStyle.Color).Render(m.meta.Title() + y)
 	}
-	return m.styles.base.Background(m.currentStyle.Color).Render(m.currentStyle.Prefix + sep + m.meta.Title() + year)
+
+	i := ": "
+	if id := m.meta.ID().Raw; id != "" {
+		i = " (" + id + "): "
+	}
+
+	p := m.meta.ID().Code
+	if p != "" {
+		p = "[" + p + "] "
+	}
+	return m.style.Background(m.metaStyle.Color).Render(p + m.metaStyle.Prefix + i + m.meta.Title() + y)
 }
