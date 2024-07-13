@@ -58,9 +58,11 @@ func New[T any](
 
 	l.SetStatusBarItemName(singular, plural)
 
-	return &State{
+	s := &State{
 		list:     l,
 		delegate: &delegate,
 		keyMap:   newKeyMap(l.KeyMap, other),
 	}
+	s.updateKeybinds(len(items) != 0)
+	return s
 }

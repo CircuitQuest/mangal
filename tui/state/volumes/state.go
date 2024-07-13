@@ -27,7 +27,7 @@ type state struct {
 	manga   mangadata.Manga
 	client  *libmangal.Client
 
-	keyMap keyMap
+	keyMap *keyMap
 }
 
 // Intermediate implements base.State.

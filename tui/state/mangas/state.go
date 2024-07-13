@@ -25,7 +25,7 @@ type state struct {
 
 	searched bool
 
-	keyMap keyMap
+	keyMap *keyMap
 }
 
 // Intermediate implements base.State.
@@ -86,11 +86,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			goto end
 		}
 
-		i, ok := s.list.SelectedItem().(*item)
-		if !ok {
-			return nil
-		}
-
+		// don't return on nil item, keybinds will be disabled for relevant actions
+		i, _ := s.list.SelectedItem().(*item)
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
 			if config.Download.Metadata.Search.Get() {
@@ -127,4 +124,8 @@ func (s *state) View() string {
 		s.search.View(),
 		s.list.View(),
 	)
+}
+
+func (s *state) updateKeybinds() {
+	s.keyMap.confirm.SetEnabled(len(s.list.Items()) != 0)
 }

@@ -49,9 +49,9 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 
 			return item
 		},
-		_keyMap)
+		&_keyMap)
 
-	return &state{
+	s := &state{
 		list:              listWrapper,
 		meta:              metadata.New(manga.Metadata()),
 		chapters:          chapters,
@@ -65,6 +65,8 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		showGroup:         &showGroup,
 		showDate:          &showDate,
 		styles:            _styles,
-		keyMap:            _keyMap,
+		keyMap:            &_keyMap,
 	}
+	s.updateKeybinds()
+	return s
 }

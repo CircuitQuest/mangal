@@ -31,6 +31,7 @@ func (s *state) searchMangasCmd(ctx context.Context, query string) tea.Cmd {
 			s.list.SetItems(items)
 
 			s.searched = true
+			s.updateKeybinds()
 			return nil
 		},
 		base.Loaded,

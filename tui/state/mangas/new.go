@@ -17,14 +17,15 @@ func New(client *libmangal.Client) *state {
 		func(manga mangadata.Manga) _list.DefaultItem {
 			return &item{manga}
 		},
-		_keyMap)
+		&_keyMap)
 
 	s := &state{
 		list:   listWrapper,
 		search: search.New("Search manga...", ""),
 		client: client,
-		keyMap: _keyMap,
+		keyMap: &_keyMap,
 	}
+	s.updateKeybinds()
 
 	return s
 }

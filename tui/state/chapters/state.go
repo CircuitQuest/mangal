@@ -42,13 +42,16 @@ type state struct {
 	// only blocks keymaps handled by Update for read/download
 	actionRunning string
 
+	// if the actions that require an item are available
+	actionItemAvailable bool
+
 	showVolumeNumber  *bool
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
 
 	styles styles
-	keyMap keyMap
+	keyMap *keyMap
 }
 
 // Intermediate implements base.State.
@@ -123,11 +126,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			goto end
 		}
 
-		i, ok := s.list.SelectedItem().(*item)
-		if !ok {
-			return nil
-		}
-
+		// don't return on nil item, keybinds will be disabled for relevant actions
+		i, _ := s.list.SelectedItem().(*item)
 		switch {
 		case key.Matches(msg, s.keyMap.toggle):
 			i.toggle()
@@ -137,14 +137,26 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				s.selected.Remove(i)
 			}
 			return nil
+		case key.Matches(msg, s.keyMap.read):
+			return s.readCmd(ctx, i)
+		case key.Matches(msg, s.keyMap.download):
+			return s.downloadCmd(ctx, i)
 		case key.Matches(msg, s.keyMap.info):
 			s.meta.ShowFull = !s.meta.ShowFull
-		case key.Matches(msg, s.keyMap.unselectAll):
-			for _, item := range s.selected.Keys() {
-				item.toggle()
-				s.selected.Remove(item)
+		case key.Matches(msg, s.keyMap.anilist):
+			return func() tea.Msg {
+				return anilist.New(s.client.Anilist(), s.manga)
 			}
-			return nil
+		case key.Matches(msg, s.keyMap.metadata):
+			return func() tea.Msg {
+				return metadataViewer.New(s.meta)
+			}
+		case key.Matches(msg, s.keyMap.changeFormat):
+			return func() tea.Msg {
+				return formats.New()
+			}
+		case key.Matches(msg, s.keyMap.openURL):
+			return s.openURLCmd(i.chapter)
 		case key.Matches(msg, s.keyMap.selectAll):
 			for _, listItem := range s.list.Items() {
 				it, ok := listItem.(*item)
@@ -158,24 +170,12 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				}
 			}
 			return nil
-		case key.Matches(msg, s.keyMap.changeFormat):
-			return func() tea.Msg {
-				return formats.New()
+		case key.Matches(msg, s.keyMap.unselectAll):
+			for _, item := range s.selected.Keys() {
+				item.toggle()
+				s.selected.Remove(item)
 			}
-		case key.Matches(msg, s.keyMap.openURL):
-			return s.openURLCmd(i.chapter)
-		case key.Matches(msg, s.keyMap.download):
-			return s.downloadCmd(ctx, i)
-		case key.Matches(msg, s.keyMap.read):
-			return s.readCmd(ctx, i)
-		case key.Matches(msg, s.keyMap.anilist):
-			return func() tea.Msg {
-				return anilist.New(s.client.Anilist(), s.manga)
-			}
-		case key.Matches(msg, s.keyMap.metadata):
-			return func() tea.Msg {
-				return metadataViewer.New(s.meta)
-			}
+			return nil
 		case key.Matches(msg, s.keyMap.toggleVolumeNumber):
 			*s.showVolumeNumber = !(*s.showVolumeNumber)
 		case key.Matches(msg, s.keyMap.toggleChapterNumber):

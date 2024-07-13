@@ -24,7 +24,7 @@ var _ base.State = (*state)(nil)
 // state implements base.state.
 type state struct {
 	list   *list.State
-	keyMap keyMap
+	keyMap *keyMap
 }
 
 // Intermediate implements base.State.

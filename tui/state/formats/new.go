@@ -15,10 +15,10 @@ func New() *state {
 		func(format libmangal.Format) _list.DefaultItem {
 			return &item{format: format}
 		},
-		_keyMap)
+		&_keyMap)
 
 	return &state{
 		list:   listWrapper,
-		keyMap: _keyMap,
+		keyMap: &_keyMap,
 	}
 }

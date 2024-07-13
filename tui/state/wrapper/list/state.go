@@ -123,6 +123,8 @@ func (s *State) Items() []list.Item {
 
 // SetItems is a wrapper of list.Model.
 func (s *State) SetItems(items []list.Item) tea.Cmd {
+	s.updateKeybinds(len(items) != 0)
+	s.list.ResetSelected()
 	return s.list.SetItems(items)
 }
 
@@ -155,4 +157,9 @@ func (s *State) SetDelegateHeight(height int) {
 	}
 	s.delegate.SetHeight(height)
 	s.list.SetDelegate(s.delegate)
+}
+
+// updateKeybinds will enable/disable relevant keys.
+func (s *State) updateKeybinds(enable bool) {
+	s.keyMap.reverse.SetEnabled(enable)
 }

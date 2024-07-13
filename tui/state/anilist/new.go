@@ -17,7 +17,7 @@ func New(anilist *lmanilist.Anilist, manga mangadata.Manga) *state {
 		func(manga lmanilist.Manga) _list.DefaultItem {
 			return &item{manga: manga}
 		},
-		_keyMap)
+		&_keyMap)
 
 	title := manga.Info().AnilistSearch
 	if title == "" {
@@ -28,8 +28,8 @@ func New(anilist *lmanilist.Anilist, manga mangadata.Manga) *state {
 		search:  search.New("Search anilist manga...", title),
 		manga:   manga,
 		list:    listWrapper,
-		keyMap:  _keyMap,
+		keyMap:  &_keyMap,
 	}
-
+	s.updateKeybinds()
 	return s
 }

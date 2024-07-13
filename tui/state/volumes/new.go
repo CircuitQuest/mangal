@@ -17,7 +17,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Vo
 		func(volume mangadata.Volume) _list.DefaultItem {
 			return &item{volume}
 		},
-		_keyMap)
+		&_keyMap)
 
 	return &state{
 		list:    listWrapper,
@@ -25,6 +25,6 @@ func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Vo
 		volumes: volumes,
 		manga:   manga,
 		client:  client,
-		keyMap:  _keyMap,
+		keyMap:  &_keyMap,
 	}
 }

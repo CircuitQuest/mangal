@@ -20,7 +20,7 @@ type state struct {
 	list      *list.State
 	loaded    *set.Set[*item]
 	extraInfo *bool
-	keyMap    keyMap
+	keyMap    *keyMap
 }
 
 // Intermediate implements base.State.

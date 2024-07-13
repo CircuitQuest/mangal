@@ -36,3 +36,22 @@ func (s *state) updateRenderedSubtitleFormats() {
 		s.styles.subtitle.Render(" & read ") +
 		s.styles.format.Render(config.Read.Format.Get().String())
 }
+
+// updateKeybinds enables/disables keybinds whose actions require an item
+// (either to perform an action, or change something visually).
+func (s *state) updateKeybinds() {
+	enable := len(s.list.Items()) != 0
+	// require item
+	s.keyMap.toggle.SetEnabled(enable)
+	s.keyMap.read.SetEnabled(enable)
+	s.keyMap.download.SetEnabled(enable)
+	s.keyMap.openURL.SetEnabled(enable)
+	s.keyMap.selectAll.SetEnabled(enable)
+	s.keyMap.unselectAll.SetEnabled(enable)
+
+	// only make sense when there are items
+	s.keyMap.toggleVolumeNumber.SetEnabled(enable)
+	s.keyMap.toggleChapterNumber.SetEnabled(enable)
+	s.keyMap.toggleGroup.SetEnabled(enable)
+	s.keyMap.toggleDate.SetEnabled(enable)
+}

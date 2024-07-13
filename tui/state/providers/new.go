@@ -22,12 +22,12 @@ func New(loaders []libmangal.ProviderLoader) *state {
 				extraInfo:   &extraInfo,
 			}
 		},
-		_keyMap)
+		&_keyMap)
 
 	return &state{
 		list:      listWrapper,
 		loaded:    &loaded,
 		extraInfo: &extraInfo,
-		keyMap:    _keyMap,
+		keyMap:    &_keyMap,
 	}
 }
