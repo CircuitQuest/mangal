@@ -10,20 +10,24 @@ import (
 
 func New(client *libmangal.Client) *state {
 	_keyMap := newKeyMap()
+	info := false
+	fullInfo := false
 	listWrapper := list.New(
 		2,
 		"manga", "mangas",
 		nil,
 		func(manga mangadata.Manga) _list.DefaultItem {
-			return &item{manga}
+			return newItem(manga, &info, &fullInfo)
 		},
 		&_keyMap)
 
 	s := &state{
-		list:   listWrapper,
-		search: search.New("Search manga...", ""),
-		client: client,
-		keyMap: &_keyMap,
+		list:          listWrapper,
+		search:        search.New("Search manga...", ""),
+		client:        client,
+		extraInfo:     &info,
+		fullExtraInfo: &fullInfo,
+		keyMap:        &_keyMap,
 	}
 	s.updateKeybinds()
 

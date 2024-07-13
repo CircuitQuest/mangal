@@ -12,6 +12,8 @@ import (
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/search"
+	"github.com/luevano/mangal/tui/state/anilist"
+	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
@@ -21,9 +23,13 @@ var _ base.State = (*state)(nil)
 type state struct {
 	list   *list.State
 	search *search.Model
+
 	client *libmangal.Client
 
 	searched bool
+
+	extraInfo     *bool
+	fullExtraInfo *bool
 
 	keyMap *keyMap
 }
@@ -97,6 +103,20 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, s.keyMap.search):
 			s.list.ResetFilter()
 			return s.search.Focus()
+		case key.Matches(msg, s.keyMap.anilist):
+			return func() tea.Msg {
+				return anilist.New(s.client.Anilist(), i.manga)
+			}
+		case key.Matches(msg, s.keyMap.metadata):
+			return func() tea.Msg {
+				return metadataViewer.New(i.meta)
+			}
+		// TODO: only toggle for hovered/selected item? (both info and full info)
+		case key.Matches(msg, s.keyMap.info):
+			*s.extraInfo = !(*s.extraInfo)
+			s.updateKeybinds() // to enable/disable toggleFullMetadata kb
+		case key.Matches(msg, s.keyMap.toggleFullMeta):
+			*s.fullExtraInfo = !(*s.fullExtraInfo)
 		}
 	case search.SearchMsg:
 		return s.searchMangasCmd(ctx, string(msg))
@@ -104,6 +124,9 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		if s.search.Query() == "" {
 			return base.Back
 		}
+	case base.RestoredMsg:
+		// in case that the metadata was updated, update all items
+		s.updateAllItems()
 	}
 end:
 	if s.search.State() == search.Searching {
@@ -124,8 +147,4 @@ func (s *state) View() string {
 		s.search.View(),
 		s.list.View(),
 	)
-}
-
-func (s *state) updateKeybinds() {
-	s.keyMap.confirm.SetEnabled(len(s.list.Items()) != 0)
 }

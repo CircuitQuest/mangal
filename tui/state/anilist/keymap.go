@@ -12,6 +12,7 @@ func newKeyMap() keyMap {
 	return keyMap{
 		confirm:       util.Bind("confirm", "enter"),
 		search:        util.Bind("search", "s"),
+		metadata:      util.Bind("metadata", "m"),
 		cancelSearch:  util.Bind("cancel search", "esc"),
 		confirmSearch: util.Bind("confirm search", "enter"),
 	}
@@ -21,6 +22,7 @@ func newKeyMap() keyMap {
 type keyMap struct {
 	confirm,
 	search,
+	metadata,
 	cancelSearch,
 	confirmSearch key.Binding
 }
@@ -30,6 +32,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
 		k.confirm,
 		k.search,
+		k.metadata,
 	}
 }
 

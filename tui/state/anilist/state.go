@@ -12,7 +12,9 @@ import (
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/model/search"
+	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
@@ -100,6 +102,10 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, s.keyMap.search):
 			s.list.ResetFilter()
 			return s.search.Focus()
+		case key.Matches(msg, s.keyMap.metadata):
+			return func() tea.Msg {
+				return metadataViewer.New(metadata.New(&i.manga))
+			}
 		}
 	case search.SearchMsg:
 		return s.searchCmd(ctx, string(msg))
@@ -126,5 +132,7 @@ func (s *state) View() string {
 }
 
 func (s *state) updateKeybinds() {
-	s.keyMap.confirm.SetEnabled(len(s.list.Items()) != 0)
+	enable := len(s.list.Items()) != 0
+	s.keyMap.confirm.SetEnabled(enable)
+	s.keyMap.metadata.SetEnabled(enable)
 }

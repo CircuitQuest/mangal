@@ -26,7 +26,7 @@ func (s *state) searchMangasCmd(ctx context.Context, query string) tea.Cmd {
 
 			items := make([]list.Item, len(mangas))
 			for i, m := range mangas {
-				items[i] = &item{manga: m}
+				items[i] = newItem(m, s.extraInfo, s.fullExtraInfo)
 			}
 			s.list.SetItems(items)
 
