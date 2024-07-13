@@ -79,5 +79,5 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 
 // View implements base.State.
 func (s *state) View() string {
-	return fmt.Sprintf("%s %s", icon.Confirm, s.message)
+	return fmt.Sprintf("%s %s", icon.Confirm.Colored(), s.message)
 }

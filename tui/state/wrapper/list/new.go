@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/paginator"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/theme/icon"
 )
 
 func New[T any](
@@ -46,6 +47,7 @@ func New[T any](
 	delegate.SetHeight(delegateHeight)
 
 	l := list.New(listItems, delegate, 0, 0)
+	l.FilterInput.Prompt = icon.Filter.Raw() + " "
 	l.SetShowHelp(false)
 	l.SetShowFilter(false)
 	l.SetShowStatusBar(false)

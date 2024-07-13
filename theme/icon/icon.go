@@ -14,7 +14,15 @@ type icon struct {
 type symbols map[Type]string
 
 func (i icon) String() string {
+	return i.Raw() // by default return the uncolored version
+}
+
+func (i icon) Colored() string {
 	return style.Bold.Base.Foreground(i.color).Render(i.symbols[currentType])
+}
+
+func (i icon) Raw() string {
+	return i.symbols[currentType]
 }
 
 var (
@@ -98,12 +106,59 @@ var (
 		},
 	}
 
-	// TODO: set a color, currently uncolored as it can't be changed later
-	Field = icon{
-		color: lipgloss.NoColor{},
+	Filter = icon{
+		color: color.Warning,
+		symbols: symbols{
+			TypeASCII: "f",
+			TypeNerd:  "\uF0B0",
+		},
+	}
+
+	Item = icon{
+		color: color.Accent,
 		symbols: symbols{
 			TypeASCII: ">",
-			TypeNerd:  "\U000F040A",
+			TypeNerd:  "\uF101",
+		},
+	}
+
+	SubItem = icon{
+		color: color.Accent,
+		symbols: symbols{
+			TypeASCII: "-",
+			TypeNerd:  "\uF105",
+		},
+	}
+
+	LeftHardDivider = icon{
+		color: color.Accent,
+		symbols: symbols{
+			TypeASCII: ">",
+			TypeNerd:  "\uE0B0",
+		},
+	}
+
+	LeftSoftDivider = icon{
+		color: color.Accent,
+		symbols: symbols{
+			TypeASCII: ">",
+			TypeNerd:  "\uE0B1",
+		},
+	}
+
+	RightHardDivider = icon{
+		color: color.Accent,
+		symbols: symbols{
+			TypeASCII: "<",
+			TypeNerd:  "\uE0B2",
+		},
+	}
+
+	RightSoftDivider = icon{
+		color: color.Accent,
+		symbols: symbols{
+			TypeASCII: "<",
+			TypeNerd:  "\uE0B3",
 		},
 	}
 )

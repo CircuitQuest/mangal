@@ -79,12 +79,12 @@ func (i *item) Title() string {
 
 	if i.selected {
 		title.WriteString(i.renderedSep)
-		title.WriteString(icon.Mark.String())
+		title.WriteString(icon.Mark.Colored())
 	}
 
 	if i.readAvailablePath != "" {
 		title.WriteString(i.renderedSep)
-		title.WriteString(icon.Available.String())
+		title.WriteString(icon.Available.Colored())
 	}
 
 	if i.renderedDownloadedFormats != "" {
@@ -188,7 +188,7 @@ func (i *item) renderDownloadedFormats() {
 	if i.downloadedFormats.Size() > 0 {
 		var formats strings.Builder
 		formats.Grow(50)
-		formats.WriteString(icon.Download.String())
+		formats.WriteString(icon.Download.Colored())
 
 		// So that formats will be displayed in the same order
 		for _, format := range libmangal.FormatValues() {

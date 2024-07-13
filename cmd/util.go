@@ -14,11 +14,11 @@ import (
 )
 
 func successf(cmd *cobra.Command, format string, a ...any) {
-	cmd.Printf(fmt.Sprintf("%s %s\n", icon.Check, format), a...)
+	cmd.Printf(fmt.Sprintf("%s %s\n", icon.Check.Colored(), format), a...)
 }
 
 func errorf(cmd *cobra.Command, format string, a ...any) {
-	cmd.PrintErrf(fmt.Sprintf("%s %s\n", icon.Cross, format), a...)
+	cmd.PrintErrf(fmt.Sprintf("%s %s\n", icon.Cross.Colored(), format), a...)
 	os.Exit(1)
 }
 

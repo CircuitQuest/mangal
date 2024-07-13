@@ -6,7 +6,6 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/icon"
-	"github.com/luevano/mangal/theme/style"
 )
 
 func New(placeholder, initialQuery string) *Model {
@@ -16,8 +15,7 @@ func New(placeholder, initialQuery string) *Model {
 		input.Placeholder = "Search..."
 	}
 
-	input.Prompt = icon.Search.String() + " "
-	input.PromptStyle = style.Bold.Warning
+	input.Prompt = icon.Search.Colored() + " "
 	input.CharLimit = 64
 
 	initState := Unsearched

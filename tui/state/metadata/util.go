@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss/list"
 	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/theme/icon"
 	_style "github.com/luevano/mangal/theme/style"
 )
 
@@ -86,12 +87,9 @@ func (s *State) render(f field) string {
 }
 
 func (s *State) renderFieldName(name string) string {
-	// TODO: use icon.Field once the reset style is fixed where
-	// once a style is applied, a style on top will be cut off
-	// by the first one (due to the "reset" ansi code)
 	return lipgloss.NewStyle().
 		Foreground(s.meta.Style().Color).
-		Render(">" + name + ":")
+		Render(icon.Item.Raw() + name + ":")
 }
 
 func (s *State) renderField(name string, str string, width int) string {
@@ -110,7 +108,9 @@ func (s *State) renderList(name string, items []string, itemStyle lipgloss.Style
 		return s.renderField(name, "", 3)
 	}
 	l := list.New(items).
-		Enumerator(list.Dash).
+		Enumerator(func(_ list.Items, _ int) string {
+			return icon.SubItem.Raw()
+		}).
 		EnumeratorStyle(s.enumeratorStyle).
 		ItemStyle(itemStyle)
 	// jV would insert a space inbetween

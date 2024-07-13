@@ -23,7 +23,7 @@ func (s *state) viewDownloading() string {
 %s
 
 %s %s`,
-		icon.Progress,
+		icon.Progress.Colored(),
 		s.toDownload[s.currentIdx].String(),
 		s.currentIdx+1, len(s.toDownload),
 		s.progress.ViewAs(float64(s.currentIdx)/float64(len(s.toDownload))),

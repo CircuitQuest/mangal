@@ -38,7 +38,7 @@ func (i *item) Title() string {
 
 	if i.isLoaded() {
 		title.WriteString(" ")
-		title.WriteString(icon.Check.String())
+		title.WriteString(icon.Check.Colored())
 		if *i.extraInfo {
 			timeAgo := fmt.Sprintf(" loaded %s ago", time.Since(i.loadTime).Truncate(time.Second).String())
 			title.WriteString(style.Normal.Secondary.Render(timeAgo))
