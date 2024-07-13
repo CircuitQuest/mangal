@@ -14,7 +14,13 @@ var (
 	Viewport   = lipgloss.Color("#008080")
 
 	// Available only as colors
-	Bright   = lipgloss.Color("#FEFEFE")
-	Provider = lipgloss.Color("#5604b5")
-	Anilist  = lipgloss.Color("#02A9FF")
+	Bright = lipgloss.Color("#FEFEFE")
+
+	// Metadata provider colors
+	Provider     = lipgloss.Color("#f26f63")
+	Anilist      = lipgloss.Color("#02A9FF") // #1E2630
+	MyAnimeList  = lipgloss.Color("#2E51A2")
+	Kitsu        = lipgloss.Color("#F75239") // #312631
+	MangaUpdates = lipgloss.Color("#F28A2E") // no clear code available
+	AnimePlanet  = lipgloss.Color("#A72A2D") // #1C3867 #2E4F83 #F69330 #E65448 #A72A2D // not exact
 )

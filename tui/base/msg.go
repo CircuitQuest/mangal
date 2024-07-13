@@ -25,3 +25,7 @@ type LoadingMsg struct {
 
 // RestoredMsg is sent when going back to the state.
 type RestoredMsg struct{}
+
+type ShowLoadingMsg bool
+
+type ShowSubtitleMsg bool

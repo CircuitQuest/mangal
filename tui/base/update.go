@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/log"
+	"github.com/luevano/mangal/theme/color"
 	"github.com/pkg/errors"
 )
 
@@ -28,10 +29,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.help):
 			return m, m.toggleHelp()
 		case key.Matches(msg, m.keyMap.log):
-			// fixes empty space above viewport
-			m.showLoadingMessage = false
-			m.showSubtitle = false
-			return m, m.pushState(m.logState("Logs", log.Aggregate.String()))
+			return m, m.pushState(m.logState("Logs", log.Aggregate.String(), color.Viewport))
 		}
 	case BackMsg:
 		return m, m.back(msg.Steps)
@@ -54,6 +52,12 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.notify(msg.Message, msg.Duration)
 	case NotificationTimeoutMsg:
 		return m, m.hideNotification()
+	case ShowLoadingMsg:
+		m.showLoadingMessage = bool(msg)
+		return m, m.resizeState()
+	case ShowSubtitleMsg:
+		m.showSubtitle = bool(msg)
+		return m, m.resizeState()
 	case error:
 		if errors.Is(msg, context.Canceled) || strings.Contains(msg.Error(), context.Canceled.Error()) {
 			return m, nil
@@ -82,7 +86,7 @@ func (m *model) resizeState() tea.Cmd {
 
 // back to the previous State
 func (m *model) back(steps int) tea.Cmd {
-	// currently only necessary after coming from viewport(logs) state
+	// currently only necessary after coming from viewport state
 	m.showLoadingMessage = true
 	m.showSubtitle = true
 	// do not pop the last state

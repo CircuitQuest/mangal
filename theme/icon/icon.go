@@ -97,4 +97,13 @@ var (
 			TypeNerd:  "\uEB28",
 		},
 	}
+
+	// TODO: set a color, currently uncolored as it can't be changed later
+	Field = icon{
+		color: lipgloss.NoColor{},
+		symbols: symbols{
+			TypeASCII: ">",
+			TypeNerd:  "\U000F040A",
+		},
+	}
 )

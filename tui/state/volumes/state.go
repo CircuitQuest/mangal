@@ -12,6 +12,7 @@ import (
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
+	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
@@ -88,6 +89,10 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.anilist):
 			return func() tea.Msg {
 				return anilist.New(s.client.Anilist(), s.manga)
+			}
+		case key.Matches(msg, s.keyMap.metadata):
+			return func() tea.Msg {
+				return metadataViewer.New(s.meta)
 			}
 		case key.Matches(msg, s.keyMap.info):
 			s.meta.ShowFull = !s.meta.ShowFull

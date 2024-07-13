@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal/metadata"
 )
 
@@ -12,13 +11,11 @@ var _ tea.Model = (*Model)(nil)
 
 // Model implements tea.Model.
 type Model struct {
-	meta metadata.Metadata
-
+	meta   metadata.Metadata
 	styles styles
-	style  lipgloss.Style
-	prefix string
 
-	ShowFull bool
+	currentStyle style
+	ShowFull     bool
 }
 
 // SetMetadata replaces the current metadata and updates the style.
@@ -27,16 +24,36 @@ func (m *Model) SetMetadata(meta metadata.Metadata) {
 	m.updateStyle()
 }
 
+// Metadata returns the current metadata.
+func (m *Model) Metadata() metadata.Metadata {
+	return m.meta
+}
+
+// Style returns the style based on the current metadata.
+func (m *Model) Style() style {
+	return m.currentStyle
+}
+
+func (m *Model) IDStyle(id metadata.IDSource) style {
+	switch id {
+	case metadata.IDSourceAnilist:
+		return m.styles.anilist
+	case metadata.IDSourceMyAnimeList:
+		return m.styles.myAnimeList
+	case metadata.IDSourceKitsu:
+		return m.styles.kitsu
+	case metadata.IDSourceMangaUpdates:
+		return m.styles.mangaUpdates
+	case metadata.IDSourceAnimePlanet:
+		return m.styles.animePlanet
+	default:
+		return m.styles.provider
+	}
+}
+
 // updateStyle sets the style based on the current metadata.
 func (m *Model) updateStyle() {
-	switch m.meta.ID().IDSource {
-	case metadata.IDSourceAnilist:
-		m.style = m.styles.anilist
-		m.prefix = "Anilist"
-	default:
-		m.style = m.styles.provider
-		m.prefix = "Provider"
-	}
+	m.currentStyle = m.IDStyle(m.meta.ID().IDSource)
 }
 
 // Init implements tea.Model.
@@ -53,12 +70,12 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *Model) View() string {
 	year := " (" + strconv.Itoa(m.meta.StartDate().Year) + ")"
 	if !m.ShowFull {
-		return m.style.Render(m.meta.Title() + year)
+		return m.styles.base.Background(m.currentStyle.Color).Render(m.meta.Title() + year)
 	}
 
 	sep := ": "
 	if id := m.meta.ID().IDRaw; id != "" {
 		sep = " (" + id + "): "
 	}
-	return m.style.Render(m.prefix + sep + m.meta.Title() + year)
+	return m.styles.base.Background(m.currentStyle.Color).Render(m.currentStyle.Prefix + sep + m.meta.Title() + year)
 }

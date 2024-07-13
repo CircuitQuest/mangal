@@ -3,18 +3,33 @@ package metadata
 import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/color"
-	"github.com/luevano/mangal/theme/style"
+	_style "github.com/luevano/mangal/theme/style"
 )
 
+type style struct {
+	Color  lipgloss.Color
+	Prefix string
+}
+
 type styles struct {
+	base lipgloss.Style
+
 	provider,
-	anilist lipgloss.Style
+	anilist,
+	myAnimeList,
+	kitsu,
+	mangaUpdates,
+	animePlanet style
 }
 
 func defaultStyles() styles {
-	baseStyle := style.Normal.Base.Padding(0, 1).Foreground(color.Bright)
 	return styles{
-		provider: baseStyle.Background(color.Provider),
-		anilist:  baseStyle.Background(color.Anilist),
+		base:         _style.Normal.Base.Padding(0, 1).Foreground(color.Bright),
+		provider:     style{color.Provider, "Provider"},
+		anilist:      style{color.Anilist, "Anilist"},
+		myAnimeList:  style{color.MyAnimeList, "MyAnimeList"},
+		kitsu:        style{color.Kitsu, "Kitsu"},
+		mangaUpdates: style{color.MangaUpdates, "MangaUpdates"},
+		animePlanet:  style{color.AnimePlanet, "AnimePlanet"},
 	}
 }

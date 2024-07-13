@@ -15,6 +15,7 @@ import (
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
 	"github.com/luevano/mangal/tui/state/formats"
+	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/zyedidia/generic/set"
 )
@@ -170,6 +171,10 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, s.keyMap.anilist):
 			return func() tea.Msg {
 				return anilist.New(s.client.Anilist(), s.manga)
+			}
+		case key.Matches(msg, s.keyMap.metadata):
+			return func() tea.Msg {
+				return metadataViewer.New(s.meta)
 			}
 		case key.Matches(msg, s.keyMap.toggleVolumeNumber):
 			*s.showVolumeNumber = !(*s.showVolumeNumber)

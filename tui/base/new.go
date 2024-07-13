@@ -6,13 +6,14 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/style"
 	"github.com/zyedidia/generic/stack"
 )
 
 func New(state State,
 	errState func(err error) State,
-	logState func(title, content string) State,
+	logState func(title, content string, color lipgloss.Color) State,
 ) *model {
 	ctx, ctxCancel := context.WithCancel(context.Background())
 

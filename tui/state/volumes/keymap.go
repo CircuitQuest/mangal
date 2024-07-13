@@ -10,9 +10,10 @@ var _ help.KeyMap = (*keyMap)(nil)
 
 func newKeyMap() keyMap {
 	return keyMap{
-		confirm: util.Bind("confirm", "enter"),
-		anilist: util.Bind("anilist", "A"),
-		info:    util.Bind("info", "i"),
+		confirm:  util.Bind("confirm", "enter"),
+		anilist:  util.Bind("anilist", "A"),
+		metadata: util.Bind("metadata", "m"),
+		info:     util.Bind("info", "i"),
 	}
 }
 
@@ -20,6 +21,7 @@ func newKeyMap() keyMap {
 type keyMap struct {
 	confirm,
 	anilist,
+	metadata,
 	info key.Binding
 }
 
@@ -28,6 +30,7 @@ func (k keyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
 		k.confirm,
 		k.anilist,
+		k.metadata,
 		k.info,
 	}
 }

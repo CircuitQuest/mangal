@@ -40,7 +40,7 @@ type model struct {
 
 	// Custom states to show errors and logs
 	errState func(err error) State
-	logState func(title, content string) State
+	logState func(title, content string, color lipgloss.Color) State
 }
 
 // Init implements tea.Model.

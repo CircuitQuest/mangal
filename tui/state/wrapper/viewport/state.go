@@ -7,7 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/mangal/theme/color"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/tui/base"
 )
 
@@ -17,6 +17,7 @@ var _ base.State = (*State)(nil)
 type State struct {
 	viewport viewport.Model
 	title    string
+	color    lipgloss.Color
 	keyMap   keyMap
 }
 
@@ -37,7 +38,7 @@ func (s *State) KeyMap() help.KeyMap {
 
 // Title implements base.State.
 func (s *State) Title() base.Title {
-	return base.Title{Text: s.title, Background: color.Viewport}
+	return base.Title{Text: s.title, Background: s.color}
 }
 
 // Subtitle implements base.State.
@@ -60,11 +61,22 @@ func (s *State) Resize(size base.Size) tea.Cmd {
 
 // Init implements base.State.
 func (s *State) Init(ctx context.Context) tea.Cmd {
-	return nil
+	return tea.Sequence(
+		func() tea.Msg {
+			return base.ShowLoadingMsg(false)
+		},
+		func() tea.Msg {
+			return base.ShowSubtitleMsg(false)
+		},
+	)
 }
 
 // Update implements base.State.
 func (s *State) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
+	switch msg := msg.(type) {
+	case SetContentMsg:
+		s.viewport.SetContent(string(msg))
+	}
 	s.viewport, cmd = s.viewport.Update(msg)
 	return cmd
 }
