@@ -130,9 +130,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	}
 end:
 	if s.search.State() == search.Searching {
-		input, updateCmd := s.search.Update(msg)
-		s.search = input.(*search.Model)
-		return updateCmd
+		return s.search.Update(msg)
 	}
 	return s.list.Update(msg)
 }

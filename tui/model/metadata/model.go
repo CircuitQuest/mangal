@@ -9,9 +9,6 @@ import (
 	"github.com/luevano/mangal/tui/util"
 )
 
-var _ tea.Model = (*Model)(nil)
-
-// Model implements tea.Model.
 type Model struct {
 	meta  metadata.Metadata
 	style lipgloss.Style
@@ -31,17 +28,14 @@ func (m *Model) updateStyle() {
 	m.metaStyle = util.MetaIDStyle(m.meta.ID())
 }
 
-// Init implements tea.Model.
 func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
-// Update implements tea.Model.
-func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
-	return m, nil
+func (m *Model) Update(msg tea.Msg) tea.Cmd {
+	return nil
 }
 
-// View implements tea.Model.
 func (m *Model) View() string {
 	var y string
 	if m.meta.StartDate().Year != 0 {

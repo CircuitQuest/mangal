@@ -201,9 +201,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	}
 end:
 	if s.inFormats {
-		formats, updateCmd := s.formats.Update(msg)
-		s.formats = formats.(*format.Model)
-		return updateCmd
+		return s.formats.Update(msg)
 	}
 	return s.list.Update(msg)
 }

@@ -19,8 +19,6 @@ const (
 	SearchCanceled
 )
 
-var _ tea.Model = (*Model)(nil)
-
 // Model implements tea.Model.
 type Model struct {
 	input textinput.Model
@@ -58,16 +56,14 @@ func (m *Model) Resize(size base.Size) {
 	m.input.Width = size.Width
 }
 
-// Init implements tea.Model.
 func (m *Model) Init() tea.Cmd {
 	return nil
 }
 
-// Update implements tea.Model.
-func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case base.RestoredMsg:
-		return m, textinput.Blink
+		return textinput.Blink
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keyMap.cancel):
@@ -78,31 +74,30 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// keep the last searched query in the input field
 			m.input.SetValue(m.query)
 
-			return m, SearchCancelCmd
+			return SearchCancelCmd
 		case key.Matches(msg, m.keyMap.confirm):
 			if strings.TrimSpace(m.input.Value()) == "" {
-				return m, base.Notify("Can't search whitespace only")
+				return base.Notify("Can't search whitespace only")
 			}
 			m.state = Searched
 			m.input.Blur()
 			m.enableKeyMap(false)
 
 			m.query = m.input.Value()
-			return m, SearchCmd(m.query)
+			return SearchCmd(m.query)
 		}
 	}
 
-	input, updateCmd := m.input.Update(msg)
+	input, cmd := m.input.Update(msg)
 	searchChanged := m.input.Value() != input.Value()
 	if searchChanged {
 		m.keyMap.confirm.SetEnabled(m.input.Value() != "")
 	}
 	m.input = input
 
-	return m, updateCmd
+	return cmd
 }
 
-// View implements tea.Model.
 func (m *Model) View() string {
 	return m.style.Render(m.input.View())
 }

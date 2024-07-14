@@ -17,9 +17,6 @@ const (
 	forBoth     forWhat = "both"
 )
 
-var _ tea.Model = (*Model)(nil)
-
-// Model implements tea.Model.
 type Model struct {
 	list *list.Model
 
@@ -34,13 +31,11 @@ type Model struct {
 	keyMap *keyMap
 }
 
-// Init implements tea.Model.
 func (m *Model) Init() tea.Cmd {
 	return m.list.Resize(m.size)
 }
 
-// Update implements tea.Model.
-func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
+func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		if m.list.FilterState() == _list.Filtering {
@@ -51,21 +46,19 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		i, _ := m.list.SelectedItem().(*item)
 		switch {
 		case key.Matches(msg, m.keyMap.setRead):
-			return m, m.setFormatForCmd(forRead, i.format)
+			return m.setFormatForCmd(forRead, i.format)
 		case key.Matches(msg, m.keyMap.setDownload):
-			return m, m.setFormatForCmd(forDownload, i.format)
+			return m.setFormatForCmd(forDownload, i.format)
 		case key.Matches(msg, m.keyMap.setBoth):
-			return m, m.setFormatForCmd(forBoth, i.format)
+			return m.setFormatForCmd(forBoth, i.format)
 		case key.Matches(msg, m.keyMap.back):
-			return m, backCmd
+			return backCmd
 		}
 	}
 end:
-	// the ctx is not used for anything in the list anyways
-	return m, m.list.Update(msg)
+	return m.list.Update(msg)
 }
 
-// View implements tea.Model.
 func (m *Model) View() string {
 	return lipgloss.JoinVertical(lipgloss.Left, m.title, m.list.View(), m.help)
 }
