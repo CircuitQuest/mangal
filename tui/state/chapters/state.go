@@ -17,7 +17,6 @@ import (
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
-	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 	"github.com/luevano/mangal/tui/util"
 	"github.com/zyedidia/generic/set"
 )
@@ -150,9 +149,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				return anilist.New(s.client.Anilist(), s.manga)
 			}
 		case key.Matches(msg, s.keyMap.metadata):
-			return func() tea.Msg {
-				return metadataViewer.New(s.manga.Metadata())
-			}
+			return s.meta.ShowMetadataCmd()
 		case key.Matches(msg, s.keyMap.changeFormat):
 			s.previousFrame = s.View()
 			s.inFormats = true

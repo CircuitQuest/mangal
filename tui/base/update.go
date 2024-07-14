@@ -8,7 +8,10 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/log"
+	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/tui/model/viewport"
 	"github.com/pkg/errors"
 )
 
@@ -28,11 +31,23 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.help):
 			return m, m.toggleHelp()
 		case key.Matches(msg, m.keyMap.log):
-			return m, m.pushState(m.logState())
+			return m, Viewport("Logs", log.Aggregate.String(), color.Viewport)
 		}
+	case ShowViewportMsg:
+		return m, m.showViewport(msg.Title, msg.Content, msg.Color)
+	case viewport.BackMsg:
+		return m, m.hideViewport()
 	case BackMsg:
+		if m.inViewport {
+			return m, m.hideViewport()
+		}
+		m.inViewport = false
 		return m, m.back(msg.Steps)
 	case BackToHomeMsg:
+		if m.inViewport {
+			return m, m.hideViewport()
+		}
+		m.inViewport = false
 		return m, m.back(m.history.Size())
 	case State:
 		return m, m.pushState(msg)
@@ -51,22 +66,17 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, m.notify(msg.Message, msg.Duration)
 	case NotificationTimeoutMsg:
 		return m, m.hideNotification()
-	case ShowLoadingMsg:
-		m.showLoadingMessage = bool(msg)
-		return m, m.resizeState()
-	case ShowSubtitleMsg:
-		m.showSubtitle = bool(msg)
-		return m, m.resizeState()
 	case error:
 		if errors.Is(msg, context.Canceled) || strings.Contains(msg.Error(), context.Canceled.Error()) {
 			return m, nil
 		}
-
 		log.L.Err(msg).Msg("")
-
-		return m, m.pushState(m.errState(msg))
+		return m, Viewport("Logs", msg.Error(), color.Error)
 	}
 
+	if m.inViewport {
+		return m, m.viewport.Update(msg)
+	}
 	return m, m.state.Update(m.ctx, msg)
 }
 
@@ -74,20 +84,20 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m *model) resize(size Size) tea.Cmd {
 	m.size = size
 	m.help.Width = size.Width
-
 	return m.resizeState()
 }
 
 // resizeState only resizes the State with its updated size
 func (m *model) resizeState() tea.Cmd {
-	return m.state.Resize(m.stateSize())
+	s := m.stateSize()
+	if m.inViewport {
+		return m.viewport.Resize(s.Width, s.Height)
+	}
+	return m.state.Resize(s)
 }
 
 // back to the previous State
 func (m *model) back(steps int) tea.Cmd {
-	// currently only necessary after coming from viewport state
-	m.showLoadingMessage = true
-	m.showSubtitle = true
 	// do not pop the last state
 	if m.history.Size() == 0 || steps <= 0 {
 		return nil
@@ -165,4 +175,30 @@ func (m *model) notify(message string, duration time.Duration) tea.Cmd {
 func (m *model) hideNotification() tea.Cmd {
 	m.notification = ""
 	return nil
+}
+
+func (m *model) showViewport(title, content string, color lipgloss.Color) tea.Cmd {
+	m.inViewport = true
+	m.showLoadingMessage = false
+	m.showSubtitle = false
+	m.viewport.SetData(title, content, color)
+	m.updateKeybinds()
+	s := m.stateSize()
+	return m.viewport.Resize(s.Width, s.Height)
+}
+
+func (m *model) hideViewport() tea.Cmd {
+	m.inViewport = false
+	m.showLoadingMessage = true
+	m.showSubtitle = true
+	m.updateKeybinds()
+	return nil
+}
+
+// updateKeybinds will enable/disable keybinds depending on availability
+func (m *model) updateKeybinds() {
+	enable := !m.inViewport
+	m.keyMap.back.SetEnabled(enable)
+	m.keyMap.home.SetEnabled(enable)
+	m.keyMap.log.SetEnabled(enable)
 }

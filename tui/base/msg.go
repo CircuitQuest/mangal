@@ -1,6 +1,10 @@
 package base
 
-import "time"
+import (
+	"time"
+
+	"github.com/charmbracelet/lipgloss"
+)
 
 type BackMsg struct {
 	Steps int
@@ -26,6 +30,8 @@ type LoadingMsg struct {
 // RestoredMsg is sent when going back to the state.
 type RestoredMsg struct{}
 
-type ShowLoadingMsg bool
-
-type ShowSubtitleMsg bool
+type ShowViewportMsg struct {
+	Title,
+	Content string
+	Color lipgloss.Color
+}

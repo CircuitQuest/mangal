@@ -7,12 +7,10 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/tui/model/help"
+	"github.com/luevano/mangal/tui/model/viewport"
 )
 
-func New(state State,
-	errState func(error) State,
-	logState func() State,
-) *model {
+func New(state State) *model {
 	ctx, ctxCancel := context.WithCancel(context.Background())
 
 	_styles := defaultStyles()
@@ -23,6 +21,7 @@ func New(state State,
 
 	model := &model{
 		state:                       state,
+		viewport:                    viewport.New(),
 		history:                     &history{},
 		ctx:                         ctx,
 		ctxCancel:                   ctxCancel,
@@ -34,8 +33,6 @@ func New(state State,
 		showBreadcrumbs:             config.TUI.ShowBreadcrumbs.Get(),
 		showLoadingMessage:          true,
 		showSubtitle:                true,
-		errState:                    errState,
-		logState:                    logState,
 	}
 
 	return model

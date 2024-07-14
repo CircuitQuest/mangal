@@ -13,8 +13,8 @@ import (
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/list"
+	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/model/search"
-	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 )
 
 var _ base.State = (*state)(nil)
@@ -102,9 +102,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			s.list.ResetFilter()
 			return s.search.Focus()
 		case key.Matches(msg, s.keyMap.metadata):
-			return func() tea.Msg {
-				return metadataViewer.New(&i.manga)
-			}
+			return metadata.New(&i.manga).ShowMetadataCmd()
 		}
 	case search.SearchMsg:
 		return s.searchCmd(ctx, string(msg))

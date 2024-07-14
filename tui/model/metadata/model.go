@@ -6,15 +6,15 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal/metadata"
-	"github.com/luevano/mangal/tui/util"
 )
 
 type Model struct {
-	meta  metadata.Metadata
-	style lipgloss.Style
+	meta      metadata.Metadata
+	metaStyle metaStyle
 
-	metaStyle util.MetaStyle
-	ShowFull  bool
+	ShowFull bool
+
+	styles styles
 }
 
 // SetMetadata replaces the current metadata and updates the style.
@@ -25,7 +25,19 @@ func (m *Model) SetMetadata(meta metadata.Metadata) {
 
 // updateStyle sets the style based on the current metadata.
 func (m *Model) updateStyle() {
-	m.metaStyle = util.MetaIDStyle(m.meta.ID())
+	m.metaStyle = metaIDStyle(m.meta.ID())
+}
+
+func (m *Model) Title() string {
+	p := m.meta.ID().Code
+	if p != "" {
+		p = "[" + p + "] "
+	}
+	return p + m.metaStyle.Prefix + " Metadata"
+}
+
+func (m *Model) Color() lipgloss.Color {
+	return m.metaStyle.Color
 }
 
 func (m *Model) Init() tea.Cmd {
@@ -43,7 +55,7 @@ func (m *Model) View() string {
 	}
 
 	if !m.ShowFull {
-		return m.style.Background(m.metaStyle.Color).Render(m.meta.Title() + y)
+		return m.styles.mini.Background(m.metaStyle.Color).Render(m.meta.Title() + y)
 	}
 
 	i := ": "
@@ -55,5 +67,5 @@ func (m *Model) View() string {
 	if p != "" {
 		p = "[" + p + "] "
 	}
-	return m.style.Background(m.metaStyle.Color).Render(p + m.metaStyle.Prefix + i + m.meta.Title() + y)
+	return m.styles.mini.Background(m.metaStyle.Color).Render(p + m.metaStyle.Prefix + i + m.meta.Title() + y)
 }

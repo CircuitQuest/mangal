@@ -13,7 +13,6 @@ import (
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
-	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 )
 
 var _ base.State = (*state)(nil)
@@ -92,7 +91,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 			}
 		case key.Matches(msg, s.keyMap.metadata):
 			return func() tea.Msg {
-				return metadataViewer.New(s.manga.Metadata())
+				return s.meta.ShowMetadataCmd()
 			}
 		case key.Matches(msg, s.keyMap.info):
 			s.meta.ShowFull = !s.meta.ShowFull

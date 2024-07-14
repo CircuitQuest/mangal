@@ -4,6 +4,7 @@ import (
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 // Back goes back to the previous state if available.
@@ -61,5 +62,15 @@ func Loading(message string) tea.Cmd {
 func Loaded() tea.Msg {
 	return LoadingMsg{
 		Message: "",
+	}
+}
+
+func Viewport(title, content string, color lipgloss.Color) tea.Cmd {
+	return func() tea.Msg {
+		return ShowViewportMsg{
+			Title:   title,
+			Content: content,
+			Color:   color,
+		}
 	}
 }

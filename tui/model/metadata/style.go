@@ -1,18 +1,43 @@
-package util
+package metadata
 
 import (
 	"github.com/charmbracelet/lipgloss"
+	"github.com/charmbracelet/lipgloss/list"
 	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/theme/color"
+	"github.com/luevano/mangal/theme/icon"
+	_style "github.com/luevano/mangal/theme/style"
 )
 
-type MetaStyle struct {
+type styles struct {
+	meta metaStyle
+	enum func(list.Items, int) string
+
+	mini,
+	fieldName,
+	enumerator lipgloss.Style
+}
+
+func defaultStyles(meta metaStyle) styles {
+	base := lipgloss.NewStyle().Foreground(meta.Color)
+	return styles{
+		meta: meta,
+		enum: func(_ list.Items, _ int) string {
+			return icon.SubItem.Raw()
+		},
+		mini:       _style.Normal.Base.Padding(0, 1).Foreground(color.Bright),
+		fieldName:  base,
+		enumerator: base.MarginRight(1).PaddingLeft(2),
+	}
+}
+
+type metaStyle struct {
 	Color  lipgloss.Color
 	Prefix string
 	Code   string
 }
 
-func MetaIDStyle(id metadata.ID) MetaStyle {
+func metaIDStyle(id metadata.ID) metaStyle {
 	c := color.Provider
 	p := "Provider"
 	v := id.Code
@@ -38,5 +63,5 @@ func MetaIDStyle(id metadata.ID) MetaStyle {
 		p = "AnimePlanet"
 		v = metadata.IDCodeAnimePlanet
 	}
-	return MetaStyle{c, p, v}
+	return metaStyle{c, p, v}
 }

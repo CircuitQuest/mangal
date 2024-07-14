@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/luevano/mangal/tui/model/viewport"
 )
 
 var _ tea.Model = (*model)(nil)
@@ -16,8 +17,9 @@ var _ tea.Model = (*model)(nil)
 //
 // model is the parent of all States (windows), could be thought of as the main window.
 type model struct {
-	state   State
-	history *history
+	state    State
+	viewport *viewport.Model
+	history  *history
 
 	ctx       context.Context
 	ctxCancel context.CancelFunc
@@ -38,9 +40,7 @@ type model struct {
 	showLoadingMessage bool
 	showSubtitle       bool
 
-	// Custom states to show errors and logs
-	errState func(error) State
-	logState func() State
+	inViewport bool
 }
 
 // Init implements tea.Model.

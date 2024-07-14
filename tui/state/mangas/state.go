@@ -14,7 +14,6 @@ import (
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/search"
 	"github.com/luevano/mangal/tui/state/anilist"
-	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 )
 
 var _ base.State = (*state)(nil)
@@ -108,9 +107,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				return anilist.New(s.client.Anilist(), i.manga)
 			}
 		case key.Matches(msg, s.keyMap.metadata):
-			return func() tea.Msg {
-				return metadataViewer.New(i.manga.Metadata())
-			}
+			return i.meta.ShowMetadataCmd()
 		// TODO: only toggle for hovered/selected item? (both info and full info)
 		case key.Matches(msg, s.keyMap.info):
 			*s.extraInfo = !(*s.extraInfo)

@@ -38,6 +38,12 @@ func (m *model) viewHeader() string {
 	}
 
 	title := m.state.Title()
+	if m.inViewport {
+		title = Title{
+			Text:       m.viewport.Title(),
+			Background: m.viewport.Color(),
+		}
+	}
 	titleStyle := m.styles.title
 
 	if title.Background != "" {
@@ -48,7 +54,11 @@ func (m *model) viewHeader() string {
 	}
 	header.WriteString(titleStyle.MaxWidth(m.size.Width / 2).Render(title.Text))
 
-	if status := m.state.Status(); status != "" {
+	status := m.state.Status()
+	if m.inViewport {
+		status = m.viewport.Status()
+	}
+	if status != "" {
 		header.WriteString(m.styles.status.Render(status))
 	}
 
@@ -80,6 +90,9 @@ func (m *model) viewHeader() string {
 }
 
 func (m *model) viewState() string {
+	if m.inViewport {
+		return m.styles.state.Render(m.viewport.View())
+	}
 	size := m.stateSize()
 	return lipgloss.Place(
 		size.Width,
@@ -91,5 +104,8 @@ func (m *model) viewState() string {
 }
 
 func (m *model) viewFooter() string {
+	if m.inViewport {
+		return m.styles.footer.Render(m.help.View(m.keyMap.with(m.viewport.KeyMap())))
+	}
 	return m.styles.footer.Render(m.help.View(m.keyMap.with(m.state.KeyMap())))
 }
