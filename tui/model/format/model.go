@@ -6,7 +6,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/wrapper/list"
+	"github.com/luevano/mangal/tui/model/list"
 )
 
 type forWhat string
@@ -21,7 +21,7 @@ var _ tea.Model = (*Model)(nil)
 
 // Model implements tea.Model.
 type Model struct {
-	list *list.State
+	list *list.Model
 
 	// pre-rendered
 	title,
@@ -62,7 +62,7 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	}
 end:
 	// the ctx is not used for anything in the list anyways
-	return m, m.list.Update(nil, msg)
+	return m, m.list.Update(msg)
 }
 
 // View implements tea.Model.

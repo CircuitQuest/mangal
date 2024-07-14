@@ -9,7 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/wrapper/list"
+	"github.com/luevano/mangal/tui/model/list"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -17,7 +17,7 @@ var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
-	list      *list.State
+	list      *list.Model
 	loaded    *set.Set[*item]
 	extraInfo *bool
 	keyMap    *keyMap
@@ -66,7 +66,7 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 		func() tea.Msg {
 			return client.CloseAll()
 		},
-		s.list.Init(ctx),
+		s.list.Init(),
 	)
 }
 
@@ -99,7 +99,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		}
 	}
 end:
-	return s.list.Update(ctx, msg)
+	return s.list.Update(msg)
 }
 
 // View implements base.State.

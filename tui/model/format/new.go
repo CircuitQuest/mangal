@@ -6,7 +6,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/help"
-	"github.com/luevano/mangal/tui/state/wrapper/list"
+	"github.com/luevano/mangal/tui/model/list"
 )
 
 func New(accentColor lipgloss.Color) *Model {

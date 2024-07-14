@@ -12,16 +12,16 @@ import (
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/search"
 	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
-	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
 var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
-	list    *list.State
+	list    *list.Model
 	search  *search.Model
 	manga   mangadata.Manga
 	anilist *lmanilist.Anilist
@@ -81,7 +81,7 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	return tea.Sequence(
 		s.searchCmd(ctx, s.search.Query()),
-		s.list.Init(ctx),
+		s.list.Init(),
 	)
 }
 
@@ -115,7 +115,7 @@ end:
 		s.search = input.(*search.Model)
 		return updateCmd
 	}
-	return s.list.Update(ctx, msg)
+	return s.list.Update(msg)
 }
 
 // View implements base.State.

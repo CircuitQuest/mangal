@@ -15,7 +15,7 @@ func New[T any](
 	items []T,
 	transform func(T) list.DefaultItem,
 	other help.KeyMap,
-) *State {
+) *Model {
 	listItems := make([]list.Item, len(items))
 	for i, item := range items {
 		listItems[i] = transform(item)
@@ -60,8 +60,8 @@ func New[T any](
 
 	l.SetStatusBarItemName(singular, plural)
 
-	s := &State{
-		list:     l,
+	s := &Model{
+		Model:    l,
 		delegate: &delegate,
 		keyMap:   newKeyMap(l.KeyMap, other),
 	}

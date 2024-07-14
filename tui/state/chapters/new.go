@@ -10,8 +10,8 @@ import (
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/tui/model/format"
+	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
-	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/zyedidia/generic/set"
 )
 

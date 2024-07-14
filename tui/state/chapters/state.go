@@ -14,10 +14,10 @@ import (
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/format"
+	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
 	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
-	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/luevano/mangal/tui/util"
 	"github.com/zyedidia/generic/set"
 )
@@ -26,7 +26,7 @@ var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
-	list    *list.State
+	list    *list.Model
 	meta    *metadata.Model
 	formats *format.Model
 
@@ -115,7 +115,7 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	s.updateRenderedSubtitleFormats()
 	return tea.Sequence(
-		s.list.Init(ctx),
+		s.list.Init(),
 		s.formats.Init(),
 	)
 }
@@ -205,7 +205,7 @@ end:
 		s.formats = formats.(*format.Model)
 		return updateCmd
 	}
-	return s.list.Update(ctx, msg)
+	return s.list.Update(msg)
 }
 
 // View implements base.State.

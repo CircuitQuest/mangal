@@ -10,17 +10,17 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
 	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
-	"github.com/luevano/mangal/tui/state/wrapper/list"
 )
 
 var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
-	list *list.State
+	list *list.Model
 	meta *metadata.Model
 
 	volumes []mangadata.Volume
@@ -67,7 +67,7 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
-	return s.list.Init(ctx)
+	return s.list.Init()
 }
 
 // Update implements base.State.
@@ -102,7 +102,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		s.meta.SetMetadata(s.manga.Metadata())
 	}
 end:
-	return s.list.Update(ctx, msg)
+	return s.list.Update(msg)
 }
 
 // View implements base.State.
