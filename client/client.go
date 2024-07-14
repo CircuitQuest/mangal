@@ -80,20 +80,20 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 
 	options := libmangal.DefaultClientOptions()
 	options.FS = afs.Afero
-	options.Anilist = anilist.Anilist
 	options.HTTPClient = HTTPClient
 	options.UserAgent = config.Download.UserAgent.Get()
 	options.ModeDir = config.Download.ModeDir.Get()
 	options.ModeFile = config.Download.ModeFile.Get()
-	options.ProviderNameTemplate = template.Provider
-	options.MangaNameTemplate = template.Manga
-	options.VolumeNameTemplate = template.Volume
-	options.ChapterNameTemplate = template.Chapter
+	options.ProviderName = template.Provider
+	options.MangaName = template.Manga
+	options.VolumeName = template.Volume
+	options.ChapterName = template.Chapter
 
 	client, err := libmangal.NewClient(ctx, loader, options)
 	if err != nil {
 		return nil, err
 	}
+	client.SetAnilist(anilist.Anilist)
 
 	clients.Enqueue(client)
 	return client, nil

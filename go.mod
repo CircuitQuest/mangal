@@ -22,9 +22,9 @@ require (
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
-	github.com/luevano/libmangal v0.17.1
-	github.com/luevano/luaprovider v0.12.1
-	github.com/luevano/mangoprovider v0.14.1
+	github.com/luevano/libmangal v0.17.2
+	github.com/luevano/luaprovider v0.12.2
+	github.com/luevano/mangoprovider v0.14.2
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
 	github.com/philippgille/gokv v0.7.0
@@ -33,7 +33,7 @@ require (
 	github.com/philippgille/gokv/util v0.7.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
-	github.com/samber/lo v1.44.0
+	github.com/samber/lo v1.45.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.1

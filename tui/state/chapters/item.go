@@ -125,15 +125,15 @@ func (i *item) toggle() {
 
 // path computes the full filepath to the (possibly) downloaded chapter
 func (i *item) path(directory string, format libmangal.Format) string {
-	return filepath.Join(directory, i.client.ComputeChapterFilename(i.chapter, format))
+	return filepath.Join(directory, i.client.ChapterName(i.chapter, format))
 }
 
 // updatePaths should only be needed if the config changes
 func (i *item) updatePaths() {
 	client := i.client
-	providerFilename := client.ComputeProviderFilename(client.Info())
-	mangaFilename := client.ComputeMangaFilename(i.chapter.Volume().Manga())
-	volumeFilename := client.ComputeVolumeFilename(i.chapter.Volume())
+	providerFilename := client.ProviderName(client.Info())
+	mangaFilename := client.MangaName(i.chapter.Volume().Manga())
+	volumeFilename := client.VolumeName(i.chapter.Volume())
 
 	i.fullTempPath = filepath.Join(path.TempDir(), providerFilename, mangaFilename, volumeFilename)
 
