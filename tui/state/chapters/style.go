@@ -13,7 +13,7 @@ type styles struct {
 
 func defaultStyles() styles {
 	return styles{
-		sep:      style.Bold.Warning,
+		sep:      style.Bold.Warning.Padding(0, 1),
 		subtitle: style.Normal.Secondary, // matches base without padding
 		format:   style.Bold.Warning,
 	}

@@ -6,8 +6,8 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/theme/style"
-	"github.com/luevano/mangal/tui/base"
 )
 
 var (
@@ -29,7 +29,7 @@ func (i *item) FilterValue() string {
 func (i *item) Title() string {
 	var sb strings.Builder
 	sb.Grow(20)
-	sep := style.Bold.Warning.Render(base.Separator)
+	sep := style.Bold.Warning.Padding(0, 1).Render(icon.Separator.Raw())
 
 	sb.WriteString(i.FilterValue())
 

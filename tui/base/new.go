@@ -4,9 +4,9 @@ import (
 	"context"
 	"time"
 
-	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/spinner"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/tui/model/help"
 )
 
 func New(state State,
@@ -16,12 +16,6 @@ func New(state State,
 	ctx, ctxCancel := context.WithCancel(context.Background())
 
 	_styles := defaultStyles()
-	_help := help.New()
-	_help.Styles = _styles.help
-	_help.Ellipsis = Ellipsis
-	_help.ShortSeparator = HelpKeySeparator
-	_help.FullSeparator = HelpKeySeparator
-
 	_spinner := spinner.New(
 		spinner.WithSpinner(_styles.loading.spinner),
 		spinner.WithStyle(_styles.loading.spinnerStyle),
@@ -34,7 +28,7 @@ func New(state State,
 		ctxCancel:                   ctxCancel,
 		styles:                      _styles,
 		keyMap:                      newKeyMap(),
-		help:                        _help,
+		help:                        help.New(),
 		spinner:                     _spinner,
 		notificationDefaultDuration: time.Second,
 		showBreadcrumbs:             config.TUI.ShowBreadcrumbs.Get(),

@@ -161,4 +161,28 @@ var (
 			TypeNerd:  "\uE0B3",
 		},
 	}
+
+	Ellipsis = icon{
+		color: lipgloss.NoColor{},
+		symbols: symbols{
+			TypeASCII: "_",
+			TypeNerd:  "…", // not really nerd font
+		},
+	}
+
+	Separator = icon{
+		color: color.Warning,
+		symbols: symbols{
+			TypeASCII: "-",
+			TypeNerd:  "•", // not really nerd font
+		},
+	}
+
+	BreadcrumbSep = icon{
+		color: color.Warning,
+		symbols: symbols{
+			TypeASCII: "/",
+			TypeNerd:  "/", // not really nerd font
+		},
+	}
 )

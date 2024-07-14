@@ -7,7 +7,7 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/zyedidia/generic/set"
@@ -22,7 +22,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 
 	_styles := defaultStyles()
 	_keyMap := newKeyMap()
-	renderedSep := _styles.sep.Render(base.Separator)
+	renderedSep := _styles.sep.Render(icon.Separator.Raw())
 	listWrapper := list.New(
 		3,
 		"chapter", "chapters",
