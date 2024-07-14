@@ -1,4 +1,4 @@
-package formats
+package format
 
 import (
 	"github.com/charmbracelet/bubbles/help"
@@ -10,9 +10,10 @@ var _ help.KeyMap = (*keyMap)(nil)
 
 func newKeyMap() keyMap {
 	return keyMap{
-		setRead:     util.Bind("set for reading", "r"),
-		setDownload: util.Bind("set for downloading", "d"),
-		setBoth:     util.Bind("set for both", "enter"),
+		setRead:     util.Bind("read", "r"),
+		setDownload: util.Bind("down", "d"),
+		setBoth:     util.Bind("both", "enter"),
+		back:        util.Bind("back", "esc"),
 	}
 }
 
@@ -20,7 +21,8 @@ func newKeyMap() keyMap {
 type keyMap struct {
 	setRead,
 	setDownload,
-	setBoth key.Binding
+	setBoth,
+	back key.Binding
 }
 
 // ShortHelp implements help.KeyMap.
@@ -34,6 +36,10 @@ func (k keyMap) ShortHelp() []key.Binding {
 // FullHelp implements help.KeyMap.
 func (k keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		append(k.ShortHelp(), k.setBoth),
+		k.ShortHelp(),
+		{
+			k.setBoth,
+			k.back,
+		},
 	}
 }

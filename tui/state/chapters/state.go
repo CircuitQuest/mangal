@@ -9,14 +9,16 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/format"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/anilist"
-	"github.com/luevano/mangal/tui/state/formats"
 	metadataViewer "github.com/luevano/mangal/tui/state/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
+	"github.com/luevano/mangal/tui/util"
 	"github.com/zyedidia/generic/set"
 )
 
@@ -24,8 +26,9 @@ var _ base.State = (*state)(nil)
 
 // state implements base.state.
 type state struct {
-	list *list.State
-	meta *metadata.Model
+	list    *list.State
+	meta    *metadata.Model
+	formats *format.Model
 
 	chapters []mangadata.Chapter
 	volume   mangadata.Volume // can be nil
@@ -34,7 +37,8 @@ type state struct {
 
 	selected set.Set[*item]
 
-	renderedSep             string
+	previousFrame,
+	renderedSep,
 	renderedSubtitleFormats string
 
 	// to avoid extra read/download cmds from
@@ -45,11 +49,14 @@ type state struct {
 	// if the actions that require an item are available
 	actionItemAvailable bool
 
+	inFormats bool
+
 	showVolumeNumber  *bool
 	showChapterNumber *bool
 	showGroup         *bool
 	showDate          *bool
 
+	size   base.Size
 	styles styles
 	keyMap *keyMap
 }
@@ -61,7 +68,7 @@ func (s *state) Intermediate() bool {
 
 // Backable implements base.State.
 func (s *state) Backable() bool {
-	return s.list.Backable()
+	return s.list.Backable() && !s.inFormats
 }
 
 // KeyMap implements base.State.
@@ -100,20 +107,24 @@ func (s *state) Status() string {
 
 // Resize implements base.State.
 func (s *state) Resize(size base.Size) tea.Cmd {
+	s.size = size
 	return s.list.Resize(size)
 }
 
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	s.updateRenderedSubtitleFormats()
-	return s.list.Init(ctx)
+	return tea.Sequence(
+		s.list.Init(ctx),
+		s.formats.Init(),
+	)
 }
 
 // Update implements base.State.
 func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if s.list.FilterState() == _list.Filtering {
+		if s.list.FilterState() == _list.Filtering || s.inFormats {
 			goto end
 		}
 
@@ -143,9 +154,8 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 				return metadataViewer.New(s.manga.Metadata())
 			}
 		case key.Matches(msg, s.keyMap.changeFormat):
-			return func() tea.Msg {
-				return formats.New()
-			}
+			s.previousFrame = s.View()
+			s.inFormats = true
 		case key.Matches(msg, s.keyMap.openURL):
 			return s.openURLCmd(i.chapter)
 		case key.Matches(msg, s.keyMap.selectAll):
@@ -178,6 +188,10 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			*s.showDate = !(*s.showDate)
 			s.updateListDelegate()
 		}
+	case format.BackMsg:
+		s.inFormats = false
+		s.updateAllItems()
+		s.updateRenderedSubtitleFormats()
 	case base.RestoredMsg:
 		// in case the metadata was updated in the anilist state
 		s.meta.SetMetadata(s.manga.Metadata())
@@ -186,10 +200,20 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		s.updateRenderedSubtitleFormats()
 	}
 end:
+	if s.inFormats {
+		formats, updateCmd := s.formats.Update(msg)
+		s.formats = formats.(*format.Model)
+		return updateCmd
+	}
 	return s.list.Update(ctx, msg)
 }
 
 // View implements base.State.
 func (s *state) View() string {
+	if s.inFormats {
+		fV := s.styles.formatView.Render(s.formats.View())
+		w, h := lipgloss.Size(fV)
+		return util.PlaceOverlay((s.size.Width-w)/2, (s.size.Height-h)/2, fV, s.previousFrame)
+	}
 	return s.list.View()
 }

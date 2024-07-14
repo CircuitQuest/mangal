@@ -7,7 +7,9 @@ import (
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/theme/icon"
+	"github.com/luevano/mangal/tui/model/format"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/state/wrapper/list"
 	"github.com/zyedidia/generic/set"
@@ -54,6 +56,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	s := &state{
 		list:              listWrapper,
 		meta:              metadata.New(manga.Metadata()),
+		formats:           format.New(color.Viewport),
 		chapters:          chapters,
 		volume:            volume,
 		manga:             manga,

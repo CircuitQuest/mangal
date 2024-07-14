@@ -1,4 +1,4 @@
-package formats
+package format
 
 import (
 	"strings"
@@ -15,6 +15,12 @@ var (
 	_ list.DefaultItem = (*item)(nil)
 )
 
+var (
+	sep  = style.Bold.Warning.Padding(0, 1).Render(icon.Separator.Raw())
+	down = style.Bold.Warning.Render("down")
+	read = style.Bold.Warning.Render("read")
+)
+
 // item implements list.item.
 type item struct {
 	format libmangal.Format
@@ -29,18 +35,17 @@ func (i *item) FilterValue() string {
 func (i *item) Title() string {
 	var sb strings.Builder
 	sb.Grow(20)
-	sep := style.Bold.Warning.Padding(0, 1).Render(icon.Separator.Raw())
 
 	sb.WriteString(i.FilterValue())
 
 	if i.isSelectedForDownloading() {
 		sb.WriteString(sep)
-		sb.WriteString(style.Bold.Warning.Render("download"))
+		sb.WriteString(down)
 	}
 
 	if i.isSelectedForReading() {
 		sb.WriteString(sep)
-		sb.WriteString(style.Bold.Warning.Render("read"))
+		sb.WriteString(read)
 	}
 
 	return sb.String()

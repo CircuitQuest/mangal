@@ -1,4 +1,4 @@
-package formats
+package format
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
@@ -6,7 +6,11 @@ import (
 	"github.com/luevano/mangal/config"
 )
 
-func (s *state) setFormatForCmd(what forWhat, format libmangal.Format) tea.Cmd {
+func backCmd() tea.Msg {
+	return BackMsg{}
+}
+
+func (m *Model) setFormatForCmd(what forWhat, format libmangal.Format) tea.Cmd {
 	return func() tea.Msg {
 		var err error
 		switch what {
