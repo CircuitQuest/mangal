@@ -8,6 +8,48 @@ import (
 	"github.com/luevano/mangal/meta"
 )
 
+type PathName string
+
+const (
+	PathCache     PathName = "cache"
+	PathConfig    PathName = "config"
+	PathDownloads PathName = "downloads"
+	PathTemp      PathName = "temp"
+	PathProviders PathName = "providers"
+	PathLog       PathName = "log"
+)
+
+type Paths map[PathName]string
+
+func (p Paths) Keys() []PathName {
+	keys := make([]PathName, len(p))
+	i := 0
+	for k := range p {
+		keys[i] = k
+		i++
+	}
+	return keys
+}
+
+func (p Paths) Get(name PathName) string {
+	return p[name]
+}
+
+func (p Paths) GetAsPaths(name PathName) Paths {
+	return Paths{name: p.Get(name)}
+}
+
+func AllPaths() Paths {
+	return Paths{
+		PathCache:     CacheDir(),
+		PathConfig:    ConfigDir(),
+		PathDownloads: DownloadsDir(),
+		PathTemp:      TempDir(),
+		PathProviders: ProvidersDir(),
+		PathLog:       LogDir(),
+	}
+}
+
 func CacheDir() string {
 	dir := config.Cache.Path.Get()
 	createDirIfAbsent(dir)

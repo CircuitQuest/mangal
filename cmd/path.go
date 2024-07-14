@@ -3,8 +3,9 @@ package cmd
 import (
 	"encoding/json"
 
+	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/path"
-	"github.com/luevano/mangal/tui/misc/pathtable"
+	pathViewer "github.com/luevano/mangal/tui/model/path"
 	"github.com/spf13/cobra"
 )
 
@@ -22,16 +23,16 @@ func init() {
 	rootCmd.AddCommand(pathCmd)
 
 	f := pathCmd.Flags()
-	f.BoolVar(&pathArgs.Config, "config", false, "Path to the config directory")
-	f.BoolVar(&pathArgs.Cache, "cache", false, "Path to the cache directory")
-	f.BoolVar(&pathArgs.Temp, "temp", false, "Path to a temporary directory")
-	f.BoolVar(&pathArgs.Downloads, "downloads", false, "Path to the downloads directory")
-	f.BoolVar(&pathArgs.Providers, "providers", false, "Path to the providers directory")
-	f.BoolVar(&pathArgs.Logs, "logs", false, "Path to the logs directory")
-	f.BoolVarP(&pathArgs.JSON, "json", "j", false, "Output in JSON format for parsing")
+	f.BoolVar(&pathArgs.Config, "cfg", false, "Get config directory")
+	f.BoolVar(&pathArgs.Cache, "cache", false, "Get cache directory")
+	f.BoolVar(&pathArgs.Temp, "temp", false, "Get temporary directory")
+	f.BoolVar(&pathArgs.Downloads, "downloads", false, "Get downloads directory")
+	f.BoolVar(&pathArgs.Providers, "providers", false, "Get providers directory")
+	f.BoolVar(&pathArgs.Logs, "logs", false, "Get logs directory")
+	f.BoolVarP(&pathArgs.JSON, "json", "j", false, "Output as JSON")
 
 	pathCmd.MarkFlagsMutuallyExclusive(
-		"config",
+		"cfg",
 		"cache",
 		"temp",
 		"downloads",
@@ -46,90 +47,41 @@ var pathCmd = &cobra.Command{
 	Short: "Show paths",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {
-		type pathEntry struct {
-			Name string `json:"name"`
-			Path string `json:"path"`
-		}
-
-		var (
-			pathToShow     string
-			pathToShowName string
-		)
-
+		var p path.PathName
 		switch {
-		case pathArgs.Config:
-			// TODO: get config directory based on passed --config flag on the persisted flags
-			pathToShow = path.ConfigDir()
-			pathToShowName = "config"
-		case pathArgs.Providers:
-			pathToShow = path.ProvidersDir()
-			pathToShowName = "providers"
-		case pathArgs.Downloads:
-			pathToShow = path.DownloadsDir()
-			pathToShowName = "downloads"
 		case pathArgs.Cache:
-			pathToShow = path.CacheDir()
-			pathToShowName = "cache"
+			p = path.PathCache
+		case pathArgs.Config:
+			p = path.PathConfig
+		case pathArgs.Downloads:
+			p = path.PathConfig
 		case pathArgs.Temp:
-			pathToShow = path.TempDir()
-			pathToShowName = "temp"
+			p = path.PathConfig
+		case pathArgs.Providers:
+			p = path.PathConfig
 		case pathArgs.Logs:
-			pathToShow = path.LogDir()
-			pathToShowName = "logs"
-		default:
-			if pathArgs.JSON {
-				err := json.NewEncoder(cmd.OutOrStdout()).Encode([]pathEntry{
-					{
-						Name: "config",
-						Path: path.ConfigDir(),
-					},
-					{
-						Name: "providers",
-						Path: path.ProvidersDir(),
-					},
-					{
-						Name: "downloads",
-						Path: path.DownloadsDir(),
-					},
-					{
-						Name: "cache",
-						Path: path.CacheDir(),
-					},
-					{
-						Name: "logs",
-						Path: path.LogDir(),
-					},
-					{
-						Name: "temp",
-						Path: path.TempDir(),
-					},
-				})
-				if err != nil {
-					errorf(cmd, err.Error())
-				}
-
-				return
-			}
-
-			if err := pathtable.Run(); err != nil {
-				errorf(cmd, err.Error())
-			}
-
-			return
+			p = path.PathConfig
+		}
+		paths := path.AllPaths()
+		if p != "" {
+			paths = paths.GetAsPaths(p)
 		}
 
 		if pathArgs.JSON {
-			err := json.NewEncoder(cmd.OutOrStdout()).Encode(pathEntry{
-				Name: pathToShowName,
-				Path: pathToShow,
-			})
+			err := json.NewEncoder(cmd.OutOrStdout()).Encode(paths)
 			if err != nil {
 				errorf(cmd, err.Error())
 			}
-
 			return
 		}
 
-		cmd.Println(pathToShow)
+		if p != "" {
+			cmd.Println(paths.Get(p))
+			return
+		}
+
+		if _, err := tea.NewProgram(pathViewer.New(true)).Run(); err != nil {
+			errorf(cmd, err.Error())
+		}
 	},
 }
