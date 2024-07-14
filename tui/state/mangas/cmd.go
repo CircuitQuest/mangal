@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
@@ -38,22 +39,20 @@ func (s *state) searchMangasCmd(ctx context.Context, query string) tea.Cmd {
 	)
 }
 
-// TODO: generalize to search metadata, not just anilist
 func (s *state) searchMetadataCmd(ctx context.Context, item *item) tea.Cmd {
 	return tea.Sequence(
-		base.Loading(fmt.Sprintf("Searching Anilist manga for %q", item.manga)),
+		base.Loading(fmt.Sprintf("Searching metadata for %q", item.manga)),
 		func() tea.Msg {
-			anilistManga, found, err := s.client.Anilist().SearchByManga(context.Background(), item.manga)
+			meta, err := s.client.SearchMetadata(ctx, item.manga)
 			if err != nil {
 				return err
 			}
-			if !found {
-				log.Log("Couldn't find Anilist for %q", item.manga)
-			} else {
-				item.manga.SetMetadata(&anilistManga)
-				log.Log("Found and set Anilist for %q: %q (%d)", item.manga, anilistManga.String(), anilistManga.ID)
+			if err := metadata.Validate(meta); err != nil {
+				return err
 			}
 
+			item.manga.SetMetadata(meta)
+			log.Log("Found and set metadata for %q: %q", item.manga, meta.String())
 			return s.searchVolumesCmd(ctx, item)()
 		},
 		base.Loaded,
