@@ -3,6 +3,7 @@ package download
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
@@ -82,7 +83,10 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	s.client.Logger().SetOnLog(func(format string, a ...any) {
 		s.message = fmt.Sprintf(format, a...)
-		log.Log(format, a...)
+		// TODO: add option for "verbose" so it logs pages progress?
+		if !strings.HasPrefix(format, "page") {
+			log.Log(format, a...)
+		}
 	})
 
 	s.updateKeyMap()
