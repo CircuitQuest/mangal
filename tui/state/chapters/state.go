@@ -2,7 +2,6 @@ package chapters
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"strings"
 
@@ -13,7 +12,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
-	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/confirm"
 	"github.com/luevano/mangal/tui/model/format"
@@ -32,6 +30,7 @@ const (
 	cSDownloadNone confirmState = iota
 	cSDownloadHovered
 	cSDownloadSelected
+	cSDownloadForRead
 )
 
 // state implements base.state.
@@ -158,7 +157,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, s.keyMap.read):
 			return s.readCmd(ctx, i)
 		case key.Matches(msg, s.keyMap.download):
-			return s.downloadCmd(ctx, i)
+			return s.downloadCmd(i)
 		case key.Matches(msg, s.keyMap.info):
 			s.meta.ShowFull = !s.meta.ShowFull
 		case key.Matches(msg, s.keyMap.anilist):
@@ -208,27 +207,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		s.confirmState = msg.state
 		s.confirm.SetData(msg.title, msg.message)
 	case confirm.YesMsg:
-		// save current state and update to none
-		state := s.confirmState
-		s.inConfirm = false
-		s.confirmState = cSDownloadNone
-
-		switch state {
-		case cSDownloadHovered:
-			options := config.DownloadOptions()
-			options.SearchMetadata = false
-			// hovered
-			i, _ := s.list.SelectedItem().(*item)
-			return s.downloadChapterCmd(ctx, i, options, false)
-		case cSDownloadSelected:
-			options := config.DownloadOptions()
-			options.SearchMetadata = false
-			return s.downloadChaptersCmd(s.selected, options)
-		default:
-			return func() tea.Msg {
-				return errors.New("unexpected confirm yes msg on chapters state")
-			}
-		}
+		return s.onConfirmCmd(ctx)
 	case confirm.NoMsg:
 		s.inConfirm = false
 		s.confirmState = cSDownloadNone

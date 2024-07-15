@@ -2,6 +2,7 @@ package string
 
 import (
 	"fmt"
+	"strconv"
 	"strings"
 
 	"github.com/charmbracelet/lipgloss"
@@ -98,6 +99,22 @@ func FormatRanges[T constraints.Integer | constraints.Float](ranges []T) string 
 	}
 
 	return strings.Join(rangesStr, ", ")
+}
+
+// FormatFloa32 returns the string representation with
+// all of the insignificant digits removed.
+//
+// For example, "001.500" becomes "1.5".
+func FormatFloa32(n float32) string {
+	return strconv.FormatFloat(float64(n), 'f', -1, 64)
+}
+
+// FormatFloa64 returns the string representation with
+// all of the insignificant digits removed.
+//
+// For example, "001.500" becomes "1.5".
+func FormatFloa64(n float64) string {
+	return strconv.FormatFloat(n, 'f', -1, 64)
 }
 
 func CaseCamelToSnake(s string) string {

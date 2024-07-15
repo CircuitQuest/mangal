@@ -2,6 +2,7 @@ package chapters
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"sort"
 
@@ -28,6 +29,43 @@ func showConfirmCmd(title, message string, state confirmState) tea.Cmd {
 	}
 }
 
+func (s *state) onConfirmCmd(ctx context.Context) tea.Cmd {
+	// save current state and update to none
+	state := s.confirmState
+	s.inConfirm = false
+	s.confirmState = cSDownloadNone
+
+	options := config.DownloadOptions()
+	// Guaranteed to had been searched during mangas state,
+	// this avoids re-searching during download and unsetting the
+	// set metadata
+	options.SearchMetadata = false
+
+	// hovered
+	i, _ := s.list.SelectedItem().(*item)
+	switch state {
+	case cSDownloadHovered:
+		return s.downloadChapterCmd(ctx, i, options, false)
+	case cSDownloadSelected:
+		return s.downloadChaptersCmd(s.selected, options)
+	case cSDownloadForRead:
+		// TODO: add warning when read format != download format?
+		options.Format = config.Read.Format.Get()
+		// if shouldn't download on read, save to tmp dir with all dirs created
+		if !config.Read.DownloadOnRead.Get() {
+			options.Directory = path.TempDir()
+			options.CreateProviderDir = true
+			options.CreateMangaDir = true
+			options.CreateVolumeDir = true
+		}
+		return s.downloadChapterCmd(ctx, i, options, true)
+	default:
+		return func() tea.Msg {
+			return errors.New("unexpected confirm yes msg on chapters state")
+		}
+	}
+}
+
 func (s *state) blockedActionByCmd(wanted string) tea.Cmd {
 	return base.Notify(fmt.Sprintf("Can't perform %q right now, %q is running", wanted, s.actionRunning))
 }
@@ -47,22 +85,24 @@ func (s *state) openURLCmd(chapter mangadata.Chapter) tea.Cmd {
 	)
 }
 
-func (s *state) downloadCmd(ctx context.Context, item *item) tea.Cmd {
+func (s *state) downloadCmd(item *item) tea.Cmd {
 	if s.actionRunning != "" {
 		return s.blockedActionByCmd("download")
 	}
 
-	options := config.DownloadOptions()
-	// Guaranteed to had been searched during mangas state,
-	// this avoids re-searching during download and unsetting the
-	// set metadata
-	options.SearchMetadata = false
+	size := s.selected.Size()
 	// when no toggled chapters then just download the one hovered
-	if s.selected.Size() == 0 {
-		// TODO: add confirmation?
-		return s.downloadChapterCmd(ctx, item, options, false)
+	if size <= 1 {
+		i := item
+		if size == 1 {
+			i = s.selected.Keys()[0]
+		}
+		msg := "Download chapter " + stringutil.FormatFloa32(i.chapter.Info().Number) + ` ("` + i.chapter.Info().Title + `")?`
+		return showConfirmCmd("Download", msg, cSDownloadHovered)
 	}
-	return showConfirmCmd("Download", "Download "+stringutil.Quantify(s.selected.Size(), "chapter", "chapters"), cSDownloadSelected)
+
+	msg := "Download " + stringutil.Quantify(size, "chapter", "chapters") + "?"
+	return showConfirmCmd("Download", msg, cSDownloadSelected)
 }
 
 func (s *state) downloadChapterCmd(ctx context.Context, item *item, options libmangal.DownloadOptions, readAfter bool) tea.Cmd {
@@ -134,24 +174,8 @@ func (s *state) readCmd(ctx context.Context, item *item) tea.Cmd {
 		return s.readChapterCmd(ctx, i.readAvailablePath, i, config.ReadOptions())
 	}
 
-	options := config.DownloadOptions()
-	// Guaranteed to had been searched during mangas state,
-	// this avoids re-searching during download and unsetting the
-	// set metadata
-	options.SearchMetadata = false
-	// TODO: add warning when read format != download format?
-	options.Format = config.Read.Format.Get()
-	// If shouldn't download on read, save to tmp dir with all dirs created
-	if !config.Read.DownloadOnRead.Get() {
-		options.Directory = path.TempDir()
-		options.CreateProviderDir = true
-		options.CreateMangaDir = true
-		options.CreateVolumeDir = true
-	}
-
-	// TODO: add confirmation?
-	log.Log("Read format not yet downloaded, downloading")
-	return s.downloadChapterCmd(ctx, i, options, true)
+	msg := fmt.Sprintf("Download chapter %s (%q) for reading?", stringutil.FormatFloa32(i.chapter.Info().Number), i.chapter.Info().Title)
+	return showConfirmCmd("Download", msg, cSDownloadForRead)
 }
 
 func (s *state) readChapterCmd(ctx context.Context, path string, item *item, options libmangal.ReadOptions) tea.Cmd {
