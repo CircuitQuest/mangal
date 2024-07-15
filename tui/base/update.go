@@ -58,6 +58,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if cmd := m.updateSpinner(msg); cmd != nil {
 			return m, cmd
 		}
+		return m, m.state.Update(m.ctx, msg)
 	case LoadingMsg:
 		return m, m.loading(msg.Message)
 	case NotificationMsg:
