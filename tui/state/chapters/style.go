@@ -10,6 +10,7 @@ type styles struct {
 	sep,
 	subtitle,
 	format,
+	confirmView,
 	formatView lipgloss.Style
 }
 
@@ -18,6 +19,9 @@ func defaultStyles() styles {
 		sep:      style.Bold.Warning.Padding(0, 1),
 		subtitle: style.Normal.Secondary, // matches base without padding
 		format:   style.Bold.Warning,
+		confirmView: lipgloss.NewStyle().
+			Border(lipgloss.RoundedBorder()).
+			BorderForeground(color.Success),
 		formatView: lipgloss.NewStyle().
 			Border(lipgloss.RoundedBorder()).
 			BorderForeground(color.Viewport),

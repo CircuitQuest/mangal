@@ -2,6 +2,7 @@ package chapters
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"strings"
 
@@ -12,7 +13,9 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/confirm"
 	"github.com/luevano/mangal/tui/model/format"
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
@@ -23,10 +26,19 @@ import (
 
 var _ base.State = (*state)(nil)
 
+type confirmState uint8
+
+const (
+	cSDownloadNone confirmState = iota
+	cSDownloadHovered
+	cSDownloadSelected
+)
+
 // state implements base.state.
 type state struct {
 	list    *list.Model
 	meta    *metadata.Model
+	confirm *confirm.Model
 	formats *format.Model
 
 	chapters []mangadata.Chapter
@@ -48,7 +60,10 @@ type state struct {
 	// if the actions that require an item are available
 	actionItemAvailable bool
 
+	inConfirm,
 	inFormats bool
+
+	confirmState confirmState
 
 	showVolumeNumber  *bool
 	showChapterNumber *bool
@@ -67,7 +82,7 @@ func (s *state) Intermediate() bool {
 
 // Backable implements base.State.
 func (s *state) Backable() bool {
-	return s.list.Backable() && !s.inFormats
+	return s.list.Backable() && !s.inFormats && !s.inConfirm
 }
 
 // KeyMap implements base.State.
@@ -115,6 +130,7 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 	s.updateRenderedSubtitleFormats()
 	return tea.Sequence(
 		s.list.Init(),
+		s.confirm.Init(),
 		s.formats.Init(),
 	)
 }
@@ -123,7 +139,8 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if s.list.FilterState() == _list.Filtering || s.inFormats {
+		// skip keybind handling, let the models handle these events
+		if s.list.FilterState() == _list.Filtering || s.inFormats || s.inConfirm {
 			goto end
 		}
 
@@ -185,6 +202,36 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			*s.showDate = !(*s.showDate)
 			s.updateListDelegate()
 		}
+	case showConfirmMsg:
+		s.previousFrame = s.View()
+		s.inConfirm = true
+		s.confirmState = msg.state
+		s.confirm.SetData(msg.title, msg.message)
+	case confirm.YesMsg:
+		// save current state and update to none
+		state := s.confirmState
+		s.inConfirm = false
+		s.confirmState = cSDownloadNone
+
+		switch state {
+		case cSDownloadHovered:
+			options := config.DownloadOptions()
+			options.SearchMetadata = false
+			// hovered
+			i, _ := s.list.SelectedItem().(*item)
+			return s.downloadChapterCmd(ctx, i, options, false)
+		case cSDownloadSelected:
+			options := config.DownloadOptions()
+			options.SearchMetadata = false
+			return s.downloadChaptersCmd(s.selected, options)
+		default:
+			return func() tea.Msg {
+				return errors.New("unexpected confirm yes msg on chapters state")
+			}
+		}
+	case confirm.NoMsg:
+		s.inConfirm = false
+		s.confirmState = cSDownloadNone
 	case format.BackMsg:
 		s.inFormats = false
 		s.updateAllItems()
@@ -197,18 +244,28 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		s.updateRenderedSubtitleFormats()
 	}
 end:
-	if s.inFormats {
+	switch {
+	case s.inConfirm:
+		return s.confirm.Update(msg)
+	case s.inFormats:
 		return s.formats.Update(msg)
+	default:
+		return s.list.Update(msg)
 	}
-	return s.list.Update(msg)
 }
 
 // View implements base.State.
 func (s *state) View() string {
-	if s.inFormats {
+	switch {
+	case s.inConfirm:
+		cV := s.styles.confirmView.Render(s.confirm.View())
+		w, h := lipgloss.Size(cV)
+		return util.PlaceOverlay((s.size.Width-w)/2, (s.size.Height-h)/2, cV, s.previousFrame)
+	case s.inFormats:
 		fV := s.styles.formatView.Render(s.formats.View())
 		w, h := lipgloss.Size(fV)
 		return util.PlaceOverlay((s.size.Width-w)/2, (s.size.Height-h)/2, fV, s.previousFrame)
+	default:
+		return s.list.View()
 	}
-	return s.list.View()
 }

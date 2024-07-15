@@ -12,12 +12,21 @@ import (
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/tui/base"
-	"github.com/luevano/mangal/tui/state/confirm"
 	"github.com/luevano/mangal/tui/state/download"
 	stringutil "github.com/luevano/mangal/util/string"
 	"github.com/skratchdot/open-golang/open"
 	"github.com/zyedidia/generic/set"
 )
+
+func showConfirmCmd(title, message string, state confirmState) tea.Cmd {
+	return func() tea.Msg {
+		return showConfirmMsg{
+			title:   title,
+			message: message,
+			state:   state,
+		}
+	}
+}
 
 func (s *state) blockedActionByCmd(wanted string) tea.Cmd {
 	return base.Notify(fmt.Sprintf("Can't perform %q right now, %q is running", wanted, s.actionRunning))
@@ -53,20 +62,7 @@ func (s *state) downloadCmd(ctx context.Context, item *item) tea.Cmd {
 		// TODO: add confirmation?
 		return s.downloadChapterCmd(ctx, item, options, false)
 	}
-
-	// TODO: refactor confirmation state?
-	return func() tea.Msg {
-		return confirm.New(
-			fmt.Sprint("Download ", stringutil.Quantify(s.selected.Size(), "chapter", "chapters")),
-			func(response bool) tea.Cmd {
-				if !response {
-					return base.Back
-				}
-
-				return s.downloadChaptersCmd(s.selected, options)
-			},
-		)
-	}
+	return showConfirmCmd("Download", "Download "+stringutil.Quantify(s.selected.Size(), "chapter", "chapters"), cSDownloadSelected)
 }
 
 func (s *state) downloadChapterCmd(ctx context.Context, item *item, options libmangal.DownloadOptions, readAfter bool) tea.Cmd {

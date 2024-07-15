@@ -9,6 +9,7 @@ import (
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/theme/icon"
+	"github.com/luevano/mangal/tui/model/confirm"
 	"github.com/luevano/mangal/tui/model/format"
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
@@ -56,6 +57,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	s := &state{
 		list:              listWrapper,
 		meta:              metadata.New(manga.Metadata()),
+		confirm:           confirm.New(30, color.Success),
 		formats:           format.New(color.Viewport),
 		chapters:          chapters,
 		volume:            volume,
@@ -63,6 +65,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		client:            client,
 		selected:          set.NewMapset[*item](),
 		renderedSep:       renderedSep,
+		confirmState:      cSDownloadNone,
 		showVolumeNumber:  &showVolumeNumber,
 		showChapterNumber: &showChapterNumber,
 		showGroup:         &showGroup,
