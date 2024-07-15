@@ -33,6 +33,8 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.log):
 			return m, Viewport("Logs", log.Aggregate.String(), color.Viewport)
 		}
+	// receiving any of these msgs override the behavior of the keybinds;
+	// even if the keybinds are disabled, these messages will work.
 	case ShowViewportMsg:
 		return m, m.showViewport(msg.Title, msg.Content, msg.Color)
 	case viewport.BackMsg:
@@ -41,13 +43,11 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.inViewport {
 			return m, m.hideViewport()
 		}
-		m.inViewport = false
 		return m, m.back(msg.Steps)
 	case BackToHomeMsg:
 		if m.inViewport {
 			return m, m.hideViewport()
 		}
-		m.inViewport = false
 		return m, m.back(m.history.Size())
 	case State:
 		return m, m.pushState(msg)
