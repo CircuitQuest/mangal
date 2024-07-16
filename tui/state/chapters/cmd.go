@@ -125,6 +125,7 @@ func (s *state) downloadChapterCmd(ctx context.Context, item *item, options libm
 			}
 			s.updateItem(item)
 
+			log.Log("Downloaded chapter %q at %q", chapter, downChap.Path())
 			if readAfter {
 				return s.readChapterCmd(ctx, downChap.Path(), item, config.ReadOptions())()
 			}
@@ -134,9 +135,11 @@ func (s *state) downloadChapterCmd(ctx context.Context, item *item, options libm
 	)
 }
 
-// TODO: implement base.Loading/Loaded and actionRunningCmd/actionRanCmd
 func (s *state) downloadChaptersCmd(items set.Set[*item], options libmangal.DownloadOptions) tea.Cmd {
 	return func() tea.Msg {
+		s.actionRunningNow("download")
+		defer s.actionRunningNow("")
+
 		var chapters []mangadata.Chapter
 		for _, item := range items.Keys() {
 			chapters = append(chapters, item.chapter)
@@ -145,11 +148,7 @@ func (s *state) downloadChaptersCmd(items set.Set[*item], options libmangal.Down
 			return chapters[i].Info().Number < chapters[j].Info().Number
 		})
 
-		return download.New(
-			s.client,
-			chapters,
-			options,
-		)
+		return download.New(s.client, chapters, options)
 	}
 }
 

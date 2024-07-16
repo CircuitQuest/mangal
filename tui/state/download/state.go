@@ -10,41 +10,56 @@ import (
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
-	"github.com/luevano/libmangal/mangadata"
-	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/tui/model/viewport"
+	stringutil "github.com/luevano/mangal/util/string"
 )
 
 var _ base.State = (*state)(nil)
 
+type chapterState uint8
+
+const (
+	cSToDownload chapterState = iota + 1
+	cSSucceed
+	cSFailed
+)
+
+type downloadState uint8
+
+const (
+	dSUninitialized downloadState = iota + 1
+	dSDownloading
+	dSDownloaded
+)
+
 // state implements base.state.
 type state struct {
-	client   *libmangal.Client
-	chapters []mangadata.Chapter
-	options  libmangal.DownloadOptions
-
-	// currently downloading?
-	downloading bool
-
-	currentIdx int
-	toDownload,
-	succeed,
-	failed []mangadata.Chapter
-	succeedDownloads []*metadata.DownloadedChapter
-
-	message  string
 	progress progress.Model
 	spinner  spinner.Model
+	viewport *viewport.Model
+	client   *libmangal.Client
+	chapters chapters
+	options  libmangal.DownloadOptions
+
+	downloading downloadState
+	currentIdx  int
+	toDownload  chapters
+
+	sep,
+	message string
 
 	size   base.Size
+	styles styles
 	keyMap keyMap
 }
 
 // Intermediate implements base.State.
 func (s *state) Intermediate() bool {
-	return true
+	return false
 }
 
 // Backable implements base.State.
@@ -64,7 +79,33 @@ func (s *state) Title() base.Title {
 
 // Subtitle implements base.State.
 func (s *state) Subtitle() string {
-	return ""
+	down, succ, fail := s.chapters.getEach()
+	var sb strings.Builder
+	sb.Grow(50)
+
+	renDown := len(down) != 0
+	renSucc := len(succ) != 0
+	renFail := len(fail) != 0
+
+	if renDown {
+		q := stringutil.Quantify(len(down), "chapter", "chapters")
+		sb.WriteString(s.styles.toDownload.Render(q + " to download"))
+		if renSucc || renFail {
+			sb.WriteString(s.sep)
+		}
+	}
+	if renSucc {
+		q := stringutil.Quantify(len(succ), "chapter", "chapters")
+		sb.WriteString(s.styles.succeed.Render(q + " downloaded"))
+		if renFail {
+			sb.WriteString(s.sep)
+		}
+	}
+	if renFail {
+		q := stringutil.Quantify(len(fail), "chapter", "chapters")
+		sb.WriteString(s.styles.failed.Render(q + " failed"))
+	}
+	return sb.String()
 }
 
 // Status implements base.State.
@@ -75,8 +116,12 @@ func (s *state) Status() string {
 // Resize implements base.State.
 func (s *state) Resize(size base.Size) tea.Cmd {
 	s.size = size
-	s.progress.Width = size.Width
-	return nil
+	s.progress.Width = s.size.Width
+	h := 0
+	if s.downloading != dSDownloaded {
+		h = lipgloss.Height(s.viewDownloading())
+	}
+	return s.viewport.Resize(s.size.Width, s.size.Height-h)
 }
 
 // Init implements base.State.
@@ -89,8 +134,9 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 		}
 	})
 
-	s.updateKeyMap()
+	s.updateKeybinds()
 	return tea.Sequence(
+		s.viewport.Init(),
 		s.spinner.Tick,
 		s.startDownloadCmd,
 	)
@@ -104,25 +150,29 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, s.keyMap.open):
 			return s.openCmd
 		case key.Matches(msg, s.keyMap.retry):
-			return s.retryCmd
+			return s.retryCmd()
 		}
 	case spinner.TickMsg:
 		spinner, cmd := s.spinner.Update(msg)
 		s.spinner = spinner
 		return cmd
 	case nextChapterMsg:
+		s.updateKeybinds()
+		s.viewport.SetContent(s.viewDownloaded())
 		return s.downloadChapterCmd(ctx)
 	case downloadCompletedMsg:
-		s.downloading = false
-		s.updateKeyMap()
+		s.downloading = dSDownloaded
+		s.updateKeybinds()
+		s.viewport.SetContent(s.viewDownloaded())
+		return s.Resize(s.size)
 	}
-	return nil
+	return s.viewport.Update(msg)
 }
 
 // View implements base.State.
 func (s *state) View() string {
-	if s.downloading {
-		return s.viewDownloading()
+	if s.downloading == dSDownloading {
+		return s.viewDownloading() + "\n" + s.viewport.View()
 	}
-	return s.viewDownloaded()
+	return s.viewport.View()
 }

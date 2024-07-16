@@ -10,63 +10,75 @@ import (
 	stringutil "github.com/luevano/mangal/util/string"
 )
 
-// updateKeyMap enables open/retry keybinds if necessary
-func (s *state) updateKeyMap() {
-	s.keyMap.open.SetEnabled(len(s.succeed) > 0 && !s.downloading)
-	s.keyMap.retry.SetEnabled(len(s.failed) > 0 && !s.downloading)
+// updateKeybinds enables open/retry keybinds if necessary
+func (s *state) updateKeybinds() {
+	_, succ, fail := s.chapters.getEach()
+	hasSucc := len(succ) > 0
+	hasFail := len(fail) > 0
+	downloading := s.downloading != dSDownloaded
+	s.keyMap.open.SetEnabled(hasSucc && !downloading)
+	s.keyMap.retry.SetEnabled(hasFail && !downloading)
 }
 
 func (s *state) viewDownloading() string {
-	spinnerView := s.spinner.View()
-	return fmt.Sprintf(`%s Downloading %s - %d/%d
-
-%s
-
-%s %s`,
+	ch := s.chapters[s.currentIdx].chapter
+	summary := fmt.Sprintf(
+		`%s Downloading chapter %s "%s" %s %d/%d`,
 		icon.Progress.Colored(),
-		s.toDownload[s.currentIdx].String(),
-		s.currentIdx+1, len(s.toDownload),
+		s.styles.accent.Render(stringutil.FormatFloa32(ch.Info().Number)),
+		s.styles.accent.Render(ch.String()),
+		s.sep, s.currentIdx+1, len(s.toDownload),
+	)
+	return lipgloss.JoinVertical(
+		lipgloss.Left,
+		summary,
+		" ",
 		s.progress.ViewAs(float64(s.currentIdx)/float64(len(s.toDownload))),
-		spinnerView,
-		style.Normal.Secondary.Render(stringutil.Trim(s.message, s.size.Width-lipgloss.Width(spinnerView)-1)),
+		" ",
+		s.spinner.View()+" "+style.Normal.Secondary.Render(s.message),
 	)
 }
 
 func (s *state) viewDownloaded() string {
-	var (
-		succeed = len(s.succeed)
-		failed  = len(s.failed)
-	)
-
-	if failed == 0 {
-		return style.Normal.Success.
-			Render(fmt.Sprintf(
-				"%s downloaded successfully!",
-				stringutil.Quantify(succeed, "chapter", "chapters"),
-			))
+	down, succ, fail := s.chapters.getEach()
+	var lines []string
+	if len(down) != 0 {
+		lines = append(lines, s.viewChapterList("To download:", s.styles.toDownload, down))
 	}
+	if len(succ) != 0 {
+		lines = append(lines, s.viewChapterList("Succeeded:", s.styles.succeed, succ))
+	}
+	if len(fail) != 0 {
+		lines = append(lines, s.viewChapterList("Failed:", s.styles.failed, fail))
+	}
+	expl := "\nThe lists follow the template:\n" +
+		"`<number> - <title> - s: <download status> - f: <filename>`"
+	lines = append(lines, s.styles.toDownload.Render(expl))
+	return lipgloss.JoinVertical(lipgloss.Left, lines...)
+}
 
+func (s *state) viewChapterList(header string, headerStyle lipgloss.Style, chaps chapters) string {
 	var sb strings.Builder
+	sb.Grow(200)
 
-	sb.WriteString(fmt.Sprintf(
-		"%s downloaded successfully, %d failed.",
-		stringutil.Quantify(succeed, "chapter", "chapters"),
-		failed,
-	))
+	sb.WriteString(headerStyle.Render(header))
+	sb.WriteByte('\n')
 
-	sb.WriteString("\n\nFailed:\n")
-
-	if failed <= 3 {
-		for _, chapter := range s.failed {
-			sb.WriteString(fmt.Sprintf("\n%s", chapter))
+	item := s.styles.itemEnum.Foreground(headerStyle.GetForeground()).Render(icon.Item.Raw())
+	subItm := s.styles.subItemEnum.Foreground(headerStyle.GetForeground()).Render(icon.SubItem.Raw())
+	var lastDir string
+	for i, ch := range chaps {
+		if ch.down != nil && ch.down.Directory != lastDir {
+			lastDir = ch.down.Directory
+			sb.WriteString(item)
+			sb.WriteString(s.styles.toDownload.Render(lastDir))
+			sb.WriteByte('\n')
 		}
-	} else {
-		indices := make([]float32, failed)
-		for i, c := range s.failed {
-			indices[i] = c.Info().Number
+		sb.WriteString(subItm)
+		sb.WriteString(ch.render(s.styles))
+		if i < len(chaps) {
+			sb.WriteByte('\n')
 		}
-
-		sb.WriteString(stringutil.FormatRanges(indices))
 	}
 
 	return sb.String()

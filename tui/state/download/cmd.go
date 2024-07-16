@@ -4,33 +4,31 @@ import (
 	"context"
 
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/libmangal/mangadata"
 	"github.com/skratchdot/open-golang/open"
 )
 
 func (s *state) startDownloadCmd() tea.Msg {
+	s.downloading = dSDownloading
 	s.currentIdx = 0
-	s.toDownload = s.chapters
-	s.downloading = true
+	s.toDownload = s.chapters.toDownload()
 	return nextChapterMsg{}
 }
 
 func (s *state) downloadChapterCmd(ctx context.Context) tea.Cmd {
 	return func() tea.Msg {
-		chapter := s.toDownload[s.currentIdx]
-		downChap, err := s.client.DownloadChapter(ctx, chapter, s.options)
+		ch := s.toDownload[s.currentIdx]
+		downChap, err := s.client.DownloadChapter(ctx, ch.chapter, s.options)
+		ch.down = downChap
 
 		if err != nil {
-			s.failed = append(s.failed, chapter)
+			ch.state = cSFailed
 		} else {
-			s.succeedDownloads = append(s.succeedDownloads, downChap)
-			s.succeed = append(s.succeed, chapter)
+			ch.state = cSSucceed
 		}
 
 		if s.currentIdx+1 >= len(s.toDownload) {
 			return downloadCompletedMsg{}
 		}
-
 		s.currentIdx++
 		return nextChapterMsg{}
 	}
@@ -38,14 +36,18 @@ func (s *state) downloadChapterCmd(ctx context.Context) tea.Cmd {
 
 // openCmd relies on the keybinds enabled/disabled effectively
 func (s *state) openCmd() tea.Msg {
-	return open.Start(s.succeedDownloads[0].Directory)
+	return open.Start(s.chapters[0].down.Directory)
 }
 
 // retryCmd relies on the keybinds enabled/disabled effectively
-func (s *state) retryCmd() tea.Msg {
+func (s *state) retryCmd() tea.Cmd {
+	s.downloading = dSDownloading
 	s.currentIdx = 0
-	s.toDownload = s.failed
-	s.failed = []mangadata.Chapter{}
-	s.downloading = true
-	return nextChapterMsg{}
+	s.toDownload = s.chapters.failed()
+	return tea.Sequence(
+		func() tea.Msg {
+			return nextChapterMsg{}
+		},
+		s.Resize(s.size),
+	)
 }

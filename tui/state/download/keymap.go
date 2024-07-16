@@ -3,35 +3,41 @@ package download
 import (
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
+	"github.com/luevano/mangal/tui/model/viewport"
 	"github.com/luevano/mangal/tui/util"
 )
 
 var _ help.KeyMap = (*keyMap)(nil)
 
-func newKeyMap() keyMap {
+func newKeyMap(viewport *viewport.KeyMap) keyMap {
 	return keyMap{
-		open:  util.Bind("open directory", "o"),
-		retry: util.Bind("retry", "r"),
+		viewport: viewport,
+		open:     util.Bind("open directory", "o"),
+		retry:    util.Bind("retry", "r"),
 	}
 }
 
 // keyMap implements help.keyMap.
 type keyMap struct {
+	viewport *viewport.KeyMap
+
 	open,
 	retry key.Binding
 }
 
-// ShortHelp implements help.keyMap.
-func (k keyMap) ShortHelp() []key.Binding {
+func (k keyMap) shortHelp() []key.Binding {
 	return []key.Binding{
 		k.open,
 		k.retry,
 	}
 }
 
+// ShortHelp implements help.keyMap.
+func (k keyMap) ShortHelp() []key.Binding {
+	return append(k.shortHelp(), k.viewport.ShortHelp()...)
+}
+
 // FullHelp implements help.keyMap.
 func (k keyMap) FullHelp() [][]key.Binding {
-	return [][]key.Binding{
-		k.ShortHelp(),
-	}
+	return append([][]key.Binding{k.shortHelp()}, k.viewport.FullHelp()...)
 }
