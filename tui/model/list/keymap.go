@@ -7,55 +7,55 @@ import (
 	"github.com/luevano/mangal/tui/util"
 )
 
-var _ help.KeyMap = (*keyMap)(nil)
+var _ help.KeyMap = (*KeyMap)(nil)
 
-func newKeyMap(listKeyMap list.KeyMap, other help.KeyMap) keyMap {
-	return keyMap{
-		reverse: util.Bind("reverse", "R"),
-		list:    listKeyMap,
+func newKeyMap(listKeyMap *list.KeyMap, other help.KeyMap) KeyMap {
+	return KeyMap{
+		List:    listKeyMap,
 		other:   other,
+		Reverse: util.Bind("reverse", "R"),
 	}
 }
 
-// keyMap implements help.keyMap.
-type keyMap struct {
-	reverse key.Binding
-	list    list.KeyMap
-
+// KeyMap implements help.KeyMap.
+type KeyMap struct {
+	List  *list.KeyMap
 	other help.KeyMap
+
+	Reverse key.Binding
 }
 
-func (k keyMap) shortHelp() []key.Binding {
+func (k KeyMap) shortHelp() []key.Binding {
 	return []key.Binding{
-		k.list.Filter,
-		k.reverse,
-		k.list.CursorUp,
-		k.list.CursorDown,
+		k.List.Filter,
+		k.Reverse,
+		k.List.CursorUp,
+		k.List.CursorDown,
 	}
 }
 
 // ShortHelp implements help.KeyMap.
-func (k keyMap) ShortHelp() []key.Binding {
+func (k KeyMap) ShortHelp() []key.Binding {
 	return append(k.other.ShortHelp(),
 		k.shortHelp()...,
 	)
 }
 
 // FullHelp implements help.KeyMap.
-func (k keyMap) FullHelp() [][]key.Binding {
+func (k KeyMap) FullHelp() [][]key.Binding {
 	return append(k.other.FullHelp(),
 		[][]key.Binding{
 			k.shortHelp(),
 			{
-				k.list.NextPage,
-				k.list.PrevPage,
-				k.list.GoToStart,
-				k.list.GoToEnd,
+				k.List.NextPage,
+				k.List.PrevPage,
+				k.List.GoToStart,
+				k.List.GoToEnd,
 			},
 			{
-				k.list.ClearFilter,
-				k.list.CancelWhileFiltering,
-				k.list.AcceptWhileFiltering,
+				k.List.ClearFilter,
+				k.List.CancelWhileFiltering,
+				k.List.AcceptWhileFiltering,
 			},
 		}...,
 	)

@@ -5,7 +5,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/tui/base"
@@ -30,12 +29,12 @@ func (s *state) Intermediate() bool {
 
 // Backable implements base.State.
 func (s *state) Backable() bool {
-	return s.list.Backable()
+	return s.list.Unfiltered()
 }
 
 // KeyMap implements base.State.
 func (s *state) KeyMap() help.KeyMap {
-	return s.list.KeyMap()
+	return s.list.KeyMap
 }
 
 // Title implements base.State.
@@ -74,7 +73,7 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if s.list.FilterState() == _list.Filtering {
+		if s.list.Filtering() {
 			goto end
 		}
 

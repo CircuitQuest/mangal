@@ -3,7 +3,6 @@ package list
 import (
 	"slices"
 
-	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
@@ -14,17 +13,26 @@ import (
 type Model struct {
 	list.Model
 	delegate *list.DefaultDelegate
-	keyMap   keyMap
+	KeyMap   KeyMap
 }
 
-func (m *Model) Backable() bool {
+// Unfiltered is a convenience method to check if the list is currently unfiltered.
+func (m *Model) Unfiltered() bool {
 	return m.FilterState() == list.Unfiltered
 }
 
-func (m *Model) KeyMap() help.KeyMap {
-	return m.keyMap
+// Filtering is a convenience method to check if the list is currently filtering.
+func (m *Model) Filtering() bool {
+	return m.FilterState() == list.Filtering
 }
 
+// FilterApplied is a convenience method to check if the list has a filter applied.
+func (m *Model) FilterApplied() bool {
+	return m.FilterState() == list.FilterApplied
+}
+
+// Subtitle returns the quantified amount of items.
+// For example: "1 manga", "10 chapters", "0 pages".
 func (m *Model) Subtitle() string {
 	singular, plural := m.StatusBarItemName()
 	return stringutil.Quantify(len(m.VisibleItems()), singular, plural)
@@ -60,7 +68,7 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 		}
 
 		switch {
-		case key.Matches(msg, m.keyMap.reverse):
+		case key.Matches(msg, m.KeyMap.Reverse):
 			slices.Reverse(m.Items())
 			return tea.Sequence(
 				m.SetItems(m.Items()),
@@ -76,27 +84,32 @@ end:
 }
 
 func (m *Model) SetItems(items []list.Item) tea.Cmd {
-	m.updateKeybinds(len(items) != 0)
 	m.ResetSelected()
-	return m.Model.SetItems(items)
+	return tea.Sequence(
+		m.Model.SetItems(items),
+		func() tea.Msg {
+			m.updateKeybinds()
+			return nil
+		},
+	)
 }
 
 // SetDelegateHeight sets the height of the delegate, which translates to the items' height.
 //
 // Clamps to a minimum of 1, in which case the description is hidden.
-func (s *Model) SetDelegateHeight(height int) {
+func (m *Model) SetDelegateHeight(height int) {
 	if height < 2 {
 		height = 1
 	}
 	if height == 1 {
-		s.delegate.ShowDescription = false
+		m.delegate.ShowDescription = false
 	} else {
-		s.delegate.ShowDescription = true
+		m.delegate.ShowDescription = true
 	}
-	s.delegate.SetHeight(height)
-	s.SetDelegate(s.delegate)
+	m.delegate.SetHeight(height)
+	m.SetDelegate(m.delegate)
 }
 
-func (s *Model) updateKeybinds(enable bool) {
-	s.keyMap.reverse.SetEnabled(enable)
+func (m *Model) updateKeybinds() {
+	m.KeyMap.Reverse.SetEnabled(len(m.Items()) != 0)
 }

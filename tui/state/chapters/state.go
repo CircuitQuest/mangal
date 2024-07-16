@@ -7,7 +7,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
@@ -81,12 +80,12 @@ func (s *state) Intermediate() bool {
 
 // Backable implements base.State.
 func (s *state) Backable() bool {
-	return s.list.Backable() && !s.inFormats && !s.inConfirm
+	return s.list.Unfiltered() && !s.inFormats && !s.inConfirm
 }
 
 // KeyMap implements base.State.
 func (s *state) KeyMap() help.KeyMap {
-	return s.list.KeyMap()
+	return s.list.KeyMap
 }
 
 // Title implements base.State.
@@ -139,7 +138,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		// skip keybind handling, let the models handle these events
-		if s.list.FilterState() == _list.Filtering || s.inFormats || s.inConfirm {
+		if s.list.Filtering() || s.inFormats || s.inConfirm {
 			goto end
 		}
 

@@ -19,7 +19,6 @@ const (
 	SearchCanceled
 )
 
-// Model implements tea.Model.
 type Model struct {
 	input textinput.Model
 	state State
@@ -37,6 +36,26 @@ func (m *Model) Query() string {
 // State returns the current state of the search.
 func (m *Model) State() State {
 	return m.state
+}
+
+// Unsearched is a convenience method to check if there hasn't been a search done.
+func (m *Model) Unsearched() bool {
+	return m.state == Unsearched
+}
+
+// Searching is a convenience method to check if a search is being performed.
+func (m *Model) Searching() bool {
+	return m.state == Searching
+}
+
+// Searched is a convenience method to check if a search was performed.
+func (m *Model) Searched() bool {
+	return m.state == Unsearched
+}
+
+// SearchCanceled is a convenience method to check if the search was canceled.
+func (m *Model) SearchCanceled() bool {
+	return m.state == SearchCanceled
 }
 
 // Focus sets the sate to Searching and enables the input.

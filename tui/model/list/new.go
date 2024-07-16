@@ -63,8 +63,8 @@ func New[T any](
 	s := &Model{
 		Model:    l,
 		delegate: &delegate,
-		keyMap:   newKeyMap(l.KeyMap, other),
+		KeyMap:   newKeyMap(&l.KeyMap, other),
 	}
-	s.updateKeybinds(len(items) != 0)
+	s.updateKeybinds()
 	return s
 }

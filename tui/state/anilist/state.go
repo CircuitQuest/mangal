@@ -5,7 +5,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
-	_list "github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal/mangadata"
@@ -38,12 +37,12 @@ func (s *state) Intermediate() bool {
 
 // Backable implements base.State.
 func (s *state) Backable() bool {
-	return s.list.Backable() && s.search.State() != search.Searching
+	return s.list.Unfiltered() && !s.search.Searching()
 }
 
 // KeyMap implements base.State.
 func (s *state) KeyMap() help.KeyMap {
-	return s.list.KeyMap()
+	return s.list.KeyMap
 }
 
 // Title implements base.State.
@@ -89,7 +88,7 @@ func (s *state) Init(ctx context.Context) tea.Cmd {
 func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
-		if s.list.FilterState() == _list.Filtering || s.search.State() == search.Searching {
+		if s.list.Filtering() || s.search.Searching() {
 			goto end
 		}
 
@@ -108,7 +107,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		return s.searchCmd(ctx, string(msg))
 	}
 end:
-	if s.search.State() == search.Searching {
+	if s.search.Searching() {
 		return s.search.Update(msg)
 	}
 	return s.list.Update(msg)
