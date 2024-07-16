@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/atotto/clipboard"
-	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
@@ -22,7 +21,7 @@ type Model struct {
 	borderVerticalSize int
 
 	style  lipgloss.Style
-	keyMap keyMap
+	KeyMap KeyMap
 }
 
 func (m *Model) Title() string {
@@ -33,17 +32,17 @@ func (m *Model) Color() lipgloss.Color {
 	return m.color
 }
 
-func (m *Model) SetData(title, content string, color lipgloss.Color) {
-	m.title = title
+func (m *Model) SetContent(content string) {
 	m.content = content
 	m.Model.SetContent(content)
-	m.color = color
-	m.style = m.style.BorderForeground(color)
 	m.updateKeybinds()
 }
 
-func (m *Model) KeyMap() help.KeyMap {
-	return m.keyMap
+func (m *Model) SetData(title, content string, color lipgloss.Color) {
+	m.title = title
+	m.color = color
+	m.style = m.style.BorderForeground(color)
+	m.SetContent(content)
 }
 
 func (s *Model) Status() string {
@@ -64,15 +63,19 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, m.keyMap.copy):
-			return func() tea.Msg {
-				return clipboard.WriteAll(m.content)
-			}
-		case key.Matches(msg, m.keyMap.goTop):
+		case key.Matches(msg, m.KeyMap.Copy):
+			return tea.Sequence(
+				func() tea.Msg {
+					// TODO: sanitize copied text (ansi codes)
+					return clipboard.WriteAll(m.content)
+				},
+				notificationCmd("Copied content to clipboard"),
+			)
+		case key.Matches(msg, m.KeyMap.GoTop):
 			m.GotoTop()
-		case key.Matches(msg, m.keyMap.goBottom):
+		case key.Matches(msg, m.KeyMap.GoBottom):
 			m.GotoBottom()
-		case key.Matches(msg, m.keyMap.back):
+		case key.Matches(msg, m.KeyMap.Back):
 			return backCmd
 		}
 	}
@@ -88,7 +91,7 @@ func (m *Model) View() string {
 // updateKeybinds enables/disables keybinds based on the content.
 func (m *Model) updateKeybinds() {
 	enable := m.content != ""
-	m.keyMap.copy.SetEnabled(enable)
-	m.keyMap.goTop.SetEnabled(enable)
-	m.keyMap.goBottom.SetEnabled(enable)
+	m.KeyMap.Copy.SetEnabled(enable)
+	m.KeyMap.GoTop.SetEnabled(enable)
+	m.KeyMap.GoBottom.SetEnabled(enable)
 }

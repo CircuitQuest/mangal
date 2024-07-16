@@ -37,6 +37,8 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// even if the keybinds are disabled, these messages will work.
 	case ShowViewportMsg:
 		return m, m.showViewport(msg.Title, msg.Content, msg.Color)
+	case viewport.NotificationMsg:
+		return m, Notify(msg.Message)
 	case viewport.BackMsg:
 		return m, m.hideViewport()
 	case BackMsg:

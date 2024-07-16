@@ -7,54 +7,59 @@ import (
 	"github.com/luevano/mangal/tui/util"
 )
 
-// TODO: add custom keybinds
+var _ help.KeyMap = (*KeyMap)(nil)
 
-var _ help.KeyMap = (*keyMap)(nil)
-
-func newKeyMap(vieportKeyMap *viewport.KeyMap) keyMap {
-	return keyMap{
-		viewport: vieportKeyMap,
-		copy:     util.Bind("copy content", "c"),
-		goTop:    util.BindNamedKey("g/home", "go to start", "g", "home"),
-		goBottom: util.BindNamedKey("G/end", "go to end", "G", "end"),
-		back:     util.Bind("back", "esc"),
+func newKeyMap(vieportKeyMap *viewport.KeyMap) KeyMap {
+	return KeyMap{
+		Viewport: vieportKeyMap,
+		Copy:     util.Bind("copy content", "c"),
+		GoTop:    util.BindNamedKey("g/home", "go to start", "g", "home"),
+		GoBottom: util.BindNamedKey("G/end", "go to end", "G", "end"),
+		Back:     util.Bind("back", "esc"),
 	}
 }
 
-// keyMap implements help.keyMap.
-type keyMap struct {
-	viewport *viewport.KeyMap
+// KeyMap implements help.KeyMap.
+type KeyMap struct {
+	// Viewport is the original viewport KeyMap
+	Viewport *viewport.KeyMap
 
-	copy,
-	goTop,
-	goBottom,
-	back key.Binding
+	Copy,
+	GoTop,
+	GoBottom,
+	Back key.Binding
 }
 
 // ShortHelp implements help.keyMap.
-func (k keyMap) ShortHelp() []key.Binding {
+func (k KeyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
-		k.copy,
-		k.viewport.Up,
-		k.viewport.Down,
+		k.Copy,
+		k.Viewport.Up,
+		k.Viewport.Down,
 	}
 }
 
 // FullHelp implements help.keyMap.
-func (k keyMap) FullHelp() [][]key.Binding {
+func (k KeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
-		k.ShortHelp(),
 		{
-			k.goTop,
-			k.goBottom,
+			k.Copy,
 		},
 		{
-			k.viewport.HalfPageUp,
-			k.viewport.HalfPageDown,
+			k.Viewport.Up,
+			k.Viewport.Down,
 		},
 		{
-			k.viewport.PageUp,
-			k.viewport.PageDown,
+			k.GoTop,
+			k.GoBottom,
+		},
+		{
+			k.Viewport.HalfPageUp,
+			k.Viewport.HalfPageDown,
+		},
+		{
+			k.Viewport.PageUp,
+			k.Viewport.PageDown,
 		},
 	}
 }

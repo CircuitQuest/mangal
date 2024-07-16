@@ -13,7 +13,7 @@ func New() *Model {
 		borderHorizontalSize: b.GetLeftSize() + b.GetRightSize(),
 		borderVerticalSize:   b.GetTopSize() + b.GetBottomSize(),
 		style:                lipgloss.NewStyle().BorderStyle(b),
-		keyMap:               newKeyMap(&v.KeyMap),
+		KeyMap:               newKeyMap(&v.KeyMap),
 	}
 	s.updateKeybinds()
 	return s
