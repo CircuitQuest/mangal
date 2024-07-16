@@ -9,23 +9,22 @@ import (
 
 var _ help.KeyMap = (*KeyMap)(nil)
 
-func newKeyMap(listKeyMap *list.KeyMap, other help.KeyMap) KeyMap {
+func newKeyMap(listKeyMap *list.KeyMap) KeyMap {
 	return KeyMap{
 		List:    listKeyMap,
-		other:   other,
 		Reverse: util.Bind("reverse", "R"),
 	}
 }
 
 // KeyMap implements help.KeyMap.
 type KeyMap struct {
-	List  *list.KeyMap
-	other help.KeyMap
+	List *list.KeyMap
 
 	Reverse key.Binding
 }
 
-func (k KeyMap) shortHelp() []key.Binding {
+// ShortHelp implements help.KeyMap.
+func (k KeyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
 		k.List.Filter,
 		k.Reverse,
@@ -34,29 +33,20 @@ func (k KeyMap) shortHelp() []key.Binding {
 	}
 }
 
-// ShortHelp implements help.KeyMap.
-func (k KeyMap) ShortHelp() []key.Binding {
-	return append(k.other.ShortHelp(),
-		k.shortHelp()...,
-	)
-}
-
 // FullHelp implements help.KeyMap.
 func (k KeyMap) FullHelp() [][]key.Binding {
-	return append(k.other.FullHelp(),
-		[][]key.Binding{
-			k.shortHelp(),
-			{
-				k.List.NextPage,
-				k.List.PrevPage,
-				k.List.GoToStart,
-				k.List.GoToEnd,
-			},
-			{
-				k.List.ClearFilter,
-				k.List.CancelWhileFiltering,
-				k.List.AcceptWhileFiltering,
-			},
-		}...,
-	)
+	return [][]key.Binding{
+		k.ShortHelp(),
+		{
+			k.List.NextPage,
+			k.List.PrevPage,
+			k.List.GoToStart,
+			k.List.GoToEnd,
+		},
+		{
+			k.List.ClearFilter,
+			k.List.CancelWhileFiltering,
+			k.List.AcceptWhileFiltering,
+		},
+	}
 }

@@ -10,15 +10,13 @@ import (
 )
 
 func New(accentColor lipgloss.Color) *Model {
-	_keyMap := newKeyMap()
 	listWrapper := list.New(
-		2,
-		"manga", "mangas",
+		2, "manga", "mangas",
 		libmangal.FormatValues(),
 		func(format libmangal.Format) _list.DefaultItem {
 			return &item{format: format}
 		},
-		&_keyMap)
+	)
 
 	t := lipgloss.NewStyle().
 		Background(accentColor).
@@ -27,6 +25,7 @@ func New(accentColor lipgloss.Color) *Model {
 		Render("Formats")
 	h := help.New()
 	h.ShowAll = true
+	_keyMap := newKeyMap()
 	return &Model{
 		list:  listWrapper,
 		title: t,
@@ -35,6 +34,6 @@ func New(accentColor lipgloss.Color) *Model {
 			Width:  24,
 			Height: 18,
 		},
-		keyMap: &_keyMap,
+		keyMap: _keyMap,
 	}
 }

@@ -27,7 +27,7 @@ type state struct {
 
 	searched bool
 
-	keyMap *keyMap
+	keyMap keyMap
 }
 
 // Intermediate implements base.State.
@@ -42,7 +42,7 @@ func (s *state) Backable() bool {
 
 // KeyMap implements base.State.
 func (s *state) KeyMap() help.KeyMap {
-	return s.list.KeyMap
+	return base.CombinedKeyMap(s.keyMap, s.list.KeyMap)
 }
 
 // Title implements base.State.

@@ -24,7 +24,6 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	showDate := config.TUI.Chapter.ShowDate.Get()
 
 	_styles := defaultStyles()
-	_keyMap := newKeyMap()
 	renderedSep := _styles.sep.Render(icon.Separator.Raw())
 	listWrapper := list.New(
 		3,
@@ -52,7 +51,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 
 			return item
 		},
-		&_keyMap)
+	)
 
 	s := &state{
 		list:              listWrapper,
@@ -71,7 +70,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 		showGroup:         &showGroup,
 		showDate:          &showDate,
 		styles:            _styles,
-		keyMap:            &_keyMap,
+		keyMap:            newKeyMap(),
 	}
 	s.updateKeybinds()
 	return s

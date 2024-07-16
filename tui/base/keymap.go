@@ -51,28 +51,31 @@ func (k keyMap) FullHelp() [][]key.Binding {
 	}
 }
 
-// with creates a combined keymap
-func (k keyMap) with(other help.KeyMap) combinedKeyMap {
+// CombinedKeyMap is a convenience function to create a combined KeyMap that
+// implements help.KeyMap, useful for concatenating them.
+//
+// The resulting keybind is not ment to be be modified in-place.
+func CombinedKeyMap(first, second help.KeyMap) combinedKeyMap {
 	return combinedKeyMap{
-		k:     k,
-		other: other,
+		first:  first,
+		second: second,
 	}
 }
 
 // combinedKeyMap implements help.KeyMap.
 type combinedKeyMap struct {
-	k     help.KeyMap
-	other help.KeyMap
+	first  help.KeyMap
+	second help.KeyMap
 }
 
 // ShortHelp implements help.KeyMap.
 func (c combinedKeyMap) ShortHelp() []key.Binding {
-	return append(c.other.ShortHelp(), c.k.ShortHelp()...)
+	return append(c.first.ShortHelp(), c.second.ShortHelp()...)
 }
 
 // FullHelp implements help.KeyMap.
 func (c combinedKeyMap) FullHelp() [][]key.Binding {
-	return append(c.other.FullHelp(), c.k.FullHelp()...)
+	return append(c.first.FullHelp(), c.second.FullHelp()...)
 }
 
 // NoKeyMap implements help.keyMap.

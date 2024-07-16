@@ -28,7 +28,7 @@ type Model struct {
 	size,
 	maxSize base.Size
 
-	keyMap *keyMap
+	keyMap keyMap
 }
 
 func (m *Model) Init() tea.Cmd {

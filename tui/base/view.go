@@ -105,7 +105,7 @@ func (m *model) viewState() string {
 
 func (m *model) viewFooter() string {
 	if m.inViewport {
-		return m.styles.footer.Render(m.help.View(m.keyMap.with(m.viewport.KeyMap)))
+		return m.styles.footer.Render(m.help.View(CombinedKeyMap(m.viewport.KeyMap, m.keyMap)))
 	}
-	return m.styles.footer.Render(m.help.View(m.keyMap.with(m.state.KeyMap())))
+	return m.styles.footer.Render(m.help.View(CombinedKeyMap(m.state.KeyMap(), m.keyMap)))
 }

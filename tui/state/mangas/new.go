@@ -9,7 +9,6 @@ import (
 )
 
 func New(client *libmangal.Client) *state {
-	_keyMap := newKeyMap()
 	info := false
 	fullInfo := false
 	listWrapper := list.New(
@@ -19,7 +18,7 @@ func New(client *libmangal.Client) *state {
 		func(manga mangadata.Manga) _list.DefaultItem {
 			return newItem(manga, &info, &fullInfo)
 		},
-		&_keyMap)
+	)
 
 	s := &state{
 		list:          listWrapper,
@@ -27,9 +26,8 @@ func New(client *libmangal.Client) *state {
 		client:        client,
 		extraInfo:     &info,
 		fullExtraInfo: &fullInfo,
-		keyMap:        &_keyMap,
+		keyMap:        newKeyMap(),
 	}
 	s.updateKeybinds()
-
 	return s
 }

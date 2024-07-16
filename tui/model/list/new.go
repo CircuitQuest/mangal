@@ -1,7 +1,6 @@
 package list
 
 import (
-	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/paginator"
 	"github.com/charmbracelet/lipgloss"
@@ -14,7 +13,6 @@ func New[T any](
 	singular, plural string,
 	items []T,
 	transform func(T) list.DefaultItem,
-	other help.KeyMap,
 ) *Model {
 	listItems := make([]list.Item, len(items))
 	for i, item := range items {
@@ -63,7 +61,7 @@ func New[T any](
 	s := &Model{
 		Model:    l,
 		delegate: &delegate,
-		KeyMap:   newKeyMap(&l.KeyMap, other),
+		KeyMap:   newKeyMap(&l.KeyMap),
 	}
 	s.updateKeybinds()
 	return s

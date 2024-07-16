@@ -9,7 +9,6 @@ import (
 )
 
 func New(anilist *lmanilist.Anilist, manga mangadata.Manga) *state {
-	_keyMap := newKeyMap()
 	listWrapper := list.New(
 		2,
 		"anilist manga", "anilist mangas",
@@ -17,7 +16,7 @@ func New(anilist *lmanilist.Anilist, manga mangadata.Manga) *state {
 		func(manga lmanilist.Manga) _list.DefaultItem {
 			return &item{manga: manga}
 		},
-		&_keyMap)
+	)
 
 	title := manga.Info().AnilistSearch
 	if title == "" {
@@ -28,7 +27,7 @@ func New(anilist *lmanilist.Anilist, manga mangadata.Manga) *state {
 		search:  search.New("Search anilist manga...", title),
 		manga:   manga,
 		list:    listWrapper,
-		keyMap:  &_keyMap,
+		keyMap:  newKeyMap(),
 	}
 	s.updateKeybinds()
 	return s
