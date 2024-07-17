@@ -10,17 +10,16 @@ import (
 	bolt "go.etcd.io/bbolt"
 )
 
-const ttlBucketName = "ttl"
+const TTLBucketName = "ttl"
 
 var _ gokv.Store = (*Store)(nil)
 
 // Store is a gokv.Store implementation for bbolt (formerly known as Bolt / Bolt DB).
 type Store struct {
-	db            *bolt.DB
-	ttl           time.Duration
-	ttlBucketName string
-	bucketName    string
-	codec         encoding.Codec
+	db         *bolt.DB
+	bucketName string
+	codec      encoding.Codec
+	ttl        time.Duration
 }
 
 // Set stores the given value for the given key.
@@ -43,8 +42,11 @@ func (s Store) Set(k string, v interface{}) error {
 			return err
 		}
 
-		bTTL := tx.Bucket([]byte(s.ttlBucketName))
-		return bTTL.Put([]byte(k), []byte(time.Now().UTC().Format(time.RFC3339Nano)))
+		if s.ttl == 0 {
+			return nil
+		}
+		bTTL := tx.Bucket([]byte(TTLBucketName))
+		return bTTL.Put([]byte(s.bucketName+"-"+k), []byte(time.Now().UTC().Format(time.RFC3339Nano)))
 	})
 	if err != nil {
 		return err
@@ -65,15 +67,19 @@ func (s Store) Get(k string, v interface{}) (found bool, err error) {
 
 	var data []byte
 	err = s.db.View(func(tx *bolt.Tx) error {
-		bTTL := tx.Bucket([]byte(s.ttlBucketName))
-		ttlData := bTTL.Get([]byte(k))
-		if ttlData != nil {
-			ttl, err := time.Parse(time.RFC3339Nano, string(ttlData))
-			if err != nil {
-				return err
-			}
-			if time.Now().UTC().After(ttl.Add(s.ttl)) {
-				return nil
+		if s.ttl != 0 {
+			// If the data has expired (surpassed the TTL) then
+			// don't even look for the data
+			bTTL := tx.Bucket([]byte(TTLBucketName))
+			ttlData := bTTL.Get([]byte(s.bucketName + "-" + k))
+			if ttlData != nil {
+				ttl, err := time.Parse(time.RFC3339Nano, string(ttlData))
+				if err != nil {
+					return err
+				}
+				if time.Now().UTC().After(ttl.Add(s.ttl)) {
+					return nil
+				}
 			}
 		}
 
@@ -116,8 +122,11 @@ func (s Store) Delete(k string) error {
 			return err
 		}
 
-		bTTL := tx.Bucket([]byte(s.ttlBucketName))
-		return bTTL.Delete([]byte(k))
+		if s.ttl == 0 {
+			return nil
+		}
+		bTTL := tx.Bucket([]byte(TTLBucketName))
+		return bTTL.Delete([]byte(s.bucketName + "-" + k))
 	})
 }
 
@@ -129,6 +138,9 @@ func (s Store) Close() error {
 
 // Options are the options for the bbolt store.
 type Options struct {
+	// TTL Time-To-Live (expire time) of the data.
+	// A TTL of 0 (or any negative number) means no expire time.
+	// Optional (time.Hour * 24 * 7 by default).
 	TTL time.Duration
 	// Bucket name for storing the key-value pairs.
 	// Optional ("default" by default).
@@ -168,8 +180,8 @@ func NewStore(options Options) (Store, error) {
 	if options.Codec == nil {
 		options.Codec = DefaultOptions.Codec
 	}
-	if options.TTL == 0 {
-		options.TTL = DefaultOptions.TTL
+	if options.TTL < 0 {
+		options.TTL = 0
 	}
 
 	// Open DB
@@ -186,7 +198,10 @@ func NewStore(options Options) (Store, error) {
 			return err
 		}
 
-		_, err = tx.CreateBucketIfNotExists([]byte(ttlBucketName))
+		if options.TTL == 0 {
+			return nil
+		}
+		_, err = tx.CreateBucketIfNotExists([]byte(TTLBucketName))
 		if err != nil {
 			return err
 		}
@@ -196,11 +211,10 @@ func NewStore(options Options) (Store, error) {
 		return result, err
 	}
 
-	result.ttl = options.TTL
 	result.db = db
-	result.ttlBucketName = ttlBucketName
 	result.bucketName = options.BucketName
 	result.codec = options.Codec
+	result.ttl = options.TTL
 
 	return result, nil
 }
