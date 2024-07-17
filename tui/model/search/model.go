@@ -62,7 +62,7 @@ func (m *Model) SearchCanceled() bool {
 func (m *Model) Focus() tea.Cmd {
 	m.state = Searching
 	m.input.CursorEnd()
-	m.enableKeyMap(true)
+	m.updateKeybinds()
 
 	return tea.Sequence(
 		m.input.Focus(),
@@ -89,7 +89,7 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 			m.state = SearchCanceled
 			m.input.Blur()
 			m.input.Reset()
-			m.enableKeyMap(false)
+			m.updateKeybinds()
 			// keep the last searched query in the input field
 			m.input.SetValue(m.query)
 
@@ -100,7 +100,7 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 			}
 			m.state = Searched
 			m.input.Blur()
-			m.enableKeyMap(false)
+			m.updateKeybinds()
 
 			m.query = m.input.Value()
 			return SearchCmd(m.query)
@@ -108,15 +108,17 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	}
 
 	input, cmd := m.input.Update(msg)
-	searchChanged := m.input.Value() != input.Value()
-	if searchChanged {
-		m.keyMap.confirm.SetEnabled(m.input.Value() != "")
-	}
 	m.input = input
-
 	return cmd
 }
 
 func (m *Model) View() string {
 	return m.style.Render(m.input.View())
+}
+
+// updateKeybinds if the keymap should be enabled.
+func (m *Model) updateKeybinds() {
+	enable := m.state == Searching
+	m.keyMap.cancel.SetEnabled(enable)
+	m.keyMap.confirm.SetEnabled(enable)
 }
