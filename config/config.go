@@ -425,11 +425,6 @@ func initConfig() config {
 					Default:     "en",
 					Description: "The language the manga should be on.",
 				}),
-				TitleChapterNumber: reg(entry[bool, bool]{
-					Key:         "providers.filter.title_chapter_number",
-					Default:     false,
-					Description: "Include the chapter number in the title regardless of the availability of the chapter title.",
-				}),
 				AvoidDuplicateChapters: reg(entry[bool, bool]{
 					Key:         "providers.filter.avoid_duplicate_chapters",
 					Default:     true,

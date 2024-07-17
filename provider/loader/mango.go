@@ -17,11 +17,10 @@ func MangoLoaders() ([]libmangal.ProviderLoader, error) {
 
 	o.HTTPClient.Timeout = time.Minute
 	o.UserAgent = config.Download.UserAgent.Get()
-	o.HTTPStore = httpStore
+	o.CacheStore = cacheStore
 	o.Parallelism = config.Providers.Parallelism.Get()
 	o.Filter.NSFW = config.Providers.Filter.NSFW.Get()
 	o.Filter.Language = config.Providers.Filter.Language.Get()
-	o.Filter.TitleChapterNumber = config.Providers.Filter.TitleChapterNumber.Get()
 	o.Filter.AvoidDuplicateChapters = config.Providers.Filter.AvoidDuplicateChapters.Get()
 	o.Filter.ShowUnavailableChapters = config.Providers.Filter.ShowUnavailableChapters.Get()
 	o.Headless.UseFlaresolverr = config.Providers.Headless.UseFlaresolverr.Get()

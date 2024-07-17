@@ -121,7 +121,6 @@ type configLibrary struct {
 type configProvidersFilter struct {
 	NSFW                    *entry[bool, bool]
 	Language                *entry[string, string]
-	TitleChapterNumber      *entry[bool, bool]
 	AvoidDuplicateChapters  *entry[bool, bool]
 	ShowUnavailableChapters *entry[bool, bool]
 }

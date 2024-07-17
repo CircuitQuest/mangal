@@ -1,7 +1,6 @@
 package loader
 
 import (
-	"log"
 	"path/filepath"
 	"time"
 
@@ -12,16 +11,16 @@ import (
 	"github.com/philippgille/gokv/encoding"
 )
 
-func httpStore(providerID string) (gokv.Store, error) {
+func cacheStore(dbName, bucketName string) (gokv.Store, error) {
 	ttl, err := time.ParseDuration(config.Cache.TTL.Get())
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return bbolt.NewStore(bbolt.Options{
 		TTL:        ttl,
-		BucketName: providerID,
-		Path:       filepath.Join(path.CacheDir(), providerID+".db"),
+		BucketName: bucketName,
+		Path:       filepath.Join(path.CacheDir(), dbName+".db"),
 		Codec:      encoding.Gob,
 	})
 }

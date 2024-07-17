@@ -1,6 +1,7 @@
 package anilist
 
 import (
+	"errors"
 	"log"
 	"path/filepath"
 	"time"
@@ -17,44 +18,38 @@ import (
 var Anilist = newAnilist()
 
 func newAnilist() *anilist.Anilist {
-	newPersistentStore := func(name string, ttl time.Duration) (gokv.Store, error) {
-		dir := filepath.Join(path.CacheDir(), "anilist")
-		if err := afs.Afero.MkdirAll(dir, config.Download.ModeDir.Get()); err != nil {
-			return nil, err
-		}
+	options := anilist.DefaultOptions()
+	options.CacheStore = cacheStore
 
-		return bbolt.NewStore(bbolt.Options{
-			TTL:        ttl,
-			BucketName: name,
-			Path:       filepath.Join(dir, name+".db"),
-			Codec:      encoding.Gob,
-		})
-	}
-
-	anilistOptions := anilist.DefaultOptions()
-
-	var err error
-	anilistOptions.QueryToIDsStore, err = newPersistentStore("query-to-id", time.Hour*24*2)
+	ani, err := anilist.NewAnilist(options)
 	if err != nil {
 		log.Fatal(err)
 	}
+	return ani
+}
 
-	anilistOptions.IDToMangaStore, err = newPersistentStore("id-to-manga", time.Hour*24*2)
-	if err != nil {
-		log.Fatal(err)
+func cacheStore(dbName, bucketName string) (gokv.Store, error) {
+	dir := filepath.Join(path.CacheDir(), "metadata")
+	if err := afs.Afero.MkdirAll(dir, config.Download.ModeDir.Get()); err != nil {
+		return nil, err
 	}
 
-	// TODO: make infinite ttl
-	anilistOptions.TitleToIDStore, err = newPersistentStore("title-to-id", time.Hour*9999)
-	if err != nil {
-		log.Fatal(err)
+	ttl := time.Hour * 24 * 2
+	switch bucketName {
+	case bbolt.TTLBucketName:
+		return nil, errors.New(`can't use reserved bucket name "` + bucketName + `"`)
+	case anilist.CacheBucketNameTitleToID:
+		// TODO: keeping the same old behavior, need to rework this;
+		// the infinite TTL is implemented now
+		ttl = time.Hour * 9999
+	case anilist.CacheBucketNameAccessToken:
+		ttl = time.Hour * 24 * 30
 	}
 
-	anilistOptions.AccessTokenStore, err = newPersistentStore("access-token", time.Hour*24*30)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	anilist := anilist.NewAnilist(anilistOptions)
-	return &anilist
+	return bbolt.NewStore(bbolt.Options{
+		TTL:        ttl,
+		BucketName: bucketName,
+		Path:       filepath.Join(dir, dbName+".db"),
+		Codec:      encoding.Gob,
+	})
 }

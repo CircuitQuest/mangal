@@ -32,7 +32,6 @@ func init() {
 	inlineFlags := inlineCmd.Flags()
 	f.AddFlag(inlineFlags.Lookup("nsfw"))
 	f.AddFlag(inlineFlags.Lookup("language"))
-	f.AddFlag(inlineFlags.Lookup("title-chapter-number"))
 	f.AddFlag(inlineFlags.Lookup("avoid-duplicate-chapters"))
 	f.AddFlag(inlineFlags.Lookup("show-unavailable-chapters"))
 	f.AddFlag(inlineFlags.Lookup("parallelism"))

@@ -118,7 +118,7 @@ func newLoader(info libmangal.ProviderInfo, dir string) (libmangal.ProviderLoade
 			Timeout: time.Minute,
 		},
 		UserAgent:    config.Download.UserAgent.Get(),
-		HTTPStore:    httpStore,
+		CacheStore:   cacheStore,
 		PackagePaths: []string{dir},
 	}
 

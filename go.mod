@@ -23,9 +23,9 @@ require (
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
-	github.com/luevano/libmangal v0.17.3
-	github.com/luevano/luaprovider v0.12.3
-	github.com/luevano/mangoprovider v0.14.3
+	github.com/luevano/libmangal v0.18.0
+	github.com/luevano/luaprovider v0.13.0
+	github.com/luevano/mangoprovider v0.15.0
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -35,7 +35,7 @@ require (
 	github.com/philippgille/gokv/util v0.7.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
-	github.com/samber/lo v1.45.0
+	github.com/samber/lo v1.46.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.1
@@ -44,7 +44,7 @@ require (
 	github.com/yuin/gopher-lua v1.1.1
 	github.com/zyedidia/generic v1.2.1
 	go.etcd.io/bbolt v1.3.10
-	golang.org/x/exp v0.0.0-20240707233637-46b078467d37
+	golang.org/x/exp v0.0.0-20240716175740-e3f259677ff7
 )
 
 require (
@@ -147,7 +147,7 @@ require (
 	github.com/sahilm/fuzzy v0.1.1 // indirect
 	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/sergi/go-diff v1.3.2-0.20230802210424-5b0b94c5c0d3 // indirect
-	github.com/skeema/knownhosts v1.2.2 // indirect
+	github.com/skeema/knownhosts v1.3.0 // indirect
 	github.com/spf13/pflag v1.0.5
 	github.com/xanzy/ssh-agent v0.3.3 // indirect
 	github.com/ysmood/fetchup v0.2.4 // indirect
