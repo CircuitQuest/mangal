@@ -23,10 +23,10 @@ type Model struct {
 	state State
 	query string
 
-	// maxSuggestions to display
-	// in the suggestions box
-	maxSuggestions int
-
+	maxWidth int
+	// the Height field in size is used
+	// for the max suggestions to display
+	size   base.Size
 	styles styles
 	keyMap keyMap
 }
@@ -80,7 +80,10 @@ func (m *Model) Focus() tea.Cmd {
 
 // Resize resizes the input given the new size.
 func (m *Model) Resize(size base.Size) {
-	m.input.Width = size.Width
+	if size.Width < m.maxWidth {
+		m.size.Width = size.Width
+		m.input.Width = size.Width
+	}
 }
 
 func (m *Model) Init() tea.Cmd {
@@ -134,10 +137,10 @@ func (m *Model) View() string {
 func (m *Model) SuggestionBox() string {
 	sugs, idx := m.getSuggestions()
 	if len(sugs) == 0 {
-		return m.styles.renderSuggestionBox(m.styles.normalSuggestion.Render("<no suggestions>"))
+		return m.styles.renderSuggestionBox(m.styles.normalSuggestion.Render("<no suggestions>"), m.size.Width)
 	}
-	if len(sugs) > m.maxSuggestions {
-		sugs = sugs[:m.maxSuggestions]
+	if len(sugs) > m.size.Height {
+		sugs = sugs[:m.size.Height]
 	}
 
 	var sb strings.Builder
@@ -152,7 +155,7 @@ func (m *Model) SuggestionBox() string {
 			sb.WriteByte('\n')
 		}
 	}
-	return m.styles.renderSuggestionBox(sb.String())
+	return m.styles.renderSuggestionBox(sb.String(), m.size.Width)
 }
 
 // TODO: change to exposed input methods once (if?) merged and released,

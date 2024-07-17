@@ -5,9 +5,10 @@ import (
 
 	"github.com/charmbracelet/bubbles/textinput"
 	"github.com/luevano/mangal/theme/icon"
+	"github.com/luevano/mangal/tui/base"
 )
 
-func New(placeholder, initialQuery string) *Model {
+func New(placeholder, initialQuery string, width, maxSuggestions int) *Model {
 	input := textinput.New()
 	input.Placeholder = placeholder
 	if input.Placeholder == "" {
@@ -16,8 +17,6 @@ func New(placeholder, initialQuery string) *Model {
 
 	input.ShowSuggestions = true
 	input.Prompt = icon.Search.Colored() + " "
-	// TODO: make dynamic/updatable
-	input.CharLimit = 64
 
 	initState := Unsearched
 	query := strings.TrimSpace(initialQuery)
@@ -27,11 +26,12 @@ func New(placeholder, initialQuery string) *Model {
 	}
 
 	return &Model{
-		input:          input,
-		state:          initState,
-		query:          query,
-		maxSuggestions: 5,
-		styles:         defaultStyles(),
-		keyMap:         newKeyMap(),
+		input:    input,
+		state:    initState,
+		query:    query,
+		maxWidth: width,
+		size:     base.Size{Width: width, Height: maxSuggestions},
+		styles:   defaultStyles(),
+		keyMap:   newKeyMap(),
 	}
 }

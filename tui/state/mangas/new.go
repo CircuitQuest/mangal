@@ -22,7 +22,7 @@ func New(client *libmangal.Client) *state {
 
 	s := &state{
 		list:          listWrapper,
-		search:        search.New("Search manga...", ""),
+		search:        search.New("Search manga...", "", 64, 5),
 		client:        client,
 		extraInfo:     &info,
 		fullExtraInfo: &fullInfo,

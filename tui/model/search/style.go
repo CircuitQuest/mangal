@@ -7,33 +7,25 @@ import (
 )
 
 type styles struct {
-	renderSuggestionBox func(string) string
+	renderSuggestionBox func(str string, width int) string
 
-	suggestionsBox,
 	suggestions,
 	normalSuggestion,
 	matchSuggestion lipgloss.Style
 }
 
 func defaultStyles() styles {
-	// TODO: make width dynamic (this currently matches input width)
-	sugs := lipgloss.NewStyle().Width(64).MaxWidth(64)
-	sugsBox := lipgloss.NewStyle().
+	sugs := lipgloss.NewStyle().
 		MarginLeft(1). // alings with the search input box
 		Border(lipgloss.RoundedBorder()).
 		BorderTop(false).
 		BorderForeground(color.Secondary)
-	s := styles{
-		suggestions:      sugs,
+	return styles{
+		renderSuggestionBox: func(str string, width int) string {
+			return sugs.Render(lipgloss.NewStyle().Width(width).MaxWidth(width).Render(str))
+		},
 		normalSuggestion: style.Normal.Secondary,
 		matchSuggestion:  style.Normal.Base,
-		suggestionsBox:   sugsBox,
+		suggestions:      sugs,
 	}
-	// to use the same values as the ones assigned, else
-	// if these were to change, the function styling would be outdated
-	s.renderSuggestionBox = func(str string) string {
-		return s.suggestionsBox.Render(s.suggestions.Render(str))
-	}
-
-	return s
 }

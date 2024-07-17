@@ -24,7 +24,7 @@ func New(anilist *lmanilist.Anilist, manga mangadata.Manga) *state {
 	}
 	s := &state{
 		anilist: anilist,
-		search:  search.New("Search anilist manga...", title),
+		search:  search.New("Search anilist manga...", title, 64, 5),
 		manga:   manga,
 		list:    listWrapper,
 		keyMap:  newKeyMap(),
