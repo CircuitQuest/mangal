@@ -6,6 +6,7 @@ import (
 
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
+	"github.com/luevano/mangal/util/cache"
 	mango "github.com/luevano/mangoprovider"
 	"github.com/luevano/mangoprovider/apis"
 	"github.com/luevano/mangoprovider/scrapers"
@@ -17,7 +18,7 @@ func MangoLoaders() ([]libmangal.ProviderLoader, error) {
 
 	o.HTTPClient.Timeout = time.Minute
 	o.UserAgent = config.Download.UserAgent.Get()
-	o.CacheStore = cacheStore
+	o.CacheStore = cache.CacheStore
 	o.Parallelism = config.Providers.Parallelism.Get()
 	o.Filter.NSFW = config.Providers.Filter.NSFW.Get()
 	o.Filter.Language = config.Providers.Filter.Language.Get()

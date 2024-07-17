@@ -13,6 +13,7 @@ import (
 	"github.com/luevano/mangal/path"
 	"github.com/luevano/mangal/provider/info"
 	"github.com/luevano/mangal/util/afs"
+	"github.com/luevano/mangal/util/cache"
 )
 
 const mainLua = "main.lua"
@@ -118,7 +119,7 @@ func newLoader(info libmangal.ProviderInfo, dir string) (libmangal.ProviderLoade
 			Timeout: time.Minute,
 		},
 		UserAgent:    config.Download.UserAgent.Get(),
-		CacheStore:   cacheStore,
+		CacheStore:   cache.CacheStore,
 		PackagePaths: []string{dir},
 	}
 
