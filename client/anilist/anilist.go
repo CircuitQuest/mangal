@@ -7,7 +7,11 @@ import (
 	"github.com/luevano/mangal/util/cache"
 )
 
-var Anilist = newAnilist()
+var anilist_ = newAnilist()
+
+func Anilist() *anilist.Anilist {
+	return anilist_
+}
 
 func newAnilist() *anilist.Anilist {
 	options := anilist.DefaultOptions()

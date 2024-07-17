@@ -93,7 +93,7 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 	if err != nil {
 		return nil, err
 	}
-	client.SetAnilist(anilist.Anilist)
+	client.SetAnilist(anilist.Anilist())
 
 	clients.Enqueue(client)
 	return client, nil

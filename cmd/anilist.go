@@ -59,7 +59,7 @@ var anilistAuthCmd = &cobra.Command{
 		}
 		code = strings.TrimSpace(code)
 
-		err = anilist.Anilist.Authorize(context.Background(), lmanilist.LoginCredentials{
+		err = anilist.Anilist().Authorize(context.Background(), lmanilist.LoginCredentials{
 			ID:     id,
 			Secret: secret,
 			Code:   code,
@@ -80,7 +80,7 @@ var anilistLogoutCmd = &cobra.Command{
 	Use:   "logout",
 	Short: "Logout from anilist",
 	Run: func(cmd *cobra.Command, _ []string) {
-		if err := anilist.Anilist.Logout(); err != nil {
+		if err := anilist.Anilist().Logout(); err != nil {
 			errorf(cmd, err.Error())
 		}
 
