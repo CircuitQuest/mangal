@@ -6,7 +6,6 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/tui/base"
 )
 
@@ -24,13 +23,22 @@ type Model struct {
 	state State
 	query string
 
-	style  lipgloss.Style
+	// maxSuggestions to display
+	// in the suggestions box
+	maxSuggestions int
+
+	styles styles
 	keyMap keyMap
 }
 
 // Query returns the current set query (only when the input is confirmed)
 func (m *Model) Query() string {
 	return m.query
+}
+
+// SetSuggestions sets the suggestions for the internal input.
+func (m *Model) SetSuggestions(suggestions []string) {
+	m.input.SetSuggestions(suggestions)
 }
 
 // State returns the current state of the search.
@@ -95,15 +103,21 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 
 			return SearchCancelCmd
 		case key.Matches(msg, m.keyMap.confirm):
-			if strings.TrimSpace(m.input.Value()) == "" {
+			// Remove all surrounding whitespace
+			q := strings.TrimSpace(m.input.Value())
+			if q == "" {
 				return base.Notify("Can't search whitespace only")
 			}
+
 			m.state = Searched
 			m.input.Blur()
 			m.updateKeybinds()
 
-			m.query = m.input.Value()
-			return SearchCmd(m.query)
+			// remove redundant spaces and use that value as the query
+			q = strings.Join(strings.Fields(q), " ")
+			m.input.SetValue(q)
+			m.query = q
+			return SearchCmd(q)
 		}
 	}
 
@@ -113,7 +127,61 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 }
 
 func (m *Model) View() string {
-	return m.style.Render(m.input.View())
+	return m.input.View()
+}
+
+// SuggestionBox returns the rendered suggestions box with styling applied.
+func (m *Model) SuggestionBox() string {
+	sugs, idx := m.getSuggestions()
+	if len(sugs) == 0 {
+		return m.styles.renderSuggestionBox(m.styles.normalSuggestion.Render("<no suggestions>"))
+	}
+	if len(sugs) > m.maxSuggestions {
+		sugs = sugs[:m.maxSuggestions]
+	}
+
+	var sb strings.Builder
+	sb.Grow(200)
+	for i, s := range sugs {
+		if i == idx {
+			sb.WriteString(m.styles.matchSuggestion.Render(s))
+		} else {
+			sb.WriteString(m.styles.normalSuggestion.Render(s))
+		}
+		if i < len(sugs)-1 {
+			sb.WriteByte('\n')
+		}
+	}
+	return m.styles.renderSuggestionBox(sb.String())
+}
+
+// TODO: change to exposed input methods once (if?) merged and released,
+// https://github.com/charmbracelet/bubbles/pull/556
+//
+// Also, CurrentSuggestion is currently panic if called on empty
+// matches (no input or no matches at all); fixed by (not yet released)
+// https://github.com/charmbracelet/bubbles/pull/473
+//
+// getSuggestions will get the matched suggestions and their index, else
+// just the available suggestions and -1 as index
+func (m *Model) getSuggestions() (matches []string, idx int) {
+	idx = -1
+	val := m.input.Value()
+	if strings.TrimSpace(val) == "" {
+		return m.input.AvailableSuggestions(), idx
+	}
+
+	i := 0
+	for _, s := range m.input.AvailableSuggestions() {
+		if strings.HasPrefix(strings.ToLower(s), strings.ToLower(val)) {
+			if strings.ToLower(s) == strings.ToLower(m.input.CurrentSuggestion()) {
+				idx = i
+			}
+			matches = append(matches, s)
+			i++
+		}
+	}
+	return matches, idx
 }
 
 // updateKeybinds if the keymap should be enabled.

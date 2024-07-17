@@ -14,6 +14,7 @@ import (
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/model/search"
+	"github.com/luevano/mangal/tui/util"
 )
 
 var _ base.State = (*state)(nil)
@@ -71,7 +72,7 @@ func (s *state) Status() string {
 func (s *state) Resize(size base.Size) tea.Cmd {
 	s.search.Resize(size)
 	_, searchHeight := lipgloss.Size(s.search.View())
-	size.Height -= searchHeight
+	size.Height -= searchHeight + 1 // +1 for added padding
 
 	return s.list.Resize(size)
 }
@@ -116,11 +117,25 @@ end:
 // View implements base.State.
 func (s *state) View() string {
 	if !s.searched {
-		return s.search.View()
+		return s.search.View() // no need to display suggestions
 	}
+
+	if s.search.Searching() {
+		input := s.search.View()
+		view := lipgloss.JoinVertical(
+			lipgloss.Left,
+			input,
+			" ", // "padding" bottom of input
+			s.list.View(),
+		)
+		h := lipgloss.Height(input)
+		return util.PlaceOverlay(0, h, s.search.SuggestionBox(), view)
+	}
+
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
 		s.search.View(),
+		" ", // "padding" bottom of input
 		s.list.View(),
 	)
 }

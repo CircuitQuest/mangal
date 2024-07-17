@@ -4,7 +4,6 @@ import (
 	"strings"
 
 	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/icon"
 )
 
@@ -15,7 +14,9 @@ func New(placeholder, initialQuery string) *Model {
 		input.Placeholder = "Search..."
 	}
 
+	input.ShowSuggestions = true
 	input.Prompt = icon.Search.Colored() + " "
+	// TODO: make dynamic/updatable
 	input.CharLimit = 64
 
 	initState := Unsearched
@@ -26,10 +27,11 @@ func New(placeholder, initialQuery string) *Model {
 	}
 
 	return &Model{
-		input:  input,
-		state:  initState,
-		query:  query,
-		style:  lipgloss.NewStyle().Padding(0, 1, 1, 1),
-		keyMap: newKeyMap(),
+		input:          input,
+		state:          initState,
+		query:          query,
+		maxSuggestions: 5,
+		styles:         defaultStyles(),
+		keyMap:         newKeyMap(),
 	}
 }
