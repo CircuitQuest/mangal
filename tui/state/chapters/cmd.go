@@ -49,7 +49,6 @@ func (s *state) onConfirmCmd(ctx context.Context) tea.Cmd {
 	case cSDownloadSelected:
 		return s.downloadChaptersCmd(s.selected, options)
 	case cSDownloadForRead:
-		// TODO: add warning when read format != download format?
 		options.Format = config.Read.Format.Get()
 		// if shouldn't download on read, save to tmp dir with all dirs created
 		if !config.Read.DownloadOnRead.Get() {
@@ -97,7 +96,9 @@ func (s *state) downloadCmd(item *item) tea.Cmd {
 		if size == 1 {
 			i = s.selected.Keys()[0]
 		}
-		msg := "Download chapter " + stringutil.FormatFloa32(i.chapter.Info().Number) + ` ("` + i.chapter.Info().Title + `")?`
+		msg := "Download chapter " +
+			stringutil.FormatFloa32(i.chapter.Info().Number) +
+			` ("` + i.chapter.Info().Title + `")?`
 		return showConfirmCmd("Download", msg, cSDownloadHovered)
 	}
 
@@ -118,7 +119,6 @@ func (s *state) downloadChapterCmd(ctx context.Context, item *item, options libm
 			s.actionRunningNow("download")
 			defer s.actionRunningNow("")
 
-			// TODO: make use of the returned data for data aggregation?
 			downChap, err := s.client.DownloadChapter(ctx, chapter, options)
 			if err != nil {
 				return err
@@ -173,7 +173,9 @@ func (s *state) readCmd(ctx context.Context, item *item) tea.Cmd {
 		return s.readChapterCmd(ctx, i.readAvailablePath, i, config.ReadOptions())
 	}
 
-	msg := fmt.Sprintf("Download chapter %s (%q) for reading?", stringutil.FormatFloa32(i.chapter.Info().Number), i.chapter.Info().Title)
+	msg := "Download chapter " +
+		stringutil.FormatFloa32(i.chapter.Info().Number) +
+		` ("` + i.chapter.Info().Title + `") for reading?`
 	return showConfirmCmd("Download", msg, cSDownloadForRead)
 }
 
