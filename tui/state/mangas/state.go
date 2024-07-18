@@ -14,6 +14,7 @@ import (
 	"github.com/luevano/mangal/tui/model/search"
 	"github.com/luevano/mangal/tui/state/anilist"
 	"github.com/luevano/mangal/tui/util"
+	"github.com/luevano/mangal/util/cache"
 )
 
 var _ base.State = (*state)(nil)
@@ -22,9 +23,9 @@ var _ base.State = (*state)(nil)
 type state struct {
 	list   *list.Model
 	search *search.Model
-
 	client *libmangal.Client
 
+	history  cache.Records
 	searched bool
 
 	extraInfo     *bool
@@ -78,6 +79,7 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	return tea.Sequence(
+		s.getHistoryCmd,
 		s.search.Init(),
 		s.search.Focus(), // sets it to searching, enables it
 		s.list.Init(),
@@ -117,7 +119,10 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			*s.fullExtraInfo = !(*s.fullExtraInfo)
 		}
 	case search.SearchMsg:
-		return s.searchMangasCmd(ctx, string(msg))
+		return tea.Sequence(
+			s.updateHistoryCmd(string(msg)),
+			s.searchMangasCmd(ctx, string(msg)),
+		)
 	case search.SearchCancelMsg:
 		if s.search.Query() == "" {
 			return base.Back

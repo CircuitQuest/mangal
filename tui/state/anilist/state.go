@@ -15,6 +15,7 @@ import (
 	"github.com/luevano/mangal/tui/model/metadata"
 	"github.com/luevano/mangal/tui/model/search"
 	"github.com/luevano/mangal/tui/util"
+	"github.com/luevano/mangal/util/cache"
 )
 
 var _ base.State = (*state)(nil)
@@ -26,6 +27,7 @@ type state struct {
 	manga   mangadata.Manga
 	anilist *lmanilist.Anilist
 
+	history  cache.Records
 	searched bool
 
 	keyMap keyMap
@@ -80,6 +82,7 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	return tea.Sequence(
+		s.getHistoryCmd,
 		s.searchCmd(ctx, s.search.Query()),
 		s.search.Init(),
 		s.list.Init(),
@@ -106,7 +109,10 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			return metadata.New(&i.manga).ShowMetadataCmd()
 		}
 	case search.SearchMsg:
-		return s.searchCmd(ctx, string(msg))
+		return tea.Sequence(
+			s.updateHistoryCmd(string(msg)),
+			s.searchCmd(ctx, string(msg)),
+		)
 	}
 end:
 	if s.search.Searching() {

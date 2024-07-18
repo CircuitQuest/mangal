@@ -58,6 +58,8 @@ func CacheStore(dbName, bucketName string) (gokv.Store, error) {
 		ttl = time.Hour * 24 * 2
 	case anilist.CacheBucketNameAccessToken:
 		ttl = time.Hour * 24 * 30
+	case BucketNameSearchHistory:
+		ttl = 0 // no expiry
 	}
 
 	return bbolt.NewStore(bbolt.Options{

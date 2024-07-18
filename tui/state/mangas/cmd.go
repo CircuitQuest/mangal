@@ -14,7 +14,28 @@ import (
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/state/chapters"
 	"github.com/luevano/mangal/tui/state/volumes"
+	"github.com/luevano/mangal/util/cache"
 )
+
+func (s *state) getHistoryCmd() tea.Msg {
+	found, err := cache.GetMangasSearchHistory(&s.history)
+	if err != nil {
+		return err
+	}
+	if found {
+		s.search.SetSuggestions(s.history.Get())
+	}
+	return nil
+}
+
+func (s *state) updateHistoryCmd(query string) tea.Cmd {
+	return func() tea.Msg {
+		s.history.Add(query)
+		s.history.Sort()
+		s.search.SetSuggestions(s.history.Get())
+		return cache.SetMangasSearchHistory(s.history)
+	}
+}
 
 func (s *state) searchMangasCmd(ctx context.Context, query string) tea.Cmd {
 	return tea.Sequence(

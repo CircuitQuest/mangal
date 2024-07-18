@@ -9,7 +9,28 @@ import (
 	"github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
+	"github.com/luevano/mangal/util/cache"
 )
+
+func (s *state) getHistoryCmd() tea.Msg {
+	found, err := cache.GetAnilistSearchHistory(&s.history)
+	if err != nil {
+		return err
+	}
+	if found {
+		s.search.SetSuggestions(s.history.Get())
+	}
+	return nil
+}
+
+func (s *state) updateHistoryCmd(query string) tea.Cmd {
+	return func() tea.Msg {
+		s.history.Add(query)
+		s.history.Sort()
+		s.search.SetSuggestions(s.history.Get())
+		return cache.SetAnilistSearchHistory(s.history)
+	}
+}
 
 func (s *state) setMetadataCmd(manga anilist.Manga) tea.Cmd {
 	return func() tea.Msg {
