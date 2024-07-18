@@ -72,10 +72,7 @@ func (m *Model) Focus() tea.Cmd {
 	m.input.CursorEnd()
 	m.updateKeybinds()
 
-	return tea.Sequence(
-		m.input.Focus(),
-		textinput.Blink,
-	)
+	return m.input.Focus()
 }
 
 // Resize resizes the input given the new size.
@@ -87,13 +84,11 @@ func (m *Model) Resize(size base.Size) {
 }
 
 func (m *Model) Init() tea.Cmd {
-	return nil
+	return textinput.Blink
 }
 
 func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
-	case base.RestoredMsg:
-		return textinput.Blink
 	case tea.KeyMsg:
 		switch {
 		case key.Matches(msg, m.keyMap.cancel):

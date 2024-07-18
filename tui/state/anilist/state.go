@@ -81,6 +81,7 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	return tea.Sequence(
 		s.searchCmd(ctx, s.search.Query()),
+		s.search.Init(),
 		s.list.Init(),
 	)
 }

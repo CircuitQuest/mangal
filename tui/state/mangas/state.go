@@ -78,7 +78,8 @@ func (s *state) Resize(size base.Size) tea.Cmd {
 // Init implements base.State.
 func (s *state) Init(ctx context.Context) tea.Cmd {
 	return tea.Sequence(
-		s.search.Focus(),
+		s.search.Init(),
+		s.search.Focus(), // sets it to searching, enables it
 		s.list.Init(),
 	)
 }
