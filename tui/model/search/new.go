@@ -16,6 +16,7 @@ func New(placeholder, initialQuery string, width, maxSuggestions int) *Model {
 	}
 
 	input.ShowSuggestions = true
+	input.Width = width
 	input.Prompt = icon.Search.Colored() + " "
 
 	initState := Unsearched
