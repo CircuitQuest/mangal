@@ -74,7 +74,7 @@ func (m *model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			return m, nil
 		}
 		log.L.Err(msg).Msg("")
-		return m, Viewport("Logs", msg.Error(), color.Error)
+		return m, Viewport("Error", msg.Error(), color.Error)
 	}
 
 	if m.inViewport {
