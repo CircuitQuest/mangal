@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/charmbracelet/bubbles/timer"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
@@ -40,6 +41,7 @@ const (
 type state struct {
 	progress progress.Model
 	spinner  spinner.Model
+	timer    timer.Model
 	viewport *viewport.Model
 	client   *libmangal.Client
 	chapters chapters
@@ -48,6 +50,10 @@ type state struct {
 	downloading downloadState
 	currentIdx  int
 	toDownload  chapters
+
+	retryCount,
+	maxRetries int
+	retrying bool
 
 	sep,
 	message string
@@ -156,10 +162,28 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		spinner, cmd := s.spinner.Update(msg)
 		s.spinner = spinner
 		return cmd
+	case timer.TickMsg:
+		timer, cmd := s.timer.Update(msg)
+		s.timer = timer
+		if !msg.Timeout {
+			return cmd
+		}
+
+		s.retrying = false
+		// since the currentIdx is not updated,
+		// just resend the normal download chapter cmd
+		return tea.Sequence(
+			cmd,
+			s.downloadChapterCmd(ctx),
+		)
 	case nextChapterMsg:
 		s.updateKeybinds()
 		s.viewport.SetContent(s.viewDownloaded())
 		return s.downloadChapterCmd(ctx)
+	case retryChapterMsg:
+		s.retrying = true
+		s.timer.Timeout = msg.After
+		return s.timer.Init()
 	case downloadCompletedMsg:
 		s.downloading = dSDownloaded
 		s.updateKeybinds()

@@ -1,8 +1,11 @@
 package download
 
 import (
+	"time"
+
 	"github.com/charmbracelet/bubbles/progress"
 	"github.com/charmbracelet/bubbles/spinner"
+	"github.com/charmbracelet/bubbles/timer"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
 	"github.com/luevano/mangal/theme/icon"
@@ -31,11 +34,13 @@ func New(client *libmangal.Client, chaptersToDownload []mangadata.Chapter, optio
 			spinner.WithSpinner(base.DotSpinner),
 			spinner.WithStyle(style.Normal.Accent),
 		),
+		timer:       timer.New(time.Second),
 		viewport:    _viewport,
 		client:      client,
 		chapters:    c,
 		options:     options,
 		downloading: dSUninitialized,
+		maxRetries:  10, // TODO: make it configurable
 		sep:         sep,
 		message:     "Preparing...",
 		styles:      _styles,

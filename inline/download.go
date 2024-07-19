@@ -3,6 +3,7 @@ package inline
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"strconv"
 	"strings"
@@ -77,6 +78,8 @@ func RunDownload(ctx context.Context, args Args) error {
 	}
 
 	totalChapters := len(chapters)
+	// TODO: make configurable
+	maxRetries := 10
 	retryCount := 0
 	for i, chapter := range chapters {
 		retry := true
@@ -88,14 +91,20 @@ func RunDownload(ctx context.Context, args Args) error {
 				// TODO: handle other responses here too if possible
 				if strings.Contains(errMsg, "429") && strings.Contains(errMsg, "Retry-After") {
 					retry = true
-					retryCount += 1
-					rcTemp := strings.Split(errMsg, ":")
-					retryAfter, err := strconv.Atoi(strings.TrimSpace(rcTemp[len(rcTemp)-1]))
-					if err != nil {
-						return fmt.Errorf("Error while parsing Retry-Count from error mesage: %s", err.Error())
+					retryCount++
+					if retryCount > maxRetries {
+						return fmt.Errorf("exceeded max retries (%d) while downloading chapters", maxRetries)
 					}
-					fmt.Printf("429 status code while downloading chapter. Waiting %d seconds until retry (retry #%d)\n", retryAfter, retryCount)
-					time.Sleep(time.Duration(retryAfter) * time.Second)
+
+					raTemp := strings.Split(errMsg, ":")
+					raParsed, err := strconv.Atoi(strings.TrimSpace(raTemp[len(raTemp)-1]))
+					if err != nil {
+						return errors.New("error while parsing Retry-Count from error mesage: " + err.Error())
+					}
+
+					retryAfter := time.Duration(min(10, raParsed)) * time.Second
+					fmt.Printf("429 Too Many Requests (retry #%d). Retrying in %s\n", retryAfter, retryAfter)
+					time.Sleep(retryAfter)
 					continue
 				}
 				return err

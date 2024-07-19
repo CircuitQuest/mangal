@@ -42,6 +42,14 @@ var (
 		},
 	}
 
+	Timer = icon{
+		color: color.Accent,
+		symbols: symbols{
+			TypeASCII: "¿",
+			TypeNerd:  "\U000F13AB",
+		},
+	}
+
 	Mark = icon{
 		color: color.Accent,
 		symbols: symbols{

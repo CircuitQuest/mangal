@@ -21,21 +21,35 @@ func (s *state) updateKeybinds() {
 }
 
 func (s *state) viewDownloading() string {
-	ch := s.chapters[s.currentIdx].chapter
-	summary := fmt.Sprintf(
-		`%s Downloading chapter %s "%s" %s %d/%d`,
-		icon.Progress.Colored(),
-		s.styles.accent.Render(stringutil.FormatFloa32(ch.Info().Number)),
-		s.styles.accent.Render(ch.String()),
-		s.sep, s.currentIdx+1, len(s.toDownload),
-	)
 	return lipgloss.JoinVertical(
 		lipgloss.Left,
-		summary,
+		s.viewSummary(),
 		" ",
 		s.progress.ViewAs(float64(s.currentIdx)/float64(len(s.toDownload))),
 		" ",
 		s.spinner.View()+" "+style.Normal.Secondary.Render(s.message),
+	)
+}
+
+func (s *state) viewSummary() string {
+	ch := s.chapters[s.currentIdx].chapter
+	if s.retrying {
+		s.message = fmt.Sprintf("429 Too Many Requests (retry #%d)", s.retryCount)
+		return fmt.Sprintf(
+			`%s Retrying chapter %s "%s" in %s%s%d/%d`,
+			icon.Timer.Colored(),
+			s.styles.accent.Render(stringutil.FormatFloa32(ch.Info().Number)),
+			s.styles.accent.Render(ch.String()),
+			s.timer.View(),
+			s.sep, s.currentIdx+1, len(s.toDownload),
+		)
+	}
+	return fmt.Sprintf(
+		`%s Downloading chapter %s "%s"%s%d/%d`,
+		icon.Progress.Colored(),
+		s.styles.accent.Render(stringutil.FormatFloa32(ch.Info().Number)),
+		s.styles.accent.Render(ch.String()),
+		s.sep, s.currentIdx+1, len(s.toDownload),
 	)
 }
 
