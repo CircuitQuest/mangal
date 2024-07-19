@@ -20,15 +20,17 @@ type Model struct {
 	help  help.Model
 
 	// to be able to clear the screen in standalone
-	quitting   bool
+	quitting,
 	standalone bool
+
+	// pre-rendered
+	title string
 
 	notification         string
 	notificationDuration time.Duration
 
-	style,
-	msgStyle lipgloss.Style
-	keyMap keyMap
+	styles styles
+	keyMap KeyMap
 }
 
 // Init implements tea.Model.
@@ -84,9 +86,9 @@ func (m *Model) View() string {
 	if m.quitting {
 		return ""
 	}
-	msg := m.msgStyle.Render(m.notification)
-	view := lipgloss.JoinVertical(lipgloss.Left, msg, m.table.View(), m.help.View(&m.keyMap))
-	return m.style.Render(view)
+	msg := m.styles.notification.Render(m.notification)
+	view := lipgloss.JoinVertical(lipgloss.Left, m.title, msg, m.table.View(), m.help.View(&m.keyMap))
+	return m.styles.view.Render(view)
 }
 
 func (m *Model) DisableQuitKeybindings() {

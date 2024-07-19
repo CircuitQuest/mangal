@@ -6,8 +6,6 @@ import (
 
 	"github.com/charmbracelet/bubbles/table"
 	"github.com/luevano/mangal/path"
-	"github.com/luevano/mangal/theme/color"
-	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/model/help"
 )
 
@@ -31,15 +29,16 @@ func New(standalone bool) *Model {
 		rows[i] = table.Row{string(k), paths.Get(k)}
 	}
 
+	_styles := defaultStyles()
 	t := table.New(
 		table.WithColumns(cols),
 		table.WithRows(rows),
 		table.WithFocused(true),
 		table.WithHeight(len(rows)),
 		table.WithStyles(table.Styles{
-			Header:   style.Bold.Accent,
-			Cell:     style.Normal.Base,
-			Selected: style.Normal.Background.Background(color.Accent),
+			Header:   _styles.header,
+			Cell:     _styles.cell,
+			Selected: _styles.selected,
 		}),
 	)
 
@@ -47,9 +46,9 @@ func New(standalone bool) *Model {
 		table:                t,
 		help:                 help.New(),
 		standalone:           standalone,
-		notificationDuration: time.Second,
-		style:                style.Normal.Base.Margin(0, 2),
-		msgStyle:             style.Normal.Warning,
+		title:                _styles.title.Render("Mangal Paths"),
+		notificationDuration: 2 * time.Second,
+		styles:               _styles,
 		keyMap:               newKeyMap(),
 	}
 	if !standalone {

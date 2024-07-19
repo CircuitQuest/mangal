@@ -6,23 +6,23 @@ import (
 	"github.com/luevano/mangal/tui/util"
 )
 
-var _ help.KeyMap = (*keyMap)(nil)
+var _ help.KeyMap = (*KeyMap)(nil)
 
-func newKeyMap() keyMap {
-	return keyMap{
+func newKeyMap() KeyMap {
+	return KeyMap{
 		Copy: util.Bind("copy", "c", "enter"),
 		quit: util.Bind("quit", "q", "ctrl+c"),
 	}
 }
 
-// keyMap implements help.KeyMap.
-type keyMap struct {
+// KeyMap implements help.KeyMap.
+type KeyMap struct {
 	Copy,
 	quit key.Binding
 }
 
 // ShortHelp implements help.KeyMap.
-func (k *keyMap) ShortHelp() []key.Binding {
+func (k *KeyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
 		k.Copy,
 		k.quit,
@@ -30,6 +30,6 @@ func (k *keyMap) ShortHelp() []key.Binding {
 }
 
 // FullHelp implements help.KeyMap.
-func (k *keyMap) FullHelp() [][]key.Binding {
+func (k *KeyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{k.ShortHelp()}
 }

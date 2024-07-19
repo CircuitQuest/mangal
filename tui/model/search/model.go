@@ -91,15 +91,6 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
 		switch {
-		case key.Matches(msg, m.keyMap.cancel):
-			m.state = SearchCanceled
-			m.input.Blur()
-			m.input.Reset()
-			m.updateKeybinds()
-			// keep the last searched query in the input field
-			m.input.SetValue(m.query)
-
-			return SearchCancelCmd
 		case key.Matches(msg, m.keyMap.confirm):
 			// Remove all surrounding whitespace
 			q := strings.TrimSpace(m.input.Value())
@@ -116,6 +107,15 @@ func (m *Model) Update(msg tea.Msg) tea.Cmd {
 			m.input.SetValue(q)
 			m.query = q
 			return SearchCmd(q)
+		case key.Matches(msg, m.keyMap.cancel):
+			m.state = SearchCanceled
+			m.input.Blur()
+			m.input.Reset()
+			m.updateKeybinds()
+			// keep the last searched query in the input field
+			m.input.SetValue(m.query)
+
+			return SearchCancelCmd
 		}
 	}
 
@@ -184,7 +184,7 @@ func (m *Model) getSuggestions() (matches []string, idx int) {
 
 // updateKeybinds if the keymap should be enabled.
 func (m *Model) updateKeybinds() {
-	enable := m.state == Searching
+	enable := m.Searching()
 	m.keyMap.cancel.SetEnabled(enable)
 	m.keyMap.confirm.SetEnabled(enable)
 }
