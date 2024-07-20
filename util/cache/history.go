@@ -52,3 +52,63 @@ func (r *Records) Add(query string) {
 		*r = append(*r, &Record{Rank: 0, Query: query})
 	}
 }
+
+type UserHistory []string
+
+// Size gets the amount of users in the history.
+func (u *UserHistory) Size() int {
+	if u == nil {
+		return 0
+	}
+	return len(*u)
+}
+
+// Last gets the last user in the history.
+func (u *UserHistory) Last() string {
+	if u == nil {
+		return ""
+	}
+	if len(*u) != 0 {
+		return (*u)[len(*u)-1]
+	}
+	return ""
+}
+
+// Get the user history as a slice of strings.
+func (u *UserHistory) Get() []string {
+	if u == nil {
+		return []string{}
+	}
+	return []string(*u)
+}
+
+// Add will add the new username to the user history,
+// if it exists, it will move it to the end of the history.
+func (u *UserHistory) Add(username string) {
+	if u == nil {
+		u = &UserHistory{username}
+		return
+	}
+	var newHistory UserHistory
+	for _, user := range *u {
+		if user != username {
+			newHistory = append(newHistory, user)
+		}
+	}
+	newHistory = append(newHistory, username)
+	*u = newHistory
+}
+
+// Delete will delete the username from the user history, if existent.
+func (u *UserHistory) Delete(username string) {
+	if u == nil {
+		return
+	}
+	var newHistory UserHistory
+	for _, user := range *u {
+		if user != username {
+			newHistory = append(newHistory, user)
+		}
+	}
+	*u = newHistory
+}

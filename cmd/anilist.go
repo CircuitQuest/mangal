@@ -20,7 +20,7 @@ var anilistCmd = &cobra.Command{
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {
 		if anilistLogout {
-			if err := anilist.Anilist().Logout(); err != nil {
+			if err := anilist.Anilist().Logout(false); err != nil {
 				errorf(cmd, err.Error())
 			}
 

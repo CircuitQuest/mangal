@@ -7,12 +7,14 @@ import (
 const CacheDBNameMangal = "mangal"
 
 const (
-	BucketNameSearchHistory = "search-history"
+	BucketNameSearchHistory      = "search-history"
+	BucketNameAnilistAuthHistory = "anilist-auth-history"
 )
 
 const (
 	MangasSearchHistory  = "mangas"
 	AnilistSearchHistory = "anilist"
+	AnilistAuthHistory   = "anilist"
 )
 
 var store_ = store{
@@ -89,6 +91,40 @@ func GetAnilistSearchHistory(records *Records) (bool, error) {
 	defer store_.Close()
 
 	found, err := store_.store.Get(AnilistSearchHistory, records)
+	if err != nil {
+		return false, err
+	}
+	if found {
+		return true, nil
+	}
+	return false, nil
+}
+
+// SetAnilistAuthHistory will store the authenticated username history.
+//
+// These are used only to remember the usernames, no auth data is stored.
+func SetAnilistAuthHistory(userHistory UserHistory) error {
+	err := store_.open(BucketNameAnilistAuthHistory)
+	if err != nil {
+		return err
+	}
+	defer store_.Close()
+
+	return store_.store.Set(AnilistAuthHistory, userHistory)
+}
+
+// GetAnilistAuthHistory will populate the given username history
+// if there is a history of authenticated anilist users.
+//
+// These are only usernames and don't contain any auth data.
+func GetAnilistAuthHistory(userHistory *UserHistory) (bool, error) {
+	err := store_.open(BucketNameAnilistAuthHistory)
+	if err != nil {
+		return false, err
+	}
+	defer store_.Close()
+
+	found, err := store_.store.Get(AnilistAuthHistory, userHistory)
 	if err != nil {
 		return false, err
 	}

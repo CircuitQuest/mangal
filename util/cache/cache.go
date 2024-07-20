@@ -27,6 +27,7 @@ func init() {
 	gob.RegisterName("mango-page", &mango.Page{})
 	gob.RegisterName("provider-metadata", &mangadata.Metadata{})
 	gob.RegisterName("anilist-manga", &anilist.Manga{})
+	gob.RegisterName("anilist-user", &anilist.User{})
 }
 
 func CacheStore(dbName, bucketName string) (gokv.Store, error) {
@@ -56,8 +57,10 @@ func CacheStore(dbName, bucketName string) (gokv.Store, error) {
 		ttl = time.Hour * 9999
 	case anilist.CacheBucketNameIDToManga:
 		ttl = time.Hour * 24 * 2
-	case anilist.CacheBucketNameAccessToken:
-		ttl = time.Hour * 24 * 30
+	case anilist.CacheBucketNameNameToAccessToken,
+		anilist.CacheBucketNameNameToUser,
+		BucketNameAnilistAuthHistory:
+		ttl = time.Hour * 24 * 365 // access tokens last a year
 	case BucketNameSearchHistory:
 		ttl = 0 // no expiry
 	}

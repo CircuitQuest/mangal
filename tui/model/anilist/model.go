@@ -1,19 +1,19 @@
 package anilist
 
 import (
+	"errors"
 	"time"
 
 	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/mangal/tui/model/list"
+	"github.com/luevano/mangal/util/cache"
 )
 
-var authURL = "https://anilist.co/api/v2/oauth/authorize?client_id=" +
-	"%s" +
-	"&response_type=code&redirect_uri=https://anilist.co/api/v2/oauth/pin"
+var authURL = "https://anilist.co/api/v2/oauth/authorize?client_id=%s&response_type=%s"
 
 type State int
 
@@ -38,8 +38,12 @@ type Model struct {
 	secretInput,
 	codeInput textinput.Model
 	input   *textinput.Model // current selected input
+	list    *list.Model
 	help    help.Model
 	anilist *anilist.Anilist
+
+	user        anilist.User
+	userHistory cache.UserHistory
 
 	// to be able to clear the screen in standalone
 	quitting,
@@ -54,7 +58,8 @@ type Model struct {
 
 	state   State
 	current Field
-	inInput bool
+	inInput,
+	inNew bool
 
 	styles styles
 	keyMap keyMap
@@ -86,23 +91,34 @@ func (m *Model) Init() tea.Cmd {
 		m.notification = "anilist login: anilist is nil"
 		return nil
 	}
-	if m.anilist.IsAuthorized() {
+	if m.anilist.Authenticated() {
 		m.state = LoggedIn
 	} else {
 		m.state = LoggedOut
 	}
+	if m.userHistory.Size() == 0 {
+		m.inNew = true
+	}
 	m.updateKeybinds()
-	return textinput.Blink
+	return tea.Sequence(
+		m.list.Init(),
+		textinput.Blink,
+	)
 }
 
 // Update implements tea.Model.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
 	case tea.KeyMsg:
+		// selected user from history
+		i, _ := m.list.SelectedItem().(*item)
 		switch {
 		case key.Matches(msg, m.keyMap.quit):
 			m.quitting = true
 			return m, tea.Quit
+		case key.Matches(msg, m.keyMap.back):
+			m.inNew = false
+			m.updateKeybinds()
 		case key.Matches(msg, m.keyMap.up):
 			m.current--
 			if m.current < ID {
@@ -130,24 +146,44 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			m.updateKeybinds()
 		case key.Matches(msg, m.keyMap.clear):
 			m.input.SetValue("")
+			m.updateKeybinds()
 		case key.Matches(msg, m.keyMap.login):
+			if !m.inNew {
+				return m, m.loginCachedCmd(i)
+			}
 			return m, m.loginCmd
-		case key.Matches(msg, m.keyMap.open):
-			return m, m.openAuthURLCmd
 		case key.Matches(msg, m.keyMap.logout):
 			return m, m.logoutCmd
+		case key.Matches(msg, m.keyMap.open):
+			return m, m.openAuthURLCmd
+		case key.Matches(msg, m.keyMap.new):
+			m.inNew = true
+			m.updateKeybinds()
+		case key.Matches(msg, m.keyMap.delete):
+			return m, m.deleteUserCmd(i)
 		}
 	case NotificationMsg:
 		return m, m.notifyCmd(string(msg))
 	case NotificationTimeoutMsg:
 		m.notification = ""
 		return m, nil
-	}
-	if m.Uninitialized() || !m.inInput {
-		return m, nil
+	case error:
+		return m, m.notifyCmd(msg.Error())
 	}
 
-	return m, m.updateInputCmd(msg)
+	switch m.state {
+	case Uninitialized:
+		return m, func() tea.Msg {
+			return errors.New("anilist model needs to be initialized")
+		}
+	case LoggedOut:
+		if m.inNew {
+			return m, m.updateInputCmd(msg)
+		}
+		return m, m.list.Update(msg)
+	default: // and LoggedIn
+		return m, nil
+	}
 }
 
 // UpdateI is a convenience method to update the model in-place,
@@ -163,22 +199,17 @@ func (m *Model) View() string {
 	if m.quitting {
 		return ""
 	}
-	if m.Uninitialized() {
-		return "Uninitialized"
-	}
 
-	view := "Already logged in"
-	if m.LoggedOut() {
-		view = m.viewLogin()
+	switch m.state {
+	case Uninitialized:
+		return "uninitialized"
+	case LoggedIn:
+		return m.viewLoggedIn()
+	case LoggedOut:
+		return m.viewLoggedOut()
+	default:
+		return "unkown anilist login state"
 	}
-
-	if !m.standalone {
-		return view
-	}
-
-	msg := m.styles.notification.Render(m.notification)
-	view = lipgloss.JoinVertical(lipgloss.Left, m.title, msg, view, m.help.View(&m.keyMap))
-	return m.styles.view.Render(view)
 }
 
 func (m *Model) DisableQuitKeybindings() {
