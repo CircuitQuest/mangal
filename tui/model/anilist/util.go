@@ -1,13 +1,9 @@
 package anilist
 
 import (
-	"strconv"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/help"
 	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/lipgloss"
-	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/util/cache"
 )
 
@@ -42,72 +38,6 @@ func (m *Model) updateUserHistory() error {
 	}
 	m.list.SetItems(items)
 	return nil
-}
-
-func (m *Model) viewLoggedIn() string {
-	if m.inNew {
-		return m.viewLoggedOut()
-	}
-	view := "Logged in to " + m.user.Name + " (" + strconv.Itoa(m.user.ID) + ")"
-	if !m.standalone {
-		return view
-	}
-
-	msg := m.styles.notification.Render(m.notification)
-	view = lipgloss.JoinVertical(lipgloss.Left, m.title, msg, view, m.help.View(&m.keyMap))
-	return m.styles.view.Render(view)
-}
-
-func (m *Model) viewLoggedOut() string {
-	var k help.KeyMap
-	k = base.CombinedKeyMap(&m.keyMap, &m.list.KeyMap)
-	view := m.viewAvailableLogins()
-	if m.inNew {
-		k = &m.keyMap
-		view = m.viewNewLogin()
-	}
-	if !m.standalone {
-		return view
-	}
-
-	msg := m.styles.notification.Render(m.notification)
-	return lipgloss.JoinVertical(lipgloss.Left, m.title, msg, view, m.help.View(k))
-}
-
-// viewAvailableLogins renders the list of available logins.
-func (m *Model) viewAvailableLogins() string {
-	return lipgloss.JoinVertical(lipgloss.Left, "Available logins", m.list.View())
-}
-
-// viewNewLogin renders the login form.
-func (m *Model) viewNewLogin() string {
-	return lipgloss.JoinVertical(
-		lipgloss.Left,
-		m.viewField(ID),
-		m.viewField(Secret),
-		m.viewField(Code),
-	)
-}
-
-// viewField renders the input fields depending and render hovered accordingly.
-func (m *Model) viewField(field Field) string {
-	cursor := ""
-	render := m.styles.field.Render
-	if m.current == field {
-		cursor = m.selectCursor
-		render = m.styles.selected.Render
-	}
-
-	switch field {
-	case ID:
-		return render(cursor + m.idInput.View())
-	case Secret:
-		return render(cursor + m.secretInput.View())
-	case Code:
-		return render(cursor + m.codeInput.View())
-	default:
-		return "unkown field"
-	}
 }
 
 // updateKeybinds enables/disables the keybinds depending on the state of

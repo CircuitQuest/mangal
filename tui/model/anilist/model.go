@@ -206,12 +206,11 @@ func (m *Model) View() string {
 	case LoggedIn:
 		return m.viewLoggedIn()
 	case LoggedOut:
+		if m.inNew {
+			return m.viewNewLogin()
+		}
 		return m.viewLoggedOut()
 	default:
 		return "unkown anilist login state"
 	}
-}
-
-func (m *Model) DisableQuitKeybindings() {
-	m.keyMap.quit.SetEnabled(false)
 }
