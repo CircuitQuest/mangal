@@ -7,11 +7,8 @@ import (
 	"github.com/spf13/cobra"
 )
 
-var anilistLogout bool
-
 func init() {
 	rootCmd.AddCommand(anilistCmd)
-	anilistCmd.Flags().BoolVarP(&anilistLogout, "logout", "l", false, "Logout of Anilist")
 }
 
 var anilistCmd = &cobra.Command{
@@ -19,15 +16,6 @@ var anilistCmd = &cobra.Command{
 	Short: "Anilist auth commands",
 	Args:  cobra.NoArgs,
 	Run: func(cmd *cobra.Command, _ []string) {
-		if anilistLogout {
-			if err := anilist.Anilist().Logout(false); err != nil {
-				errorf(cmd, err.Error())
-			}
-
-			successf(cmd, "Logged out from Anilist")
-			return
-		}
-
 		if _, err := tea.NewProgram(anilistViewer.New(anilist.Anilist(), true)).Run(); err != nil {
 			errorf(cmd, err.Error())
 		}
