@@ -11,7 +11,7 @@ func New(loaders []libmangal.ProviderLoader) *state {
 	extraInfo := false
 	loaded := set.NewMapset[*item]()
 	listWrapper := list.New(
-		2,
+		2, 1,
 		"provider", "providers",
 		loaders,
 		func(loader libmangal.ProviderLoader) _list.DefaultItem {

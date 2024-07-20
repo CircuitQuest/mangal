@@ -26,7 +26,7 @@ func New(client *libmangal.Client, manga mangadata.Manga, volume mangadata.Volum
 	_styles := defaultStyles()
 	renderedSep := _styles.sep.Render(icon.Separator.Raw())
 	listWrapper := list.New(
-		3,
+		3, 1,
 		"chapter", "chapters",
 		chapters,
 		func(chapter mangadata.Chapter) _list.DefaultItem {

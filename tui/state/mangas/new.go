@@ -12,7 +12,7 @@ func New(client *libmangal.Client) *state {
 	info := false
 	fullInfo := false
 	listWrapper := list.New(
-		2,
+		2, 1,
 		"manga", "mangas",
 		nil,
 		func(manga mangadata.Manga) _list.DefaultItem {

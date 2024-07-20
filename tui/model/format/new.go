@@ -11,7 +11,8 @@ import (
 
 func New(accentColor lipgloss.Color) *Model {
 	listWrapper := list.New(
-		2, "manga", "mangas",
+		2, 1,
+		"manga", "mangas",
 		libmangal.FormatValues(),
 		func(format libmangal.Format) _list.DefaultItem {
 			return &item{format: format}

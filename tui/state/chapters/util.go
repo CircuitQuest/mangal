@@ -23,9 +23,9 @@ func (s *state) updateAllItems() {
 
 func (s *state) updateListDelegate() {
 	if *s.showDate || *s.showGroup {
-		s.list.SetDelegateHeight(3)
+		s.list.SetItemHeight(3)
 	} else {
-		s.list.SetDelegateHeight(2)
+		s.list.SetItemHeight(2)
 	}
 }
 

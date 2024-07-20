@@ -9,7 +9,8 @@ import (
 )
 
 func New[T any](
-	delegateHeight int,
+	itemHeight int,
+	itemSpacing int,
 	singular, plural string,
 	items []T,
 	transform func(T) list.DefaultItem,
@@ -38,13 +39,17 @@ func New[T any](
 		BorderForeground(color.Accent)
 	delegate.Styles = styles
 
-	if delegateHeight == 1 {
+	if itemHeight == 1 {
 		delegate.ShowDescription = false
 	}
+	delegate.SetHeight(itemHeight)
+	delegate.SetSpacing(itemSpacing)
 
-	delegate.SetHeight(delegateHeight)
+	// If only a few items, just set the necessary hight, else the max
+	perItemHeight := itemHeight + itemSpacing
+	itemsHeight := perItemHeight * len(items)
 
-	l := list.New(listItems, delegate, 0, 0)
+	l := list.New(listItems, delegate, 20, min(10, itemsHeight))
 	l.FilterInput.Prompt = icon.Filter.Raw() + " "
 	l.SetShowHelp(false)
 	l.SetShowFilter(false)

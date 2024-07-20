@@ -10,7 +10,7 @@ import (
 
 func New(client *libmangal.Client, manga mangadata.Manga, volumes []mangadata.Volume) *state {
 	listWrapper := list.New(
-		1,
+		1, 1,
 		"volume", "volumes",
 		volumes,
 		func(volume mangadata.Volume) _list.DefaultItem {

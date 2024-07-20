@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/tui/base"
 	stringutil "github.com/luevano/mangal/util/string"
 )
@@ -94,10 +95,10 @@ func (m *Model) SetItems(items []list.Item) tea.Cmd {
 	)
 }
 
-// SetDelegateHeight sets the height of the delegate, which translates to the items' height.
+// SetItemHeight sets the height of the delegate, which translates to the items' height.
 //
 // Clamps to a minimum of 1, in which case the description is hidden.
-func (m *Model) SetDelegateHeight(height int) {
+func (m *Model) SetItemHeight(height int) {
 	if height < 2 {
 		height = 1
 	}
@@ -107,6 +108,17 @@ func (m *Model) SetDelegateHeight(height int) {
 		m.delegate.ShowDescription = true
 	}
 	m.delegate.SetHeight(height)
+	m.SetDelegate(m.delegate)
+}
+
+func (m *Model) SetItemSpacing(spacing int) {
+	m.delegate.SetSpacing(spacing)
+	m.SetDelegate(m.delegate)
+}
+
+func (m *Model) SetAccentColor(color lipgloss.Color) {
+	m.delegate.Styles.SelectedTitle = m.delegate.Styles.SelectedTitle.Foreground(color).BorderForeground(color)
+	m.delegate.Styles.SelectedDesc = m.delegate.Styles.SelectedDesc.BorderForeground(color)
 	m.SetDelegate(m.delegate)
 }
 

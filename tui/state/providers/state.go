@@ -89,9 +89,9 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			*s.extraInfo = !(*s.extraInfo)
 
 			if *s.extraInfo {
-				s.list.SetDelegateHeight(3)
+				s.list.SetItemHeight(3)
 			} else {
-				s.list.SetDelegateHeight(2)
+				s.list.SetItemHeight(2)
 			}
 		case key.Matches(msg, s.keyMap.closeAll):
 			return s.closeAllProvidersCmd

@@ -10,7 +10,7 @@ import (
 
 func New(anilist *lmanilist.Anilist, manga mangadata.Manga) *state {
 	listWrapper := list.New(
-		2,
+		2, 1,
 		"anilist manga", "anilist mangas",
 		nil,
 		func(manga lmanilist.Manga) _list.DefaultItem {
