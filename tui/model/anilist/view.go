@@ -35,14 +35,14 @@ func (m *Model) viewNewLogin() string {
 func (m *Model) viewLoggedOut() string {
 	view := m.viewAvailableLogins()
 	if m.standalone {
-		return m.viewStandalone(view, base.CombinedKeyMap(&m.keyMap, &m.list.KeyMap))
+		return m.viewStandalone(view, base.CombinedKeyMap(&m.list.KeyMap, &m.keyMap))
 	}
 	return view
 }
 
 // viewAvailableLogins renders the list of available logins.
 func (m *Model) viewAvailableLogins() string {
-	return lipgloss.JoinVertical(lipgloss.Left, "Available logins", " ", m.list.View())
+	return lipgloss.JoinVertical(lipgloss.Left, "Available logins ("+m.list.Status()+")", " ", m.list.View())
 }
 
 // viewNewLoginForm renders the login form.

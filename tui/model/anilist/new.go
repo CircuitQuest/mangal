@@ -37,6 +37,10 @@ func New(anilist *anilist.Anilist, standalone bool) *Model {
 	list.SetAccentColor(color.Anilist)
 	list.KeyMap.List.Filter.SetEnabled(false)
 	list.KeyMap.Reverse.SetEnabled(false)
+	list.KeyMap.List.GoToStart.SetEnabled(false)
+	list.KeyMap.List.GoToEnd.SetEnabled(false)
+	list.KeyMap.List.NextPage.SetEnabled(false)
+	list.KeyMap.List.PrevPage.SetEnabled(false)
 
 	m := &Model{
 		idInput:              idInput,

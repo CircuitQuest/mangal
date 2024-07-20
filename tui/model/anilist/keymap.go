@@ -17,11 +17,12 @@ func newKeyMap() keyMap {
 		delete:  util.Bind("forget", "ctrl+d"),
 		up:      util.BindNamedKey("↑/k", "up", "k", "up"),
 		down:    util.BindNamedKey("↓/j", "down", "j", "down"),
-		selekt:  util.Bind("select", "enter"),
+		selekt:  util.Bind("edit field", "enter"),
 		confirm: util.Bind("confirm", "enter"),
 		cancel:  util.Bind("cancel", "esc"),
 		clear:   util.Bind("clear field", "c"),
 		back:    util.Bind("select login", "esc"),
+		help:    util.Bind("help", "?"),
 		quit:    util.Bind("quit", "q", "ctrl+c"),
 	}
 }
@@ -40,12 +41,15 @@ type keyMap struct {
 	cancel, // cancel input content
 	clear, // clear input content
 	back, // go from new login to select existing logins (if any)
+	help,
 	quit key.Binding
 }
 
 // ShortHelp implements help.KeyMap.
 func (k *keyMap) ShortHelp() []key.Binding {
 	return []key.Binding{
+		k.up,
+		k.down,
 		k.login,
 		k.logout,
 		k.open,
@@ -53,15 +57,17 @@ func (k *keyMap) ShortHelp() []key.Binding {
 		k.delete,
 		k.selekt,
 		k.clear,
-		k.up,
-		k.down,
-		k.quit,
+		k.help,
 	}
 }
 
 // FullHelp implements help.KeyMap.
 func (k *keyMap) FullHelp() [][]key.Binding {
 	return [][]key.Binding{
+		{
+			k.up,
+			k.down,
+		},
 		{
 			k.login,
 			k.logout,
@@ -76,12 +82,9 @@ func (k *keyMap) FullHelp() [][]key.Binding {
 			k.clear,
 		},
 		{
-			k.up,
-			k.down,
-		},
-		{
 			k.back,
 			k.quit,
+			k.help,
 		},
 	}
 }

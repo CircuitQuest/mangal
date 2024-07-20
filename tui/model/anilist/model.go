@@ -9,6 +9,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/util/cache"
 )
@@ -106,6 +107,10 @@ func (m *Model) Init() tea.Cmd {
 	)
 }
 
+func (m *Model) Resize(size base.Size) tea.Cmd {
+	return m.list.Resize(size)
+}
+
 // Update implements tea.Model.
 func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	switch msg := msg.(type) {
@@ -119,6 +124,8 @@ func (m *Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		case key.Matches(msg, m.keyMap.back):
 			m.inNew = false
 			m.updateKeybinds()
+		case key.Matches(msg, m.keyMap.help):
+			m.help.ShowAll = !m.help.ShowAll
 		case key.Matches(msg, m.keyMap.up):
 			m.current--
 			if m.current < ID {

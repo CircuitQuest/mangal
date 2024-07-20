@@ -37,13 +37,18 @@ func (m *Model) updateUserHistory() error {
 		items[i] = &item{user: u}
 	}
 	m.list.SetItems(items)
+	size := m.list.Size()
+	size.Height = min(20, len(items))
+	m.Resize(size)
 	return nil
 }
 
 // updateKeybinds enables/disables the keybinds depending on the state of
 // the anilist authentication status.
 func (m *Model) updateKeybinds() {
-	m.keyMap.quit.SetEnabled(m.standalone && !m.inInput)
+	standalone := m.standalone && !m.inInput
+	m.keyMap.help.SetEnabled(standalone)
+	m.keyMap.quit.SetEnabled(standalone)
 	m.keyMap.back.SetEnabled(m.inNew && !m.inInput && m.userHistory.Size() != 0)
 
 	loggable := m.LoggedOut() && !m.inInput
