@@ -87,7 +87,7 @@ func (m *Model) View() string {
 		return ""
 	}
 	msg := m.styles.notification.Render(m.notification)
-	view := lipgloss.JoinVertical(lipgloss.Left, m.title, msg, m.table.View(), m.help.View(&m.keyMap))
+	view := lipgloss.JoinVertical(lipgloss.Left, m.title, msg, m.table.View(), " ", m.help.View(&m.keyMap))
 	return m.styles.view.Render(view)
 }
 

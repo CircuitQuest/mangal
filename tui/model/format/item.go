@@ -6,7 +6,6 @@ import (
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/config"
-	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/theme/style"
 )
 
@@ -15,8 +14,10 @@ var (
 	_ list.DefaultItem = (*item)(nil)
 )
 
+// the sep needs to be rendered after the app is
+// completely loaded, else the incorrect icon will be used
 var (
-	sep  = style.Bold.Warning.Padding(0, 1).Render(icon.Separator.Raw())
+	sep  string
 	down = style.Bold.Warning.Render("down")
 	read = style.Bold.Warning.Render("read")
 )
@@ -54,22 +55,16 @@ func (i *item) Title() string {
 // Description implements list.DefaultItem.
 func (i *item) Description() string {
 	ext := i.format.Extension()
-
 	if ext == "" {
 		return "<none>"
 	}
-
 	return ext
 }
 
 func (i *item) isSelectedForDownloading() bool {
-	format := config.Download.Format.Get()
-
-	return i.format == format
+	return i.format == config.Download.Format.Get()
 }
 
 func (i *item) isSelectedForReading() bool {
-	format := config.Read.Format.Get()
-
-	return i.format == format
+	return i.format == config.Read.Format.Get()
 }

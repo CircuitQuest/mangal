@@ -24,7 +24,6 @@ type Model struct {
 	title,
 	help string
 
-	minSize,
 	size,
 	maxSize base.Size
 
@@ -60,5 +59,5 @@ end:
 }
 
 func (m *Model) View() string {
-	return lipgloss.JoinVertical(lipgloss.Left, m.title, m.list.View(), m.help)
+	return lipgloss.JoinVertical(lipgloss.Left, m.title, m.list.View(), " ", m.help)
 }
