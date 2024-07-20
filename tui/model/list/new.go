@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/theme/icon"
+	"github.com/luevano/mangal/tui/base"
 )
 
 func New[T any](
@@ -45,11 +46,12 @@ func New[T any](
 	delegate.SetHeight(itemHeight)
 	delegate.SetSpacing(itemSpacing)
 
-	// If only a few items, just set the necessary hight, else the max
+	// If only a few items, just set the necessary hight, else the max (10 lines)
 	perItemHeight := itemHeight + itemSpacing
 	itemsHeight := perItemHeight * len(items)
+	size := base.Size{Width: 20, Height: min(10, itemsHeight)}
 
-	l := list.New(listItems, delegate, 20, min(10, itemsHeight))
+	l := list.New(listItems, delegate, size.Width, size.Height)
 	l.FilterInput.Prompt = icon.Filter.Raw() + " "
 	l.SetShowHelp(false)
 	l.SetShowFilter(false)
@@ -66,6 +68,7 @@ func New[T any](
 	s := &Model{
 		Model:    l,
 		delegate: &delegate,
+		size:     size,
 		KeyMap:   newKeyMap(&l.KeyMap),
 	}
 	s.updateKeybinds()
