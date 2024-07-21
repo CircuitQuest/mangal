@@ -16,7 +16,7 @@ import (
 func (s *state) startDownloadCmd() tea.Msg {
 	s.downloading = dSDownloading
 	s.currentIdx = 0
-	s.toDownload = s.chapters.toDownload()
+	s.toDownload = s.chapters.ToDownload()
 	return nextChapterMsg{}
 }
 
@@ -28,7 +28,7 @@ func (s *state) downloadChapterCmd(ctx context.Context) tea.Cmd {
 			err      error
 		)
 
-		downChap, err = s.client.DownloadChapter(ctx, ch.chapter, s.options)
+		downChap, err = s.client.DownloadChapter(ctx, ch.Chapter, s.options)
 		if err != nil {
 			errMsg := err.Error()
 			// TODO: handle other responses here too if possible
@@ -50,13 +50,8 @@ func (s *state) downloadChapterCmd(ctx context.Context) tea.Cmd {
 				return retryChapterMsg{After: retryAfter}
 			}
 		}
-
-		ch.down = downChap
-		if err != nil {
-			ch.state = cSFailed
-		} else {
-			ch.state = cSSucceed
-		}
+		ch.Down = downChap
+		ch.Err = err
 
 		if s.currentIdx+1 >= len(s.toDownload) {
 			return downloadCompletedMsg{}
@@ -68,7 +63,7 @@ func (s *state) downloadChapterCmd(ctx context.Context) tea.Cmd {
 
 // openCmd acts on the key press and thus relies on the keybinds being updated.
 func (s *state) openCmd() tea.Msg {
-	return open.Start(s.chapters[0].down.Directory)
+	return open.Start(s.chapters[0].Down.Directory)
 }
 
 // retryCmd acts on the key press and thus relies on the keybinds being updated,
@@ -76,7 +71,7 @@ func (s *state) openCmd() tea.Msg {
 func (s *state) retryCmd() tea.Cmd {
 	s.downloading = dSDownloading
 	s.currentIdx = 0
-	s.toDownload = s.chapters.failed()
+	s.toDownload = s.chapters.Failed()
 	return tea.Sequence(
 		func() tea.Msg {
 			return nextChapterMsg{}

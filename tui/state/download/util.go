@@ -7,12 +7,13 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/theme/style"
+	"github.com/luevano/mangal/util/chapter"
 	stringutil "github.com/luevano/mangal/util/string"
 )
 
 // updateKeybinds enables open/retry keybinds if necessary
 func (s *state) updateKeybinds() {
-	_, succ, fail := s.chapters.getEach()
+	_, succ, fail := s.chapters.GetEach()
 	hasSucc := len(succ) > 0
 	hasFail := len(fail) > 0
 	downloading := s.downloading != dSDownloaded
@@ -32,7 +33,7 @@ func (s *state) viewDownloading() string {
 }
 
 func (s *state) viewSummary() string {
-	ch := s.chapters[s.currentIdx].chapter
+	ch := s.chapters[s.currentIdx].Chapter
 	if s.retrying {
 		s.message = fmt.Sprintf("429 Too Many Requests (retry #%d)", s.retryCount)
 		return fmt.Sprintf(
@@ -54,7 +55,7 @@ func (s *state) viewSummary() string {
 }
 
 func (s *state) viewDownloaded() string {
-	down, succ, fail := s.chapters.getEach()
+	down, succ, fail := s.chapters.GetEach()
 	var lines []string
 	if len(down) != 0 {
 		lines = append(lines, s.viewChapterList("To download:", s.styles.toDownload, down))
@@ -71,7 +72,7 @@ func (s *state) viewDownloaded() string {
 	return lipgloss.JoinVertical(lipgloss.Left, lines...)
 }
 
-func (s *state) viewChapterList(header string, headerStyle lipgloss.Style, chaps chapters) string {
+func (s *state) viewChapterList(header string, headerStyle lipgloss.Style, chaps chapter.Chapters) string {
 	var sb strings.Builder
 	sb.Grow(200)
 
@@ -82,14 +83,14 @@ func (s *state) viewChapterList(header string, headerStyle lipgloss.Style, chaps
 	subItm := s.styles.subItemEnum.Foreground(headerStyle.GetForeground()).Render(icon.SubItem.Raw())
 	var lastDir string
 	for i, ch := range chaps {
-		if ch.down != nil && ch.down.Directory != lastDir {
-			lastDir = ch.down.Directory
+		if ch.Down != nil && ch.Down.Directory != lastDir {
+			lastDir = ch.Down.Directory
 			sb.WriteString(item)
 			sb.WriteString(s.styles.toDownload.Render(lastDir))
 			sb.WriteByte('\n')
 		}
 		sb.WriteString(subItm)
-		sb.WriteString(ch.render(s.styles))
+		sb.WriteString(ch.Render(style.Normal.Base, s.styles.toDownload, s.styles.succeed, s.styles.failed, s.styles.warning))
 		if i < len(chaps) {
 			sb.WriteByte('\n')
 		}

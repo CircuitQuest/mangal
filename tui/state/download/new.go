@@ -12,14 +12,14 @@ import (
 	"github.com/luevano/mangal/theme/style"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/viewport"
+	"github.com/luevano/mangal/util/chapter"
 )
 
 func New(client *libmangal.Client, chaptersToDownload []mangadata.Chapter, options libmangal.DownloadOptions) *state {
-	c := make(chapters, len(chaptersToDownload))
+	c := make(chapter.Chapters, len(chaptersToDownload))
 	for i, ch := range chaptersToDownload {
-		c[i] = &chapter{
-			chapter: ch,
-			state:   cSToDownload,
+		c[i] = &chapter.Chapter{
+			Chapter: ch,
 		}
 	}
 

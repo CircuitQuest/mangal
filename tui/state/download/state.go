@@ -16,18 +16,11 @@ import (
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/viewport"
+	"github.com/luevano/mangal/util/chapter"
 	stringutil "github.com/luevano/mangal/util/string"
 )
 
 var _ base.State = (*state)(nil)
-
-type chapterState uint8
-
-const (
-	cSToDownload chapterState = iota + 1
-	cSSucceed
-	cSFailed
-)
 
 type downloadState uint8
 
@@ -44,12 +37,12 @@ type state struct {
 	timer    timer.Model
 	viewport *viewport.Model
 	client   *libmangal.Client
-	chapters chapters
+	chapters chapter.Chapters
 	options  libmangal.DownloadOptions
 
 	downloading downloadState
 	currentIdx  int
-	toDownload  chapters
+	toDownload  chapter.Chapters
 
 	retryCount,
 	maxRetries int
@@ -85,7 +78,7 @@ func (s *state) Title() base.Title {
 
 // Subtitle implements base.State.
 func (s *state) Subtitle() string {
-	down, succ, fail := s.chapters.getEach()
+	down, succ, fail := s.chapters.GetEach()
 	var sb strings.Builder
 	sb.Grow(50)
 
