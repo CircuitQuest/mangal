@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/adrg/xdg"
+	"github.com/disgoorg/disgo/webhook"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/template/funcs"
@@ -29,15 +30,16 @@ var (
 // Exported config
 var (
 	// Path to the config file
-	Path      = filepath.Join(dir, filename)
-	Icons     = cfg.Icons
-	Cache     = cfg.Cache
-	CLI       = cfg.CLI
-	Read      = cfg.Read
-	Download  = cfg.Download
-	TUI       = cfg.TUI
-	Providers = cfg.Providers
-	Library   = cfg.Library
+	Path         = filepath.Join(dir, filename)
+	Icons        = cfg.Icons
+	Cache        = cfg.Cache
+	CLI          = cfg.CLI
+	Read         = cfg.Read
+	Download     = cfg.Download
+	TUI          = cfg.TUI
+	Providers    = cfg.Providers
+	Library      = cfg.Library
+	Notification = cfg.Notification
 )
 
 func xdgConfig() string {
@@ -481,6 +483,27 @@ func initConfig() config {
 					return expandPath(s)
 				},
 			}),
+		},
+		Notification: configNotification{
+			Discord: configNotificationDiscord{
+				Username: reg(entry[string, string]{
+					Key:         "notification.discord.username",
+					Default:     "Mangal",
+					Description: "Username of the message sender. If empty it will use the configured name in the server.",
+				}),
+				WebhookURL: reg(entry[string, string]{
+					Key:         "notification.discord.webhook_url",
+					Default:     "",
+					Description: "Webhook URL, if present discord notifications will be sent.",
+					Validate: func(s string) error {
+						if s == "" {
+							return nil
+						}
+						_, err := webhook.NewWithURL(s)
+						return err
+					},
+				}),
+			},
 		},
 	}
 	// Load from "default" config paths

@@ -8,14 +8,15 @@ import (
 )
 
 type config struct {
-	Icons     *entry[string, icon.Type]
-	Cache     configCache
-	CLI       configCLI
-	Read      configRead
-	Download  configDownload
-	TUI       configTUI
-	Providers configProviders
-	Library   configLibrary
+	Icons        *entry[string, icon.Type]
+	Cache        configCache
+	CLI          configCLI
+	Read         configRead
+	Download     configDownload
+	TUI          configTUI
+	Providers    configProviders
+	Library      configLibrary
+	Notification configNotification
 }
 
 type configCLI struct {
@@ -134,4 +135,13 @@ type configProvidersMangaPlus struct {
 
 type configProvidersMangaDex struct {
 	DataSaver *entry[bool, bool]
+}
+
+type configNotification struct {
+	Discord configNotificationDiscord
+}
+
+type configNotificationDiscord struct {
+	Username   *entry[string, string]
+	WebhookURL *entry[string, string]
 }

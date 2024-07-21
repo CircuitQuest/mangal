@@ -14,28 +14,32 @@ import (
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
+	"github.com/luevano/mangal/notify"
+	"github.com/luevano/mangal/util/chapter"
 )
 
 func RunDownload(ctx context.Context, args Args) error {
 	client, err := client.NewClientByID(ctx, args.Provider)
 	if err != nil {
-		return err
+		return notify.SendError(err)
 	}
 
 	mangas, err := client.SearchMangas(ctx, args.Query)
 	if err != nil {
-		return err
+		return notify.SendError(err)
 	}
 	if len(mangas) == 0 {
-		return fmt.Errorf("no mangas found with provider ID %q and query %q", args.Provider, args.Query)
+		err = fmt.Errorf("no mangas found with provider ID %q and query %q", args.Provider, args.Query)
+		return notify.SendError(err)
 	}
 
 	mangaResults, err := getSelectedMangaResults(args, mangas)
 	if err != nil {
-		return err
+		return notify.SendError(err)
 	}
 	if len(mangaResults) != 1 {
-		return fmt.Errorf("invalid manga selector %q, needs to select 1 manga only", args.MangaSelector)
+		err = fmt.Errorf("invalid manga selector %q, needs to select 1 manga only", args.MangaSelector)
+		return notify.SendError(err)
 	}
 
 	manga := mangaResults[0].Manga
@@ -57,17 +61,25 @@ func RunDownload(ctx context.Context, args Args) error {
 	if !useMangaMetadata && args.AnilistID != 0 {
 		anilistManga, found, err = client.Anilist().SearchByID(ctx, args.AnilistID)
 		if err != nil {
-			return err
+			return notify.SendError(err)
 		}
 		if !found {
-			return fmt.Errorf("couldn't find anilist manga with id %q (from argument)", args.AnilistID)
+			err = fmt.Errorf("couldn't find anilist manga with id %q (from argument)", args.AnilistID)
+			return notify.SendError(err)
 		}
 		manga.SetMetadata(&anilistManga)
 	}
 
-	chapters, err := getChapters(ctx, client, args, manga)
+	rawChapters, err := getChapters(ctx, client, args, manga)
 	if err != nil {
-		return err
+		return notify.SendError(err)
+	}
+	// wrapper for keeping track of failed/success downloads
+	chapters := make(chapter.Chapters, len(rawChapters))
+	for i, ch := range rawChapters {
+		chapters[i] = &chapter.Chapter{
+			Chapter: ch,
+		}
 	}
 
 	// Take the download options from the config and apply necessary changes
@@ -77,15 +89,14 @@ func RunDownload(ctx context.Context, args Args) error {
 		downloadOptions.SearchMetadata = false
 	}
 
-	totalChapters := len(chapters)
 	// TODO: make configurable
 	maxRetries := 10
 	retryCount := 0
-	for i, chapter := range chapters {
+	for i, ch := range chapters {
 		retry := true
 		for retry {
 			retry = false
-			downChap, err := client.DownloadChapter(ctx, chapter, downloadOptions)
+			downChap, err := client.DownloadChapter(ctx, ch.Chapter, downloadOptions)
 			if err != nil {
 				errMsg := err.Error()
 				// TODO: handle other responses here too if possible
@@ -93,13 +104,15 @@ func RunDownload(ctx context.Context, args Args) error {
 					retry = true
 					retryCount++
 					if retryCount > maxRetries {
-						return fmt.Errorf("exceeded max retries (%d) while downloading chapters", maxRetries)
+						err = fmt.Errorf("exceeded max retries (%d) while downloading chapters", maxRetries)
+						return notify.SendError(err)
 					}
 
 					raTemp := strings.Split(errMsg, ":")
 					raParsed, err := strconv.Atoi(strings.TrimSpace(raTemp[len(raTemp)-1]))
 					if err != nil {
-						return errors.New("error while parsing Retry-Count from error mesage: " + err.Error())
+						err = errors.New("error while parsing Retry-Count from error mesage: " + err.Error())
+						return notify.SendError(err)
 					}
 
 					retryAfter := time.Duration(min(10, raParsed)) * time.Second
@@ -107,13 +120,14 @@ func RunDownload(ctx context.Context, args Args) error {
 					time.Sleep(retryAfter)
 					continue
 				}
-				return err
 			}
+			ch.Down = downChap
+			ch.Err = err
 
 			if args.JSONOutput {
 				dc, err := json.Marshal(downChap)
 				if err != nil {
-					return err
+					return notify.SendError(err)
 				}
 				fmt.Println(string(dc))
 			} else {
@@ -121,10 +135,10 @@ func RunDownload(ctx context.Context, args Args) error {
 			}
 			// To avoid abusing the mangaplus api, since there are no status codes returned to check
 			// sleep for a second on after each chapter download
-			if downChap.ChapterStatus == metadata.DownloadStatusNew && args.Provider == "mango-mangaplus" && i != totalChapters-1 {
+			if downChap.ChapterStatus == metadata.DownloadStatusNew && args.Provider == "mango-mangaplus" && i != len(chapters)-1 {
 				time.Sleep(time.Second)
 			}
 		}
 	}
-	return nil
+	return notify.Send(chapters)
 }
