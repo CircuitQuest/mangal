@@ -138,7 +138,9 @@ type configProvidersMangaDex struct {
 }
 
 type configNotification struct {
-	Discord configNotificationDiscord
+	IncludeExisting  *entry[bool, bool]
+	IncludeDirectory *entry[bool, bool]
+	Discord          configNotificationDiscord
 }
 
 type configNotificationDiscord struct {

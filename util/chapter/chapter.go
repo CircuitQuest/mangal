@@ -96,6 +96,16 @@ func (c Chapters) Succeed() (s Chapters) {
 	return s
 }
 
+// Existent returns the successfully 'downloaded' chapters that already existed.
+func (c Chapters) Existent() (n Chapters) {
+	for _, ch := range c {
+		if ch.Succeed() && ch.Down.ChapterStatus == metadata.DownloadStatusExists {
+			n = append(n, ch)
+		}
+	}
+	return n
+}
+
 // Failed returns the Chapters that failed to download.
 func (c Chapters) Failed() (f Chapters) {
 	for _, ch := range c {

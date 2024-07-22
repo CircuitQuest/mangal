@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"errors"
 	"strconv"
 	"time"
 
@@ -37,7 +38,14 @@ func (e DiscordErrorNotifyError) Error() string {
 func chaptersToList(chapters chapter.Chapters, includeDirs bool) (out string) {
 	var lastDir string
 	for i, ch := range chapters {
-		if includeDirs && ch.Down != nil && ch.Down.Directory != lastDir {
+		if ch.Down != nil &&
+			ch.Down.ChapterStatus == metadata.DownloadStatusExists &&
+			!config.Notification.IncludeExisting.Get() {
+			continue
+		}
+		if includeDirs &&
+			ch.Down != nil &&
+			ch.Down.Directory != lastDir {
 			lastDir = ch.Down.Directory
 			out += lastDir
 			out += ":\n"
@@ -74,20 +82,30 @@ func chaptersToList(chapters chapter.Chapters, includeDirs bool) (out string) {
 
 // Send will send a message using the configured discord WebhookURL.
 func Send(chapters chapter.Chapters) error {
+	if len(chapters) == 0 {
+		return SendError(errors.New("No downloaded chapters to be notified of."))
+	}
+	d, s, f := chapters.GetEach()
+	e := s.Existent()
+
+	// All downloaded chapters are succeed already existent
+	if len(chapters) == len(e) && !config.Notification.IncludeExisting.Get() {
+		return nil
+	}
+
 	client, err := webhook.NewWithURL(config.Notification.Discord.WebhookURL.Get())
 	if err != nil {
 		return DiscordNotifyError(err.Error())
 	}
+
 	var (
 		color      int
-		summary    string
 		failed     string
 		succeed    string
 		toDownload string
 		fields     []discord.EmbedField
 	)
 
-	d, s, f := chapters.GetEach()
 	switch {
 	case len(f) != 0:
 		color = ColorRed
@@ -97,15 +115,16 @@ func Send(chapters chapter.Chapters) error {
 		color = ColorGreen
 	}
 
-	if len(chapters) != 0 {
-		summary += `Downloaded chapters report for manga "` + chapters[0].Chapter.Volume().Manga().Info().Title + `"`
+	succeedCount := strconv.Itoa(len(s))
+	if len(e) != 0 {
+		succeedCount += " (" + strconv.Itoa(len(e)) + " existed)"
 	}
 
 	// summaries
 	inline := true
 	fields = append(fields, discord.EmbedField{
 		Name:   "succeed",
-		Value:  strconv.Itoa(len(s)),
+		Value:  succeedCount,
 		Inline: &inline,
 	})
 	fields = append(fields, discord.EmbedField{
@@ -130,7 +149,7 @@ func Send(chapters chapter.Chapters) error {
 
 	// succeed
 	if len(s) != 0 {
-		succeed = chaptersToList(s, true)
+		succeed = chaptersToList(s, config.Notification.IncludeDirectory.Get())
 		fields = append(fields, discord.EmbedField{
 			Name:  "succeed",
 			Value: succeed,
@@ -152,7 +171,7 @@ func Send(chapters chapter.Chapters) error {
 		Embeds: []discord.Embed{
 			{
 				Title:       "Downloaded chapters",
-				Description: summary,
+				Description: chapters[0].Chapter.Volume().Manga().Info().Title,
 				Color:       color,
 				Timestamp:   &t,
 				Fields:      fields,

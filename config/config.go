@@ -485,6 +485,16 @@ func initConfig() config {
 			}),
 		},
 		Notification: configNotification{
+			IncludeExisting: reg(entry[bool, bool]{
+				Key:         "notification.include_existing",
+				Default:     false,
+				Description: "If existing downloaded chapters should be included in the notification. If false and all chapters already existed, no notification is sent.",
+			}),
+			IncludeDirectory: reg(entry[bool, bool]{
+				Key:         "notification.include_directory",
+				Default:     true,
+				Description: "If the full chapter download directory should be included, only unique directories are shown.",
+			}),
 			Discord: configNotificationDiscord{
 				Username: reg(entry[string, string]{
 					Key:         "notification.discord.username",
