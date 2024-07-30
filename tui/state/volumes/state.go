@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
+	lmmeta "github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/tui/model/metadata"
@@ -86,8 +87,14 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.confirm):
 			return s.searchVolumeChapters(ctx, i)
 		case key.Matches(msg, s.keyMap.anilist):
+			ani, err := s.client.GetMetadataProvider(lmmeta.IDCodeAnilist)
+			if err != nil {
+				return func() tea.Msg {
+					return err
+				}
+			}
 			return func() tea.Msg {
-				return anilist.New(s.client.Anilist(), s.manga)
+				return anilist.New(ani, s.manga)
 			}
 		case key.Matches(msg, s.keyMap.metadata):
 			return func() tea.Msg {

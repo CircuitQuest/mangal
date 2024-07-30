@@ -8,6 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/list"
@@ -106,8 +107,14 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			s.list.ResetFilter()
 			return s.search.Focus()
 		case key.Matches(msg, s.keyMap.anilist):
+			ani, err := s.client.GetMetadataProvider(metadata.IDCodeAnilist)
+			if err != nil {
+				return func() tea.Msg {
+					return err
+				}
+			}
 			return func() tea.Msg {
-				return anilist.New(s.client.Anilist(), i.manga)
+				return anilist.New(ani, i.manga)
 			}
 		case key.Matches(msg, s.keyMap.metadata):
 			return i.meta.ShowMetadataCmd()

@@ -39,7 +39,6 @@ func Lib(client *libmangal.Client) *luadoc.Lib {
 							"id", luadoc.String,
 							"banner", luadoc.String,
 							"cover", luadoc.String,
-							"anilist_search", luadoc.String,
 						),
 					},
 				},
@@ -255,7 +254,6 @@ func mangaInfo(state *lua.LState) int {
 	table := state.NewTable()
 
 	table.RawSetString("title", lua.LString(info.Title))
-	table.RawSetString("anilist_search", lua.LString(info.AnilistSearch))
 	table.RawSetString("url", lua.LString(info.URL))
 	table.RawSetString("id", lua.LString(info.ID))
 	table.RawSetString("banner", lua.LString(info.Banner))

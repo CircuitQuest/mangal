@@ -63,5 +63,5 @@ func metaIDStyle(id metadata.ID) metaStyle {
 		p = "AnimePlanet"
 		v = metadata.IDCodeAnimePlanet
 	}
-	return metaStyle{c, p, v}
+	return metaStyle{c, p, string(v)}
 }

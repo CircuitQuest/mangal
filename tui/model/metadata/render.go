@@ -64,7 +64,7 @@ func (m *Model) render(f field) string {
 			style := metaIDStyle(id)
 			prefix := style.Prefix
 			if id.Code != "" {
-				prefix = "[" + id.Code + "] " + prefix
+				prefix = "[" + string(id.Code) + "] " + prefix
 			}
 			strs[i] = lipgloss.NewStyle().Foreground(style.Color).Render(prefix+": ") + value[i].Raw
 		}

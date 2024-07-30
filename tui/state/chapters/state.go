@@ -11,6 +11,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
+	lmmeta "github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/confirm"
 	"github.com/luevano/mangal/tui/model/format"
@@ -160,8 +161,14 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, s.keyMap.info):
 			s.meta.ShowFull = !s.meta.ShowFull
 		case key.Matches(msg, s.keyMap.anilist):
+			ani, err := s.client.GetMetadataProvider(lmmeta.IDCodeAnilist)
+			if err != nil {
+				return func() tea.Msg {
+					return err
+				}
+			}
 			return func() tea.Msg {
-				return anilist.New(s.client.Anilist(), s.manga)
+				return anilist.New(ani, s.manga)
 			}
 		case key.Matches(msg, s.keyMap.metadata):
 			return s.meta.ShowMetadataCmd()

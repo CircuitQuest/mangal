@@ -6,7 +6,7 @@ import (
 
 	"github.com/charmbracelet/bubbles/list"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/util/cache"
@@ -32,9 +32,9 @@ func (s *state) updateHistoryCmd(query string) tea.Cmd {
 	}
 }
 
-func (s *state) setMetadataCmd(manga anilist.Manga) tea.Cmd {
+func (s *state) setMetadataCmd(manga metadata.Metadata) tea.Cmd {
 	return func() tea.Msg {
-		s.manga.SetMetadata(&manga)
+		s.manga.SetMetadata(manga)
 
 		msg := fmt.Sprintf("Set Anilist %q", manga.String())
 		log.Log(msg+" to manga %q", s.manga)
@@ -46,10 +46,10 @@ func (s *state) searchCmd(ctx context.Context, query string) tea.Cmd {
 	return tea.Sequence(
 		base.Loading(fmt.Sprintf("Searching %q on Anilist", query)),
 		func() tea.Msg {
-			var mangas []anilist.Manga
+			var mangas []metadata.Metadata
 
 			// to keep the closest on top
-			closest, found, err := s.anilist.FindClosestManga(ctx, query)
+			closest, found, err := s.anilist.FindClosest(ctx, query, 3, 3)
 			if err != nil {
 				return err
 			}
@@ -58,7 +58,7 @@ func (s *state) searchCmd(ctx context.Context, query string) tea.Cmd {
 			}
 
 			// the rest of the results
-			mangaSearchResults, err := s.anilist.SearchMangas(ctx, query)
+			mangaSearchResults, err := s.anilist.Search(ctx, query)
 			if err != nil {
 				return nil
 			}
@@ -72,7 +72,7 @@ func (s *state) searchCmd(ctx context.Context, query string) tea.Cmd {
 
 			items := make([]list.Item, len(mangas))
 			for i, m := range mangas {
-				items[i] = &item{manga: m}
+				items[i] = &item{meta: m}
 			}
 			s.list.SetItems(items)
 

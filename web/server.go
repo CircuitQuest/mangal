@@ -13,6 +13,8 @@ import (
 	"github.com/labstack/echo/v4"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/libmangal/metadata"
+	"github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/provider/manager"
@@ -106,7 +108,12 @@ func (s *Server) GetMangaPage(ctx context.Context, request api.GetMangaPageReque
 		Volumes: v,
 	}
 
-	anilistManga, found, _ := c.Anilist().FindClosestManga(ctx, info.Title)
+	// TODO: refactor to use generic metadata
+	//
+	// guaranteed to exist
+	ani, _ := c.GetMetadataProvider(metadata.IDCodeAnilist)
+	meta, found, _ := ani.FindClosest(ctx, info.Title, 3, 3)
+	anilistManga := meta.(*anilist.Manga)
 	if found {
 		response.AnilistManga = &api.AnilistManga{
 			BannerImage: &anilistManga.BannerImage,

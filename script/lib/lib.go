@@ -3,6 +3,7 @@ package lib
 import (
 	luadoc "github.com/luevano/gopher-luadoc"
 	"github.com/luevano/libmangal"
+	"github.com/luevano/libmangal/metadata"
 	sdk "github.com/luevano/luaprovider/lib"
 	"github.com/luevano/mangal/meta"
 	"github.com/luevano/mangal/script/lib/anilist"
@@ -15,17 +16,22 @@ import (
 func Lib(state *lua.LState, lmclient *libmangal.Client) *luadoc.Lib {
 	SDKOptions := sdk.DefaultOptions()
 
+	libs := []*luadoc.Lib{
+		sdk.Lib(state, SDKOptions),
+		prompt.Lib(),
+		json.Lib(),
+		client.Lib(lmclient),
+	}
+
+	ani, err := lmclient.GetMetadataProvider(metadata.IDCodeAnilist)
+	if err == nil {
+		libs = append(libs, anilist.Lib(ani))
+	}
+
 	return &luadoc.Lib{
 		Name:        meta.AppName,
 		Description: meta.AppName + " scripting mode utilities",
-		// TODO: add anilist lib, why isn't it added?
-		Libs: []*luadoc.Lib{
-			sdk.Lib(state, SDKOptions),
-			prompt.Lib(),
-			json.Lib(),
-			client.Lib(lmclient),
-			anilist.Lib(lmclient.Anilist()),
-		},
+		Libs:        libs,
 	}
 }
 

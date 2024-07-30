@@ -93,7 +93,9 @@ func NewClient(ctx context.Context, loader libmangal.ProviderLoader) (*libmangal
 	if err != nil {
 		return nil, err
 	}
-	client.SetAnilist(anilist.Anilist())
+	// guaranteed to exist
+	// anilist.Anilist().SetLogger(client.Logger())
+	_ = client.AddMetadataProvider(anilist.Anilist())
 
 	clients.Enqueue(client)
 	return client, nil

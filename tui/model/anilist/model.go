@@ -8,7 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/list"
 	"github.com/luevano/mangal/util/cache"
@@ -41,9 +41,9 @@ type Model struct {
 	input   *textinput.Model // current selected input
 	list    *list.Model
 	help    help.Model
-	anilist *anilist.Anilist
+	anilist *metadata.ProviderWithCache
 
-	user        anilist.User
+	user        metadata.User
 	userHistory cache.UserHistory
 
 	// to be able to clear the screen in standalone

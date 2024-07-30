@@ -4,6 +4,7 @@ import (
 	"context"
 
 	luadoc "github.com/luevano/gopher-luadoc"
+	"github.com/luevano/libmangal/metadata"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/script/lib/util"
 	lua "github.com/yuin/gopher-lua"
@@ -15,8 +16,7 @@ const (
 	mangaTypeName = libName + "_manga"
 )
 
-// TODO: add this to main lib, currently not being used
-func Lib(anilist *lmanilist.Anilist) *luadoc.Lib {
+func Lib(anilist *metadata.ProviderWithCache) *luadoc.Lib {
 	return &luadoc.Lib{
 		Name:        libName,
 		Description: "Anilist operations",
@@ -85,21 +85,28 @@ func Lib(anilist *lmanilist.Anilist) *luadoc.Lib {
 	}
 }
 
-func missingAnilistError(state *lua.LState) int {
+func notAnilistProvider(state *lua.LState) int {
 	state.RaiseError("anilist client is missing")
 	return 0
 }
 
-func newSearchMangas(anilist *lmanilist.Anilist) lua.LGFunction {
-	if anilist == nil {
-		return missingAnilistError
+func newSearchMangas(anilist *metadata.ProviderWithCache) lua.LGFunction {
+	if anilist.Info().ID != metadata.IDCodeAnilist {
+		return notAnilistProvider
 	}
 
 	return func(state *lua.LState) int {
 		query := state.CheckString(1)
 
-		mangas, err := anilist.SearchMangas(state.Context(), query)
+		metas, err := anilist.Search(state.Context(), query)
 		util.Must(state, err)
+
+		// TODO: better handle this?
+		mangas := make([]lmanilist.Manga, len(metas))
+		for i, m := range metas {
+			manga := m.(*lmanilist.Manga)
+			mangas[i] = *manga
+		}
 
 		table := util.SliceToTable(state, mangas, func(manga lmanilist.Manga) lua.LValue {
 			return util.NewUserData(state, manga, mangaTypeName)
@@ -110,15 +117,15 @@ func newSearchMangas(anilist *lmanilist.Anilist) lua.LGFunction {
 	}
 }
 
-func newFindClosestManga(anilist *lmanilist.Anilist) lua.LGFunction {
-	if anilist == nil {
-		return missingAnilistError
+func newFindClosestManga(anilist *metadata.ProviderWithCache) lua.LGFunction {
+	if anilist.Info().ID != metadata.IDCodeAnilist {
+		return notAnilistProvider
 	}
 
 	return func(state *lua.LState) int {
 		title := state.CheckString(1)
 
-		manga, found, err := anilist.FindClosestManga(context.Background(), title)
+		manga, found, err := anilist.FindClosest(context.Background(), title, 3, 3)
 		util.Must(state, err)
 
 		util.Push(state, manga, mangaTypeName)
@@ -127,9 +134,9 @@ func newFindClosestManga(anilist *lmanilist.Anilist) lua.LGFunction {
 	}
 }
 
-func newBindTitleWithID(anilist *lmanilist.Anilist) lua.LGFunction {
-	if anilist == nil {
-		return missingAnilistError
+func newBindTitleWithID(anilist *metadata.ProviderWithCache) lua.LGFunction {
+	if anilist.Info().ID != metadata.IDCodeAnilist {
+		return notAnilistProvider
 	}
 
 	return func(state *lua.LState) int {

@@ -1,6 +1,7 @@
 package anilist
 
 import (
+	"errors"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
@@ -19,24 +20,31 @@ func (m *Model) updateCurrent() {
 }
 
 func (m *Model) updateAuthUser() error {
-	user, err := m.anilist.AuthenticatedUser()
-	if err != nil {
-		return err
+	user := m.anilist.User()
+	if user == nil {
+		return errors.New("received nil User from Anilist")
 	}
 	m.user = user
 	return nil
 }
 
+// updateUserHistory is a convenience method to update the
+// auth user history data within the cache and the model list.
 func (m *Model) updateUserHistory() error {
-	err := cache.SetAnilistAuthHistory(m.userHistory)
+	// Set the updated auth user history
+	err := cache.SetAuthHistory(cache.AnilistAuthHistory, m.userHistory)
 	if err != nil {
 		return err
 	}
+
+	// Set the new user history items
 	items := make([]list.Item, m.userHistory.Size())
 	for i, u := range m.userHistory {
 		items[i] = &item{user: u}
 	}
 	m.list.SetItems(items)
+
+	// Expand the list view if needed
 	size := m.list.Size()
 	size.Height = min(20, len(items))
 	m.Resize(size)

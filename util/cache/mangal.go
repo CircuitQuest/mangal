@@ -7,14 +7,12 @@ import (
 const CacheDBNameMangal = "mangal"
 
 const (
-	BucketNameSearchHistory      = "search-history"
-	BucketNameAnilistAuthHistory = "anilist-auth-history"
+	BucketNameSearchHistory = "search-history"
 )
 
 const (
 	MangasSearchHistory  = "mangas"
 	AnilistSearchHistory = "anilist"
-	AnilistAuthHistory   = "anilist"
 )
 
 var store_ = store{
@@ -23,7 +21,6 @@ var store_ = store{
 	},
 }
 
-// thus the SetMetadata method will not work.
 type store struct {
 	openStore func(bucketName string) (gokv.Store, error)
 	store     gokv.Store
@@ -35,7 +32,7 @@ func (s *store) open(bucketName string) error {
 	return err
 }
 
-func (s *store) Close() error {
+func (s *store) close() error {
 	if s.store == nil {
 		return nil
 	}
@@ -48,7 +45,7 @@ func SetMangasSearchHistory(records Records) error {
 	if err != nil {
 		return err
 	}
-	defer store_.Close()
+	defer store_.close()
 
 	return store_.store.Set(MangasSearchHistory, records)
 }
@@ -59,7 +56,7 @@ func GetMangasSearchHistory(records *Records) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	defer store_.Close()
+	defer store_.close()
 
 	found, err := store_.store.Get(MangasSearchHistory, records)
 	if err != nil {
@@ -77,7 +74,7 @@ func SetAnilistSearchHistory(records Records) error {
 	if err != nil {
 		return err
 	}
-	defer store_.Close()
+	defer store_.close()
 
 	return store_.store.Set(AnilistSearchHistory, records)
 }
@@ -88,43 +85,9 @@ func GetAnilistSearchHistory(records *Records) (bool, error) {
 	if err != nil {
 		return false, err
 	}
-	defer store_.Close()
+	defer store_.close()
 
 	found, err := store_.store.Get(AnilistSearchHistory, records)
-	if err != nil {
-		return false, err
-	}
-	if found {
-		return true, nil
-	}
-	return false, nil
-}
-
-// SetAnilistAuthHistory will store the authenticated username history.
-//
-// These are used only to remember the usernames, no auth data is stored.
-func SetAnilistAuthHistory(userHistory UserHistory) error {
-	err := store_.open(BucketNameAnilistAuthHistory)
-	if err != nil {
-		return err
-	}
-	defer store_.Close()
-
-	return store_.store.Set(AnilistAuthHistory, userHistory)
-}
-
-// GetAnilistAuthHistory will populate the given username history
-// if there is a history of authenticated anilist users.
-//
-// These are only usernames and don't contain any auth data.
-func GetAnilistAuthHistory(userHistory *UserHistory) (bool, error) {
-	err := store_.open(BucketNameAnilistAuthHistory)
-	if err != nil {
-		return false, err
-	}
-	defer store_.Close()
-
-	found, err := store_.store.Get(AnilistAuthHistory, userHistory)
 	if err != nil {
 		return false, err
 	}

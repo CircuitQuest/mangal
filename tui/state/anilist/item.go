@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/charmbracelet/bubbles/list"
-	lmanilist "github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/libmangal/metadata"
 )
 
 var (
@@ -14,12 +14,12 @@ var (
 
 // item implements list.item.
 type item struct {
-	manga lmanilist.Manga
+	meta metadata.Metadata
 }
 
 // FilterValue implements list.Item.
 func (i *item) FilterValue() string {
-	title := i.manga.String()
+	title := i.meta.String()
 	if title != "" {
 		return title
 	}
@@ -33,5 +33,5 @@ func (i *item) Title() string {
 
 // Description implements list.Item.
 func (i *item) Description() string {
-	return fmt.Sprint("https://anilist.co/manga/", i.manga.ID().Value())
+	return fmt.Sprint("https://anilist.co/manga/", i.meta.ID().Value())
 }

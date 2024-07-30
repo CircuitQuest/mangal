@@ -11,6 +11,7 @@ import (
 	"github.com/lithammer/fuzzysearch/fuzzy"
 	"github.com/luevano/libmangal"
 	"github.com/luevano/libmangal/mangadata"
+	"github.com/luevano/libmangal/metadata"
 	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/log"
 	"github.com/samber/lo"
@@ -104,16 +105,19 @@ func getSelectedMangaResults(args Args, mangas []mangadata.Manga) ([]MangaResult
 // use the provider metadata if preferred and search metadata in general otherwise
 func assignAnilist(ctx context.Context, client *libmangal.Client, args Args, mangaResults *[]MangaResult) {
 	for i, mangaResult := range *mangaResults {
-		var aniManga lmanilist.Manga
+		var meta metadata.Metadata
 		var found bool
 		var aniErr error
+		// guaranteed to exist
+		ani, _ := client.GetMetadataProvider(metadata.IDCodeAnilist)
 		if args.AnilistID != 0 {
-			aniManga, found, aniErr = client.Anilist().SearchByID(ctx, args.AnilistID)
+			meta, found, aniErr = ani.SearchByID(ctx, args.AnilistID)
 		} else {
-			aniManga, found, aniErr = client.Anilist().SearchByManga(ctx, mangaResult.Manga)
+			meta, found, aniErr = client.SearchByManga(ctx, ani, mangaResult.Manga)
 		}
 		if aniErr == nil && found {
-			(*mangaResults)[i].Anilist = &aniManga
+			aniMeta := meta.(*lmanilist.Manga)
+			(*mangaResults)[i].Anilist = aniMeta
 		}
 	}
 }

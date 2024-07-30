@@ -4,6 +4,7 @@ go 1.22
 
 // Mistakenly "uploaded" when importing in a separate package...
 retract (
+	v0.0.0-20240707233308-9adbbbc770e1
 	v0.0.0-20240517101323-1d20eb78430f
 	v0.0.0-20240514061342-bf49b6004548
 )
@@ -24,9 +25,9 @@ require (
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
-	github.com/luevano/libmangal v0.19.1
-	github.com/luevano/luaprovider v0.13.2
-	github.com/luevano/mangoprovider v0.15.2
+	github.com/luevano/libmangal v0.20.0
+	github.com/luevano/luaprovider v0.14.0
+	github.com/luevano/mangoprovider v0.16.0
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -46,6 +47,7 @@ require (
 	github.com/zyedidia/generic v1.2.1
 	go.etcd.io/bbolt v1.3.10
 	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
+	golang.org/x/oauth2 v0.21.0
 )
 
 require (
@@ -57,7 +59,7 @@ require (
 	github.com/charmbracelet/x/input v0.1.3 // indirect
 	github.com/charmbracelet/x/term v0.1.1 // indirect
 	github.com/charmbracelet/x/windows v0.1.2 // indirect
-	github.com/cyphar/filepath-securejoin v0.3.0 // indirect
+	github.com/cyphar/filepath-securejoin v0.3.1 // indirect
 	github.com/disgoorg/json v1.1.0 // indirect
 	github.com/disgoorg/snowflake/v2 v2.0.3 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
@@ -134,7 +136,7 @@ require (
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/mattn/go-localereader v0.0.1 // indirect
-	github.com/mattn/go-runewidth v0.0.15
+	github.com/mattn/go-runewidth v0.0.16
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
 	github.com/modern-go/reflect2 v1.0.2 // indirect

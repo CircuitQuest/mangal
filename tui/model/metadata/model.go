@@ -29,7 +29,7 @@ func (m *Model) updateStyle() {
 }
 
 func (m *Model) Title() string {
-	p := m.meta.ID().Code
+	p := string(m.meta.ID().Code)
 	if p != "" {
 		p = "[" + p + "] "
 	}
@@ -63,7 +63,7 @@ func (m *Model) View() string {
 		i = " (" + id + "): "
 	}
 
-	p := m.meta.ID().Code
+	p := string(m.meta.ID().Code)
 	if p != "" {
 		p = "[" + p + "] "
 	}

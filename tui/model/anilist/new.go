@@ -5,7 +5,8 @@ import (
 
 	_list "github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
-	"github.com/luevano/libmangal/metadata/anilist"
+	"github.com/luevano/libmangal/metadata"
+	"github.com/luevano/mangal/log"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/theme/icon"
 	"github.com/luevano/mangal/tui/model/help"
@@ -13,7 +14,7 @@ import (
 	"github.com/luevano/mangal/util/cache"
 )
 
-func New(anilist *anilist.Anilist, standalone bool) *Model {
+func New(anilist *metadata.ProviderWithCache, standalone bool) *Model {
 	_styles := defaultStyles()
 	input := textinput.New()
 	input.Width = 60
@@ -28,8 +29,12 @@ func New(anilist *anilist.Anilist, standalone bool) *Model {
 	secretInput.Placeholder = "(optional)"
 	codeInput.Prompt = "Code:   "
 
+	// TODO: handle cache error?
 	var userHistory cache.UserHistory
-	_, _ = cache.GetAnilistAuthHistory(&userHistory)
+	_, err := cache.GetAuthHistory(cache.AnilistAuthHistory, &userHistory)
+	if err != nil {
+		log.Log("error while getting auth history for Anilist")
+	}
 
 	list := list.New(1, 0, "user", "users", userHistory.Get(), func(u string) _list.DefaultItem {
 		return &item{user: u}
@@ -59,10 +64,8 @@ func New(anilist *anilist.Anilist, standalone bool) *Model {
 		styles:               _styles,
 		keyMap:               newKeyMap(),
 	}
-	user, err := anilist.AuthenticatedUser()
-	if err == nil {
-		m.user = user
-	}
+
+	m.user = anilist.User()
 	m.updateCurrent()
 	return m
 }

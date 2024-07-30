@@ -10,7 +10,6 @@ import (
 	"time"
 
 	"github.com/luevano/libmangal/metadata"
-	lmanilist "github.com/luevano/libmangal/metadata/anilist"
 	"github.com/luevano/mangal/client"
 	"github.com/luevano/mangal/config"
 	"github.com/luevano/mangal/log"
@@ -52,14 +51,16 @@ func RunDownload(ctx context.Context, args Args) error {
 			useMangaMetadata = true
 		}
 	}
-	var anilistManga lmanilist.Manga
+	var meta metadata.Metadata
 	var found bool
 
 	// If AnilistID is provided via argument, then search for it and replace the manga metadata,
 	// error out as it is expected to find some metadata (given the id).
 	// Otherwise, if prefer provider metadata is true and the metadata is valid, libmangal will search for metadata.
 	if !useMangaMetadata && args.AnilistID != 0 {
-		anilistManga, found, err = client.Anilist().SearchByID(ctx, args.AnilistID)
+		// guaranteed to exist
+		ani, _ := client.GetMetadataProvider(metadata.IDCodeAnilist)
+		meta, found, err = ani.SearchByID(ctx, args.AnilistID)
 		if err != nil {
 			return notify.SendError(err)
 		}
@@ -67,7 +68,7 @@ func RunDownload(ctx context.Context, args Args) error {
 			err = fmt.Errorf("couldn't find anilist manga with id %q (from argument)", args.AnilistID)
 			return notify.SendError(err)
 		}
-		manga.SetMetadata(&anilistManga)
+		manga.SetMetadata(meta)
 	}
 
 	rawChapters, err := getChapters(ctx, client, args, manga)

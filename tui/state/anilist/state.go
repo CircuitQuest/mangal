@@ -8,7 +8,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/luevano/libmangal/mangadata"
-	lmanilist "github.com/luevano/libmangal/metadata/anilist"
+	lmmeta "github.com/luevano/libmangal/metadata"
 	"github.com/luevano/mangal/theme/color"
 	"github.com/luevano/mangal/tui/base"
 	"github.com/luevano/mangal/tui/model/list"
@@ -25,7 +25,7 @@ type state struct {
 	list    *list.Model
 	search  *search.Model
 	manga   mangadata.Manga
-	anilist *lmanilist.Anilist
+	anilist *lmmeta.ProviderWithCache
 
 	history  cache.Records
 	searched bool
@@ -101,12 +101,12 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		i, _ := s.list.SelectedItem().(*item)
 		switch {
 		case key.Matches(msg, s.keyMap.confirm):
-			return s.setMetadataCmd(i.manga)
+			return s.setMetadataCmd(i.meta)
 		case key.Matches(msg, s.keyMap.search):
 			s.list.ResetFilter()
 			return s.search.Focus()
 		case key.Matches(msg, s.keyMap.metadata):
-			return metadata.New(&i.manga).ShowMetadataCmd()
+			return metadata.New(i.meta).ShowMetadataCmd()
 		}
 	case search.SearchMsg:
 		return tea.Sequence(

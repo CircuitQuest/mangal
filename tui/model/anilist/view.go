@@ -17,7 +17,7 @@ func (m *Model) viewStandalone(content string, keyMap help.KeyMap) string {
 }
 
 func (m *Model) viewLoggedIn() string {
-	view := fmt.Sprintf("Logged in as %q (%d)", m.user.Name, m.user.ID)
+	view := fmt.Sprintf("Logged in as %s", m.user.String())
 	if m.standalone {
 		return m.viewStandalone(view, &m.keyMap)
 	}
