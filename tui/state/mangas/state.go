@@ -107,7 +107,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 			s.list.ResetFilter()
 			return s.search.Focus()
 		case key.Matches(msg, s.keyMap.anilist):
-			ani, err := s.client.GetMetadataProvider(metadata.IDCodeAnilist)
+			ani, err := s.client.GetMetadataProvider(metadata.IDSourceAnilist)
 			if err != nil {
 				return func() tea.Msg {
 					return err

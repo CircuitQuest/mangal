@@ -12,6 +12,8 @@ type LoginOption interface {
 	// String the name of the login option, for logging purposes.
 	String() string
 
+	// TODO: return the token along with the error?
+	//
 	// Authorize will perform the authorization steps to obtain the oauth2 Token.
 	Authorize(ctx context.Context) error
 

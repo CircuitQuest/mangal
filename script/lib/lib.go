@@ -23,7 +23,7 @@ func Lib(state *lua.LState, lmclient *libmangal.Client) *luadoc.Lib {
 		client.Lib(lmclient),
 	}
 
-	ani, err := lmclient.GetMetadataProvider(metadata.IDCodeAnilist)
+	ani, err := lmclient.GetMetadataProvider(metadata.IDSourceAnilist)
 	if err == nil {
 		libs = append(libs, anilist.Lib(ani))
 	}

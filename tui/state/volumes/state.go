@@ -87,7 +87,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) (cmd tea.Cmd) {
 		case key.Matches(msg, s.keyMap.confirm):
 			return s.searchVolumeChapters(ctx, i)
 		case key.Matches(msg, s.keyMap.anilist):
-			ani, err := s.client.GetMetadataProvider(lmmeta.IDCodeAnilist)
+			ani, err := s.client.GetMetadataProvider(lmmeta.IDSourceAnilist)
 			if err != nil {
 				return func() tea.Msg {
 					return err

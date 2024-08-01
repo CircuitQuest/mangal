@@ -161,7 +161,7 @@ func (s *state) Update(ctx context.Context, msg tea.Msg) tea.Cmd {
 		case key.Matches(msg, s.keyMap.info):
 			s.meta.ShowFull = !s.meta.ShowFull
 		case key.Matches(msg, s.keyMap.anilist):
-			ani, err := s.client.GetMetadataProvider(lmmeta.IDCodeAnilist)
+			ani, err := s.client.GetMetadataProvider(lmmeta.IDSourceAnilist)
 			if err != nil {
 				return func() tea.Msg {
 					return err

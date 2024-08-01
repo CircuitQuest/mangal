@@ -111,7 +111,7 @@ func (s *Server) GetMangaPage(ctx context.Context, request api.GetMangaPageReque
 	// TODO: refactor to use generic metadata
 	//
 	// guaranteed to exist
-	ani, _ := c.GetMetadataProvider(metadata.IDCodeAnilist)
+	ani, _ := c.GetMetadataProvider(metadata.IDSourceAnilist)
 	meta, found, _ := ani.FindClosest(ctx, info.Title, 3, 3)
 	anilistManga := meta.(*anilist.Manga)
 	if found {

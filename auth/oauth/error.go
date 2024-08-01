@@ -16,8 +16,9 @@ func (e ConvertCodeError) Error() string {
 // Some specific errors
 
 var (
-	EmptyClientIDError    = Error("ClientID is empty")
-	EmptyCodeError        = Error("Access Code/Token is empty")
-	NilTokenError         = Error("Token is nil")
-	TooManyCallbacksError = Error("Too many callback requests")
+	EmptyClientIDError        = Error("ClientID is empty")
+	EmptyCodeError            = Error("Access Code/Token is empty")
+	NilTokenError             = Error("Token is nil")
+	TooManyCallbacksError     = Error("Too many callback requests")
+	InvalidCallbackStateError = Error("Invalid callback state received")
 )

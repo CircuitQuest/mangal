@@ -15,6 +15,9 @@ import (
 	"golang.org/x/oauth2"
 )
 
+// Reference docs:
+// https://anilist.gitbook.io/anilist-apiv2-docs/overview/oauth/getting-started
+
 const (
 	// TODO: make configurable (and used in the oauth handlers)
 	AnilistServerBaseRUL     = "http://localhost:6969/oauth/al/"
@@ -150,6 +153,9 @@ func (o *AnilistLoginOption) Authorize(ctx context.Context) (tokenErr error) {
 	} else {
 		handler = o.implicitGrantHandler(srvCtxCancel, &tokenErr)
 	}
+	if tokenErr != nil {
+		return tokenErr
+	}
 
 	// start a new http server
 	s := &http.Server{
@@ -188,10 +194,13 @@ func (o *AnilistLoginOption) Authorize(ctx context.Context) (tokenErr error) {
 func (o *AnilistLoginOption) codeGrantHandler(ctxCancel context.CancelFunc, tokenErr *error) http.Handler {
 	callbackCount := 0
 	closeMsg := "; this window can now be closed"
+
+	oAuthConfig := o.getOAuthConfig()
+
 	// TODO: don't hardcode the server paths
 	mux := http.NewServeMux()
 	mux.HandleFunc("/oauth/al/login", func(w http.ResponseWriter, r *http.Request) {
-		http.Redirect(w, r, o.getOAuthConfig().AuthCodeURL(""), http.StatusTemporaryRedirect)
+		http.Redirect(w, r, oAuthConfig.AuthCodeURL(""), http.StatusTemporaryRedirect)
 	})
 	mux.HandleFunc("/oauth/al/callback", func(w http.ResponseWriter, r *http.Request) {
 		callbackCount++
@@ -210,7 +219,7 @@ func (o *AnilistLoginOption) codeGrantHandler(ctxCancel context.CancelFunc, toke
 			return
 		}
 
-		token, err := o.getOAuthConfig().Exchange(context.Background(), o.code)
+		token, err := oAuthConfig.Exchange(context.Background(), o.code)
 		if err != nil {
 			*tokenErr = err
 			w.Write([]byte("error: " + (*tokenErr).Error() + closeMsg))

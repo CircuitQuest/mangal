@@ -17,15 +17,16 @@ require (
 	github.com/charmbracelet/x/ansi v0.1.4
 	github.com/disgoorg/disgo v0.18.9
 	github.com/fatih/camelcase v1.0.0
-	github.com/getkin/kin-openapi v0.126.0
+	github.com/getkin/kin-openapi v0.127.0
 	github.com/go-git/go-git/v5 v5.12.0
+	github.com/google/uuid v1.6.0
 	github.com/itchyny/gojq v0.12.16
 	github.com/json-iterator/go v1.1.12
 	github.com/ktr0731/go-fuzzyfinder v0.8.0
 	github.com/labstack/echo/v4 v4.12.0
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
-	github.com/luevano/libmangal v0.20.0
+	github.com/luevano/libmangal v0.20.1
 	github.com/luevano/luaprovider v0.14.0
 	github.com/luevano/mangoprovider v0.16.0
 	github.com/muesli/reflow v0.3.0
@@ -70,7 +71,6 @@ require (
 	github.com/gobwas/glob v0.2.3 // indirect
 	github.com/gocolly/colly/v2 v2.1.0 // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/invopop/yaml v0.3.1 // indirect
 	github.com/josharian/intern v1.0.0 // indirect

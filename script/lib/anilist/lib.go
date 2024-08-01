@@ -91,7 +91,7 @@ func notAnilistProvider(state *lua.LState) int {
 }
 
 func newSearchMangas(anilist *metadata.ProviderWithCache) lua.LGFunction {
-	if anilist.Info().ID != metadata.IDCodeAnilist {
+	if anilist.Info().Source != metadata.IDSourceAnilist {
 		return notAnilistProvider
 	}
 
@@ -118,7 +118,7 @@ func newSearchMangas(anilist *metadata.ProviderWithCache) lua.LGFunction {
 }
 
 func newFindClosestManga(anilist *metadata.ProviderWithCache) lua.LGFunction {
-	if anilist.Info().ID != metadata.IDCodeAnilist {
+	if anilist.Info().Source != metadata.IDSourceAnilist {
 		return notAnilistProvider
 	}
 
@@ -135,7 +135,7 @@ func newFindClosestManga(anilist *metadata.ProviderWithCache) lua.LGFunction {
 }
 
 func newBindTitleWithID(anilist *metadata.ProviderWithCache) lua.LGFunction {
-	if anilist.Info().ID != metadata.IDCodeAnilist {
+	if anilist.Info().Source != metadata.IDSourceAnilist {
 		return notAnilistProvider
 	}
 

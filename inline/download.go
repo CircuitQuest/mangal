@@ -59,7 +59,7 @@ func RunDownload(ctx context.Context, args Args) error {
 	// Otherwise, if prefer provider metadata is true and the metadata is valid, libmangal will search for metadata.
 	if !useMangaMetadata && args.AnilistID != 0 {
 		// guaranteed to exist
-		ani, _ := client.GetMetadataProvider(metadata.IDCodeAnilist)
+		ani, _ := client.GetMetadataProvider(metadata.IDSourceAnilist)
 		meta, found, err = ani.SearchByID(ctx, args.AnilistID)
 		if err != nil {
 			return notify.SendError(err)

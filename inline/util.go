@@ -109,7 +109,7 @@ func assignAnilist(ctx context.Context, client *libmangal.Client, args Args, man
 		var found bool
 		var aniErr error
 		// guaranteed to exist
-		ani, _ := client.GetMetadataProvider(metadata.IDCodeAnilist)
+		ani, _ := client.GetMetadataProvider(metadata.IDSourceAnilist)
 		if args.AnilistID != 0 {
 			meta, found, aniErr = ani.SearchByID(ctx, args.AnilistID)
 		} else {
