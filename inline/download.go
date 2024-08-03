@@ -117,7 +117,7 @@ func RunDownload(ctx context.Context, args Args) error {
 					}
 
 					retryAfter := time.Duration(min(10, raParsed)) * time.Second
-					fmt.Printf("429 Too Many Requests (retry #%d). Retrying in %s\n", retryAfter, retryAfter)
+					fmt.Printf("429 Too Many Requests (retry #%d). Retrying in %s\n", retryCount, retryAfter)
 					time.Sleep(retryAfter)
 					continue
 				}
