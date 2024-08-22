@@ -11,11 +11,11 @@ retract (
 
 require (
 	github.com/adrg/xdg v0.5.0
-	github.com/charmbracelet/bubbles v0.18.0
-	github.com/charmbracelet/bubbletea v0.26.6
-	github.com/charmbracelet/lipgloss v0.12.1
-	github.com/charmbracelet/x/ansi v0.1.4
-	github.com/disgoorg/disgo v0.18.9
+	github.com/charmbracelet/bubbles v0.19.0
+	github.com/charmbracelet/bubbletea v0.27.0
+	github.com/charmbracelet/lipgloss v0.13.0
+	github.com/charmbracelet/x/ansi v0.2.3
+	github.com/disgoorg/disgo v0.18.10
 	github.com/fatih/camelcase v1.0.0
 	github.com/getkin/kin-openapi v0.127.0
 	github.com/go-git/go-git/v5 v5.12.0
@@ -27,8 +27,8 @@ require (
 	github.com/lithammer/fuzzysearch v1.1.8
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.20.1
-	github.com/luevano/luaprovider v0.14.0
-	github.com/luevano/mangoprovider v0.16.0
+	github.com/luevano/luaprovider v0.14.1
+	github.com/luevano/mangoprovider v0.16.4
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -38,7 +38,7 @@ require (
 	github.com/philippgille/gokv/util v0.7.0
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.33.0
-	github.com/samber/lo v1.46.0
+	github.com/samber/lo v1.47.0
 	github.com/skratchdot/open-golang v0.0.0-20200116055534-eef842397966
 	github.com/spf13/afero v1.11.0
 	github.com/spf13/cobra v1.8.1
@@ -46,20 +46,19 @@ require (
 	github.com/wk8/go-ordered-map/v2 v2.1.8
 	github.com/yuin/gopher-lua v1.1.1
 	github.com/zyedidia/generic v1.2.1
-	go.etcd.io/bbolt v1.3.10
-	golang.org/x/exp v0.0.0-20240719175910-8a7402abbf56
-	golang.org/x/oauth2 v0.21.0
+	go.etcd.io/bbolt v1.3.11
+	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
+	golang.org/x/oauth2 v0.22.0
 )
 
 require (
+	github.com/Luzifer/go-openssl/v4 v4.2.2 // indirect
 	github.com/allegro/bigcache/v3 v3.1.0 // indirect
 	github.com/antchfx/htmlquery v1.3.2 // indirect
 	github.com/antchfx/xmlquery v1.4.1 // indirect
 	github.com/antchfx/xpath v1.3.1 // indirect
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
-	github.com/charmbracelet/x/input v0.1.3 // indirect
-	github.com/charmbracelet/x/term v0.1.1 // indirect
-	github.com/charmbracelet/x/windows v0.1.2 // indirect
+	github.com/charmbracelet/x/term v0.2.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.3.1 // indirect
 	github.com/disgoorg/json v1.1.0 // indirect
 	github.com/disgoorg/snowflake/v2 v2.0.3 // indirect
@@ -88,22 +87,23 @@ require (
 	github.com/saintfish/chardet v0.0.0-20230101081208-5e3ef4b5456d // indirect
 	github.com/sasha-s/go-csync v0.0.0-20240107134140-fcbab37b09ad // indirect
 	github.com/sourcegraph/conc v0.3.0 // indirect
-	github.com/spf13/cast v1.6.0 // indirect
+	github.com/spf13/cast v1.7.0 // indirect
 	github.com/subosito/gotenv v1.6.0 // indirect
 	github.com/temoto/robotstxt v1.1.2 // indirect
+	github.com/tj/go-naturaldate v1.3.0 // indirect
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	github.com/valyala/bytebufferpool v1.0.0 // indirect
 	github.com/valyala/fasttemplate v1.2.2 // indirect
-	github.com/xo/terminfo v0.0.0-20220910002029-abceb7e1c41e // indirect
+	github.com/vineesh12344/gojsfuck v0.2.0 // indirect
 	go.uber.org/multierr v1.11.0 // indirect
-	golang.org/x/term v0.22.0 // indirect
+	golang.org/x/term v0.23.0 // indirect
 	google.golang.org/appengine v1.6.8 // indirect
 	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 )
 
 require (
-	dario.cat/mergo v1.0.0 // indirect
+	dario.cat/mergo v1.0.1 // indirect
 	github.com/JohannesKaufmann/html-to-markdown v1.6.0 // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/ProtonMail/go-crypto v1.0.0 // indirect
@@ -115,7 +115,7 @@ require (
 	github.com/buger/jsonparser v1.1.1 // indirect
 	github.com/charmbracelet/harmonica v0.2.0 // indirect
 	github.com/cixtor/readability v1.0.0 // indirect
-	github.com/cloudflare/circl v1.3.9 // indirect
+	github.com/cloudflare/circl v1.4.0 // indirect
 	github.com/emirpasic/gods v1.18.1 // indirect
 	github.com/gdamore/encoding v1.0.1 // indirect
 	github.com/gdamore/tcell/v2 v2.7.4 // indirect
@@ -162,13 +162,13 @@ require (
 	github.com/ysmood/gson v0.7.3 // indirect
 	github.com/ysmood/leakless v0.9.0 // indirect
 	github.com/yuin/gluamapper v0.0.0-20150323120927-d836955830e7 // indirect
-	golang.org/x/crypto v0.25.0 // indirect
-	golang.org/x/image v0.18.0 // indirect
-	golang.org/x/mod v0.19.0 // indirect
-	golang.org/x/net v0.27.0 // indirect
-	golang.org/x/sync v0.7.0 // indirect
-	golang.org/x/sys v0.22.0 // indirect
-	golang.org/x/text v0.16.0 // indirect
+	golang.org/x/crypto v0.26.0 // indirect
+	golang.org/x/image v0.19.0 // indirect
+	golang.org/x/mod v0.20.0 // indirect
+	golang.org/x/net v0.28.0 // indirect
+	golang.org/x/sync v0.8.0 // indirect
+	golang.org/x/sys v0.24.0 // indirect
+	golang.org/x/text v0.17.0 // indirect
 	gopkg.in/sourcemap.v1 v1.0.5 // indirect
 	gopkg.in/warnings.v0 v0.1.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
