@@ -90,6 +90,7 @@ func RunDownload(ctx context.Context, args Args) error {
 		downloadOptions.SearchMetadata = false
 	}
 
+	// FIX: rework this mess
 	// TODO: make configurable
 	maxRetries := 10
 	retryCount := 0
@@ -97,14 +98,15 @@ func RunDownload(ctx context.Context, args Args) error {
 		retry := true
 		for retry {
 			retry = false
-			downChap, err := client.DownloadChapter(ctx, ch.Chapter, downloadOptions)
-			if err != nil {
-				errMsg := err.Error()
+			ch.Down, ch.Err = client.DownloadChapter(ctx, ch.Chapter, downloadOptions)
+			if ch.Err != nil {
+				errMsg := ch.Err.Error()
 				// TODO: handle other responses here too if possible
 				if strings.Contains(errMsg, "429") && strings.Contains(errMsg, "Retry-After") {
 					retry = true
 					retryCount++
 					if retryCount > maxRetries {
+						// TODO: use as ch.Err?
 						err = fmt.Errorf("exceeded max retries (%d) while downloading chapters", maxRetries)
 						return notify.SendError(err)
 					}
@@ -112,31 +114,38 @@ func RunDownload(ctx context.Context, args Args) error {
 					raTemp := strings.Split(errMsg, ":")
 					raParsed, err := strconv.Atoi(strings.TrimSpace(raTemp[len(raTemp)-1]))
 					if err != nil {
+						// TODO: use as ch.Err?
 						err = errors.New("error while parsing Retry-Count from error mesage: " + err.Error())
 						return notify.SendError(err)
 					}
 
 					retryAfter := time.Duration(min(10, raParsed)) * time.Second
+					// TODO: handle different in case that JSONOutput is desired?
 					fmt.Printf("429 Too Many Requests (retry #%d). Retrying in %s\n", retryCount, retryAfter)
 					time.Sleep(retryAfter)
 					continue
 				}
+
+				// In case that the error is not due to 429 code, just continue to the next chapter
+				// as ch.Down will not be available
+				if args.Provider == "mango-mangaplus" && i != len(chapters)-1 {
+					time.Sleep(time.Second)
+				}
+				continue
 			}
-			ch.Down = downChap
-			ch.Err = err
 
 			if args.JSONOutput {
-				dc, err := json.Marshal(downChap)
+				dc, err := json.Marshal(ch.Down)
 				if err != nil {
 					return notify.SendError(err)
 				}
 				fmt.Println(string(dc))
 			} else {
-				fmt.Println(downChap.Path())
+				fmt.Println(ch.Down.Path())
 			}
 			// To avoid abusing the mangaplus api, since there are no status codes returned to check
-			// sleep for a second on after each chapter download
-			if downChap.ChapterStatus == metadata.DownloadStatusNew && args.Provider == "mango-mangaplus" && i != len(chapters)-1 {
+			// sleep for a second after each chapter download
+			if ch.Down.ChapterStatus == metadata.DownloadStatusNew && args.Provider == "mango-mangaplus" && i != len(chapters)-1 {
 				time.Sleep(time.Second)
 			}
 		}
