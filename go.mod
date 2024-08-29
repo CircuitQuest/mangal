@@ -12,7 +12,7 @@ retract (
 require (
 	github.com/adrg/xdg v0.5.0
 	github.com/charmbracelet/bubbles v0.19.0
-	github.com/charmbracelet/bubbletea v0.27.0
+	github.com/charmbracelet/bubbletea v1.0.0
 	github.com/charmbracelet/lipgloss v0.13.0
 	github.com/charmbracelet/x/ansi v0.2.3
 	github.com/disgoorg/disgo v0.18.10
@@ -28,7 +28,7 @@ require (
 	github.com/luevano/gopher-luadoc v0.3.2
 	github.com/luevano/libmangal v0.20.1
 	github.com/luevano/luaprovider v0.14.1
-	github.com/luevano/mangoprovider v0.16.4
+	github.com/luevano/mangoprovider v0.16.5
 	github.com/muesli/reflow v0.3.0
 	github.com/oapi-codegen/runtime v1.1.1
 	github.com/pelletier/go-toml v1.9.5
@@ -47,7 +47,7 @@ require (
 	github.com/yuin/gopher-lua v1.1.1
 	github.com/zyedidia/generic v1.2.1
 	go.etcd.io/bbolt v1.3.11
-	golang.org/x/exp v0.0.0-20240808152545-0cdaa3abc0fa
+	golang.org/x/exp v0.0.0-20240823005443-9b4947da3948
 	golang.org/x/oauth2 v0.22.0
 )
 
@@ -60,7 +60,7 @@ require (
 	github.com/apapsch/go-jsonmerge/v2 v2.0.0 // indirect
 	github.com/charmbracelet/x/term v0.2.0 // indirect
 	github.com/cyphar/filepath-securejoin v0.3.1 // indirect
-	github.com/disgoorg/json v1.1.0 // indirect
+	github.com/disgoorg/json v1.2.0 // indirect
 	github.com/disgoorg/snowflake/v2 v2.0.3 // indirect
 	github.com/erikgeiser/coninput v0.0.0-20211004153227-1c3628e74d0f // indirect
 	github.com/fatih/color v1.17.0 // indirect
@@ -75,12 +75,12 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/kennygrant/sanitize v1.2.4 // indirect
 	github.com/labstack/gommon v0.4.2 // indirect
-	github.com/luevano/mangodex v0.3.8 // indirect
+	github.com/luevano/mangodex v0.3.9 // indirect
 	github.com/luevano/mangoplus v0.4.4 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mohae/deepcopy v0.0.0-20170929034955-c48cc78d4826 // indirect
-	github.com/pelletier/go-toml/v2 v2.2.2 // indirect
+	github.com/pelletier/go-toml/v2 v2.2.3 // indirect
 	github.com/perimeterx/marshmallow v1.1.5 // indirect
 	github.com/sagikazarmark/locafero v0.6.0 // indirect
 	github.com/sagikazarmark/slog-shim v0.1.0 // indirect
