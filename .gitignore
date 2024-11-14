@@ -308,3 +308,6 @@ dist/
 
 changelog-temp.md
 mangal
+
+##
+web/api/*.gen.go

@@ -17,34 +17,47 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4.2.2
         with:
           fetch-depth: 0
       - name: Fetch all tags
         run: git fetch --force --tags
       - name: Set up Go
-        uses: actions/setup-go@v2
+        uses: actions/setup-go@v5.1.0
         with:
-          go-version: 1.19
+          go-version: 1.23.3
+      - name: Install Go packages
+        run: |
+          go install github.com/oapi-codegen/oapi-codegen/v2/cmd/oapi-codegen@latest
+          go install github.com/dmarkham/enumer@latest
       - name: Login to Docker Hub
-        uses: docker/login-action@v1
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v1
-      - name: Set up Python 
-        uses: actions/setup-python@v4
+        uses: docker/setup-buildx-action@v3.7.1
+      - name: Setup Node
+        uses: actions/setup-node@v4.1.0
+      - name: Setup just
+        # You may pin to the exact commit or the version.
+        # uses: extractions/setup-just@dd310ad5a97d8e7b41793f8ef055398d51ad4de6
+        uses: extractions/setup-just@v2
         with:
-          python-version: '3.10' 
-      - name: Generate Release Notes
-        run: python ./.github/scripts/generate-release-notes.py # outputs a file named "changelog-temp.md"
+          # A valid semver specifier of the just version to install
+          just-version: 1.36.0
+      - name: Install dependencies
+        working-directory: web/ui
+        run: npm install
+      - name: Generate web UI assets
+        working-directory: web/ui
+        run: npm run build
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+        uses: goreleaser/goreleaser-action@v5.1.0
         with:
           distribution: goreleaser
           version: latest
-          args: release --rm-dist --release-notes changelog-temp.md
+          args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SCOOP_TAP_GITHUB_TOKEN: ${{ secrets.SCOOP_TAP_GITHUB_TOKEN }}
